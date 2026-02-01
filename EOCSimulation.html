@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EOC Simulation Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .game-title {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    
+    @keyframes pulse-alert {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    @keyframes rain {
+      0% { transform: translateY(-100%) rotate(15deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(200%) rotate(15deg); opacity: 0; }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+    
+    .alert-pulse {
+      animation: pulse-alert 1s ease-in-out infinite;
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .rain-drop {
+      animation: rain 1s linear infinite;
+    }
+    
+    .shake-effect {
+      animation: shake 0.3s ease-in-out infinite;
+    }
+    
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 2px;
+    }
+    
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    
+    .cell-water {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    }
+    
+    .cell-land {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    }
+    
+    .cell-urban {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    }
+    
+    .cell-flooded {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    }
+    
+    .cell-affected {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .cell-evacuated {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .cell-safe {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .resource-card {
+      transition: all 0.2s ease;
+    }
+    
+    .resource-card:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .resource-card:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .decision-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .decision-btn:hover {
+      transform: scale(1.02);
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+    
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.2s ease;
+    }
+    
+    .has-tooltip:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    
+    .notification-slide {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 3px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-slate-900 text-white overflow-auto">
+  <div id="app" class="h-full w-full"><!-- Title Screen -->
+   <div id="title-screen" class="h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div class="text-center max-w-2xl">
+     <div class="mb-6">
+      <svg class="w-24 h-24 mx-auto text-amber-500 float-animation" viewbox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" /> <path d="M50 20 L50 55 L70 70" stroke="currentColor" stroke-width="4" stroke-linecap="round" /> <circle cx="50" cy="50" r="6" fill="currentColor" /> <path d="M25 50 L15 50 M75 50 L85 50 M50 25 L50 15 M50 75 L50 85" stroke="currentColor" stroke-width="2" />
+      </svg>
+     </div>
+     <h1 id="main-title" class="game-title text-4xl md:text-5xl font-bold text-amber-500 mb-2">EOC SIMULATION</h1>
+     <h2 id="sub-title" class="text-xl md:text-2xl text-slate-300 mb-4">Emergency Operations Center Training</h2>
+     <p id="lgu-display" class="text-lg text-amber-400 mb-8">Municipality of Sample LGU</p>
+     <p id="welcome-text" class="text-slate-400 mb-8 leading-relaxed">Train your emergency response skills through realistic disaster scenarios. Make critical decisions, manage resources, and coordinate rescue operations.</p>
+     <div class="space-y-4 mb-8"><input type="text" id="player-name" placeholder="Enter your name" class="w-full max-w-xs px-4 py-3 bg-slate-800 border-2 border-slate-600 rounded-lg text-center focus:border-amber-500 focus:outline-none transition-colors">
+     </div><button id="start-btn" onclick="startGame()" class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-lg rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-amber-500/25"> 🚨 START SIMULATION </button>
+     <div class="mt-8 flex justify-center gap-6 text-sm text-slate-500">
+      <div class="flex items-center gap-2"><span>🎯</span> Decision Making
+      </div>
+      <div class="flex items-center gap-2"><span>📦</span> Resource Management
+      </div>
+      <div class="flex items-center gap-2"><span>👥</span> Coordination
+      </div>
+     </div><button onclick="showLeaderboard()" class="mt-6 text-amber-400 hover:text-amber-300 underline text-sm"> View Training Records 📊 </button>
+    </div>
+   </div><!-- Role Selection Screen -->
+   <div id="role-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <h2 class="game-title text-3xl font-bold text-amber-500 mb-2">SELECT YOUR ROLE</h2>
+    <p class="text-slate-400 mb-8">Choose your position in the Emergency Operations Center</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full"><button onclick="selectRole('incident_commander')" class="role-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-red-500 hover:bg-slate-700 transition-all text-left group">
+      <div class="flex items-center gap-4 mb-3"><span class="text-4xl">🎖️</span>
+       <div>
+        <h3 class="font-bold text-lg text-red-400 group-hover:text-red-300">Incident Commander</h3>
+        <p class="text-sm text-slate-400">Overall strategic leadership</p>
+       </div>
+      </div><p class="text-xs text-slate-500">Make final decisions on resource deployment, evacuation orders, and inter-agency coordination.</p></button> <button onclick="selectRole('operations')" class="role-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-blue-500 hover:bg-slate-700 transition-all text-left group">
+      <div class="flex items-center gap-4 mb-3"><span class="text-4xl">🔧</span>
+       <div>
+        <h3 class="font-bold text-lg text-blue-400 group-hover:text-blue-300">Operations Chief</h3>
+        <p class="text-sm text-slate-400">Field operations management</p>
+       </div>
+      </div><p class="text-xs text-slate-500">Direct search and rescue teams, manage evacuation routes, and coordinate ground response.</p></button> <button onclick="selectRole('logistics')" class="role-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-green-500 hover:bg-slate-700 transition-all text-left group">
+      <div class="flex items-center gap-4 mb-3"><span class="text-4xl">📦</span>
+       <div>
+        <h3 class="font-bold text-lg text-green-400 group-hover:text-green-300">Logistics Chief</h3>
+        <p class="text-sm text-slate-400">Resource management</p>
+       </div>
+      </div><p class="text-xs text-slate-500">Manage supplies, equipment, and personnel allocation across evacuation centers and response teams.</p></button> <button onclick="selectRole('information')" class="role-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-purple-500 hover:bg-slate-700 transition-all text-left group">
+      <div class="flex items-center gap-4 mb-3"><span class="text-4xl">📢</span>
+       <div>
+        <h3 class="font-bold text-lg text-purple-400 group-hover:text-purple-300">Public Information</h3>
+        <p class="text-sm text-slate-400">Communications &amp; alerts</p>
+       </div>
+      </div><p class="text-xs text-slate-500">Issue public warnings, coordinate with media, and ensure accurate information dissemination.</p></button>
+    </div>
+   </div><!-- Scenario Selection Screen -->
+   <div id="scenario-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <h2 class="game-title text-3xl font-bold text-amber-500 mb-2">SELECT SCENARIO</h2>
+    <p class="text-slate-400 mb-8">Choose the disaster scenario for this simulation</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl w-full"><button onclick="selectScenario('typhoon')" class="scenario-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-cyan-500 hover:bg-slate-700 transition-all text-center group"> <span class="text-5xl mb-4 block">🌀</span> <h3 class="font-bold text-lg text-cyan-400 group-hover:text-cyan-300 mb-2">Super Typhoon</h3><p class="text-xs text-slate-400 mb-3">Signal No. 4 • Heavy flooding • Strong winds</p>
+      <div class="flex justify-center gap-2"><span class="px-2 py-1 bg-cyan-900/50 text-cyan-300 rounded text-xs">💨 Wind</span> <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded text-xs">🌊 Flood</span>
+      </div></button> <button onclick="selectScenario('earthquake')" class="scenario-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-orange-500 hover:bg-slate-700 transition-all text-center group"> <span class="text-5xl mb-4 block">🏚️</span> <h3 class="font-bold text-lg text-orange-400 group-hover:text-orange-300 mb-2">Major Earthquake</h3><p class="text-xs text-slate-400 mb-3">Magnitude 7.2 • Structural collapse • Aftershocks</p>
+      <div class="flex justify-center gap-2"><span class="px-2 py-1 bg-orange-900/50 text-orange-300 rounded text-xs">🏗️ Collapse</span> <span class="px-2 py-1 bg-red-900/50 text-red-300 rounded text-xs">🔥 Fire</span>
+      </div></button> <button onclick="selectScenario('flood')" class="scenario-card p-6 bg-slate-800 border-2 border-slate-600 rounded-xl hover:border-blue-500 hover:bg-slate-700 transition-all text-center group"> <span class="text-5xl mb-4 block">🌊</span> <h3 class="font-bold text-lg text-blue-400 group-hover:text-blue-300 mb-2">Flash Flood</h3><p class="text-xs text-slate-400 mb-3">Monsoon rains • Rising waters • Dam release</p>
+      <div class="flex justify-center gap-2"><span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded text-xs">🚣 Rescue</span> <span class="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded text-xs">🏠 Evac</span>
+      </div></button>
+    </div><button onclick="goBack('role')" class="mt-8 text-slate-400 hover:text-white transition-colors"> ← Back to Role Selection </button>
+   </div><!-- Main Game Screen -->
+   <div id="game-screen" class="hidden h-full w-full flex flex-col bg-slate-900"><!-- Top HUD -->
+    <div class="flex-shrink-0 bg-slate-800 border-b border-slate-700 p-3">
+     <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-4">
+       <div id="scenario-badge" class="flex items-center gap-2 px-3 py-1 bg-cyan-900/50 rounded-lg"><span id="scenario-icon">🌀</span> <span id="scenario-name" class="font-bold text-cyan-300 text-sm">TYPHOON MARING</span>
+       </div>
+       <div id="alert-level" class="flex items-center gap-2 px-3 py-1 bg-red-900/50 rounded-lg alert-pulse"><span>⚠️</span> <span class="font-bold text-red-300 text-sm">SIGNAL NO. 3</span>
+       </div>
+      </div>
+      <div class="flex items-center gap-4">
+       <div class="flex items-center gap-2"><span class="text-slate-400 text-sm">⏱️</span> <span id="game-timer" class="font-mono text-amber-400 font-bold">15:00</span>
+       </div>
+       <div class="flex items-center gap-2"><span class="text-slate-400 text-sm">📊</span> <span id="current-score" class="font-mono text-green-400 font-bold">0</span>
+       </div>
+      </div>
+     </div>
+    </div><!-- Main Game Area -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden"><!-- Left Panel - Map & Status -->
+     <div class="lg:w-2/3 flex flex-col p-4 overflow-auto"><!-- Map Section -->
+      <div class="bg-slate-800 rounded-xl p-4 mb-4">
+       <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-300 flex items-center gap-2"><span>🗺️</span> Barangay Map - <span id="map-area-name">Brgy. San Miguel</span></h3>
+        <div class="flex gap-2 text-xs"><span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-500"></span> Safe</span> <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-500"></span> Evacuating</span> <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-500"></span> Affected</span> <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-violet-500"></span> Flooded</span>
+        </div>
+       </div>
+       <div id="game-map" class="map-grid bg-slate-900 rounded-lg p-2 min-h-[200px]"><!-- Map cells will be generated here -->
+       </div>
+       <div id="selected-cell-info" class="mt-3 p-3 bg-slate-900 rounded-lg hidden">
+        <div class="flex items-center justify-between">
+         <div>
+          <h4 id="cell-name" class="font-bold text-amber-400">Purok 1</h4>
+          <p id="cell-status" class="text-sm text-slate-400">Status: Normal</p>
+         </div>
+         <div id="cell-actions" class="flex gap-2"><!-- Action buttons will appear here -->
+         </div>
+        </div>
+       </div>
+      </div><!-- Stats Dashboard -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+       <div class="bg-slate-800 rounded-lg p-3 text-center">
+        <div class="text-2xl mb-1">
+         👥
+        </div>
+        <div id="stat-population" class="text-xl font-bold text-white">
+         12,450
+        </div>
+        <div class="text-xs text-slate-400">
+         Total Population
+        </div>
+       </div>
+       <div class="bg-slate-800 rounded-lg p-3 text-center">
+        <div class="text-2xl mb-1">
+         🏃
+        </div>
+        <div id="stat-evacuated" class="text-xl font-bold text-green-400">
+         0
+        </div>
+        <div class="text-xs text-slate-400">
+         Evacuated
+        </div>
+       </div>
+       <div class="bg-slate-800 rounded-lg p-3 text-center">
+        <div class="text-2xl mb-1">
+         ⚠️
+        </div>
+        <div id="stat-affected" class="text-xl font-bold text-amber-400">
+         0
+        </div>
+        <div class="text-xs text-slate-400">
+         Affected
+        </div>
+       </div>
+       <div class="bg-slate-800 rounded-lg p-3 text-center">
+        <div class="text-2xl mb-1">
+         💔
+        </div>
+        <div id="stat-casualties" class="text-xl font-bold text-red-400">
+         0
+        </div>
+        <div class="text-xs text-slate-400">
+         Casualties
+        </div>
+       </div>
+      </div>
+     </div><!-- Right Panel - Controls & Events -->
+     <div class="lg:w-1/3 flex flex-col bg-slate-800 border-l border-slate-700 overflow-hidden"><!-- Resources Section -->
+      <div class="p-4 border-b border-slate-700">
+       <h3 class="font-bold text-slate-300 mb-3 flex items-center gap-2"><span>📦</span> Available Resources</h3>
+       <div id="resources-panel" class="grid grid-cols-2 gap-2"><!-- Resource cards will be generated -->
+       </div>
+      </div><!-- Active Events / Decisions -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+       <div class="p-4 border-b border-slate-700">
+        <h3 class="font-bold text-slate-300 flex items-center gap-2"><span>🚨</span> Active Situation</h3>
+       </div>
+       <div id="events-panel" class="flex-1 overflow-auto p-4 scrollbar-thin">
+        <div id="current-decision" class="bg-slate-900 rounded-lg p-4">
+         <p class="text-slate-400 text-center">Simulation starting...</p>
+        </div>
+       </div>
+      </div><!-- Communication Log -->
+      <div class="p-4 border-t border-slate-700 max-h-40 overflow-auto scrollbar-thin">
+       <h3 class="font-bold text-slate-300 mb-2 text-sm flex items-center gap-2"><span>📻</span> Communications Log</h3>
+       <div id="comm-log" class="space-y-2 text-xs">
+        <div class="text-slate-500">
+         Waiting for updates...
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Results Screen -->
+   <div id="results-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+    <div class="max-w-2xl w-full text-center">
+     <div class="mb-6"><span id="result-icon" class="text-7xl">🏆</span>
+     </div>
+     <h2 class="game-title text-3xl font-bold text-amber-500 mb-2">SIMULATION COMPLETE</h2>
+     <p id="result-message" class="text-xl text-slate-300 mb-8">Excellent emergency response!</p>
+     <div class="bg-slate-800 rounded-xl p-6 mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+       <div class="text-center">
+        <div class="text-3xl font-bold text-amber-400" id="result-score">
+         0
+        </div>
+        <div class="text-sm text-slate-400">
+         Final Score
+        </div>
+       </div>
+       <div class="text-center">
+        <div class="text-3xl font-bold text-green-400" id="result-saved">
+         0
+        </div>
+        <div class="text-sm text-slate-400">
+         Lives Saved
+        </div>
+       </div>
+       <div class="text-center">
+        <div class="text-3xl font-bold text-blue-400" id="result-efficiency">
+         0%
+        </div>
+        <div class="text-sm text-slate-400">
+         Resource Efficiency
+        </div>
+       </div>
+       <div class="text-center">
+        <div class="text-3xl font-bold text-purple-400" id="result-decisions">
+         0
+        </div>
+        <div class="text-sm text-slate-400">
+         Decisions Made
+        </div>
+       </div>
+      </div>
+      <div class="border-t border-slate-700 pt-4">
+       <h4 class="font-bold text-slate-300 mb-3">Performance Analysis</h4>
+       <div id="performance-bars" class="space-y-3"><!-- Performance bars will be generated -->
+       </div>
+      </div>
+     </div>
+     <div id="result-feedback" class="bg-slate-800/50 rounded-lg p-4 mb-6 text-left">
+      <h4 class="font-bold text-amber-400 mb-2">📋 Debriefing Notes</h4>
+      <ul id="feedback-list" class="text-sm text-slate-300 space-y-2"><!-- Feedback items will be generated -->
+      </ul>
+     </div>
+     <div class="flex flex-wrap justify-center gap-4"><button onclick="restartGame()" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg transition-all"> 🔄 Play Again </button> <button onclick="returnToTitle()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-all"> 🏠 Main Menu </button>
+     </div>
+    </div>
+   </div><!-- Leaderboard Modal -->
+   <div id="leaderboard-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 z-50">
+    <div class="modal-overlay absolute inset-0" onclick="hideLeaderboard()"></div>
+    <div class="relative bg-slate-800 rounded-xl p-6 max-w-lg w-full max-h-[80%] overflow-auto"><button onclick="hideLeaderboard()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">×</button>
+     <h3 class="game-title text-2xl font-bold text-amber-500 mb-4">📊 Training Records</h3>
+     <div id="leaderboard-content" class="space-y-3">
+      <p class="text-slate-400 text-center">No records yet. Complete a simulation to save your score!</p>
+     </div>
+    </div>
+   </div><!-- Notification Toast -->
+   <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"><!-- Notifications will appear here -->
+   </div>
+  </div>
+  <script>
+    // ===== CONFIGURATION & STATE =====
+    const defaultConfig = {
+      game_title: 'EOC SIMULATION',
+      lgu_name: 'Municipality of Sample LGU',
+      welcome_message: 'Train your emergency response skills through realistic disaster scenarios.',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_color: '#f59e0b',
+      secondary_color: '#64748b'
+    };
+    
+    let config = { ...defaultConfig };
+    let gameRecords = [];
+    
+    // Game State
+    let gameState = {
+      playerName: '',
+      role: '',
+      scenario: '',
+      score: 0,
+      timeRemaining: 900, // 15 minutes in seconds
+      timerInterval: null,
+      currentPhase: 0,
+      decisions: [],
+      
+      // Statistics
+      population: 12450,
+      evacuated: 0,
+      affected: 0,
+      casualties: 0,
+      
+      // Resources
+      resources: {
+        rescue_boats: { name: '🚣 Rescue Boats', count: 8, max: 8 },
+        medical_teams: { name: '🏥 Medical Teams', count: 5, max: 5 },
+        evacuation_trucks: { name: '🚛 Evac Trucks', count: 6, max: 6 },
+        relief_packs: { name: '📦 Relief Packs', count: 500, max: 500 },
+        responders: { name: '👷 Responders', count: 50, max: 50 }
+      },
+      
+      // Map Data
+      mapCells: [],
+      selectedCell: null,
+      
+      // Events Queue
+      eventQueue: [],
+      currentEvent: null,
+      
+      // Performance Metrics
+      metrics: {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      }
+    };
+    
+    // ===== SCENARIOS DATA =====
+    const scenarios = {
+      typhoon: {
+        name: 'Super Typhoon Maring',
+        icon: '🌀',
+        alertLevel: 'SIGNAL NO. 4',
+        alertColor: 'red',
+        hazardTypes: ['flooding', 'wind_damage', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '🌧️ Heavy Rainfall Warning',
+            description: 'PAGASA reports 150mm rainfall in the last 3 hours. River levels rising rapidly in Barangay San Miguel.',
+            options: [
+              { text: 'Issue immediate evacuation order for riverside areas', effect: { evacuated: 800, score: 100, time: -60, resources: { evacuation_trucks: -2 } }, feedback: 'Quick evacuation saved many lives.' },
+              { text: 'Monitor situation and prepare evacuation centers', effect: { affected: 200, score: 50, time: -30 }, feedback: 'Preparation helped but delayed response increased affected population.' },
+              { text: 'Send warning through barangay officials only', effect: { affected: 400, score: 20, time: -20 }, feedback: 'Limited communication reach resulted in more people getting stranded.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🌊 Flash Flood in Purok 3',
+            description: 'Water levels have risen to 1.5 meters. 200 families trapped in their homes. Some are on rooftops.',
+            options: [
+              { text: 'Deploy all available rescue boats immediately', effect: { evacuated: 600, score: 150, time: -90, resources: { rescue_boats: -6, responders: -20 } }, feedback: 'Aggressive rescue operation was highly effective.' },
+              { text: 'Deploy rescue boats gradually while coordinating with Coast Guard', effect: { evacuated: 400, casualties: 5, score: 80, time: -60, resources: { rescue_boats: -4, responders: -15 } }, feedback: 'Coordinated approach was safer but some casualties occurred due to delay.' },
+              { text: 'Wait for water levels to stabilize before rescue', effect: { casualties: 25, score: -50, time: -30 }, feedback: 'Waiting proved fatal for many stranded residents.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Medical Emergency at Evacuation Center',
+            description: 'Multiple evacuees showing symptoms of hypothermia and respiratory infections. Medical supplies running low.',
+            options: [
+              { text: 'Request emergency medical supplies from provincial office', effect: { score: 80, time: -45, metrics: { communicationScore: 10 } }, feedback: 'Inter-agency coordination secured additional resources.' },
+              { text: 'Redistribute existing supplies and prioritize critical cases', effect: { casualties: 3, score: 60, time: -30, resources: { relief_packs: -100 } }, feedback: 'Efficient triage but limited supplies led to some complications.' },
+              { text: 'Send medical teams to evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -3 } }, feedback: 'Direct medical intervention improved health outcomes.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🛣️ Road Blocked by Landslide',
+            description: 'Main highway to evacuation center blocked. Relief trucks cannot deliver supplies. 2,000 evacuees waiting.',
+            options: [
+              { text: 'Coordinate with DPWH for immediate clearing operations', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'Inter-agency coordination resolved the blockage.' },
+              { text: 'Find alternative routes through barangay roads', effect: { score: 90, time: -60, resources: { evacuation_trucks: -1 } }, feedback: 'Quick thinking found alternative supply routes.' },
+              { text: 'Use boats to transport supplies via river', effect: { score: 100, time: -45, resources: { rescue_boats: -2 } }, feedback: 'Creative solution ensured continuous relief operations.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '📢 Misinformation Spreading',
+            description: 'False reports of dam failure spreading panic on social media. Residents fleeing to higher ground chaotically.',
+            options: [
+              { text: 'Issue official statement through all channels immediately', effect: { score: 100, time: -30, metrics: { communicationScore: 20 } }, feedback: 'Clear communication prevented panic-induced accidents.' },
+              { text: 'Contact dam management for verification first', effect: { affected: 100, score: 60, time: -45, metrics: { communicationScore: -10 } }, feedback: 'Verification caused delay but ensured accurate information.' },
+              { text: 'Deploy responders to manage crowd movement', effect: { affected: 50, score: 70, time: -60, resources: { responders: -15 } }, feedback: 'Ground management helped but didnt address root cause.' }
+            ]
+          }
+        ]
+      },
+      earthquake: {
+        name: 'Magnitude 7.2 Earthquake',
+        icon: '🏚️',
+        alertLevel: 'INTENSITY VII',
+        alertColor: 'orange',
+        hazardTypes: ['collapse', 'fire', 'aftershock'],
+        events: [
+          {
+            phase: 1,
+            title: '🏗️ Building Collapse Reported',
+            description: 'Multiple structures collapsed in commercial district. Estimated 150 people trapped. Aftershocks continuing.',
+            options: [
+              { text: 'Deploy all rescue teams with heavy equipment', effect: { evacuated: 100, score: 120, time: -90, resources: { responders: -30, medical_teams: -3 } }, feedback: 'Immediate deployment saved trapped survivors.' },
+              { text: 'Assess structural safety before deploying teams', effect: { evacuated: 60, casualties: 15, score: 60, time: -60 }, feedback: 'Safety assessment caused delays but protected rescuers.' },
+              { text: 'Coordinate with military for heavy equipment', effect: { evacuated: 80, casualties: 10, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Military assets proved valuable but took time to mobilize.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🔥 Fire Outbreak in Residential Area',
+            description: 'Gas line rupture caused fire in Purok 5. Fire spreading to nearby wooden houses. 50 families at risk.',
+            options: [
+              { text: 'Evacuate affected areas and deploy fire volunteers', effect: { evacuated: 200, score: 100, time: -60, resources: { responders: -15 } }, feedback: 'Quick evacuation prevented casualties from fire.' },
+              { text: 'Request BFP support for fire suppression', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Professional firefighting contained the blaze.' },
+              { text: 'Cut power to prevent electrical fires', effect: { score: 60, time: -30 }, feedback: 'Preventive measure reduced fire spread risk.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Hospital Overwhelmed',
+            description: 'District hospital over capacity. 200+ injured waiting for treatment. Medical supplies critically low.',
+            options: [
+              { text: 'Set up field hospital at evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -2, relief_packs: -150 } }, feedback: 'Field hospital effectively managed overflow patients.' },
+              { text: 'Coordinate patient transfers to other hospitals', effect: { score: 80, time: -90, resources: { evacuation_trucks: -3 }, metrics: { communicationScore: 10 } }, feedback: 'Patient distribution eased hospital burden.' },
+              { text: 'Request DOH emergency medical supplies', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'National support replenished critical supplies.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '⚠️ Strong Aftershock Warning',
+            description: 'PHIVOLCS warns of possible magnitude 6.0 aftershock. Damaged structures at high risk of secondary collapse.',
+            options: [
+              { text: 'Immediately evacuate all damaged building areas', effect: { evacuated: 500, score: 120, time: -45, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Preemptive evacuation saved lives when aftershock struck.' },
+              { text: 'Issue public warning and mark dangerous structures', effect: { affected: 100, score: 80, time: -30, metrics: { communicationScore: 10 } }, feedback: 'Warning helped but some ignored the alerts.' },
+              { text: 'Suspend rescue operations until aftershock passes', effect: { casualties: 20, score: -30, time: -60 }, feedback: 'Suspension led to loss of trapped survivors.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🏠 Mass Displacement',
+            description: '3,000+ residents homeless. Temporary shelters needed urgently. Rain expected tonight.',
+            options: [
+              { text: 'Open all schools and gyms as evacuation centers', effect: { evacuated: 1500, score: 100, time: -60, resources: { relief_packs: -200 } }, feedback: 'Multiple evacuation sites accommodated displaced families.' },
+              { text: 'Request tents from DSWD regional office', effect: { evacuated: 800, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Additional shelter materials helped but took time.' },
+              { text: 'Prioritize most vulnerable for indoor shelter', effect: { evacuated: 500, affected: 300, score: 60, time: -45, resources: { relief_packs: -100 } }, feedback: 'Triage approach protected vulnerable but left others exposed.' }
+            ]
+          }
+        ]
+      },
+      flood: {
+        name: 'Flash Flood Emergency',
+        icon: '🌊',
+        alertLevel: 'RED WARNING',
+        alertColor: 'blue',
+        hazardTypes: ['flooding', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '💧 Dam Water Release',
+            description: 'Upstream dam releasing water due to critical levels. Downstream barangays have 2 hours before water arrives.',
+            options: [
+              { text: 'Immediate forced evacuation of flood plains', effect: { evacuated: 1000, score: 150, time: -90, resources: { evacuation_trucks: -4, responders: -25 } }, feedback: 'Early evacuation ensured zero casualties from flooding.' },
+              { text: 'Alert barangay captains to begin voluntary evacuation', effect: { evacuated: 600, affected: 200, score: 80, time: -60 }, feedback: 'Voluntary evacuation was partially effective.' },
+              { text: 'Prepare rescue boats for deployment after flooding', effect: { casualties: 30, affected: 400, score: -20, time: -30, resources: { rescue_boats: -4 } }, feedback: 'Reactive approach resulted in preventable casualties.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🚣 Stranded Residents in Sitio Riverside',
+            description: '80 families stranded on rooftops. Water at chest level and rising. Children and elderly among them.',
+            options: [
+              { text: 'Deploy all rescue boats with medical personnel', effect: { evacuated: 300, score: 130, time: -75, resources: { rescue_boats: -6, medical_teams: -2, responders: -15 } }, feedback: 'Comprehensive rescue saved all stranded families.' },
+              { text: 'Deploy rescue boats, request military helicopter support', effect: { evacuated: 280, score: 110, time: -90, resources: { rescue_boats: -4 }, metrics: { communicationScore: 15 } }, feedback: 'Air support accelerated rescue of critical cases.' },
+              { text: 'Prioritize children and elderly for first rescue trips', effect: { evacuated: 150, affected: 50, score: 80, time: -60, resources: { rescue_boats: -3 } }, feedback: 'Prioritization protected vulnerable but delayed others.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏫 Evacuation Center Flooded',
+            description: 'Elementary school evacuation center now flooded. 500 evacuees need to be relocated immediately.',
+            options: [
+              { text: 'Transfer all evacuees to gymnasium on higher ground', effect: { evacuated: 500, score: 100, time: -60, resources: { evacuation_trucks: -3, responders: -10 } }, feedback: 'Swift relocation prevented secondary displacement crisis.' },
+              { text: 'Move evacuees to upper floors of school building', effect: { affected: 100, score: 60, time: -30 }, feedback: 'Temporary measure provided shelter but poor conditions.' },
+              { text: 'Request provincial assistance for additional shelter', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Provincial support expanded shelter capacity.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🦠 Waterborne Disease Outbreak Risk',
+            description: 'Health officer warns of potential leptospirosis outbreak. Contaminated flood water widespread.',
+            options: [
+              { text: 'Distribute water purification tablets and boots', effect: { score: 100, time: -45, resources: { relief_packs: -150 } }, feedback: 'Preventive measures significantly reduced disease cases.' },
+              { text: 'Set up medical checkpoints at evacuation centers', effect: { score: 80, time: -60, resources: { medical_teams: -2 } }, feedback: 'Health monitoring enabled early treatment.' },
+              { text: 'Issue public health advisory through loudspeakers', effect: { affected: 50, score: 50, time: -20, metrics: { communicationScore: 5 } }, feedback: 'Information campaign reached limited audience.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🌧️ Second Wave Warning',
+            description: 'PAGASA reports another storm cell approaching. Expected to intensify flooding in 4 hours.',
+            options: [
+              { text: 'Expand evacuation to include medium-risk areas', effect: { evacuated: 800, score: 120, time: -90, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Proactive expansion prevented second wave casualties.' },
+              { text: 'Fortify current evacuation centers with supplies', effect: { score: 80, time: -60, resources: { relief_packs: -200 } }, feedback: 'Preparation helped weather the second wave.' },
+              { text: 'Request national government disaster declaration', effect: { score: 70, time: -120, metrics: { communicationScore: 20 } }, feedback: 'National attention brought additional resources.' }
+            ]
+          }
+        ]
+      }
+    };
+    
+    // ===== INITIALIZATION =====
+    async function initializeApp() {
+      // Initialize Elements SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...defaultConfig, ...newConfig };
+            updateUIFromConfig();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+              },
+              {
+                get: () => cfg.surface_color || defaultConfig.surface_color,
+                set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+              },
+              {
+                get: () => cfg.primary_color || defaultConfig.primary_color,
+                set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+              },
+              {
+                get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['game_title', cfg.game_title || defaultConfig.game_title],
+            ['lgu_name', cfg.lgu_name || defaultConfig.lgu_name],
+            ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+      }
+      
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const dataHandler = {
+          onDataChanged: (data) => {
+            gameRecords = data || [];
+            updateLeaderboardDisplay();
+          }
+        };
+        
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+      
+      updateUIFromConfig();
+    }
+    
+    function updateUIFromConfig() {
+      const mainTitle = document.getElementById('main-title');
+      const subTitle = document.getElementById('sub-title');
+      const lguDisplay = document.getElementById('lgu-display');
+      const welcomeText = document.getElementById('welcome-text');
+      
+      if (mainTitle) mainTitle.textContent = config.game_title || defaultConfig.game_title;
+      if (lguDisplay) lguDisplay.textContent = config.lgu_name || defaultConfig.lgu_name;
+      if (welcomeText) welcomeText.textContent = config.welcome_message || defaultConfig.welcome_message;
+      
+      // Apply colors
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      
+      const surfaces = document.querySelectorAll('.bg-slate-800');
+      surfaces.forEach(el => {
+        el.style.backgroundColor = config.surface_color || defaultConfig.surface_color;
+      });
+      
+      const primaryElements = document.querySelectorAll('.text-amber-500, .text-amber-400, .bg-amber-500');
+      primaryElements.forEach(el => {
+        if (el.classList.contains('bg-amber-500')) {
+          el.style.backgroundColor = config.primary_color || defaultConfig.primary_color;
+        } else {
+          el.style.color = config.primary_color || defaultConfig.primary_color;
+        }
+      });
+    }
+    
+    // ===== SCREEN NAVIGATION =====
+    function showScreen(screenId) {
+      const screens = ['title-screen', 'role-screen', 'scenario-screen', 'game-screen', 'results-screen'];
+      screens.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+    
+    function startGame() {
+      const nameInput = document.getElementById('player-name');
+      gameState.playerName = nameInput.value.trim() || 'EOC Trainee';
+      showScreen('role-screen');
+    }
+    
+    function selectRole(role) {
+      gameState.role = role;
+      showScreen('scenario-screen');
+    }
+    
+    function selectScenario(scenario) {
+      gameState.scenario = scenario;
+      initializeGame();
+      showScreen('game-screen');
+    }
+    
+    function goBack(screen) {
+      showScreen(screen + '-screen');
+    }
+    
+    // ===== GAME INITIALIZATION =====
+    function initializeGame() {
+      const scenario = scenarios[gameState.scenario];
+      
+      // Reset game state
+      gameState.score = 0;
+      gameState.timeRemaining = 900;
+      gameState.currentPhase = 0;
+      gameState.decisions = [];
+      gameState.evacuated = 0;
+      gameState.affected = 0;
+      gameState.casualties = 0;
+      gameState.metrics = {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      };
+      
+      // Reset resources
+      Object.keys(gameState.resources).forEach(key => {
+        gameState.resources[key].count = gameState.resources[key].max;
+      });
+      
+      // Update UI
+      document.getElementById('scenario-icon').textContent = scenario.icon;
+      document.getElementById('scenario-name').textContent = scenario.name.toUpperCase();
+      document.getElementById('alert-level').innerHTML = `<span>⚠️</span><span class="font-bold text-${scenario.alertColor}-300 text-sm">${scenario.alertLevel}</span>`;
+      
+      // Initialize map
+      initializeMap();
+      
+      // Initialize resources panel
+      updateResourcesPanel();
+      
+      // Start timer
+      startTimer();
+      
+      // Start first event
+      setTimeout(() => triggerNextEvent(), 2000);
+      
+      // Add initial comm log
+      addCommLog('📻 EOC activated. All units report to stations.');
+      addCommLog(`🌐 ${scenario.name} monitoring in progress.`);
+    }
+    
+    function initializeMap() {
+      const mapContainer = document.getElementById('game-map');
+      mapContainer.innerHTML = '';
+      
+      const barangayNames = [
+        'Purok 1', 'Purok 2', 'Purok 3', 'Riverside',
+        'Centro', 'Market', 'School', 'Health Center',
+        'Purok 4', 'Purok 5', 'Sitio Bukid', 'Sitio Ilog',
+        'Gym', 'Church', 'Purok 6', 'Evac Center',
+        'Highway', 'Bridge', 'Farm Area', 'Mountain',
+        'Coast', 'Port', 'Mangrove', 'River'
+      ];
+      
+      const cellTypes = [
+        'urban', 'urban', 'urban', 'water',
+        'urban', 'urban', 'urban', 'urban',
+        'urban', 'urban', 'land', 'water',
+        'urban', 'urban', 'urban', 'urban',
+        'urban', 'urban', 'land', 'land',
+        'water', 'urban', 'land', 'water'
+      ];
+      
+      gameState.mapCells = [];
+      
+      for (let i = 0; i < 24; i++) {
+        const cell = document.createElement('div');
+        const cellData = {
+          id: i,
+          name: barangayNames[i],
+          type: cellTypes[i],
+          status: 'normal',
+          population: cellTypes[i] === 'urban' ? Math.floor(Math.random() * 500) + 200 : 0,
+          affected: 0,
+          evacuated: 0
+        };
+        
+        gameState.mapCells.push(cellData);
+        
+        cell.className = `cell cell-${cellTypes[i]}`;
+        cell.innerHTML = `
+          <div class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold opacity-80">
+            ${getMapIcon(cellTypes[i], barangayNames[i])}
+          </div>
+        `;
+        cell.onclick = () => selectMapCell(i);
+        cell.id = `cell-${i}`;
+        
+        mapContainer.appendChild(cell);
+      }
+    }
+    
+    function getMapIcon(type, name) {
+      if (name.includes('Evac')) return '🏠';
+      if (name.includes('Health')) return '🏥';
+      if (name.includes('School')) return '🏫';
+      if (name.includes('Gym')) return '🏟️';
+      if (name.includes('Church')) return '⛪';
+      if (name.includes('Market')) return '🏪';
+      if (name.includes('Bridge')) return '🌉';
+      if (name.includes('Port')) return '⚓';
+      if (type === 'water') return '🌊';
+      if (type === 'land') return '🌳';
+      return '🏘️';
+    }
+    
+    function selectMapCell(cellId) {
+      gameState.selectedCell = cellId;
+      const cell = gameState.mapCells[cellId];
+      const infoPanel = document.getElementById('selected-cell-info');
+      
+      infoPanel.classList.remove('hidden');
+      document.getElementById('cell-name').textContent = cell.name;
+      
+      let statusText = 'Status: ';
+      let statusColor = 'text-green-400';
+      
+      switch(cell.status) {
+        case 'affected':
+          statusText += 'Affected (' + cell.affected + ' people)';
+          statusColor = 'text-red-400';
+          break;
+        case 'flooded':
+          statusText += 'Flooded';
+          statusColor = 'text-violet-400';
+          break;
+        case 'evacuated':
+          statusText += 'Evacuated';
+          statusColor = 'text-amber-400';
+          break;
+        case 'safe':
+          statusText += 'Safe Zone';
+          statusColor = 'text-green-400';
+          break;
+        default:
+          statusText += 'Normal (Pop: ' + cell.population + ')';
+      }
+      
+      document.getElementById('cell-status').innerHTML = `<span class="${statusColor}">${statusText}</span>`;
+      
+      // Generate action buttons
+      const actionsDiv = document.getElementById('cell-actions');
+      actionsDiv.innerHTML = '';
+      
+      if (cell.status === 'affected' && cell.affected > 0) {
+        actionsDiv.innerHTML = `
+          <button onclick="deployRescue(${cellId})" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-xs font-bold transition-colors">
+            🚣 Rescue
+          </button>
+        `;
+      } else if (cell.type === 'urban' && cell.status === 'normal') {
+        actionsDiv.innerHTML = `
+          <button onclick="preEvacuate(${cellId})" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 rounded text-xs font-bold transition-colors">
+            📢 Pre-Evacuate
+          </button>
+        `;
+      }
+    }
+    
+    function deployRescue(cellId) {
+      const cell = gameState.mapCells[cellId];
+      if (gameState.resources.rescue_boats.count < 1 || gameState.resources.responders.count < 5) {
+        showNotification('⚠️ Insufficient resources for rescue operation!', 'error');
+        return;
+      }
+      
+      gameState.resources.rescue_boats.count -= 1;
+      gameState.resources.responders.count -= 5;
+      
+      const rescued = Math.min(cell.affected, 50);
+      cell.affected -= rescued;
+      cell.evacuated += rescued;
+      gameState.evacuated += rescued;
+      gameState.score += rescued * 2;
+      
+      if (cell.affected === 0) {
+        cell.status = 'evacuated';
+        updateCellVisual(cellId);
+      }
+      
+      updateStats();
+      updateResourcesPanel();
+      addCommLog(`🚣 Rescue team deployed to ${cell.name}. ${rescued} people rescued.`);
+      showNotification(`✅ ${rescued} people rescued from ${cell.name}!`, 'success');
+      selectMapCell(cellId);
+      
+      // Return resources after delay
+      setTimeout(() => {
+        gameState.resources.rescue_boats.count = Math.min(gameState.resources.rescue_boats.count + 1, gameState.resources.rescue_boats.max);
+        gameState.resources.responders.count = Math.min(gameState.resources.responders.count + 5, gameState.resources.responders.max);
+        updateResourcesPanel();
+        addCommLog(`🚣 Rescue team returned from ${cell.name}.`);
+      }, 30000);
+    }
+    
+    function preEvacuate(cellId) {
+      const cell = gameState.mapCells[cellId];
+      if (gameState.resources.responders.count < 3) {
+        showNotification('⚠️ Not enough responders available!', 'error');
+        return;
+      }
+      
+      gameState.resources.responders.count -= 3;
+      
+      const evacuated = Math.floor(cell.population * 0.5);
+      cell.population -= evacuated;
+      cell.evacuated += evacuated;
+      gameState.evacuated += evacuated;
+      gameState.score += evacuated;
+      cell.status = 'evacuated';
+      
+      updateCellVisual(cellId);
+      updateStats();
+      updateResourcesPanel();
+      addCommLog(`📢 Pre-emptive evacuation in ${cell.name}. ${evacuated} residents moved.`);
+      showNotification(`✅ ${evacuated} people evacuated from ${cell.name}!`, 'success');
+      selectMapCell(cellId);
+      
+      setTimeout(() => {
+        gameState.resources.responders.count = Math.min(gameState.resources.responders.count + 3, gameState.resources.responders.max);
+        updateResourcesPanel();
+      }, 20000);
+    }
+    
+    function updateCellVisual(cellId) {
+      const cell = gameState.mapCells[cellId];
+      const cellElement = document.getElementById(`cell-${cellId}`);
+      
+      cellElement.className = `cell cell-${cell.status !== 'normal' ? cell.status : cell.type}`;
+    }
+    
+    function affectRandomCells() {
+      const urbanCells = gameState.mapCells.filter(c => c.type === 'urban' && c.status === 'normal');
+      if (urbanCells.length === 0) return;
+      
+      const numToAffect = Math.min(Math.floor(Math.random() * 3) + 1, urbanCells.length);
+      for (let i = 0; i < numToAffect; i++) {
+        const randomIndex = Math.floor(Math.random() * urbanCells.length);
+        const cell = urbanCells[randomIndex];
+        
+        const affected = Math.floor(cell.population * (Math.random() * 0.3 + 0.2));
+        cell.affected = affected;
+        cell.status = Math.random() > 0.5 ? 'affected' : 'flooded';
+        gameState.affected += affected;
+        
+        updateCellVisual(cell.id);
+        urbanCells.splice(randomIndex, 1);
+        
+        addCommLog(`⚠️ ${cell.name} reporting ${affected} people in distress!`);
+      }
+      
+      updateStats();
+    }
+    
+    // ===== RESOURCES MANAGEMENT =====
+    function updateResourcesPanel() {
+      const panel = document.getElementById('resources-panel');
+      panel.innerHTML = '';
+      
+      Object.entries(gameState.resources).forEach(([key, resource]) => {
+        const percentage = (resource.count / resource.max) * 100;
+        let colorClass = 'bg-green-500';
+        if (percentage < 30) colorClass = 'bg-red-500';
+        else if (percentage < 60) colorClass = 'bg-amber-500';
+        
+        const card = document.createElement('div');
+        card.className = 'resource-card bg-slate-900 rounded-lg p-2';
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-slate-300">${resource.name}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 bg-slate-700 rounded-full h-2">
+              <div class="progress-bar ${colorClass} h-2 rounded-full" style="width: ${percentage}%"></div>
+            </div>
+            <span class="text-xs font-bold text-white">${resource.count}</span>
+          </div>
+        `;
+        panel.appendChild(card);
+      });
+    }
+    
+    // ===== EVENTS & DECISIONS =====
+    function triggerNextEvent() {
+      const scenario = scenarios[gameState.scenario];
+      
+      if (gameState.currentPhase >= scenario.events.length) {
+        endGame();
+        return;
+      }
+      
+      const event = scenario.events[gameState.currentPhase];
+      gameState.currentEvent = event;
+      
+      // Affect some map cells
+      affectRandomCells();
+      
+      // Display decision
+      displayDecision(event);
+      
+      gameState.currentPhase++;
+    }
+    
+    function displayDecision(event) {
+      const decisionPanel = document.getElementById('current-decision');
+      
+      decisionPanel.innerHTML = `
+        <div class="mb-4">
+          <h4 class="font-bold text-lg text-amber-400 mb-2">${event.title}</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">${event.description}</p>
+        </div>
+        <div class="space-y-2">
+          ${event.options.map((option, index) => `
+            <button onclick="makeDecision(${index})" 
+              class="decision-btn w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-left text-sm transition-all border-2 border-transparent hover:border-amber-500/50">
+              <span class="text-slate-200">${option.text}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div class="mt-3 text-center text-xs text-slate-500">
+          ⏱️ Phase ${gameState.currentPhase + 1} of ${scenarios[gameState.scenario].events.length}
+        </div>
+      `;
+    }
+    
+    function makeDecision(optionIndex) {
+      const event = gameState.currentEvent;
+      const option = event.options[optionIndex];
+      const effect = option.effect;
+      
+      // Store decision
+      gameState.decisions.push({
+        phase: gameState.currentPhase,
+        event: event.title,
+        choice: option.text,
+        feedback: option.feedback
+      });
+      
+      // Apply effects
+      if (effect.evacuated) {
+        gameState.evacuated += effect.evacuated;
+      }
+      if (effect.affected) {
+        gameState.affected += effect.affected;
+      }
+      if (effect.casualties) {
+        gameState.casualties += effect.casualties;
+      }
+      if (effect.score) {
+        gameState.score += effect.score;
+      }
+      if (effect.time) {
+        gameState.timeRemaining += effect.time;
+      }
+      if (effect.resources) {
+        Object.entries(effect.resources).forEach(([key, value]) => {
+          if (gameState.resources[key]) {
+            gameState.resources[key].count = Math.max(0, gameState.resources[key].count + value);
+          }
+        });
+      }
+      if (effect.metrics) {
+        Object.entries(effect.metrics).forEach(([key, value]) => {
+          if (gameState.metrics[key] !== undefined) {
+            gameState.metrics[key] = Math.max(0, Math.min(100, gameState.metrics[key] + value));
+          }
+        });
+      }
+      
+      // Update UI
+      updateStats();
+      updateResourcesPanel();
+      
+      // Show feedback
+      showNotification(`📋 ${option.feedback}`, effect.score > 50 ? 'success' : 'warning');
+      addCommLog(`📝 Decision made: ${option.text.substring(0, 50)}...`);
+      
+      // Show transition message
+      const decisionPanel = document.getElementById('current-decision');
+      decisionPanel.innerHTML = `
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">⏳</div>
+          <p class="text-slate-400">Processing response...</p>
+          <p class="text-xs text-amber-400 mt-2">${option.feedback}</p>
+        </div>
+      `;
+      
+      // Trigger next event
+      setTimeout(() => triggerNextEvent(), 3000);
+    }
+    
+    // ===== TIMER & STATS =====
+    function startTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+      
+      gameState.timerInterval = setInterval(() => {
+        gameState.timeRemaining--;
+        updateTimerDisplay();
+        
+        if (gameState.timeRemaining <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+      const minutes = Math.floor(gameState.timeRemaining / 60);
+      const seconds = gameState.timeRemaining % 60;
+      document.getElementById('game-timer').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      if (gameState.timeRemaining <= 60) {
+        document.getElementById('game-timer').classList.add('text-red-400');
+      }
+    }
+    
+    function updateStats() {
+      document.getElementById('stat-evacuated').textContent = gameState.evacuated.toLocaleString();
+      document.getElementById('stat-affected').textContent = gameState.affected.toLocaleString();
+      document.getElementById('stat-casualties').textContent = gameState.casualties.toLocaleString();
+      document.getElementById('current-score').textContent = gameState.score.toLocaleString();
+    }
+    
+    // ===== COMMUNICATION LOG =====
+    function addCommLog(message) {
+      const logContainer = document.getElementById('comm-log');
+      const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      
+      const entry = document.createElement('div');
+      entry.className = 'text-slate-300 notification-slide';
+      entry.innerHTML = `<span class="text-slate-500">[${time}]</span> ${message}`;
+      
+      logContainer.insertBefore(entry, logContainer.firstChild);
+      
+      // Keep only last 10 entries
+      while (logContainer.children.length > 10) {
+        logContainer.removeChild(logContainer.lastChild);
+      }
+    }
+    
+    // ===== NOTIFICATIONS =====
+    function showNotification(message, type = 'info') {
+      const container = document.getElementById('notification-container');
+      
+      const colors = {
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        warning: 'bg-amber-600',
+        info: 'bg-blue-600'
+      };
+      
+      const notification = document.createElement('div');
+      notification.className = `notification-slide ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg max-w-sm text-sm`;
+      notification.textContent = message;
+      
+      container.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
+    }
+    
+    // ===== GAME END =====
+    function endGame() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+      
+      // Calculate final metrics
+      const totalPopulation = gameState.population;
+      const livesSaved = gameState.evacuated;
+      const casualtyRate = (gameState.casualties / totalPopulation) * 100;
+      const resourcesUsed = Object.values(gameState.resources).reduce((acc, r) => acc + (r.max - r.count), 0);
+      const totalResources = Object.values(gameState.resources).reduce((acc, r) => acc + r.max, 0);
+      const resourceEfficiency = Math.round(((totalResources - resourcesUsed) / totalResources) * 100);
+      
+      // Determine result tier
+      let resultIcon = '🏆';
+      let resultMessage = 'Outstanding emergency response!';
+      
+      if (gameState.casualties > 50) {
+        resultIcon = '😔';
+        resultMessage = 'The situation was challenging. Review your decisions for improvement.';
+      } else if (gameState.casualties > 20) {
+        resultIcon = '📈';
+        resultMessage = 'Good effort, but there is room for improvement.';
+      } else if (gameState.casualties > 5) {
+        resultIcon = '👍';
+        resultMessage = 'Well done! Your response saved many lives.';
+      }
+      
+      // Update results screen
+      document.getElementById('result-icon').textContent = resultIcon;
+      document.getElementById('result-message').textContent = resultMessage;
+      document.getElementById('result-score').textContent = gameState.score.toLocaleString();
+      document.getElementById('result-saved').textContent = livesSaved.toLocaleString();
+      document.getElementById('result-efficiency').textContent = resourceEfficiency + '%';
+      document.getElementById('result-decisions').textContent = gameState.decisions.length;
+      
+      // Generate performance bars
+      const performanceBars = document.getElementById('performance-bars');
+      performanceBars.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="w-32 text-xs text-slate-400">Response Speed</span>
+          <div class="flex-1 bg-slate-700 rounded-full h-3">
+            <div class="bg-cyan-500 h-3 rounded-full transition-all" style="width: ${Math.min(100, 100 - (gameState.casualties * 2))}%"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-32 text-xs text-slate-400">Resource Mgmt</span>
+          <div class="flex-1 bg-slate-700 rounded-full h-3">
+            <div class="bg-green-500 h-3 rounded-full transition-all" style="width: ${resourceEfficiency}%"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-32 text-xs text-slate-400">Communication</span>
+          <div class="flex-1 bg-slate-700 rounded-full h-3">
+            <div class="bg-purple-500 h-3 rounded-full transition-all" style="width: ${gameState.metrics.communicationScore}%"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-32 text-xs text-slate-400">Lives Saved</span>
+          <div class="flex-1 bg-slate-700 rounded-full h-3">
+            <div class="bg-amber-500 h-3 rounded-full transition-all" style="width: ${Math.min(100, (livesSaved / 2000) * 100)}%"></div>
+          </div>
+        </div>
+      `;
+      
+      // Generate feedback
+      const feedbackList = document.getElementById('feedback-list');
+      feedbackList.innerHTML = gameState.decisions.slice(-3).map(d => `
+        <li>• ${d.feedback}</li>
+      `).join('');
+      
+      if (gameState.casualties === 0) {
+        feedbackList.innerHTML += '<li class="text-green-400">• Zero casualties achieved! Excellent leadership.</li>';
+      }
+      if (resourceEfficiency > 80) {
+        feedbackList.innerHTML += '<li class="text-blue-400">• Efficient resource utilization demonstrated.</li>';
+      }
+      if (gameState.evacuated > 2000) {
+        feedbackList.innerHTML += '<li class="text-amber-400">• Mass evacuation successfully coordinated.</li>';
+      }
+      
+      // Save to Data SDK
+      saveGameRecord(resourceEfficiency);
+      
+      showScreen('results-screen');
+    }
+    
+    async function saveGameRecord(resourceEfficiency) {
+      if (!window.dataSdk) return;
+      
+      if (gameRecords.length >= 999) {
+        console.log('Maximum records reached');
+        return;
+      }
+      
+      const record = {
+        session_id: Date.now().toString(),
+        player_name: gameState.playerName,
+        role: gameState.role,
+        scenario: gameState.scenario,
+        score: gameState.score,
+        casualties_prevented: gameState.evacuated,
+        resources_efficiency: resourceEfficiency,
+        response_time: 900 - gameState.timeRemaining,
+        decisions_made: gameState.decisions.length,
+        completed_at: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(record);
+      if (!result.isOk) {
+        console.error('Failed to save game record');
+      }
+    }
+    
+    // ===== LEADERBOARD =====
+    function showLeaderboard() {
+      document.getElementById('leaderboard-modal').classList.remove('hidden');
+      updateLeaderboardDisplay();
+    }
+    
+    function hideLeaderboard() {
+      document.getElementById('leaderboard-modal').classList.add('hidden');
+    }
+    
+    function updateLeaderboardDisplay() {
+      const content = document.getElementById('leaderboard-content');
+      
+      if (!gameRecords || gameRecords.length === 0) {
+        content.innerHTML = '<p class="text-slate-400 text-center py-4">No training records yet. Complete a simulation to save your score!</p>';
+        return;
+      }
+      
+      const sortedRecords = [...gameRecords].sort((a, b) => b.score - a.score).slice(0, 10);
+      
+      content.innerHTML = sortedRecords.map((record, index) => {
+        const scenarioIcon = record.scenario === 'typhoon' ? '🌀' : record.scenario === 'earthquake' ? '🏚️' : '🌊';
+        const date = new Date(record.completed_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
+        
+        return `
+          <div class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg">
+            <div class="w-8 h-8 flex items-center justify-center font-bold ${index < 3 ? 'text-amber-400' : 'text-slate-500'}">
+              ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
+            </div>
+            <div class="flex-1">
+              <div class="font-bold text-white">${record.player_name}</div>
+              <div class="text-xs text-slate-400">${scenarioIcon} ${record.scenario} • ${date}</div>
+            </div>
+            <div class="text-right">
+              <div class="font-bold text-amber-400">${record.score.toLocaleString()}</div>
+              <div class="text-xs text-slate-400">points</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // ===== UTILITY FUNCTIONS =====
+    function restartGame() {
+      showScreen('scenario-screen');
+    }
+    
+    function returnToTitle() {
+      showScreen('title-screen');
+    }
+    
+    // ===== INITIALIZATION =====
+    initializeApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c73f02246076e8a',t:'MTc2OTk3NTAwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
