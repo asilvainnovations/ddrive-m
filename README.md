@@ -79,6 +79,6 @@ Contributions are welcome!
 Muntinlupa City, Metro Manila, Philippines  
 
 - Website: [asilvainnovations.com](https://asilvainnovations.com)  
-- DDRiVE-M Platform: [ddrive-m-intelligence-version5.bolt.host](https://asilvainnovations.com/ddrive-m/)  
+- DDRiVE-M Platform: [ddrive-m](https://asilvainnovations.com/ddrive-m/)  
 
 ---
