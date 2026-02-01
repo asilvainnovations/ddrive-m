@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPARC Resilience Assessment Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            header, footer, .print-hidden { display: none !important; }
+            body { background-color: #fff !important; margin: 0; }
+            .print\\:shadow-none { box-shadow: none !important; }
+            .print\\:p-0 { padding: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useCallback, useEffect, useRef } = React;
+
+        // --- Icons (unchanged) ---
+        const CheckCircle = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>;
+        const SlidersHorizontal = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="16" y1="6" y2="6"/><line x1="8" x2="20" y1="18" y2="18"/></svg>;
+        const BarChart3 = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>;
+        const RotateCcw = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11a7 7 0 1 0 7 7v-2"/><path d="m3 7 3-3 3 3"/></svg>;
+        const Printer = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>;
+        const Download = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>;
+        const Sparkles = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.68 13.31a2 2 0 1 0 2.64-2.62"/><path d="M17 13l-3-3"/><path d="m12.65 17.35-3-3"/><path d="M7 13l3-3"/><path d="m9.35 6.65 3-3"/><path d="M17 7l-3-3"/></svg>;
+
+        // --- Constants (QUESTIONS unchanged except MOVE IDs fixed) ---
+        const COLORS = {
+          primary: '#0066CC',
+          secondary: '#00A3E0',
+          success: '#00C853',
+          danger: '#E53935',
+          lightGray: '#F3F4F6',
+          darkText: '#1F2937',
+        };
+
+        const QUESTIONS = [
+          // C - Coping Capacity (6)
+          { id: 'C1', component: 'C', text: 'We have clear, well-rehearsed protocols for immediate crisis response.' },
+          { id: 'C2', component: 'C', text: 'Critical staff are regularly trained and competent in emergency procedures.' },
+          { id: 'C3', component: 'C', text: 'We maintain readily accessible buffer resources (e.g., cash reserves, backup equipment, temporary space).' },
+          { id: 'C4', component: 'C', text: 'Our decision-making chain is clear and fast-tracks during a shock event.' },
+          { id: 'C5', component: 'C', text: 'Communication systems for internal and external stakeholders remain stable during a disruption.' },
+          { id: 'C6', component: 'C', text: 'Our team demonstrates psychological preparedness and remains calm under intense pressure.' },
+
+          // A - Adaptability (6)
+          { id: 'A1', component: 'A', text: 'We routinely review and update business models to anticipate future threats.' },
+          { id: 'A2', component: 'A', text: 'Our organization encourages and funds small-scale experimentation and pilots for new ways of working.' },
+          { id: 'A3', component: 'A', text: 'We possess the necessary technical skills to rapidly shift operational platforms or market offerings.' },
+          { id: 'A4', component: 'A', text: 'Lessons learned from past crises are systematically documented and integrated into future planning.' },
+          { id: 'A5', component: 'A', text: 'The organizational culture supports constructive criticism and rapid pivoting when initial responses fail.' },
+          { id: 'A6', component: 'A', text: 'We proactively seek out diverse partnerships to provide alternative resource pathways during recovery.' },
+
+          // S - Sensitivity Reduction (6)
+          { id: 'S1', component: 'S', text: 'Key processes are redundant, preventing single points of failure in operations.' },
+          { id: 'S2', component: 'S', text: 'Staffing levels and cross-training minimize the risk associated with losing critical personnel.' },
+          { id: 'S3', component: 'S', text: 'Our supply chain is diversified, reducing dependence on any single vendor or geography.' },
+          { id: 'S4', component: 'S', text: 'Data security and backup systems are robust against cyberattacks and physical incidents.' },
+          { id: 'S5', component: 'S', text: 'We have a low debt-to-equity ratio, providing financial stability during downturns.' },
+          { id: 'S6', component: 'S', text: 'Our infrastructure (physical and digital) is rated to withstand common local hazards (e.g., flood, power outage).' },
+
+          // E - Exposure Control (6)
+          { id: 'E1', component: 'E', text: 'We actively monitor external risks (political, economic, environmental) relevant to our sector.' },
+          { id: 'E2', component: 'E', text: 'Insurance coverage adequately covers potential catastrophic losses and business interruption.' },
+          { id: 'E3', component: 'E', text: 'Our market position is resilient to competitor entry or sudden shifts in customer demand.' },
+          { id: 'E4', component: 'E', text: 'We engage with regulatory bodies to anticipate and prepare for future compliance changes.' },
+          { id: 'E5', component: 'E', text: 'Our organization maintains a positive public image, minimizing reputational damage during a crisis.' },
+          { id: 'E6', component: 'E', text: 'We have established mechanisms for continuous community and stakeholder engagement to build trust.' },
+
+          // AC - Absorptive Capacity (5)
+          { id: 'AC1', component: 'AC', text: 'We have the financial capacity to absorb unexpected costs without critical disruption.' },
+          { id: 'AC2', component: 'AC', text: 'Knowledge transfer across the organization is fluid and not tied to specific individuals.' },
+          { id: 'AC3', component: 'AC', text: 'Our organizational structure allows for rapid resource reallocation.' },
+          { id: 'AC4', component: 'AC', text: 'We possess reliable forecasting models to predict resource needs during future scenarios.' },
+          { id: 'AC5', component: 'AC', text: 'Staff morale and motivation are consistently high, improving commitment during tough times.' },
+
+          // MOVE - Real-Time Leadership (5) — UNIQUE IDs
+          { id: 'MOVE1', component: 'MOVE', text: 'M-Mastering the Moment: Leaders quickly assess the situation and communicate critical facts clearly.' },
+          { id: 'MOVE2', component: 'MOVE', text: 'O-Generating Options: Leaders proactively seek diverse ideas for solutions, not just conventional ones.' },
+          { id: 'MOVE3', component: 'MOVE', text: 'V-Validating Choices: Leaders use clear criteria and evidence to commit to an action plan.' },
+          { id: 'MOVE4', component: 'MOVE', text: 'E-Execution: Leaders ensure resources are deployed efficiently and staff are empowered to act quickly.' },
+          { id: 'MOVE5', component: 'MOVE', text: 'Evaluation: Leaders establish real-time feedback loops to track success and adjust the course.' },
+        ];
+
+        const CLASSIFICATIONS = [
+          { score: 4.5, level: 'Excellent Resilience', color: COLORS.success, description: 'The organization is highly adaptable and robust, capable of thriving amidst uncertainty.' },
+          { score: 3.5, level: 'Strong Resilience', color: COLORS.primary, description: 'The organization has solid preparedness and good mechanisms for recovery and strategic adaptation.' },
+          { score: 2.5, level: 'Moderate Resilience', color: COLORS.secondary, description: 'Foundational elements are in place, but significant gaps exist in strategic adaptation and vulnerability reduction.' },
+          { score: 0, level: 'Developing Resilience', color: COLORS.danger, description: 'The organization is highly susceptible to shocks and requires immediate, foundational preparedness planning.' },
+        ];
+
+        const COMPONENTS_MAP = {
+          C: { name: 'Coping Capacity', definition: 'Immediate shock response', color: 'bg-red-500', colorHex: COLORS.danger },
+          A: { name: 'Adaptability', definition: 'Recovery and evolution', color: 'bg-green-500', colorHex: COLORS.success },
+          S: { name: 'Sensitivity Reduction', definition: 'Minimize internal vulnerabilities', color: 'bg-blue-500', colorHex: COLORS.primary },
+          E: { name: 'Exposure Control', definition: 'Manage external risks', color: 'bg-sky-500', colorHex: COLORS.secondary },
+          AC: { name: 'Absorptive Capacity', definition: 'Resource Flexibility (AC)', color: 'bg-indigo-500', colorHex: '#4F46E5' },
+          MOVE: { name: 'Real-Time Leadership', definition: 'Crisis Decision-Making (MOVE)', color: 'bg-yellow-500', colorHex: '#FBBF24' },
+        };
+
+        // --- Helper Functions ---
+
+        const calculateScores = (answers) => {
+          const componentTotals = {};
+          const componentCounts = {};
+
+          QUESTIONS.forEach(({ id, component }) => {
+            if (answers[id] !== undefined) {
+              componentTotals[component] = (componentTotals[component] || 0) + answers[id];
+              componentCounts[component] = (componentCounts[component] || 0) + 1;
+            }
+          });
+
+          const componentScores = {};
+          let totalScoreSum = 0;
+          let totalScoreCount = 0;
+
+          Object.keys(COMPONENTS_MAP).forEach(key => {
+            const score = componentTotals[key] / (componentCounts[key] || 1);
+            componentScores[key] = isNaN(score) ? 0 : parseFloat(score.toFixed(2));
+          });
+
+          const allComponents = ['C', 'A', 'S', 'E', 'AC', 'MOVE'];
+          allComponents.forEach(key => {
+            if (componentScores[key] > 0) {
+              totalScoreSum += componentScores[key];
+              totalScoreCount++;
+            }
+          });
+
+          const overallScore = totalScoreCount > 0 ? (totalScoreSum / totalScoreCount).toFixed(2) : 0;
+          const resilienceLevel = CLASSIFICATIONS.find(c => parseFloat(overallScore) >= c.score) || CLASSIFICATIONS[CLASSIFICATIONS.length - 1];
+
+          const radarData = [
+            { component: 'Coping Capacity', value: componentScores.C || 0, fullMark: 5 },
+            { component: 'Adaptability', value: componentScores.A || 0, fullMark: 5 },
+            { component: 'Sensitivity Reduction', value: componentScores.S || 0, fullMark: 5 },
+            { component: 'Exposure Control', value: componentScores.E || 0, fullMark: 5 },
+          ];
+
+          return {
+            componentScores,
+            overallScore: parseFloat(overallScore),
+            resilienceLevel,
+            radarData,
+            totalQuestions: QUESTIONS.length,
+            answeredQuestions: Object.keys(answers).filter(id => answers[id] !== undefined).length,
+          };
+        };
+
+        // Fallback recommendation generator (original logic)
+        const generateFallbackRecommendations = (scores) => {
+          const lowScores = Object.entries(scores.componentScores)
+            .filter(([, score]) => score > 0 && score < 3.5)
+            .sort(([, a], [, b]) => a - b);
+
+          if (lowScores.length === 0) {
+            return [
+              { priority: 'High', area: 'All Components', action: 'Focus on optimization and stress-testing advanced scenarios (e.g., Black Swan events).' },
+              { priority: 'Medium', area: 'Leadership', action: 'Invest in advanced, scenario-based executive leadership training for real-time decision-making.' }
+            ];
+          }
+
+          return lowScores.slice(0, 3).map(([key, score]) => {
+            const { name } = COMPONENTS_MAP[key];
+            const priority = score < 2.5 ? 'Critical' : 'High';
+            let action = '';
+            switch (key) {
+              case 'C': action = 'Mandate scenario-based drills and formalize the emergency communication tree.'; break;
+              case 'A': action = 'Establish a formal innovation budget and cross-functional teams dedicated to business model renewal.'; break;
+              case 'S': action = 'Conduct a comprehensive audit of single points of failure in IT, logistics, and personnel.'; break;
+              case 'E': action = 'Implement real-time political/economic risk monitoring and diversify major client/supplier dependencies.'; break;
+              case 'AC': action = 'Increase financial reserves and implement mandatory cross-training for all critical roles.'; break;
+              case 'MOVE': action = 'Implement a structured crisis leadership training program focusing on rapid option generation and choice validation.'; break;
+              default: action = 'Review foundational strategies related to ' + name;
+            }
+            return { priority, area: name, action, score };
+          });
+        };
+
+        // --- OpenAI Integration ---
+        const fetchAIRecommendations = async (apiKey, scores) => {
+          const summary = Object.entries(scores.componentScores)
+            .map(([comp, score]) => `${COMPONENTS_MAP[comp].name}: ${score}/5`)
+            .join('; ');
+
+          const prompt = `You are a world-class organizational resilience consultant. Based on the following SPARC assessment scores (scale 1-5), provide 3-5 actionable, prioritized recommendations. Focus on the weakest areas first. Be specific, practical, and avoid generic advice.
+
+Scores: ${summary}
+Overall Resilience Level: ${scores.resilienceLevel.level}
+
+Format each recommendation as:
+- [Priority: Critical/High/Medium] | [Area] | [Concrete Action]
+
+Do not include disclaimers.`;
+
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini',
+              messages: [{ role: 'user', content: prompt }],
+              temperature: 0.5,
+              max_tokens: 500
+            })
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Failed to fetch recommendations');
+          }
+
+          const data = await response.json();
+          const rawText = data.choices[0].message.content.trim();
+
+          // Parse into structured format
+          const lines = rawText.split('\n').filter(line => line.trim().startsWith('-'));
+          const recommendations = lines.map(line => {
+            const match = line.match(/-\s*\[Priority:\s*(\w+)\]\s*\|\s*\[(.+?)\]\s*\|\s*(.+)/);
+            if (match) {
+              const [, priority, area, action] = match;
+              // Find matching component score
+              const compKey = Object.keys(COMPONENTS_MAP).find(k => 
+                COMPONENTS_MAP[k].name.toLowerCase() === area.toLowerCase()
+              );
+              const score = compKey ? scores.componentScores[compKey] : 0;
+              return { priority, area, action: action.trim(), score };
+            }
+            return { priority: 'Medium', area: 'General', action: line.replace(/^- /, ''), score: 0 };
+          });
+
+          return recommendations.length > 0 ? recommendations : generateFallbackRecommendations(scores);
+        };
+
+        // --- Components ---
+
+        const RatingDropdown = ({ id, value, onChange }) => (
+          <select
+            value={value || ''}
+            onChange={(e) => onChange(id, parseInt(e.target.value, 10))}
+            className="w-full md:w-24 p-2 border border-gray-300 rounded-lg shadow-inner focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-150 text-base font-medium bg-white"
+          >
+            <option value="" disabled>Rate</option>
+            <option value="1">1 - Strongly Disagree / Not at all</option>
+            <option value="2">2 - Disagree</option>
+            <option value="3">3 - Neutral / Partially Implemented</option>
+            <option value="4">4 - Agree</option>
+            <option value="5">5 - Strongly Agree / Fully Implemented</option>
+          </select>
+        );
+
+        const ComponentProgressBar = ({ component, score }) => {
+          const percentage = (score / 5) * 100;
+          const color = score >= 4.5 ? COLORS.success : score >= 3.5 ? COLORS.primary : score >= 2.5 ? COLORS.secondary : COLORS.danger;
+          const { name } = COMPONENTS_MAP[component];
+          return (
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-semibold text-gray-700">{name} ({score.toFixed(2)}/5.0)</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="h-2.5 rounded-full transition-all duration-500 ease-out" style={{ width: `${percentage}%`, backgroundColor: color }}></div>
+              </div>
+            </div>
+          );
+        };
+
+        const CaseRadarChart = ({ data }) => {
+          const canvasRef = useRef(null);
+          const chartRef = useRef(null);
+
+          useEffect(() => {
+            if (!canvasRef.current || !Chart) return;
+            const ctx = canvasRef.current.getContext('2d');
+            const labels = data.map(d => d.component);
+            const chartData = data.map(d => d.value);
+
+            if (chartRef.current) chartRef.current.destroy();
+
+            chartRef.current = new Chart(ctx, {
+              type: 'radar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Resilience Score',
+                  data: chartData,
+                  backgroundColor: 'rgba(0, 102, 204, 0.6)',
+                  borderColor: 'rgba(0, 102, 204, 1)',
+                  borderWidth: 2,
+                  pointBackgroundColor: 'rgba(0, 102, 204, 1)',
+                  pointBorderColor: '#fff',
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: 'rgba(0, 102, 204, 1)',
+                  tension: 0.4 
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  r: {
+                    angleLines: { color: '#E5E7EB' },
+                    grid: { color: '#E5E7EB' },
+                    pointLabels: { font: { size: 12, weight: 'bold' }, color: COLORS.darkText },
+                    suggestedMin: 0,
+                    suggestedMax: 5,
+                    ticks: { stepSize: 1, display: false }
+                  }
+                },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return ` Score: ${context.parsed.r.toFixed(2)}`;
+                      }
+                    }
+                  }
+                }
+              }
+            });
+
+            return () => { if (chartRef.current) chartRef.current.destroy(); };
+          }, [data]);
+
+          return <div className="w-full h-80"><canvas ref={canvasRef}></canvas></div>;
+        };
+
+        const ResultsDashboard = ({ scores, handleReset, apiKey, setApiKey }) => {
+          const [recommendations, setRecommendations] = useState([]);
+          const [loading, setLoading] = useState(false);
+          const [error, setError] = useState('');
+
+          // Fetch AI recommendations on mount or when API key changes
+          useEffect(() => {
+            const getRecommendations = async () => {
+              if (!apiKey) {
+                setRecommendations(generateFallbackRecommendations(scores));
+                return;
+              }
+
+              setLoading(true);
+              setError('');
+              try {
+                const aiRecs = await fetchAIRecommendations(apiKey, scores);
+                setRecommendations(aiRecs);
+              } catch (err) {
+                console.error('AI API error:', err);
+                setError('Failed to get AI recommendations. Using standard analysis.');
+                setRecommendations(generateFallbackRecommendations(scores));
+              } finally {
+                setLoading(false);
+              }
+            };
+            getRecommendations();
+          }, [apiKey, scores]);
+
+          const handleExport = () => {
+            const reportTitle = `SPARC Resilience Assessment Report - ${new Date().toLocaleDateString()}`;
+            const assessmentSummary = Object.entries(scores.componentScores)
+              .map(([key, score]) => `${COMPONENTS_MAP[key].name}: ${score.toFixed(2)}/5.0`)
+              .join('\n');
+            
+            const recommendationsText = recommendations
+                .map(rec => `${rec.priority} Priority (${rec.area}): ${rec.action}`)
+                .join('\n\n');
+
+            const fullReport = 
+`--- ${reportTitle} ---
+Overall SPARC Score: ${scores.overallScore.toFixed(2)}
+Resilience Level: ${scores.resilienceLevel.level}
+
+--- Component Scores (Max 5.0) ---
+${assessmentSummary}
+
+--- Actionable Recommendations ---
+${recommendationsText}
+
+--- Disclaimer ---
+This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenAI (if enabled).
+`;
+
+            const blob = new Blob([fullReport], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'SPARC_Report.txt');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          };
+
+          const handlePrint = () => window.print();
+
+          return (
+            <div className="p-8 bg-white shadow-2xl rounded-xl mt-12 print:shadow-none print:p-0">
+              <div className="flex justify-between items-start mb-8 border-b pb-4 print:block">
+                <div>
+                  <h2 className="text-4xl font-extrabold text-gray-900 flex items-center">
+                    <BarChart3 className="w-8 h-8 mr-3 text-sky-600" />
+                    Resilience Scorecard
+                  </h2>
+                  <p className="mt-2 text-lg text-gray-600">
+                    Analysis of your organization's Strategic Preparedness, Agility, Resilience, and Continuity.
+                  </p>
+                </div>
+                <div className="flex space-x-3 mt-2 print:hidden">
+                  <button onClick={handleExport} className="flex items-center text-sm font-semibold px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">
+                    <Download className="w-4 h-4 mr-2" /> Export
+                  </button>
+                  <button onClick={handlePrint} className="flex items-center text-sm font-semibold px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">
+                    <Printer className="w-4 h-4 mr-2" /> Print
+                  </button>
+                  <button onClick={handleReset} className="flex items-center text-sm font-semibold px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                    <RotateCcw className="w-4 h-4 mr-2" /> Reset
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="p-6 rounded-xl shadow-lg border-t-4" style={{ borderColor: scores.resilienceLevel.color }}>
+                  <p className="text-sm font-medium text-gray-500">Overall SPARC Score</p>
+                  <h3 className="text-5xl font-extrabold mt-1" style={{ color: scores.resilienceLevel.color }}>
+                    {scores.overallScore.toFixed(2)}
+                  </h3>
+                </div>
+                <div className="md:col-span-2 p-6 rounded-xl shadow-lg bg-gray-50">
+                  <p className="text-sm font-medium text-gray-500">Resilience Classification</p>
+                  <h3 className="text-3xl font-bold text-gray-800 mt-1">{scores.resilienceLevel.level}</h3>
+                  <p className="text-gray-600 mt-2">{scores.resilienceLevel.description}</p>
+                </div>
+              </div>
+
+              {/* OpenAI API Key Input */}
+              <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start">
+                  <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <div className="flex-1">
+                    <label htmlFor="apiKey" className="block text-sm font-medium text-blue-800 mb-1">
+                      Optional: Enter your OpenAI API key for AI-enhanced recommendations
+                    </label>
+                    <input
+                      id="apiKey"
+                      type="password"
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      placeholder="sk-..."
+                      className="w-full max-w-md px-3 py-2 border border-blue-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-blue-600 mt-1">
+                      Your key is used only in this browser session. For security, do not use in shared environments.
+                    </p>
+                    {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">Component Breakdown</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                  <h4 className="text-xl font-semibold mb-4 text-gray-700">CASE Balance (Resilience = C + A + S + E)</h4>
+                  <CaseRadarChart data={scores.radarData} />
+                  <p className='text-sm text-gray-500 mt-4'>*A balanced radar chart indicates uniform strength across key resilience dimensions.</p>
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-4 text-gray-700">Detailed SPARC Scores</h4>
+                  {Object.keys(COMPONENTS_MAP).map(key => (
+                    <ComponentProgressBar key={key} component={key} score={scores.componentScores[key]} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <div className="flex items-center justify-between mb-6 border-b pb-2">
+                  <h3 className="text-2xl font-bold text-gray-900 flex items-center">
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-sky-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Generating AI Insights...
+                      </>
+                    ) : (
+                      'AI-Powered Strategic Recommendations'
+                    )}
+                  </h3>
+                  {apiKey && !loading && (
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">AI Enabled</span>
+                  )}
+                </div>
+                <div className="space-y-6">
+                  {recommendations.map((rec, index) => (
+                    <div 
+                      key={index} 
+                      className="p-5 border-l-4 rounded-r-lg shadow-md"
+                      style={{ 
+                        borderColor: rec.priority === 'Critical' ? COLORS.danger : COLORS.primary, 
+                        backgroundColor: COLORS.lightGray 
+                      }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className={`text-xs font-bold uppercase px-3 py-1 rounded-full ${
+                          rec.priority === 'Critical' ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'
+                        }`}>
+                          {rec.priority} Priority
+                        </span>
+                        <span className="text-sm font-medium text-gray-600">Area: {rec.area} ({typeof rec.score === 'number' ? rec.score.toFixed(2) : 'N/A'}/5.0)</span>
+                      </div>
+                      <p className="mt-3 text-gray-700 font-medium">{rec.action}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        const App = () => {
+          const [answers, setAnswers] = useState({});
+          const [isAssessmentComplete, setIsAssessmentComplete] = useState(false);
+          const [apiKey, setApiKey] = useState(''); // Stored in memory only
+
+          const scores = useMemo(() => calculateScores(answers), [answers]);
+          const isFormComplete = scores.answeredQuestions === scores.totalQuestions;
+
+          useEffect(() => {
+            if (isFormComplete && !isAssessmentComplete) {
+              setIsAssessmentComplete(true);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }, [isFormComplete, isAssessmentComplete]);
+
+          const handleRatingChange = useCallback((id, value) => {
+            setAnswers(prev => ({ ...prev, [id]: value }));
+          }, []);
+
+          const handleReset = () => {
+            setAnswers({});
+            setIsAssessmentComplete(false);
+            setApiKey(''); // Clear key on reset
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+
+          const groupedQuestions = useMemo(() => 
+            QUESTIONS.reduce((acc, q) => {
+              acc[q.component] = acc[q.component] || [];
+              acc[q.component].push(q);
+              return acc;
+            }, {}), 
+            []
+          );
+
+          const QuestionGroup = ({ componentId, questions }) => {
+            const { name, definition, color } = COMPONENTS_MAP[componentId];
+            const answeredCount = questions.filter(q => answers[q.id] !== undefined).length;
+            return (
+              <div className="mb-10 p-6 border border-gray-200 rounded-xl shadow-lg bg-white">
+                <h3 className="text-2xl font-bold mb-2 flex items-center">
+                  <div className={`w-3 h-3 ${color} rounded-full mr-3`}></div>
+                  {componentId} - {name}
+                </h3>
+                <p className="text-gray-600 mb-6 italic">{definition}</p>
+                <p className="text-sm font-semibold text-gray-700 mb-4">Progress: {answeredCount}/{questions.length}</p>
+                <div className="space-y-5">
+                  {questions.map((q) => (
+                    <div key={q.id} className="flex flex-col md:flex-row md:items-center justify-between border-b pb-3 last:border-b-0 last:pb-0">
+                      <p className="text-gray-800 text-base flex-1 pr-4">{q.text}</p>
+                      <div className="mt-2 md:mt-0">
+                        <RatingDropdown id={q.id} value={answers[q.id]} onChange={handleRatingChange} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          };
+          
+          return (
+            <div className="min-h-screen bg-gray-100 font-sans">
+              <header className="bg-white shadow-md print-hidden">
+                <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                  <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
+                    SPARC Resilience Assessment Tool
+                  </h1>
+                  <p className="mt-2 text-xl text-sky-600 font-medium">
+                    Strategic Preparedness, Agility, Resilience, and Continuity
+                  </p>
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-600 shadow-inner">
+                    <h3 className="text-xl font-bold text-blue-700 mb-1">
+                      Resilience <span className="text-lg font-mono">= C + A + S + E</span>
+                    </h3>
+                    <p className="text-sm text-blue-600">
+                      <span className="font-semibold">C</span> – Coping Capacity | <span className="font-semibold">A</span> – Adaptability | <span className="font-semibold">S</span> – Sensitivity Reduction | <span className="font-semibold">E</span> – Exposure Control
+                    </p>
+                  </div>
+                </div>
+              </header>
+
+              <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                {isAssessmentComplete ? (
+                  <ResultsDashboard scores={scores} handleReset={handleReset} apiKey={apiKey} setApiKey={setApiKey} />
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div className="lg:col-span-2">
+                      <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                        <SlidersHorizontal className="w-6 h-6 mr-3 text-sky-600" />
+                        Organizational Assessment Questions
+                      </h2>
+                      <p className="text-gray-600 mb-8">
+                        Please rate each statement from 1 (Strongly Disagree / Not at all) to 5 (Strongly Agree / Fully Implemented).
+                      </p>
+                      <div id="assessment-form">
+                        {Object.entries(groupedQuestions).map(([componentId, qs]) => (
+                          <QuestionGroup key={componentId} componentId={componentId} questions={qs} />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-1 print-hidden sticky top-8 h-fit">
+                      <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-sky-500">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                          <BarChart3 className="w-5 h-5 mr-2 text-sky-600" />
+                          Assessment Progress
+                        </h3>
+                        
+                        <div className="mb-6">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                            <span className="text-sm font-semibold text-sky-600">
+                              {scores.answeredQuestions}/{scores.totalQuestions} Questions
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-4">
+                            <div 
+                              className="h-4 rounded-full transition-all duration-500 ease-out" 
+                              style={{ 
+                                width: `${(scores.answeredQuestions / scores.totalQuestions) * 100}%`, 
+                                backgroundColor: COLORS.secondary 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          {Object.entries(groupedQuestions).map(([componentId, qs]) => {
+                            const answered = qs.filter(q => answers[q.id] !== undefined).length;
+                            return (
+                              <div key={componentId} className="flex justify-between items-center text-sm">
+                                <span className="font-medium text-gray-600">{COMPONENTS_MAP[componentId].name}</span>
+                                <span className={`font-semibold ${answered === qs.length ? 'text-success' : 'text-gray-500'}`}>
+                                  {answered}/{qs.length}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <button
+                          onClick={() => setIsAssessmentComplete(true)}
+                          disabled={!isFormComplete}
+                          className={`mt-8 w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-xl text-white shadow-lg transition duration-300 ${
+                            isFormComplete ? 'bg-success hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          View Resilience Scorecard
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </main>
+            </div>
+          );
+        };
+
+        window.onload = () => {
+          const container = document.getElementById('root');
+          const root = ReactDOM.createRoot(container);
+          root.render(<App />);
+        };
+    </script>
+</body>
+</html>
