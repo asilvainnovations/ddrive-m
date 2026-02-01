@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DDRiVE-M: Philippines' first AI-powered disaster resilience platform. Compliant with RA 10121, ISO 31000, and UNDRR frameworks. Enhance your organization's disaster preparedness today.">
+    <meta name="keywords" content="disaster resilience, Philippines, LGU, DRRM, RA 10121, ISO 31000, UNDRR, hazard monitoring, risk assessment">
+    <meta name="author" content="ASilva Innovations">
+    <meta property="og:title" content="DDRiVE-M: AI-Powered Disaster Resilience for Philippine LGUs">
+    <meta property="og:description" content="Comprehensive disaster intelligence platform compliant with Philippine laws and international standards.">
+    <meta property="og:image" content="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.pn">
+    <meta property="og:url" content="https://asilvainnovations.com/ddrive-m">
+    <title>DDRiVE-M | AI-Powered Disaster Resilience Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1d3693;
+            --secondary: #f59e0b;
+            --accent: #0f766e;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-dashboard {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.85rem 1.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-dashboard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(30, 64, 175, 0.4);
+        }
+        
+        .section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .section-title p {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .logo-subtext {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: -0.25rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0c4a6e 100%);
+            color: white;
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        .hero-content {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .hero-text p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .hero-image {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .compliance-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Features Section */
+        .features {
+            background-color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+        }
+        
+        /* Video Section */
+        .video-section {
+            background: linear-gradient(to bottom, #f1f5f9, white);
+            padding: 5rem 0;
+        }
+        
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Compliance Section */
+        .compliance {
+            background-color: white;
+        }
+        
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .compliance-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-radius: 1.25rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+        
+        .compliance-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .compliance-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.75rem;
+        }
+        
+        .compliance-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-align: center;
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .cta p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .cta-form {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .cta-form input {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Floating Action Button */
+        .floating-dashboard {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--secondary), #eab308);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .floating-dashboard:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.5);
+        }
+        
+        .floating-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+        
+        .floating-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-col h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text p {
+                margin: 0 auto 2rem;
+            }
+            
+            .hero-cta {
+                justify-content: center;
+            }
+            
+            .compliance-badges {
+                justify-content: center;
+            }
+            
+            .floating-dashboard {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section {
+                padding: 3rem 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .cta-form {
+                flex-direction: column;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .btn-dashboard {
+                padding: 0.7rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero {
+                padding: 3rem 0;
+            }
+            
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .floating-dashboard {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .floating-logo {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Dashboard Button -->
+    <a href="https://ddrive-erm.appimize.app/dashboard/" class="floating-dashboard">
+        <div class="floating-logo">
+            <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1767510419" alt="DDRiVE-M Logo">
+        </div>
+        LAUNCH DASHBOARD NOW
+    </a>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="DDRiVE-M Logo">
+                    </div>
+                    <div>
+                        <div class="logo-text">DDRiVE-M</div>
+                        <div class="logo-subtext"></div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>AI-Powered Disaster Resilience Platform for LGUs, SMEs, and Development Institutions</h1>
+                    <p>Comprehensive intelligence platform compliant with RA 10121, ISO 31000, and UNDRR frameworks. Enhance your disaster preparedness from detection to recovery.</p>
+                    <div class="hero-cta">
+                        <a href="https://ddrive-m-intelligence-version5.bolt.host/" class="btn btn-dashboard">OPEN DASHBOARD</a>
+                        <a href="#video" class="btn btn-secondary">Watch Video</a>
+                    </div>
+                    <div class="compliance-badges">
+                        <span class="badge">RA 10121 Compliant</span>
+                        <span class="badge">ISO 31000</span>
+                        <span class="badge">UNDRR MCR2030</span>
+                        <span class="badge">DILG MC 2020-161</span>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://appimize.app/assets/apps/user_1097/images/493f05493f25_122_1097.png" alt="DDRiVE-M Intelligence Resilience Framework">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>The 7-Phase Risk and Resilience Intelligence Cycle</h2>
+                <p>End-to-end disaster resilience management system tailored for Philippine local government units</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">1</div>
+                    <h3>Detection</h3>
+                    <p>Multi-agency hazard monitoring with real-time alerting system integrated with PHIVOLCS, PAGASA, and NOAH APIs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">2</div>
+                    <h3>Diagnosis</h3>
+                    <p>ISO 31000-aligned risk analysis with AI-powered assessment of strategic, operational, financial, compliance, and environmental risks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">3</div>
+                    <h3>Response</h3>
+                    <p>Structured risk treatment options with preventive, detective, corrective, and directive controls aligned with OCD protocols.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">4</div>
+                    <h3>Integration</h3>
+                    <p>UNDRR 10 Essentials assessment with customizable templates for barangay, municipal, and provincial DRRM plans.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">5</div>
+                    <h3>Validation</h3>
+                    <p>Simulation-based validation of risk treatments and emergency operations with performance scoring and gap analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">6</div>
+                    <h3>Enhancement</h3>
+                    <p>AI-assisted generation of Philippine-compliant templates: DANA, DRRM Plans, Contingency Plans, PSCP, and BCP.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">7</div>
+                    <h3>Monitoring</h3>
+                    <p>Real-time collaborative command center with video conferencing, SMS alerts, chat, and document sharing capabilities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section" id="video">
+        <div class="container">
+            <div class="section-title">
+                <h2>See DDRiVE-M in Action</h2>
+                <p>Experience our intelligence platform through this video</p>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/P6U9L8xxq4E" allowfullscreen="true" allow="fullscreen"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compliance Section -->
+    <section class="section compliance" id="compliance">
+        <div class="container">
+            <div class="section-title">
+                <h2>Philippine & International Compliance</h2>
+                <p>Built to meet the strictest standards for disaster resilience and risk management</p>
+            </div>
+            <div class="compliance-grid">
+                <div class="compliance-card">
+                    <div class="compliance-icon">🇵🇭</div>
+                    <h3>RA 10121</h3>
+                    <p>Philippine Disaster Risk Reduction and Management Act of 2010</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🛡️</div>
+                    <h3>ISO 31000</h3>
+                    <p>International risk management guidelines and principles</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🌏</div>
+                    <h3>UNDRR MCR2030</h3>
+                    <p>Making Cities Resilient 2030 framework and 10 Essentials</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🏛️</div>
+                    <h3>DILG MC 2020-161</h3>
+                    <p>Department of Interior and Local Government standards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>Ready to Transform Your LGU's Disaster Resilience?</h2>
+            <p>Join hundreds of Philippine LGUs already using DDRiVE-M to protect their communities and comply with national standards.</p>
+            <a href="https://ddrive-erm.appimize.app/dashboard/" class="btn btn-dashboard">GET STARTED NOW</a>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">120+</div>
+                    <div>Philippine LGUs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div>Compliance Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div>Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>DDRiVE-M</h3>
+                    <p>Philippines' first AI-powered disaster resilience platform compliant with national laws and international standards.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Platform</h3>
+                    <ul class="footer-links">
+                        <li><a href="#dashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <ul class="footer-links">
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@asilvainnovations.com">EMAIL US</a></li>
+                        <li><a href="tel:+639178555134"><CALL US</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2026 DDRiVE-M. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu after click
+                document.querySelector('.nav-links').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
