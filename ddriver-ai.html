@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDRiVER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #1f2937; }
+        .chat-container { height: 100vh; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; background-color: #1f2937; }
+        .chat-history { flex-grow: 1; overflow-y: auto; padding: 1rem; scroll-behavior: smooth; }
+        .message-bubble { border-radius: 0.75rem; padding: 0.75rem 1rem; max-width: 85%; }
+        .user-bubble { background-color: #4f46e5; color: white; margin-left: auto; border-bottom-right-radius: 0; }
+        .ai-bubble { background-color: #374151; color: #d1d5db; margin-right: auto; border-bottom-left-radius: 0; }
+        .loading-dot { animation: dot-pulse 1.5s infinite; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dot-pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="chat-container shadow-2xl">
+        <!-- Header -->
+        <header class="flex-none p-4 bg-gray-900 border-b border-gray-700 flex items-center shadow-lg">
+            <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1764820803" alt="DDRiVEr Logo" class="w-10 h-10 rounded-full mr-3 border-2 border-indigo-500">
+            <div>
+                <h1 class="text-xl font-bold text-white">DDRiVER AI Chat</h1>
+                <p class="text-xs text-indigo-400">Expert: DRRM Philippine Policies, ISO, COSO, Sendai, UNDRR-MCR2030</p>
+            </div>
+        </header>
+
+        <!-- Chat History -->
+        <div id="chat-history" class="chat-history bg-gray-800">
+            <!-- Initial Greeting Message -->
+            <div id="initial-greeting" class="flex mb-4">
+                <div class="message-bubble ai-bubble">
+                    Hello! I am your DDRiVER, your AI support and guide to navigate risks, vulnerabilities, and resilience guided with ISO Frameworks, COSO ERM, the Sendai Framework, and Philippine DRRM policies including anticipatory actions. How can I assist with your planning or knowledge needs today?
+                </div>
+            </div>
+            <!-- Messages will be injected here -->
+            <div id="loading-indicator" class="flex items-center space-x-1.5 p-2 hidden">
+                <div class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></div>
+                <div class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></div>
+                <div class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></div>
+                <span class="text-xs text-indigo-400 ml-2">DDRiVER is typing...</span>
+            </div>
+            <div id="scroll-anchor"></div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="flex-none p-4 bg-gray-900 border-t border-gray-700">
+            <form id="message-form" class="flex space-x-3">
+                <input type="text" id="user-input" placeholder="Ask about integrated risk management, Sendai, systemic risk navigation and resilience." required 
+                       class="flex-grow p-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none border border-gray-600">
+                <button type="submit" id="send-button"
+                        class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition duration-150 disabled:bg-indigo-400 disabled:cursor-not-allowed shadow-md shadow-indigo-600/30">
+                    Send
+                </button>
+            </form>
+            <p id="auth-status" class="text-xs text-gray-500 mt-2 text-center">Using Local Storage for chat history.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- GLOBAL CONFIGURATION ---
+        const LOCAL_STORAGE_KEY = 'ddriverChatHistory';
+        const apiKey = ""; // Replace with your OpenAI API key or inject via secure method
+        const apiUrl = "https://api.openai.com/v1/chat/completions";
+        const model = "gpt-4o"; // or gpt-4o-mini, gpt-4-turbo, etc.
+
+        let isInitialized = false;
+
+        const chatHistoryElement = document.getElementById('chat-history');
+        const initialGreeting = document.getElementById('initial-greeting');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const sendButton = document.getElementById('send-button');
+        const authStatusElement = document.getElementById('auth-status');
+        const messageForm = document.getElementById('message-form');
+        const userInput = document.getElementById('user-input');
+
+        // --- SYSTEM PROMPT (UNCHANGED) ---
+        const systemPrompt = `
+            You are DDRiVER AI Chat, an elite, highly specialized expert and consultant focused on integrated Disaster Risk Reduction and Management (DRRM), Climate Change Adaptation, Anticipatory Actions and Public Service Continuity. Your knowledge base is authoritative, integrating key global and Philippine national frameworks.
+
+            Your Expertise Areas Include:
+            1. Global Frameworks: ISO Frameworks (e.g., ISO 31000 for Enterprise Risk Management), COSO Risk Framework (Enterprise Risk Management - ERM), and the Sendai Framework for Disaster Risk Reduction (2015-2030).
+            2. Philippine Policies (DRRM & Climate Change): Comprehensive knowledge of relevant Philippine laws, policies, and implementing rules, including specific details on DRRM cycles (reduction, preparedness, response, recovery), and climate change actions.
+            3. Anticipatory Actions & Continuity Planning: Expertise in pre-disaster actions, climate change adaptation strategies, and Public Service Continuity Plans (PSCP).
+            4. Urban and Community Resilience: Mastery of the MCR 2030 (Making Cities and Communities Resilient 2030) initiative, including the 10 Essentials of City or Community Resilience and the Resilience Score Card.
+
+            Your Role & Tone:
+            * Provide clear, structured, and actionable advice.
+            * Cite the relevant framework or policy when providing guidance.
+            * Maintain a professional, proactive, and supportive tone.
+            * Answer all questions strictly within the boundaries of your defined expertise.
+            * Do not use markdown headers (##, ###) in your response body.
+        `;
+
+        // --- LOCAL STORAGE PERSISTENCE FUNCTIONS ---
+
+        function getStoredHistory() {
+            try {
+                const history = localStorage.getItem(LOCAL_STORAGE_KEY);
+                return history ? JSON.parse(history) : [];
+            } catch (e) {
+                console.error("Error reading from local storage:", e);
+                return [];
+            }
+        }
+
+        function saveStoredHistory(history) {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+            } catch (e) {
+                console.error("Error writing to local storage:", e);
+            }
+        }
+
+        // --- UTILITY FUNCTIONS ---
+
+        function scrollToBottom() {
+            chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+        }
+
+        function setControlsDisabled(disabled) {
+            sendButton.disabled = disabled;
+            userInput.disabled = disabled;
+            if (disabled) {
+                loadingIndicator.classList.remove('hidden');
+            } else {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        function renderMessage(message) {
+            const isAI = message.role === 'assistant';
+            const alignment = isAI ? 'justify-start' : 'justify-end';
+            const bubbleClass = isAI ? 'ai-bubble bg-gray-700 text-gray-100' : 'user-bubble bg-indigo-600 text-white';
+            
+            const timeString = message.timestamp ? new Date(message.timestamp).toLocaleTimeString() : '';
+
+            const messageHtml = `
+                <div class="flex ${alignment} mb-4">
+                    <div class="message-bubble ${bubbleClass} whitespace-pre-wrap">
+                        ${message.text.trim()}
+                        ${message.timestamp ? `<div class="text-[9px] mt-1 ${isAI ? 'text-gray-400' : 'text-indigo-200'} text-right">${timeString}</div>` : ''}
+                    </div>
+                </div>
+            `;
+            chatHistoryElement.insertAdjacentHTML('beforeend', messageHtml);
+        }
+
+        function renderChatHistory() {
+            const history = getStoredHistory();
+            
+            let messagesToRemove = Array.from(chatHistoryElement.children).filter(child => child.id !== 'initial-greeting' && child.id !== 'loading-indicator' && child.id !== 'scroll-anchor');
+            messagesToRemove.forEach(child => child.remove());
+
+            history.forEach(msg => renderMessage(msg));
+            scrollToBottom();
+        }
+
+        // --- OPENAI API INTERACTION ---
+
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} failed: ${error.message}. Retrying...`);
+                    if (i === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        async function getAIResponse(chatHistory) {
+            // OpenAI requires messages in format: [{ role: "system" | "user" | "assistant", content: "..." }]
+            const messages = [
+                { role: "system", content: systemPrompt.trim() },
+                ...chatHistory.map(msg => ({
+                    role: msg.role === 'model' ? 'assistant' : 'user',
+                    content: msg.text
+                }))
+            ];
+
+            try {
+                const result = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messages,
+                        temperature: 0.3,
+                        max_tokens: 1000
+                    })
+                });
+
+                const text = result?.choices?.[0]?.message?.content;
+                if (!text) {
+                    throw new Error("AI response was empty or malformed.");
+                }
+                return text.trim();
+            } catch (error) {
+                console.error("OpenAI API call failed:", error);
+                return "I'm sorry, I'm currently unable to access my expert knowledge. Please try again later.";
+            }
+        }
+
+        // --- CHAT LOGIC ---
+
+        function getCurrentChatHistory() {
+            return getStoredHistory();
+        }
+
+        async function handleSendMessage(event) {
+            event.preventDefault();
+            if (!isInitialized) {
+                console.error("The chat service is not fully initialized. Please wait a moment.");
+                return;
+            }
+
+            const userText = userInput.value.trim();
+            if (!userText) return;
+
+            setControlsDisabled(true);
+            userInput.value = '';
+
+            let history = getCurrentChatHistory();
+
+            // Save user message
+            const userMessage = {
+                role: 'user',
+                text: userText,
+                timestamp: Date.now()
+            };
+            history.push(userMessage);
+            saveStoredHistory(history);
+            renderChatHistory();
+
+            // Get AI response
+            const aiResponseText = await getAIResponse(history);
+
+            // Save AI message
+            const aiMessage = {
+                role: 'assistant',
+                text: aiResponseText,
+                timestamp: Date.now()
+            };
+            history.push(aiMessage);
+            saveStoredHistory(history);
+            renderChatHistory();
+
+            setControlsDisabled(false);
+            userInput.focus();
+        }
+
+        // --- STARTUP ---
+
+        function initChat() {
+            renderChatHistory();
+            isInitialized = true;
+            authStatusElement.textContent = `Using Local Storage for chat history.`;
+        }
+
+        initChat();
+        messageForm.addEventListener('submit', handleSendMessage);
+    </script>
+</body>
+</html>
