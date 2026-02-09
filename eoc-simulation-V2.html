@@ -671,9 +671,112 @@
       opacity: .3;
       transition: 0s;
     }
+    /* ========================================
+   🔴 CRITICAL ACCESSIBILITY FIXES - ADD THESE LINES
+   ======================================== */
+.notification {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-left-width: 4px !important;
+  border-left-style: solid !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+}
+.notification.error { 
+  border-left-color: #dc2626 !important; 
+  background-color: #fff1f2 !important;
+  color: #b91c1c !important;
+}
+.notification.success { 
+  border-left-color: #10b981 !important; 
+  background-color: #f0fdf4 !important;
+}
+.notification.warning { 
+  border-left-color: #f59e0b !important; 
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+}
+.notification.info { 
+  border-left-color: #06b6d4 !important; 
+  background-color: #ecfeff !important;
+}
+    #selected-cell-info {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-left: 4px solid #06b6d4 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 1.5rem !important;
+  border-radius: 12px !important;
+  margin-top: 1.5rem !important;
+}
+#selected-cell-info h4 {
+  color: #0a2463 !important;
+  font-weight: 700 !important;
+}
+#selected-cell-info p {
+  color: #64748b !important;
+}
+    .cell {
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+.cell-flooded { 
+  background: linear-gradient(135deg, #f0abfc 0%, #e879f9 100%) !important; 
+  border: 2px solid #c084fc !important;
+  color: #7e22ce !important;
+}
+.cell-affected { 
+  background: linear-gradient(135deg, #fecaca 0%, #fecaca 100%) !important; 
+  border: 2px solid #fca5a5 !important;
+  color: #b91c1c !important;
+}
+.cell-evacuated { 
+  background: linear-gradient(135deg, #ffedd5 0%, #ffedd5 100%) !important; 
+  border: 2px solid #fed7aa !important;
+  color: #b45309 !important;
+}
+.cell-safe { 
+  background: linear-gradient(135deg, #bbf7d0 0%, #bbf7d0 100%) !important; 
+  border: 2px solid #86efac !important;
+  color: #166534 !important;
+}
+.cell-water { 
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important; 
+  border-color: #93c5fd !important;
+  color: #1e40af !important;
+}
+.cell-land { 
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important; 
+  border-color: #86efac !important;
+  color: #166534 !important;
+}
+.cell-urban { 
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important; 
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+.cell-label {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+    input, textarea, select {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+input::placeholder, textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
   </style>
 </head>
-<body class="h-full bg-gradient-to-br from-[var(--deep-navy-1)] via-[var(--deep-navy-2)] to-[var(--deep-navy-1)] text-white overflow-auto">
+<body class="h-full bg-white text-gray-900 font-sans overflow-auto">
   <div id="app" class="h-full w-full">
     <!-- Title Screen - GLASSMORPHISM ENHANCED -->
     <div id="title-screen" class="h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[var(--deep-navy-1)] via-[var(--deep-navy-2)] to-[var(--deep-navy-1)]">
@@ -1319,11 +1422,11 @@
     // ===== CONFIGURATION & STATE =====
     const defaultConfig = {
       game_title: 'EOC SIMULATION',
-      lgu_name: 'Municipality of Sample LGU',
+      lgu_name: 'Municipality of XYZ, Province of ABC',
       welcome_message: 'Train your emergency response skills through realistic disaster scenarios. Make critical decisions, manage resources, and coordinate rescue operations.',
-      background_color: '#0b1121',
-      surface_color: '#162032',
-      text_color: '#e2e8f0',
+      background_color: '#ffffff',   // WAS '#0b1121'
+      surface_color: '#f8fafc',      // WAS '#162032'
+      text_color: '#1e293b',         // WAS '#e2e8f0'
       primary_color: '#06b6d4',
       secondary_color: '#8b5cf6'
     };
