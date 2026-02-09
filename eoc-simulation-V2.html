@@ -1,0 +1,3501 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EOC Simulation Training | Emergency Operations Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       🎨 BRAND DESIGN TOKENS
+       ======================================== */
+    :root {
+      /* Primary Brand Colors */
+      --brand-primary: #0A2463;
+      --brand-secondary: #0D3B66;
+      --brand-accent: #00B4D8;
+      --brand-light: #F8F9FA;
+      --brand-dark: #1A1A1A;
+      
+      /* Category Colors */
+      --category-systems: #2E5EFF;
+      --category-risk: #FF9F1C;
+      --category-resilience: #2D6A4F;
+      --category-ai: #FF6B6B;
+      --category-leadership: #4ECDC4;
+      
+      /* Game specific colors */
+      --game-bg: #0f172a;
+      --game-surface: #1e293b;
+      --game-border: #334155;
+      --game-text: #e2e8f0;
+      --game-accent: #fbbf24;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .game-title {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    
+    /* ========================================
+       🎬 ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideIn {
+      from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateX(0); 
+        opacity: 1; 
+      }
+    }
+    
+    @keyframes pulse-alert {
+      0%, 100% { 
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+      50% { 
+        opacity: 0.7;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes rain {
+      0% { transform: translateY(-100%) rotate(15deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(200%) rotate(15deg); opacity: 0; }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(0, 180, 216, 0.6);
+      }
+    }
+    
+    /* Animation Classes */
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .animate-scaleIn {
+      animation: scaleIn 0.4s ease-out forwards;
+    }
+    
+    .animate-slideUp {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    .alert-pulse {
+      animation: pulse-alert 2s ease-in-out infinite;
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .rain-drop {
+      animation: rain 1s linear infinite;
+    }
+    
+    .shake-effect {
+      animation: shake 0.3s ease-in-out infinite;
+    }
+    
+    .notification-slide {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .shimmer {
+      background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    
+    .glow-effect {
+      animation: glow 3s ease-in-out infinite;
+    }
+    
+    /* ========================================
+       🗺️ MAP STYLES
+       ======================================== */
+    .map-container {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 16px;
+      align-items: start;
+    }
+    
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 2px;
+      background: linear-gradient(135deg, var(--game-surface) 0%, var(--game-bg) 100%);
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid var(--game-border);
+      min-height: 450px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .cell:hover::before {
+      opacity: 1;
+    }
+    
+    .cell:hover {
+      transform: scale(1.15);
+      z-index: 10;
+      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.5);
+    }
+    
+    .cell-water {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+      border: 1px solid #0ea5e9;
+    }
+    
+    .cell-land {
+      background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+      border: 1px solid #86efac;
+    }
+    
+    .cell-urban {
+      background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+      border: 1px solid #cbd5e1;
+    }
+    
+    .cell-flooded {
+      background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+      border: 2px solid #a78bfa;
+      animation: pulse-alert 2s ease-in-out infinite;
+    }
+    
+    .cell-affected {
+      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+      border: 2px solid #fca5a5;
+      animation: shake 0.5s ease-in-out infinite;
+    }
+    
+    .cell-evacuated {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+      border: 2px solid #fed7aa;
+    }
+    
+    .cell-safe {
+      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+      border: 2px solid #6ee7b7;
+      animation: glow 3s ease-in-out infinite;
+    }
+    
+    .map-legend {
+      background: linear-gradient(135deg, var(--game-surface) 0%, var(--game-bg) 100%);
+      border: 2px solid var(--game-border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 470px;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .legend-title {
+      font-weight: 700;
+      color: var(--game-accent);
+      margin-bottom: 16px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .legend-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--game-border);
+    }
+    
+    .legend-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      padding: 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      cursor: help;
+      position: relative;
+    }
+    
+    .legend-item:hover {
+      background: rgba(251, 191, 36, 0.15);
+      transform: translateX(4px);
+    }
+    
+    .legend-color-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .legend-text {
+      color: var(--game-text);
+      font-size: 13px;
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    .legend-icon {
+      font-size: 22px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .cell-label {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      font-weight: 600;
+    }
+    
+    .cell:hover .cell-label {
+      opacity: 1;
+    }
+    
+    /* ========================================
+       🎯 ENHANCED TOOLTIPS
+       ======================================== */
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .has-tooltip:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    
+    .tooltip-content {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 2px solid var(--brand-accent);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--game-text);
+      white-space: nowrap;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+      font-weight: 500;
+    }
+    
+    .tooltip-content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+    
+    .tooltip-arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid var(--brand-accent);
+    }
+    
+    .tooltip-arrow-inner {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #0f172a;
+      left: -5px;
+      top: -5px;
+    }
+    
+    /* ========================================
+       🎮 UI COMPONENTS
+       ======================================== */
+    .resource-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .resource-card:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+    
+    .resource-card:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    
+    .resource-card:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .decision-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .decision-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .decision-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .decision-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+    
+    .progress-bar {
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+    }
+    
+    /* ========================================
+       📱 SCROLLBAR STYLING
+       ======================================== */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: var(--game-bg);
+      border-radius: 4px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: var(--game-border);
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-accent);
+    }
+    
+    /* ========================================
+       🎨 BRAND ELEMENTS
+       ======================================== */
+    .text-gradient {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .bg-brand-gradient {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 50%, var(--brand-accent) 100%);
+    }
+    
+    .bg-brand-subtle {
+      background: linear-gradient(135deg, rgba(10, 36, 99, 0.05) 0%, rgba(13, 59, 102, 0.03) 100%);
+    }
+    
+    /* ========================================
+       🎯 ROLE & SCENARIO CARDS
+       ======================================== */
+    .role-card, .scenario-card {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .role-card::before, .scenario-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .role-card:hover::before, .scenario-card:hover::before {
+      opacity: 1;
+    }
+    
+    .role-card:hover, .scenario-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* ========================================
+       📊 STATS CARDS
+       ======================================== */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* ========================================
+       🏆 LEADERBOARD
+       ======================================== */
+    .leaderboard-entry {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .leaderboard-entry::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--brand-primary), var(--brand-accent));
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .leaderboard-entry:hover::before {
+      transform: scaleY(1);
+    }
+    
+    .leaderboard-entry:hover {
+      background: rgba(251, 191, 36, 0.05);
+      transform: translateX(4px);
+    }
+    
+    /* ========================================
+       🔘 BUTTON STYLES
+       ======================================== */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+    
+    .btn-primary:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+    }
+    
+    /* ========================================
+       📢 NOTIFICATION STYLES
+       ======================================== */
+    .notification {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-left: 4px solid;
+    }
+    
+    .notification.success {
+      border-left-color: #10b981;
+    }
+    
+    .notification.error {
+      border-left-color: #ef4444;
+    }
+    
+    .notification.warning {
+      border-left-color: #f59e0b;
+    }
+    
+    .notification.info {
+      border-left-color: #3b82f6;
+    }
+    
+    /* ========================================
+       🌐 RESPONSIVE DESIGN
+       ======================================== */
+    @media (max-width: 1024px) {
+      .map-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .map-legend {
+        max-height: 300px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .cell {
+        font-size: 20px;
+      }
+      
+      .map-grid {
+        min-height: 350px;
+      }
+    }
+    
+    /* ========================================
+       🎭 FOCUS STYLES
+       ======================================== */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--brand-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-auto">
+  <div id="app" class="h-full w-full">
+    
+    <!-- Title Screen -->
+    <div id="title-screen" class="h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div class="text-center max-w-2xl animate-fadeIn">
+        <div class="mb-8">
+          <svg class="w-28 h-28 mx-auto text-amber-500 float-animation glow-effect" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3"/>
+            <path d="M50 20 L50 55 L70 70" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="currentColor"/>
+            <path d="M25 50 L15 50 M75 50 L85 50 M50 25 L50 15 M50 75 L50 85" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        
+        <h1 id="main-title" class="game-title text-5xl md:text-6xl font-bold text-gradient mb-3 animate-scaleIn">
+          EOC SIMULATION
+        </h1>
+        <h2 id="sub-title" class="text-2xl md:text-3xl text-slate-300 mb-4 animate-slideUp">
+          Emergency Operations Center Training
+        </h2>
+        <p id="lgu-display" class="text-xl text-amber-400 mb-8 font-semibold animate-slideUp">
+          MDDRO: Municipality of XYZ, Province of ABC
+        </p>
+        <p id="welcome-text" class="text-slate-400 mb-10 leading-relaxed text-lg animate-slideUp">
+          Train your emergency response skills through realistic disaster scenarios. Make critical decisions, manage resources, and coordinate rescue operations.
+        </p>
+        
+        <div class="space-y-4 mb-10 animate-slideUp">
+          <input type="text" id="player-name" placeholder="Enter your name" 
+            class="w-full max-w-xs px-5 py-4 bg-slate-800 border-2 border-slate-600 rounded-xl text-center focus:border-amber-500 focus:outline-none transition-all focus:ring-4 focus:ring-amber-500/20">
+        </div>
+        
+        <button id="start-btn" onclick="startGame()" 
+          class="btn-primary px-10 py-5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-bold text-xl rounded-xl transition-all shadow-2xl hover:shadow-amber-500/30 relative group has-tooltip">
+          🚨 START SIMULATION
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content flex items-center gap-2">
+              Begin your emergency response training simulation
+              <div class="tooltip-arrow">
+                <div class="tooltip-arrow-inner"></div>
+              </div>
+            </div>
+          </div>
+        </button>
+        
+        <div class="mt-10 flex justify-center gap-8 text-sm text-slate-500 animate-fadeIn">
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>🎯</span> Decision Making
+          </div>
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>📦</span> Resource Management
+          </div>
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>👥</span> Coordination
+          </div>
+        </div>
+        
+        <button onclick="showLeaderboard()" 
+          class="mt-8 text-amber-400 hover:text-amber-300 underline text-sm relative group has-tooltip transition-all">
+          View Training Records 📊
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content flex items-center gap-2">
+              View your saved simulation results and rankings
+              <div class="tooltip-arrow">
+                <div class="tooltip-arrow-inner"></div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Role Selection Screen -->
+    <div id="role-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-scaleIn">SELECT YOUR ROLE</h2>
+      <p class="text-slate-400 mb-10 text-lg animate-fadeIn">Choose your position in the Emergency Operations Center</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full animate-slideUp">
+        <button onclick="selectRole('incident_commander')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-red-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">🎖️</span>
+            <div>
+              <h3 class="font-bold text-xl text-red-400 group-hover:text-red-300 transition-colors">Incident Commander</h3>
+              <p class="text-sm text-slate-400">Overall strategic leadership</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Make final decisions on resource deployment, evacuation orders, and inter-agency coordination.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Highest responsibility - All decisions impact overall strategy
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('operations')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-blue-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">🔧</span>
+            <div>
+              <h3 class="font-bold text-xl text-blue-400 group-hover:text-blue-300 transition-colors">Operations Chief</h3>
+              <p class="text-sm text-slate-400">Field operations management</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Direct search and rescue teams, manage evacuation routes, and coordinate ground response.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Focus on execution - Manage field operations and rescue teams
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('logistics')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-green-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">📦</span>
+            <div>
+              <h3 class="font-bold text-xl text-green-400 group-hover:text-green-300 transition-colors">Logistics Chief</h3>
+              <p class="text-sm text-slate-400">Resource management</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Manage supplies, equipment, and personnel allocation across evacuation centers and response teams.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Critical role - Optimize resource allocation and distribution
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('information')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-purple-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">📢</span>
+            <div>
+              <h3 class="font-bold text-xl text-purple-400 group-hover:text-purple-300 transition-colors">Public Information</h3>
+              <p class="text-sm text-slate-400">Communications & alerts</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Issue public warnings, coordinate with media, and ensure accurate information dissemination.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Essential for coordination - Control public messaging and alerts
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scenario Selection Screen -->
+    <div id="scenario-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-scaleIn">SELECT SCENARIO</h2>
+      <p class="text-slate-400 mb-10 text-lg animate-fadeIn">Choose the disaster scenario for this simulation</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full animate-slideUp">
+        <button onclick="selectScenario('typhoon')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-cyan-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🌀</span>
+          <h3 class="font-bold text-2xl text-cyan-400 group-hover:text-cyan-300 mb-3 transition-colors">Super Typhoon</h3>
+          <p class="text-sm text-slate-400 mb-4">Signal No. 4 • Heavy flooding • Strong winds</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-cyan-900/50 text-cyan-300 rounded-full text-xs font-semibold">💨 Wind</span>
+            <span class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-semibold">🌊 Flood</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Multi-hazard scenario - Manage wind damage and flooding
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectScenario('earthquake')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-orange-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🏚️</span>
+          <h3 class="font-bold text-2xl text-orange-400 group-hover:text-orange-300 mb-3 transition-colors">Major Earthquake</h3>
+          <p class="text-sm text-slate-400 mb-4">Magnitude 7.2 • Structural collapse • Aftershocks</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-orange-900/50 text-orange-300 rounded-full text-xs font-semibold">🏗️ Collapse</span>
+            <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-xs font-semibold">🔥 Fire</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Severe scenario - Handle massive casualties and displacement
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectScenario('flood')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-blue-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🌊</span>
+          <h3 class="font-bold text-2xl text-blue-400 group-hover:text-blue-300 mb-3 transition-colors">Flash Flood</h3>
+          <p class="text-sm text-slate-400 mb-4">Monsoon rains • Rising waters • Dam release</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-semibold">🚣 Rescue</span>
+            <span class="px-3 py-1 bg-indigo-900/50 text-indigo-300 rounded-full text-xs font-semibold">🏠 Evac</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Water-focused scenario - Rescue operations and evacuation critical
+            </div>
+          </div>
+        </button>
+      </div>
+      
+      <button onclick="goBack('role')" 
+        class="mt-10 text-slate-400 hover:text-white transition-all flex items-center gap-2 group">
+        <span class="transition-transform group-hover:-translate-x-1">←</span> Back to Role Selection
+      </button>
+    </div>
+
+    <!-- Main Game Screen -->
+    <div id="game-screen" class="hidden h-full w-full flex flex-col bg-slate-900">
+      <!-- Top HUD -->
+      <div class="flex-shrink-0 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700 p-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div id="scenario-badge" class="flex items-center gap-3 px-4 py-2 bg-cyan-900/50 rounded-xl relative group has-tooltip border border-cyan-500/30">
+              <span id="scenario-icon">🌀</span>
+              <span id="scenario-name" class="font-bold text-cyan-300 text-sm">TYPHOON MARING</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Current disaster scenario information
+                </div>
+              </div>
+            </div>
+            <div id="alert-level" class="flex items-center gap-3 px-4 py-2 bg-red-900/50 rounded-xl alert-pulse relative group has-tooltip border border-red-500/30">
+              <span>⚠️</span>
+              <span class="font-bold text-red-300 text-sm">SIGNAL NO. 3</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Hazard alert level indicating danger severity
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex items-center gap-2 relative group has-tooltip">
+              <span class="text-slate-400 text-lg">⏱️</span>
+              <span id="game-timer" class="font-mono text-amber-400 font-bold text-lg">15:00</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Time remaining in simulation
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 relative group has-tooltip">
+              <span class="text-slate-400 text-lg">📊</span>
+              <span id="current-score" class="font-mono text-green-400 font-bold text-lg">0</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Training performance score
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Game Area -->
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        <!-- Left Panel - Map & Status -->
+        <div class="lg:w-2/3 flex flex-col p-6 overflow-auto scrollbar-thin">
+          <!-- Map Section -->
+          <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-2xl border border-slate-700/50">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-slate-300 flex items-center gap-3 text-lg">
+                <span>🗺️</span> Area Map - <span id="map-area-name" class="text-amber-400">Municipality Overview</span>
+              </h3>
+            </div>
+            <div class="map-container">
+              <!-- Main Map Grid -->
+              <div id="game-map" class="map-grid">
+                <!-- Map cells will be generated here -->
+              </div>
+              <!-- Legend Panel -->
+              <div class="map-legend scrollbar-thin">
+                <div class="legend-title">
+                  <span>📋</span> Legend
+                </div>
+                <!-- Area Types -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Area Types
+                  </div>
+                  <div class="legend-item" title="Urban residential and commercial areas">
+                    <div class="legend-icon">🏘️</div>
+                    <div class="legend-text">Urban</div>
+                  </div>
+                  <div class="legend-item" title="Bodies of water and rivers">
+                    <div class="legend-icon">🌊</div>
+                    <div class="legend-text">Water</div>
+                  </div>
+                  <div class="legend-item" title="Agricultural and forested areas">
+                    <div class="legend-icon">🌳</div>
+                    <div class="legend-text">Land</div>
+                  </div>
+                  <div class="legend-item" title="Key facilities and infrastructure">
+                    <div class="legend-icon">🏛️</div>
+                    <div class="legend-text">Facilities</div>
+                  </div>
+                </div>
+                <!-- Status Colors -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Status
+                  </div>
+                  <div class="legend-item" title="Normal conditions, no immediate threat">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #475569 0%, #64748b 100%); border: 1px solid #cbd5e1;"></div>
+                    <div class="legend-text">Normal</div>
+                  </div>
+                  <div class="legend-item" title="Population affected by disaster">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%); border: 2px solid #fca5a5;"></div>
+                    <div class="legend-text">Affected</div>
+                  </div>
+                  <div class="legend-item" title="Areas submerged by floodwater">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%); border: 2px solid #a78bfa;"></div>
+                    <div class="legend-text">Flooded</div>
+                  </div>
+                  <div class="legend-item" title="Evacuation in progress">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%); border: 2px solid #fed7aa;"></div>
+                    <div class="legend-text">Evacuating</div>
+                  </div>
+                  <div class="legend-item" title="All residents secured to safety">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #047857 0%, #10b981 100%); border: 2px solid #6ee7b7;"></div>
+                    <div class="legend-text">Safe</div>
+                  </div>
+                </div>
+                <!-- Quick Info -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Tips
+                  </div>
+                  <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; padding: 8px; background: rgba(251, 191, 36, 0.08); border-radius: 6px; border-left: 3px solid var(--game-accent);">
+                    💡 <strong>Hover</strong> over cells to see details. <strong>Click</strong> to take action. Use rescue boats and evacuation to reduce casualties.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="selected-cell-info" class="mt-5 p-5 bg-slate-900/80 backdrop-blur-sm rounded-xl hidden border-l-4 border-amber-500 shadow-lg">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h4 id="cell-name" class="font-bold text-amber-400 text-xl">Area Name</h4>
+                  <p id="cell-status" class="text-sm text-slate-400 mt-2">Status information</p>
+                </div>
+              </div>
+              <div id="cell-actions" class="flex flex-wrap gap-3">
+                <!-- Action buttons will appear here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Dashboard -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">👥</div>
+              <div id="stat-population" class="text-2xl font-bold text-white">12,450</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Total Population</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Total residents in affected area
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">🏃</div>
+              <div id="stat-evacuated" class="text-2xl font-bold text-green-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Evacuated</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100"><!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EOC Simulation Training | Emergency Operations Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       🎨 BRAND DESIGN TOKENS
+       ======================================== */
+    :root {
+      /* Primary Brand Colors */
+      --brand-primary: #0A2463;
+      --brand-secondary: #0D3B66;
+      --brand-accent: #00B4D8;
+      --brand-light: #F8F9FA;
+      --brand-dark: #1A1A1A;
+      
+      /* Category Colors */
+      --category-systems: #2E5EFF;
+      --category-risk: #FF9F1C;
+      --category-resilience: #2D6A4F;
+      --category-ai: #FF6B6B;
+      --category-leadership: #4ECDC4;
+      
+      /* Game specific colors */
+      --game-bg: #0f172a;
+      --game-surface: #1e293b;
+      --game-border: #334155;
+      --game-text: #e2e8f0;
+      --game-accent: #fbbf24;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .game-title {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    
+    /* ========================================
+       🎬 ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideIn {
+      from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateX(0); 
+        opacity: 1; 
+      }
+    }
+    
+    @keyframes pulse-alert {
+      0%, 100% { 
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+      50% { 
+        opacity: 0.7;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes rain {
+      0% { transform: translateY(-100%) rotate(15deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(200%) rotate(15deg); opacity: 0; }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(0, 180, 216, 0.6);
+      }
+    }
+    
+    /* Animation Classes */
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .animate-scaleIn {
+      animation: scaleIn 0.4s ease-out forwards;
+    }
+    
+    .animate-slideUp {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    .alert-pulse {
+      animation: pulse-alert 2s ease-in-out infinite;
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .rain-drop {
+      animation: rain 1s linear infinite;
+    }
+    
+    .shake-effect {
+      animation: shake 0.3s ease-in-out infinite;
+    }
+    
+    .notification-slide {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .shimmer {
+      background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    
+    .glow-effect {
+      animation: glow 3s ease-in-out infinite;
+    }
+    
+    /* ========================================
+       🗺️ MAP STYLES
+       ======================================== */
+    .map-container {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 16px;
+      align-items: start;
+    }
+    
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 2px;
+      background: linear-gradient(135deg, var(--game-surface) 0%, var(--game-bg) 100%);
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid var(--game-border);
+      min-height: 450px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .cell:hover::before {
+      opacity: 1;
+    }
+    
+    .cell:hover {
+      transform: scale(1.15);
+      z-index: 10;
+      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.5);
+    }
+    
+    .cell-water {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+      border: 1px solid #0ea5e9;
+    }
+    
+    .cell-land {
+      background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+      border: 1px solid #86efac;
+    }
+    
+    .cell-urban {
+      background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+      border: 1px solid #cbd5e1;
+    }
+    
+    .cell-flooded {
+      background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+      border: 2px solid #a78bfa;
+      animation: pulse-alert 2s ease-in-out infinite;
+    }
+    
+    .cell-affected {
+      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+      border: 2px solid #fca5a5;
+      animation: shake 0.5s ease-in-out infinite;
+    }
+    
+    .cell-evacuated {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+      border: 2px solid #fed7aa;
+    }
+    
+    .cell-safe {
+      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+      border: 2px solid #6ee7b7;
+      animation: glow 3s ease-in-out infinite;
+    }
+    
+    .map-legend {
+      background: linear-gradient(135deg, var(--game-surface) 0%, var(--game-bg) 100%);
+      border: 2px solid var(--game-border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 470px;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .legend-title {
+      font-weight: 700;
+      color: var(--game-accent);
+      margin-bottom: 16px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .legend-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--game-border);
+    }
+    
+    .legend-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      padding: 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      cursor: help;
+      position: relative;
+    }
+    
+    .legend-item:hover {
+      background: rgba(251, 191, 36, 0.15);
+      transform: translateX(4px);
+    }
+    
+    .legend-color-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .legend-text {
+      color: var(--game-text);
+      font-size: 13px;
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    .legend-icon {
+      font-size: 22px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .cell-label {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      font-weight: 600;
+    }
+    
+    .cell:hover .cell-label {
+      opacity: 1;
+    }
+    
+    /* ========================================
+       🎯 ENHANCED TOOLTIPS
+       ======================================== */
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .has-tooltip:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    
+    .tooltip-content {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 2px solid var(--brand-accent);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--game-text);
+      white-space: nowrap;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+      font-weight: 500;
+    }
+    
+    .tooltip-content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+    
+    .tooltip-arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid var(--brand-accent);
+    }
+    
+    .tooltip-arrow-inner {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #0f172a;
+      left: -5px;
+      top: -5px;
+    }
+    
+    /* ========================================
+       🎮 UI COMPONENTS
+       ======================================== */
+    .resource-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .resource-card:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+    
+    .resource-card:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    
+    .resource-card:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .decision-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .decision-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .decision-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .decision-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+    
+    .progress-bar {
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+    }
+    
+    /* ========================================
+       📱 SCROLLBAR STYLING
+       ======================================== */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: var(--game-bg);
+      border-radius: 4px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: var(--game-border);
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-accent);
+    }
+    
+    /* ========================================
+       🎨 BRAND ELEMENTS
+       ======================================== */
+    .text-gradient {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .bg-brand-gradient {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 50%, var(--brand-accent) 100%);
+    }
+    
+    .bg-brand-subtle {
+      background: linear-gradient(135deg, rgba(10, 36, 99, 0.05) 0%, rgba(13, 59, 102, 0.03) 100%);
+    }
+    
+    /* ========================================
+       🎯 ROLE & SCENARIO CARDS
+       ======================================== */
+    .role-card, .scenario-card {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .role-card::before, .scenario-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .role-card:hover::before, .scenario-card:hover::before {
+      opacity: 1;
+    }
+    
+    .role-card:hover, .scenario-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* ========================================
+       📊 STATS CARDS
+       ======================================== */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* ========================================
+       🏆 LEADERBOARD
+       ======================================== */
+    .leaderboard-entry {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .leaderboard-entry::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--brand-primary), var(--brand-accent));
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .leaderboard-entry:hover::before {
+      transform: scaleY(1);
+    }
+    
+    .leaderboard-entry:hover {
+      background: rgba(251, 191, 36, 0.05);
+      transform: translateX(4px);
+    }
+    
+    /* ========================================
+       🔘 BUTTON STYLES
+       ======================================== */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+    
+    .btn-primary:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+    }
+    
+    /* ========================================
+       📢 NOTIFICATION STYLES
+       ======================================== */
+    .notification {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-left: 4px solid;
+    }
+    
+    .notification.success {
+      border-left-color: #10b981;
+    }
+    
+    .notification.error {
+      border-left-color: #ef4444;
+    }
+    
+    .notification.warning {
+      border-left-color: #f59e0b;
+    }
+    
+    .notification.info {
+      border-left-color: #3b82f6;
+    }
+    
+    /* ========================================
+       🌐 RESPONSIVE DESIGN
+       ======================================== */
+    @media (max-width: 1024px) {
+      .map-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .map-legend {
+        max-height: 300px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .cell {
+        font-size: 20px;
+      }
+      
+      .map-grid {
+        min-height: 350px;
+      }
+    }
+    
+    /* ========================================
+       🎭 FOCUS STYLES
+       ======================================== */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--brand-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-auto">
+  <div id="app" class="h-full w-full">
+    
+    <!-- Title Screen -->
+    <div id="title-screen" class="h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div class="text-center max-w-2xl animate-fadeIn">
+        <div class="mb-8">
+          <svg class="w-28 h-28 mx-auto text-amber-500 float-animation glow-effect" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3"/>
+            <path d="M50 20 L50 55 L70 70" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="6" fill="currentColor"/>
+            <path d="M25 50 L15 50 M75 50 L85 50 M50 25 L50 15 M50 75 L50 85" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        
+        <h1 id="main-title" class="game-title text-5xl md:text-6xl font-bold text-gradient mb-3 animate-scaleIn">
+          EOC SIMULATION
+        </h1>
+        <h2 id="sub-title" class="text-2xl md:text-3xl text-slate-300 mb-4 animate-slideUp">
+          Emergency Operations Center Training
+        </h2>
+        <p id="lgu-display" class="text-xl text-amber-400 mb-8 font-semibold animate-slideUp">
+          MDDRO: Municipality of XYZ, Province of ABC
+        </p>
+        <p id="welcome-text" class="text-slate-400 mb-10 leading-relaxed text-lg animate-slideUp">
+          Train your emergency response skills through realistic disaster scenarios. Make critical decisions, manage resources, and coordinate rescue operations.
+        </p>
+        
+        <div class="space-y-4 mb-10 animate-slideUp">
+          <input type="text" id="player-name" placeholder="Enter your name" 
+            class="w-full max-w-xs px-5 py-4 bg-slate-800 border-2 border-slate-600 rounded-xl text-center focus:border-amber-500 focus:outline-none transition-all focus:ring-4 focus:ring-amber-500/20">
+        </div>
+        
+        <button id="start-btn" onclick="startGame()" 
+          class="btn-primary px-10 py-5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-bold text-xl rounded-xl transition-all shadow-2xl hover:shadow-amber-500/30 relative group has-tooltip">
+          🚨 START SIMULATION
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content flex items-center gap-2">
+              Begin your emergency response training simulation
+              <div class="tooltip-arrow">
+                <div class="tooltip-arrow-inner"></div>
+              </div>
+            </div>
+          </div>
+        </button>
+        
+        <div class="mt-10 flex justify-center gap-8 text-sm text-slate-500 animate-fadeIn">
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>🎯</span> Decision Making
+          </div>
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>📦</span> Resource Management
+          </div>
+          <div class="flex items-center gap-2 transition-all hover:text-amber-400">
+            <span>👥</span> Coordination
+          </div>
+        </div>
+        
+        <button onclick="showLeaderboard()" 
+          class="mt-8 text-amber-400 hover:text-amber-300 underline text-sm relative group has-tooltip transition-all">
+          View Training Records 📊
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content flex items-center gap-2">
+              View your saved simulation results and rankings
+              <div class="tooltip-arrow">
+                <div class="tooltip-arrow-inner"></div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Role Selection Screen -->
+    <div id="role-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-scaleIn">SELECT YOUR ROLE</h2>
+      <p class="text-slate-400 mb-10 text-lg animate-fadeIn">Choose your position in the Emergency Operations Center</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full animate-slideUp">
+        <button onclick="selectRole('incident_commander')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-red-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">🎖️</span>
+            <div>
+              <h3 class="font-bold text-xl text-red-400 group-hover:text-red-300 transition-colors">Incident Commander</h3>
+              <p class="text-sm text-slate-400">Overall strategic leadership</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Make final decisions on resource deployment, evacuation orders, and inter-agency coordination.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Highest responsibility - All decisions impact overall strategy
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('operations')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-blue-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">🔧</span>
+            <div>
+              <h3 class="font-bold text-xl text-blue-400 group-hover:text-blue-300 transition-colors">Operations Chief</h3>
+              <p class="text-sm text-slate-400">Field operations management</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Direct search and rescue teams, manage evacuation routes, and coordinate ground response.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Focus on execution - Manage field operations and rescue teams
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('logistics')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-green-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">📦</span>
+            <div>
+              <h3 class="font-bold text-xl text-green-400 group-hover:text-green-300 transition-colors">Logistics Chief</h3>
+              <p class="text-sm text-slate-400">Resource management</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Manage supplies, equipment, and personnel allocation across evacuation centers and response teams.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Critical role - Optimize resource allocation and distribution
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectRole('information')" 
+          class="role-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-purple-500 transition-all text-left group has-tooltip relative backdrop-blur-sm">
+          <div class="flex items-center gap-5 mb-4">
+            <span class="text-5xl">📢</span>
+            <div>
+              <h3 class="font-bold text-xl text-purple-400 group-hover:text-purple-300 transition-colors">Public Information</h3>
+              <p class="text-sm text-slate-400">Communications & alerts</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Issue public warnings, coordinate with media, and ensure accurate information dissemination.
+          </p>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Essential for coordination - Control public messaging and alerts
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scenario Selection Screen -->
+    <div id="scenario-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-scaleIn">SELECT SCENARIO</h2>
+      <p class="text-slate-400 mb-10 text-lg animate-fadeIn">Choose the disaster scenario for this simulation</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full animate-slideUp">
+        <button onclick="selectScenario('typhoon')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-cyan-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🌀</span>
+          <h3 class="font-bold text-2xl text-cyan-400 group-hover:text-cyan-300 mb-3 transition-colors">Super Typhoon</h3>
+          <p class="text-sm text-slate-400 mb-4">Signal No. 4 • Heavy flooding • Strong winds</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-cyan-900/50 text-cyan-300 rounded-full text-xs font-semibold">💨 Wind</span>
+            <span class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-semibold">🌊 Flood</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Multi-hazard scenario - Manage wind damage and flooding
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectScenario('earthquake')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-orange-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🏚️</span>
+          <h3 class="font-bold text-2xl text-orange-400 group-hover:text-orange-300 mb-3 transition-colors">Major Earthquake</h3>
+          <p class="text-sm text-slate-400 mb-4">Magnitude 7.2 • Structural collapse • Aftershocks</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-orange-900/50 text-orange-300 rounded-full text-xs font-semibold">🏗️ Collapse</span>
+            <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-xs font-semibold">🔥 Fire</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Severe scenario - Handle massive casualties and displacement
+            </div>
+          </div>
+        </button>
+
+        <button onclick="selectScenario('flood')" 
+          class="scenario-card p-8 bg-slate-800/80 border-2 border-slate-600 rounded-2xl hover:border-blue-500 transition-all text-center group has-tooltip relative backdrop-blur-sm">
+          <span class="text-6xl mb-6 block">🌊</span>
+          <h3 class="font-bold text-2xl text-blue-400 group-hover:text-blue-300 mb-3 transition-colors">Flash Flood</h3>
+          <p class="text-sm text-slate-400 mb-4">Monsoon rains • Rising waters • Dam release</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-semibold">🚣 Rescue</span>
+            <span class="px-3 py-1 bg-indigo-900/50 text-indigo-300 rounded-full text-xs font-semibold">🏠 Evac</span>
+          </div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content">
+              Water-focused scenario - Rescue operations and evacuation critical
+            </div>
+          </div>
+        </button>
+      </div>
+      
+      <button onclick="goBack('role')" 
+        class="mt-10 text-slate-400 hover:text-white transition-all flex items-center gap-2 group">
+        <span class="transition-transform group-hover:-translate-x-1">←</span> Back to Role Selection
+      </button>
+    </div>
+
+    <!-- Main Game Screen -->
+    <div id="game-screen" class="hidden h-full w-full flex flex-col bg-slate-900">
+      <!-- Top HUD -->
+      <div class="flex-shrink-0 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700 p-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div id="scenario-badge" class="flex items-center gap-3 px-4 py-2 bg-cyan-900/50 rounded-xl relative group has-tooltip border border-cyan-500/30">
+              <span id="scenario-icon">🌀</span>
+              <span id="scenario-name" class="font-bold text-cyan-300 text-sm">TYPHOON MARING</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Current disaster scenario information
+                </div>
+              </div>
+            </div>
+            <div id="alert-level" class="flex items-center gap-3 px-4 py-2 bg-red-900/50 rounded-xl alert-pulse relative group has-tooltip border border-red-500/30">
+              <span>⚠️</span>
+              <span class="font-bold text-red-300 text-sm">SIGNAL NO. 3</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Hazard alert level indicating danger severity
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex items-center gap-2 relative group has-tooltip">
+              <span class="text-slate-400 text-lg">⏱️</span>
+              <span id="game-timer" class="font-mono text-amber-400 font-bold text-lg">15:00</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Time remaining in simulation
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 relative group has-tooltip">
+              <span class="text-slate-400 text-lg">📊</span>
+              <span id="current-score" class="font-mono text-green-400 font-bold text-lg">0</span>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Training performance score
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Game Area -->
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        <!-- Left Panel - Map & Status -->
+        <div class="lg:w-2/3 flex flex-col p-6 overflow-auto scrollbar-thin">
+          <!-- Map Section -->
+          <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-2xl border border-slate-700/50">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-slate-300 flex items-center gap-3 text-lg">
+                <span>🗺️</span> Area Map - <span id="map-area-name" class="text-amber-400">Municipality Overview</span>
+              </h3>
+            </div>
+            <div class="map-container">
+              <!-- Main Map Grid -->
+              <div id="game-map" class="map-grid">
+                <!-- Map cells will be generated here -->
+              </div>
+              <!-- Legend Panel -->
+              <div class="map-legend scrollbar-thin">
+                <div class="legend-title">
+                  <span>📋</span> Legend
+                </div>
+                <!-- Area Types -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Area Types
+                  </div>
+                  <div class="legend-item" title="Urban residential and commercial areas">
+                    <div class="legend-icon">🏘️</div>
+                    <div class="legend-text">Urban</div>
+                  </div>
+                  <div class="legend-item" title="Bodies of water and rivers">
+                    <div class="legend-icon">🌊</div>
+                    <div class="legend-text">Water</div>
+                  </div>
+                  <div class="legend-item" title="Agricultural and forested areas">
+                    <div class="legend-icon">🌳</div>
+                    <div class="legend-text">Land</div>
+                  </div>
+                  <div class="legend-item" title="Key facilities and infrastructure">
+                    <div class="legend-icon">🏛️</div>
+                    <div class="legend-text">Facilities</div>
+                  </div>
+                </div>
+                <!-- Status Colors -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Status
+                  </div>
+                  <div class="legend-item" title="Normal conditions, no immediate threat">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #475569 0%, #64748b 100%); border: 1px solid #cbd5e1;"></div>
+                    <div class="legend-text">Normal</div>
+                  </div>
+                  <div class="legend-item" title="Population affected by disaster">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%); border: 2px solid #fca5a5;"></div>
+                    <div class="legend-text">Affected</div>
+                  </div>
+                  <div class="legend-item" title="Areas submerged by floodwater">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%); border: 2px solid #a78bfa;"></div>
+                    <div class="legend-text">Flooded</div>
+                  </div>
+                  <div class="legend-item" title="Evacuation in progress">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%); border: 2px solid #fed7aa;"></div>
+                    <div class="legend-text">Evacuating</div>
+                  </div>
+                  <div class="legend-item" title="All residents secured to safety">
+                    <div class="legend-color-box" style="background: linear-gradient(135deg, #047857 0%, #10b981 100%); border: 2px solid #6ee7b7;"></div>
+                    <div class="legend-text">Safe</div>
+                  </div>
+                </div>
+                <!-- Quick Info -->
+                <div class="legend-section">
+                  <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Tips
+                  </div>
+                  <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; padding: 8px; background: rgba(251, 191, 36, 0.08); border-radius: 6px; border-left: 3px solid var(--game-accent);">
+                    💡 <strong>Hover</strong> over cells to see details. <strong>Click</strong> to take action. Use rescue boats and evacuation to reduce casualties.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="selected-cell-info" class="mt-5 p-5 bg-slate-900/80 backdrop-blur-sm rounded-xl hidden border-l-4 border-amber-500 shadow-lg">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h4 id="cell-name" class="font-bold text-amber-400 text-xl">Area Name</h4>
+                  <p id="cell-status" class="text-sm text-slate-400 mt-2">Status information</p>
+                </div>
+              </div>
+              <div id="cell-actions" class="flex flex-wrap gap-3">
+                <!-- Action buttons will appear here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Dashboard -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">👥</div>
+              <div id="stat-population" class="text-2xl font-bold text-white">12,450</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Total Population</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Total residents in affected area
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">🏃</div>
+              <div id="stat-evacuated" class="text-2xl font-bold text-green-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Evacuated</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  People successfully moved to safety
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">⚠️</div>
+              <div id="stat-affected" class="text-2xl font-bold text-amber-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Affected</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  People impacted by the disaster
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">💔</div>
+              <div id="stat-casualties" class="text-2xl font-bold text-red-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Casualties</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Deaths and severe injuries - minimize at all costs
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel - Controls & Events -->
+        <div class="lg:w-1/3 flex flex-col bg-slate-800/90 backdrop-blur-sm border-l border-slate-700/50 overflow-hidden shadow-2xl">
+          <!-- Resources Section -->
+          <div class="p-5 border-b border-slate-700/50">
+            <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-3 text-lg">
+              <span>📦</span> Available Resources
+            </h3>
+            <div id="resources-panel" class="grid grid-cols-2 gap-3">
+              <!-- Resource cards will be generated -->
+            </div>
+          </div>
+
+          <!-- Active Events / Decisions -->
+          <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-700/50">
+              <h3 class="font-bold text-slate-300 flex items-center gap-3 text-lg">
+                <span>🚨</span> Active Situation
+              </h3>
+            </div>
+            <div id="events-panel" class="flex-1 overflow-auto p-5 scrollbar-thin">
+              <div id="current-decision" class="bg-slate-900/80 backdrop-blur-sm rounded-xl p-5 border border-slate-700/50 shadow-lg">
+                <p class="text-slate-400 text-center">Simulation starting...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Communication Log -->
+          <div class="p-5 border-t border-slate-700/50 max-h-48 overflow-auto scrollbar-thin bg-slate-900/50">
+            <h3 class="font-bold text-slate-300 mb-3 text-sm flex items-center gap-2">
+              <span>📻</span> Communications Log
+            </h3>
+            <div id="comm-log" class="space-y-2 text-xs">
+              <div class="text-slate-500">Waiting for updates...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <div class="max-w-3xl w-full text-center animate-fadeIn">
+        <div class="mb-8 animate-scaleIn">
+          <span id="result-icon" class="text-8xl">🏆</span>
+        </div>
+        <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-slideUp">SIMULATION COMPLETE</h2>
+        <p id="result-message" class="text-2xl text-slate-300 mb-10 animate-slideUp">Excellent emergency response!</p>
+        
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 mb-8 shadow-2xl border border-slate-700/50 animate-slideUp">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="text-center">
+              <div class="text-4xl font-bold text-amber-400" id="result-score">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Final Score</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-green-400" id="result-saved">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Lives Saved</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-blue-400" id="result-efficiency">0%</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Resource Efficiency</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-purple-400" id="result-decisions">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Decisions Made</div>
+            </div>
+          </div>
+          <div class="border-t border-slate-700 pt-6">
+            <h4 class="font-bold text-slate-300 mb-4 text-lg">Performance Analysis</h4>
+            <div id="performance-bars" class="space-y-4">
+              <!-- Performance bars will be generated -->
+            </div>
+          </div>
+        </div>
+        
+        <div id="result-feedback" class="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 mb-8 text-left border border-slate-700/50 shadow-lg animate-slideUp">
+          <h4 class="font-bold text-amber-400 mb-3 flex items-center gap-2 text-lg">
+            <span>📋</span> Debriefing Notes
+          </h4>
+          <ul id="feedback-list" class="text-sm text-slate-300 space-y-2 leading-relaxed">
+            <!-- Feedback items will be generated -->
+          </ul>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-5 animate-slideUp">
+          <button onclick="restartGame()" 
+            class="btn-primary px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-bold rounded-xl transition-all shadow-lg relative group has-tooltip">
+            🔄 Play Again
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content">
+                Run another training simulation
+              </div>
+            </div>
+          </button>
+          <button onclick="returnToTitle()" 
+            class="px-8 py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-all shadow-lg relative group has-tooltip">
+            🏠 Main Menu
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content">
+                Return to title screen
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 z-50">
+      <div class="modal-overlay absolute inset-0" onclick="hideLeaderboard()"></div>
+      <div class="relative bg-slate-800/95 backdrop-blur-lg rounded-2xl p-8 max-w-2xl w-full max-h-[85%] overflow-auto shadow-2xl border border-slate-700/50 animate-scaleIn">
+        <button onclick="hideLeaderboard()" 
+          class="absolute top-6 right-6 text-slate-400 hover:text-white text-3xl transition-all hover:rotate-90">
+          ×
+        </button>
+        <h3 class="game-title text-3xl font-bold text-gradient mb-6">📊 Training Records</h3>
+        <div id="leaderboard-content" class="space-y-4">
+          <p class="text-slate-400 text-center py-6">No records yet. Complete a simulation to save your score!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification-container" class="fixed top-6 right-6 z-50 space-y-3">
+      <!-- Notifications will appear here -->
+    </div>
+  </div>
+
+  <script>
+    // [Previous JavaScript code remains exactly the same]
+    // ===== CONFIGURATION & STATE =====
+    const defaultConfig = {
+      game_title: 'EOC SIMULATION',
+      lgu_name: 'Municipality of Sample LGU',
+      welcome_message: 'Train your emergency response skills through realistic disaster scenarios.',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_color: '#f59e0b',
+      secondary_color: '#64748b'
+    };
+    
+    let config = { ...defaultConfig };
+    let gameRecords = [];
+    
+    // Game State
+    let gameState = {
+      playerName: '',
+      role: '',
+      scenario: '',
+      score: 0,
+      timeRemaining: 900,
+      timerInterval: null,
+      currentPhase: 0,
+      decisions: [],
+      population: 12450,
+      evacuated: 0,
+      affected: 0,
+      casualties: 0,
+      resources: {
+        rescue_boats: { name: '🚣 Rescue Boats', count: 8, max: 8 },
+        medical_teams: { name: '🏥 Medical Teams', count: 5, max: 5 },
+        evacuation_trucks: { name: '🚛 Evac Trucks', count: 6, max: 6 },
+        relief_packs: { name: '📦 Relief Packs', count: 500, max: 500 },
+        responders: { name: '👷 Responders', count: 50, max: 50 }
+      },
+      mapCells: [],
+      selectedCell: null,
+      eventQueue: [],
+      currentEvent: null,
+      metrics: {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      }
+    };
+    
+    // ===== SCENARIOS DATA =====
+    const scenarios = {
+      typhoon: {
+        name: 'Super Typhoon Maring',
+        icon: '🌀',
+        alertLevel: 'SIGNAL NO. 4',
+        alertColor: 'red',
+        hazardTypes: ['flooding', 'wind_damage', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '🌧️ Heavy Rainfall Warning',
+            description: 'PAGASA reports 150mm rainfall in the last 3 hours. River levels rising rapidly in Barangay San Miguel.',
+            options: [
+              { text: 'Issue immediate evacuation order for riverside areas', effect: { evacuated: 800, score: 100, time: -60, resources: { evacuation_trucks: -2 } }, feedback: 'Quick evacuation saved many lives.' },
+              { text: 'Monitor situation and prepare evacuation centers', effect: { affected: 200, score: 50, time: -30 }, feedback: 'Preparation helped but delayed response increased affected population.' },
+              { text: 'Send warning through barangay officials only', effect: { affected: 400, score: 20, time: -20 }, feedback: 'Limited communication reach resulted in more people getting stranded.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🌊 Flash Flood in Purok 3',
+            description: 'Water levels have risen to 1.5 meters. 200 families trapped in their homes. Some are on rooftops.',
+            options: [
+              { text: 'Deploy all available rescue boats immediately', effect: { evacuated: 600, score: 150, time: -90, resources: { rescue_boats: -6, responders: -20 } }, feedback: 'Aggressive rescue operation was highly effective.' },
+              { text: 'Deploy rescue boats gradually while coordinating with Coast Guard', effect: { evacuated: 400, casualties: 5, score: 80, time: -60, resources: { rescue_boats: -4, responders: -15 } }, feedback: 'Coordinated approach was safer but some casualties occurred due to delay.' },
+              { text: 'Wait for water levels to stabilize before rescue', effect: { casualties: 25, score: -50, time: -30 }, feedback: 'Waiting proved fatal for many stranded residents.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Medical Emergency at Evacuation Center',
+            description: 'Multiple evacuees showing symptoms of hypothermia and respiratory infections. Medical supplies running low.',
+            options: [
+              { text: 'Request emergency medical supplies from provincial office', effect: { score: 80, time: -45, metrics: { communicationScore: 10 } }, feedback: 'Inter-agency coordination secured additional resources.' },
+              { text: 'Redistribute existing supplies and prioritize critical cases', effect: { casualties: 3, score: 60, time: -30, resources: { relief_packs: -100 } }, feedback: 'Efficient triage but limited supplies led to some complications.' },
+              { text: 'Send medical teams to evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -3 } }, feedback: 'Direct medical intervention improved health outcomes.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🛣️ Road Blocked by Landslide',
+            description: 'Main highway to evacuation center blocked. Relief trucks cannot deliver supplies. 2,000 evacuees waiting.',
+            options: [
+              { text: 'Coordinate with DPWH for immediate clearing operations', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'Inter-agency coordination resolved the blockage.' },
+              { text: 'Find alternative routes through barangay roads', effect: { score: 90, time: -60, resources: { evacuation_trucks: -1 } }, feedback: 'Quick thinking found alternative supply routes.' },
+              { text: 'Use boats to transport supplies via river', effect: { score: 100, time: -45, resources: { rescue_boats: -2 } }, feedback: 'Creative solution ensured continuous relief operations.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '📢 Misinformation Spreading',
+            description: 'False reports of dam failure spreading panic on social media. Residents fleeing to higher ground chaotically.',
+            options: [
+              { text: 'Issue official statement through all channels immediately', effect: { score: 100, time: -30, metrics: { communicationScore: 20 } }, feedback: 'Clear communication prevented panic-induced accidents.' },
+              { text: 'Contact dam management for verification first', effect: { affected: 100, score: 60, time: -45, metrics: { communicationScore: -10 } }, feedback: 'Verification caused delay but ensured accurate information.' },
+              { text: 'Deploy responders to manage crowd movement', effect: { affected: 50, score: 70, time: -60, resources: { responders: -15 } }, feedback: 'Ground management helped but didnt address root cause.' }
+            ]
+          }
+        ]
+      },
+      earthquake: {
+        name: 'Magnitude 7.2 Earthquake',
+        icon: '🏚️',
+        alertLevel: 'INTENSITY VII',
+        alertColor: 'orange',
+        hazardTypes: ['collapse', 'fire', 'aftershock'],
+        events: [
+          {
+            phase: 1,
+            title: '🏗️ Building Collapse Reported',
+            description: 'Multiple structures collapsed in commercial district. Estimated 150 people trapped. Aftershocks continuing.',
+            options: [
+              { text: 'Deploy all rescue teams with heavy equipment', effect: { evacuated: 100, score: 120, time: -90, resources: { responders: -30, medical_teams: -3 } }, feedback: 'Immediate deployment saved trapped survivors.' },
+              { text: 'Assess structural safety before deploying teams', effect: { evacuated: 60, casualties: 15, score: 60, time: -60 }, feedback: 'Safety assessment caused delays but protected rescuers.' },
+              { text: 'Coordinate with military for heavy equipment', effect: { evacuated: 80, casualties: 10, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Military assets proved valuable but took time to mobilize.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🔥 Fire Outbreak in Residential Area',
+            description: 'Gas line rupture caused fire in Purok 5. Fire spreading to nearby wooden houses. 50 families at risk.',
+            options: [
+              { text: 'Evacuate affected areas and deploy fire volunteers', effect: { evacuated: 200, score: 100, time: -60, resources: { responders: -15 } }, feedback: 'Quick evacuation prevented casualties from fire.' },
+              { text: 'Request BFP support for fire suppression', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Professional firefighting contained the blaze.' },
+              { text: 'Cut power to prevent electrical fires', effect: { score: 60, time: -30 }, feedback: 'Preventive measure reduced fire spread risk.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Hospital Overwhelmed',
+            description: 'District hospital over capacity. 200+ injured waiting for treatment. Medical supplies critically low.',
+            options: [
+              { text: 'Set up field hospital at evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -2, relief_packs: -150 } }, feedback: 'Field hospital effectively managed overflow patients.' },
+              { text: 'Coordinate patient transfers to other hospitals', effect: { score: 80, time: -90, resources: { evacuation_trucks: -3 }, metrics: { communicationScore: 10 } }, feedback: 'Patient distribution eased hospital burden.' },
+              { text: 'Request DOH emergency medical supplies', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'National support replenished critical supplies.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '⚠️ Strong Aftershock Warning',
+            description: 'PHIVOLCS warns of possible magnitude 6.0 aftershock. Damaged structures at high risk of secondary collapse.',
+            options: [
+              { text: 'Immediately evacuate all damaged building areas', effect: { evacuated: 500, score: 120, time: -45, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Preemptive evacuation saved lives when aftershock struck.' },
+              { text: 'Issue public warning and mark dangerous structures', effect: { affected: 100, score: 80, time: -30, metrics: { communicationScore: 10 } }, feedback: 'Warning helped but some ignored the alerts.' },
+              { text: 'Suspend rescue operations until aftershock passes', effect: { casualties: 20, score: -30, time: -60 }, feedback: 'Suspension led to loss of trapped survivors.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🏠 Mass Displacement',
+            description: '3,000+ residents homeless. Temporary shelters needed urgently. Rain expected tonight.',
+            options: [
+              { text: 'Open all schools and gyms as evacuation centers', effect: { evacuated: 1500, score: 100, time: -60, resources: { relief_packs: -200 } }, feedback: 'Multiple evacuation sites accommodated displaced families.' },
+              { text: 'Request tents from DSWD regional office', effect: { evacuated: 800, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Additional shelter materials helped but took time.' },
+              { text: 'Prioritize most vulnerable for indoor shelter', effect: { evacuated: 500, affected: 300, score: 60, time: -45, resources: { relief_packs: -100 } }, feedback: 'Triage approach protected vulnerable but left others exposed.' }
+            ]
+          }
+        ]
+      },
+      flood: {
+        name: 'Flash Flood Emergency',
+        icon: '🌊',
+        alertLevel: 'RED WARNING',
+        alertColor: 'blue',
+        hazardTypes: ['flooding', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '💧 Dam Water Release',
+            description: 'Upstream dam releasing water due to critical levels. Downstream barangays have 2 hours before water arrives.',
+            options: [
+              { text: 'Immediate forced evacuation of flood plains', effect: { evacuated: 1000, score: 150, time: -90, resources: { evacuation_trucks: -4, responders: -25 } }, feedback: 'Early evacuation ensured zero casualties from flooding.' },
+              { text: 'Alert barangay captains to begin voluntary evacuation', effect: { evacuated: 600, affected: 200, score: 80, time: -60 }, feedback: 'Voluntary evacuation was partially effective.' },
+              { text: 'Prepare rescue boats for deployment after flooding', effect: { casualties: 30, affected: 400, score: -20, time: -30, resources: { rescue_boats: -4 } }, feedback: 'Reactive approach resulted in preventable casualties.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🚣 Stranded Residents in Sitio Riverside',
+            description: '80 families stranded on rooftops. Water at chest level and rising. Children and elderly among them.',
+            options: [
+              { text: 'Deploy all rescue boats with medical personnel', effect: { evacuated: 300, score: 130, time: -75, resources: { rescue_boats: -6, medical_teams: -2, responders: -15 } }, feedback: 'Comprehensive rescue saved all stranded families.' },
+              { text: 'Deploy rescue boats, request military helicopter support', effect: { evacuated: 280, score: 110, time: -90, resources: { rescue_boats: -4 }, metrics: { communicationScore: 15 } }, feedback: 'Air support accelerated rescue of critical cases.' },
+              { text: 'Prioritize children and elderly for first rescue trips', effect: { evacuated: 150, affected: 50, score: 80, time: -60, resources: { rescue_boats: -3 } }, feedback: 'Prioritization protected vulnerable but delayed others.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏫 Evacuation Center Flooded',
+            description: 'Elementary school evacuation center now flooded. 500 evacuees need to be relocated immediately.',
+            options: [
+              { text: 'Transfer all evacuees to gymnasium on higher ground', effect: { evacuated: 500, score: 100, time: -60, resources: { evacuation_trucks: -3, responders: -10 } }, feedback: 'Swift relocation prevented secondary displacement crisis.' },
+              { text: 'Move evacuees to upper floors of school building', effect: { affected: 100, score: 60, time: -30 }, feedback: 'Temporary measure provided shelter but poor conditions.' },
+              { text: 'Request provincial assistance for additional shelter', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Provincial support expanded shelter capacity.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🦠 Waterborne Disease Outbreak Risk',
+            description: 'Health officer warns of potential leptospirosis outbreak. Contaminated flood water widespread.',
+            options: [
+              { text: 'Distribute water purification tablets and boots', effect: { score: 100, time: -45, resources: { relief_packs: -150 } }, feedback: 'Preventive measures significantly reduced disease cases.' },
+              { text: 'Set up medical checkpoints at evacuation centers', effect: { score: 80, time: -60, resources: { medical_teams: -2 } }, feedback: 'Health monitoring enabled early treatment.' },
+              { text: 'Issue public health advisory through loudspeakers', effect: { affected: 50, score: 50, time: -20, metrics: { communicationScore: 5 } }, feedback: 'Information campaign reached limited audience.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🌧️ Second Wave Warning',
+            description: 'PAGASA reports another storm cell approaching. Expected to intensify flooding in 4 hours.',
+            options: [
+              { text: 'Expand evacuation to include medium-risk areas', effect: { evacuated: 800, score: 120, time: -90, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Proactive expansion prevented second wave casualties.' },
+              { text: 'Fortify current evacuation centers with supplies', effect: { score: 80, time: -60, resources: { relief_packs: -200 } }, feedback: 'Preparation helped weather the second wave.' },
+              { text: 'Request national government disaster declaration', effect: { score: 70, time: -120, metrics: { communicationScore: 20 } }, feedback: 'National attention brought additional resources.' }
+            ]
+          }
+        ]
+      }
+    };
+    
+    // ===== INITIALIZATION =====
+    async function initializeApp() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...defaultConfig, ...newConfig };
+            updateUIFromConfig();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+              },
+              {
+                get: () => cfg.surface_color || defaultConfig.surface_color,
+                set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+              },
+              {
+                get: () => cfg.primary_color || defaultConfig.primary_color,
+                set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+              },
+              {
+                get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['game_title', cfg.game_title || defaultConfig.game_title],
+            ['lgu_name', cfg.lgu_name || defaultConfig.lgu_name],
+            ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+      }
+      
+      if (window.dataSdk) {
+        const dataHandler = {
+          onDataChanged: (data) => {
+            gameRecords = data || [];
+            updateLeaderboardDisplay();
+          }
+        };
+        
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+      
+      updateUIFromConfig();
+    }
+    
+    function updateUIFromConfig() {
+      const mainTitle = document.getElementById('main-title');
+      const lguDisplay = document.getElementById('lgu-display');
+      const welcomeText = document.getElementById('welcome-text');
+      
+      if (mainTitle) mainTitle.textContent = config.game_title || defaultConfig.game_title;
+      if (lguDisplay) lguDisplay.textContent = config.lgu_name || defaultConfig.lgu_name;
+      if (welcomeText) welcomeText.textContent = config.welcome_message || defaultConfig.welcome_message;
+    }
+    
+    // ===== SCREEN NAVIGATION =====
+    function showScreen(screenId) {
+      const screens = ['title-screen', 'role-screen', 'scenario-screen', 'game-screen', 'results-screen'];
+      screens.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+    
+    function startGame() {
+      const nameInput = document.getElementById('player-name');
+      gameState.playerName = nameInput.value.trim() || 'EOC Trainee';
+      showScreen('role-screen');
+    }
+    
+    function selectRole(role) {
+      gameState.role = role;
+      showScreen('scenario-screen');
+    }
+    
+    function selectScenario(scenario) {
+      gameState.scenario = scenario;
+      initializeGame();
+      showScreen('game-screen');
+    }
+    
+    function goBack(screen) {
+      showScreen(screen + '-screen');
+    }
+    
+    // ===== GAME INITIALIZATION =====
+    function initializeGame() {
+      const scenario = scenarios[gameState.scenario];
+      
+      gameState.score = 0;
+      gameState.timeRemaining = 900;
+      gameState.currentPhase = 0;
+      gameState.decisions = [];
+      gameState.evacuated = 0;
+      gameState.affected = 0;
+      gameState.casualties = 0;
+      gameState.metrics = {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      };
+      
+      Object.keys(gameState.resources).forEach(key => {
+        gameState.resources[key].count = gameState.resources[key].max;
+      });
+      
+      document.getElementById('scenario-icon').textContent = scenario.icon;
+      document.getElementById('scenario-name').textContent = scenario.name.toUpperCase();
+      document.getElementById('alert-level').innerHTML = `<span>⚠️</span><span class="font-bold text-${scenario.alertColor}-300 text-sm">${scenario.alertLevel}</span>`;
+      
+      initializeMap();
+      updateResourcesPanel();
+      startTimer();
+      
+      setTimeout(() => triggerNextEvent(), 2000);
+      
+      addCommLog('📻 EOC activated. All units report to stations.');
+      addCommLog(`🌐 ${scenario.name} monitoring in progress.`);
+    }
+    
+    function initializeMap() {
+      const mapContainer = document.getElementById('game-map');
+      mapContainer.innerHTML = '';
+      
+      const mapLayout = [
+        { name: 'Coastal Area', type: 'water', icon: '🌊' },
+        { name: 'Port', type: 'urban', icon: '⚓' },
+        { name: 'Downtown Center', type: 'urban', icon: '🏢' },
+        { name: 'Market District', type: 'urban', icon: '🏪' },
+        { name: 'Government Center', type: 'urban', icon: '🏛️' },
+        { name: 'Hospital', type: 'urban', icon: '🏥' },
+        { name: 'School District', type: 'urban', icon: '🏫' },
+        { name: 'Resort Area', type: 'land', icon: '🏨' },
+        { name: 'Forest Reserve', type: 'land', icon: '🌲' },
+        { name: 'Mountain', type: 'land', icon: '⛰️' },
+        { name: 'Ridge Area', type: 'land', icon: '🏔️' },
+        { name: 'Cliff Zone', type: 'land', icon: '🪨' },
+        { name: 'Fishing Village', type: 'urban', icon: '🎣' },
+        { name: 'River Bridge', type: 'urban', icon: '🌉' },
+        { name: 'Sports Complex', type: 'urban', icon: '⚽' },
+        { name: 'Commercial Area', type: 'urban', icon: '🏭' },
+        { name: 'Residential Sector', type: 'urban', icon: '🏘️' },
+        { name: 'Park Area', type: 'land', icon: '🌳' },
+        { name: 'Farm Fields', type: 'land', icon: '🌾' },
+        { name: 'Grassland', type: 'land', icon: '🌱' },
+        { name: 'Chapel', type: 'urban', icon: '⛪' },
+        { name: 'Community Center', type: 'urban', icon: '🏟️' },
+        { name: 'Industrial Zone', type: 'urban', icon: '🏗️' },
+        { name: 'Open Water', type: 'water', icon: '💧' },
+        { name: 'Riverside Purok', type: 'urban', icon: '🏠' },
+        { name: 'Main Highway', type: 'urban', icon: '🛣️' },
+        { name: 'Business District', type: 'urban', icon: '💼' },
+        { name: 'Housing Complex', type: 'urban', icon: '🏘️' },
+        { name: 'City Hall', type: 'urban', icon: '🏦' },
+        { name: 'Convention Center', type: 'urban', icon: '🎪' },
+        { name: 'Recreation Area', type: 'land', icon: '⛺' },
+        { name: 'Eco Park', type: 'land', icon: '🦋' },
+        { name: 'Wildlife Preserve', type: 'land', icon: '🦁' },
+        { name: 'Wetlands', type: 'water', icon: '🌿' },
+        { name: 'Canal System', type: 'water', icon: '🚣' },
+        { name: 'Pond', type: 'water', icon: '🐢' },
+        { name: 'Entertainment Zone', type: 'urban', icon: '🎭' },
+        { name: 'Shopping Mall', type: 'urban', icon: '🛍️' },
+        { name: 'Residential Area', type: 'urban', icon: '🏠' },
+        { name: 'Parking Lot', type: 'urban', icon: '🅿️' },
+        { name: 'Office Tower', type: 'urban', icon: '🏢' },
+        { name: 'Banking Sector', type: 'urban', icon: '🏦' },
+        { name: 'Library', type: 'urban', icon: '📚' },
+        { name: 'Mixed Park', type: 'land', icon: '🎡' },
+        { name: 'Garden Area', type: 'land', icon: '🌺' },
+        { name: 'Lake', type: 'water', icon: '🏞️' },
+        { name: 'Dam', type: 'water', icon: '🔧' },
+        { name: 'Reservoir', type: 'water', icon: '💧' }
+      ];
+      
+      gameState.mapCells = [];
+      
+      for (let i = 0; i < mapLayout.length; i++) {
+        const cellData = mapLayout[i];
+        const cellData_complete = {
+          id: i,
+          name: cellData.name,
+          type: cellData.type,
+          icon: cellData.icon,
+          status: 'normal',
+          population: cellData.type === 'urban' ? Math.floor(Math.random() * 500) + 200 : 0,
+          affected: 0,
+          evacuated: 0
+        };
+        
+        gameState.mapCells.push(cellData_complete);
+        
+        const cell = document.createElement('div');
+        cell.className = `cell cell-${cellData.type} group has-tooltip`;
+        cell.id = `cell-${i}`;
+        cell.onclick = () => selectMapCell(i);
+        
+        cell.innerHTML = `
+          <div class="text-3xl">${cellData.icon}</div>
+          <div class="cell-label">${cellData.name.substring(0, 10)}</div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content text-center">
+              <div class="font-bold text-sm">${cellData.name}</div>
+              <div class="text-xs mt-1">${cellData.type === 'urban' ? '👥 ' + cellData_complete.population + ' pop' : cellData.type === 'water' ? '💧 Water body' : '🌳 Natural area'}</div>
+            </div>
+          </div>
+        `;
+        
+        mapContainer.appendChild(cell);
+      }
+    }
+    
+    function selectMapCell(cellId) {
+      gameState.selectedCell = cellId;
+      const cell = gameState.mapCells[cellId];
+      const infoPanel = document.getElementById('selected-cell-info');
+      
+      infoPanel.classList.remove('hidden');
+      document.getElementById('cell-name').textContent = cell.name;
+      
+      let statusText = 'Status: ';
+      let statusColor = 'text-green-400';
+      
+      switch(cell.status) {
+        case 'affected':
+          statusText += 'Affected (' + cell.affected + ' people)';
+          statusColor = 'text-red-400';
+          break;
+        case 'flooded':
+          statusText += 'Flooded';
+          statusColor = 'text-violet-400';
+          break;
+        case 'evacuated':
+          statusText += 'Evacuated';
+          statusColor = 'text-amber-400';
+          break;
+        case 'safe':
+          statusText += 'Safe Zone';
+          statusColor = 'text-green-400';
+          break;
+        default:
+          statusText += 'Normal (Pop: ' + cell.population + ')';
+      }
+      
+      document.getElementById('cell-status').innerHTML = `<span class="${statusColor}">${statusText}</span>`;
+      
+      const actionsDiv = document.getElementById('cell-actions');
+      actionsDiv.innerHTML = '';
+      
+      if (cell.status === 'affected' && cell.affected > 0) {
+        actionsDiv.innerHTML = `
+          <button onclick="deployRescue(${cellId})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold transition-all relative group has-tooltip shadow-lg">
+            🚣 Rescue
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content whitespace-nowrap">Deploy rescue team to this area</div>
+            </div>
+          </button>
+        `;
+      } else if (cell.type === 'urban' && cell.status === 'normal') {
+        actionsDiv.innerHTML = `
+          <button onclick="preEvacuate(${cellId})" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm font-bold transition-all relative group has-tooltip shadow-lg">
+            📢 Pre-Evacuate
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content whitespace-
+                <div class="tooltip-content">
+                  People successfully moved to safety
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">⚠️</div>
+              <div id="stat-affected" class="text-2xl font-bold text-amber-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Affected</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  People impacted by the disaster
+                </div>
+              </div>
+            </div>
+            <div class="stat-card bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-slate-700/50 shadow-lg relative group has-tooltip">
+              <div class="text-3xl mb-2">💔</div>
+              <div id="stat-casualties" class="text-2xl font-bold text-red-400">0</div>
+              <div class="text-xs text-slate-400 mt-1 font-medium">Casualties</div>
+              <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+                <div class="tooltip-content">
+                  Deaths and severe injuries - minimize at all costs
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel - Controls & Events -->
+        <div class="lg:w-1/3 flex flex-col bg-slate-800/90 backdrop-blur-sm border-l border-slate-700/50 overflow-hidden shadow-2xl">
+          <!-- Resources Section -->
+          <div class="p-5 border-b border-slate-700/50">
+            <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-3 text-lg">
+              <span>📦</span> Available Resources
+            </h3>
+            <div id="resources-panel" class="grid grid-cols-2 gap-3">
+              <!-- Resource cards will be generated -->
+            </div>
+          </div>
+
+          <!-- Active Events / Decisions -->
+          <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-700/50">
+              <h3 class="font-bold text-slate-300 flex items-center gap-3 text-lg">
+                <span>🚨</span> Active Situation
+              </h3>
+            </div>
+            <div id="events-panel" class="flex-1 overflow-auto p-5 scrollbar-thin">
+              <div id="current-decision" class="bg-slate-900/80 backdrop-blur-sm rounded-xl p-5 border border-slate-700/50 shadow-lg">
+                <p class="text-slate-400 text-center">Simulation starting...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Communication Log -->
+          <div class="p-5 border-t border-slate-700/50 max-h-48 overflow-auto scrollbar-thin bg-slate-900/50">
+            <h3 class="font-bold text-slate-300 mb-3 text-sm flex items-center gap-2">
+              <span>📻</span> Communications Log
+            </h3>
+            <div id="comm-log" class="space-y-2 text-xs">
+              <div class="text-slate-500">Waiting for updates...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="hidden h-full w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <div class="max-w-3xl w-full text-center animate-fadeIn">
+        <div class="mb-8 animate-scaleIn">
+          <span id="result-icon" class="text-8xl">🏆</span>
+        </div>
+        <h2 class="game-title text-4xl font-bold text-gradient mb-3 animate-slideUp">SIMULATION COMPLETE</h2>
+        <p id="result-message" class="text-2xl text-slate-300 mb-10 animate-slideUp">Excellent emergency response!</p>
+        
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 mb-8 shadow-2xl border border-slate-700/50 animate-slideUp">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="text-center">
+              <div class="text-4xl font-bold text-amber-400" id="result-score">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Final Score</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-green-400" id="result-saved">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Lives Saved</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-blue-400" id="result-efficiency">0%</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Resource Efficiency</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-purple-400" id="result-decisions">0</div>
+              <div class="text-sm text-slate-400 mt-2 font-medium">Decisions Made</div>
+            </div>
+          </div>
+          <div class="border-t border-slate-700 pt-6">
+            <h4 class="font-bold text-slate-300 mb-4 text-lg">Performance Analysis</h4>
+            <div id="performance-bars" class="space-y-4">
+              <!-- Performance bars will be generated -->
+            </div>
+          </div>
+        </div>
+        
+        <div id="result-feedback" class="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 mb-8 text-left border border-slate-700/50 shadow-lg animate-slideUp">
+          <h4 class="font-bold text-amber-400 mb-3 flex items-center gap-2 text-lg">
+            <span>📋</span> Debriefing Notes
+          </h4>
+          <ul id="feedback-list" class="text-sm text-slate-300 space-y-2 leading-relaxed">
+            <!-- Feedback items will be generated -->
+          </ul>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-5 animate-slideUp">
+          <button onclick="restartGame()" 
+            class="btn-primary px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-bold rounded-xl transition-all shadow-lg relative group has-tooltip">
+            🔄 Play Again
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content">
+                Run another training simulation
+              </div>
+            </div>
+          </button>
+          <button onclick="returnToTitle()" 
+            class="px-8 py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-all shadow-lg relative group has-tooltip">
+            🏠 Main Menu
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-4 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content">
+                Return to title screen
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="hidden fixed inset-0 flex items-center justify-center p-4 z-50">
+      <div class="modal-overlay absolute inset-0" onclick="hideLeaderboard()"></div>
+      <div class="relative bg-slate-800/95 backdrop-blur-lg rounded-2xl p-8 max-w-2xl w-full max-h-[85%] overflow-auto shadow-2xl border border-slate-700/50 animate-scaleIn">
+        <button onclick="hideLeaderboard()" 
+          class="absolute top-6 right-6 text-slate-400 hover:text-white text-3xl transition-all hover:rotate-90">
+          ×
+        </button>
+        <h3 class="game-title text-3xl font-bold text-gradient mb-6">📊 Training Records</h3>
+        <div id="leaderboard-content" class="space-y-4">
+          <p class="text-slate-400 text-center py-6">No records yet. Complete a simulation to save your score!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification-container" class="fixed top-6 right-6 z-50 space-y-3">
+      <!-- Notifications will appear here -->
+    </div>
+  </div>
+
+  <script>
+    // [Previous JavaScript code remains exactly the same]
+    // ===== CONFIGURATION & STATE =====
+    const defaultConfig = {
+      game_title: 'EOC SIMULATION',
+      lgu_name: 'Municipality of Sample LGU',
+      welcome_message: 'Train your emergency response skills through realistic disaster scenarios.',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_color: '#f59e0b',
+      secondary_color: '#64748b'
+    };
+    
+    let config = { ...defaultConfig };
+    let gameRecords = [];
+    
+    // Game State
+    let gameState = {
+      playerName: '',
+      role: '',
+      scenario: '',
+      score: 0,
+      timeRemaining: 900,
+      timerInterval: null,
+      currentPhase: 0,
+      decisions: [],
+      population: 12450,
+      evacuated: 0,
+      affected: 0,
+      casualties: 0,
+      resources: {
+        rescue_boats: { name: '🚣 Rescue Boats', count: 8, max: 8 },
+        medical_teams: { name: '🏥 Medical Teams', count: 5, max: 5 },
+        evacuation_trucks: { name: '🚛 Evac Trucks', count: 6, max: 6 },
+        relief_packs: { name: '📦 Relief Packs', count: 500, max: 500 },
+        responders: { name: '👷 Responders', count: 50, max: 50 }
+      },
+      mapCells: [],
+      selectedCell: null,
+      eventQueue: [],
+      currentEvent: null,
+      metrics: {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      }
+    };
+    
+    // ===== SCENARIOS DATA =====
+    const scenarios = {
+      typhoon: {
+        name: 'Super Typhoon Maring',
+        icon: '🌀',
+        alertLevel: 'SIGNAL NO. 4',
+        alertColor: 'red',
+        hazardTypes: ['flooding', 'wind_damage', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '🌧️ Heavy Rainfall Warning',
+            description: 'PAGASA reports 150mm rainfall in the last 3 hours. River levels rising rapidly in Barangay San Miguel.',
+            options: [
+              { text: 'Issue immediate evacuation order for riverside areas', effect: { evacuated: 800, score: 100, time: -60, resources: { evacuation_trucks: -2 } }, feedback: 'Quick evacuation saved many lives.' },
+              { text: 'Monitor situation and prepare evacuation centers', effect: { affected: 200, score: 50, time: -30 }, feedback: 'Preparation helped but delayed response increased affected population.' },
+              { text: 'Send warning through barangay officials only', effect: { affected: 400, score: 20, time: -20 }, feedback: 'Limited communication reach resulted in more people getting stranded.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🌊 Flash Flood in Purok 3',
+            description: 'Water levels have risen to 1.5 meters. 200 families trapped in their homes. Some are on rooftops.',
+            options: [
+              { text: 'Deploy all available rescue boats immediately', effect: { evacuated: 600, score: 150, time: -90, resources: { rescue_boats: -6, responders: -20 } }, feedback: 'Aggressive rescue operation was highly effective.' },
+              { text: 'Deploy rescue boats gradually while coordinating with Coast Guard', effect: { evacuated: 400, casualties: 5, score: 80, time: -60, resources: { rescue_boats: -4, responders: -15 } }, feedback: 'Coordinated approach was safer but some casualties occurred due to delay.' },
+              { text: 'Wait for water levels to stabilize before rescue', effect: { casualties: 25, score: -50, time: -30 }, feedback: 'Waiting proved fatal for many stranded residents.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Medical Emergency at Evacuation Center',
+            description: 'Multiple evacuees showing symptoms of hypothermia and respiratory infections. Medical supplies running low.',
+            options: [
+              { text: 'Request emergency medical supplies from provincial office', effect: { score: 80, time: -45, metrics: { communicationScore: 10 } }, feedback: 'Inter-agency coordination secured additional resources.' },
+              { text: 'Redistribute existing supplies and prioritize critical cases', effect: { casualties: 3, score: 60, time: -30, resources: { relief_packs: -100 } }, feedback: 'Efficient triage but limited supplies led to some complications.' },
+              { text: 'Send medical teams to evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -3 } }, feedback: 'Direct medical intervention improved health outcomes.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🛣️ Road Blocked by Landslide',
+            description: 'Main highway to evacuation center blocked. Relief trucks cannot deliver supplies. 2,000 evacuees waiting.',
+            options: [
+              { text: 'Coordinate with DPWH for immediate clearing operations', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'Inter-agency coordination resolved the blockage.' },
+              { text: 'Find alternative routes through barangay roads', effect: { score: 90, time: -60, resources: { evacuation_trucks: -1 } }, feedback: 'Quick thinking found alternative supply routes.' },
+              { text: 'Use boats to transport supplies via river', effect: { score: 100, time: -45, resources: { rescue_boats: -2 } }, feedback: 'Creative solution ensured continuous relief operations.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '📢 Misinformation Spreading',
+            description: 'False reports of dam failure spreading panic on social media. Residents fleeing to higher ground chaotically.',
+            options: [
+              { text: 'Issue official statement through all channels immediately', effect: { score: 100, time: -30, metrics: { communicationScore: 20 } }, feedback: 'Clear communication prevented panic-induced accidents.' },
+              { text: 'Contact dam management for verification first', effect: { affected: 100, score: 60, time: -45, metrics: { communicationScore: -10 } }, feedback: 'Verification caused delay but ensured accurate information.' },
+              { text: 'Deploy responders to manage crowd movement', effect: { affected: 50, score: 70, time: -60, resources: { responders: -15 } }, feedback: 'Ground management helped but didnt address root cause.' }
+            ]
+          }
+        ]
+      },
+      earthquake: {
+        name: 'Magnitude 7.2 Earthquake',
+        icon: '🏚️',
+        alertLevel: 'INTENSITY VII',
+        alertColor: 'orange',
+        hazardTypes: ['collapse', 'fire', 'aftershock'],
+        events: [
+          {
+            phase: 1,
+            title: '🏗️ Building Collapse Reported',
+            description: 'Multiple structures collapsed in commercial district. Estimated 150 people trapped. Aftershocks continuing.',
+            options: [
+              { text: 'Deploy all rescue teams with heavy equipment', effect: { evacuated: 100, score: 120, time: -90, resources: { responders: -30, medical_teams: -3 } }, feedback: 'Immediate deployment saved trapped survivors.' },
+              { text: 'Assess structural safety before deploying teams', effect: { evacuated: 60, casualties: 15, score: 60, time: -60 }, feedback: 'Safety assessment caused delays but protected rescuers.' },
+              { text: 'Coordinate with military for heavy equipment', effect: { evacuated: 80, casualties: 10, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Military assets proved valuable but took time to mobilize.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🔥 Fire Outbreak in Residential Area',
+            description: 'Gas line rupture caused fire in Purok 5. Fire spreading to nearby wooden houses. 50 families at risk.',
+            options: [
+              { text: 'Evacuate affected areas and deploy fire volunteers', effect: { evacuated: 200, score: 100, time: -60, resources: { responders: -15 } }, feedback: 'Quick evacuation prevented casualties from fire.' },
+              { text: 'Request BFP support for fire suppression', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Professional firefighting contained the blaze.' },
+              { text: 'Cut power to prevent electrical fires', effect: { score: 60, time: -30 }, feedback: 'Preventive measure reduced fire spread risk.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏥 Hospital Overwhelmed',
+            description: 'District hospital over capacity. 200+ injured waiting for treatment. Medical supplies critically low.',
+            options: [
+              { text: 'Set up field hospital at evacuation center', effect: { score: 100, time: -60, resources: { medical_teams: -2, relief_packs: -150 } }, feedback: 'Field hospital effectively managed overflow patients.' },
+              { text: 'Coordinate patient transfers to other hospitals', effect: { score: 80, time: -90, resources: { evacuation_trucks: -3 }, metrics: { communicationScore: 10 } }, feedback: 'Patient distribution eased hospital burden.' },
+              { text: 'Request DOH emergency medical supplies', effect: { score: 70, time: -120, metrics: { communicationScore: 15 } }, feedback: 'National support replenished critical supplies.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '⚠️ Strong Aftershock Warning',
+            description: 'PHIVOLCS warns of possible magnitude 6.0 aftershock. Damaged structures at high risk of secondary collapse.',
+            options: [
+              { text: 'Immediately evacuate all damaged building areas', effect: { evacuated: 500, score: 120, time: -45, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Preemptive evacuation saved lives when aftershock struck.' },
+              { text: 'Issue public warning and mark dangerous structures', effect: { affected: 100, score: 80, time: -30, metrics: { communicationScore: 10 } }, feedback: 'Warning helped but some ignored the alerts.' },
+              { text: 'Suspend rescue operations until aftershock passes', effect: { casualties: 20, score: -30, time: -60 }, feedback: 'Suspension led to loss of trapped survivors.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🏠 Mass Displacement',
+            description: '3,000+ residents homeless. Temporary shelters needed urgently. Rain expected tonight.',
+            options: [
+              { text: 'Open all schools and gyms as evacuation centers', effect: { evacuated: 1500, score: 100, time: -60, resources: { relief_packs: -200 } }, feedback: 'Multiple evacuation sites accommodated displaced families.' },
+              { text: 'Request tents from DSWD regional office', effect: { evacuated: 800, score: 80, time: -120, metrics: { communicationScore: 10 } }, feedback: 'Additional shelter materials helped but took time.' },
+              { text: 'Prioritize most vulnerable for indoor shelter', effect: { evacuated: 500, affected: 300, score: 60, time: -45, resources: { relief_packs: -100 } }, feedback: 'Triage approach protected vulnerable but left others exposed.' }
+            ]
+          }
+        ]
+      },
+      flood: {
+        name: 'Flash Flood Emergency',
+        icon: '🌊',
+        alertLevel: 'RED WARNING',
+        alertColor: 'blue',
+        hazardTypes: ['flooding', 'landslide'],
+        events: [
+          {
+            phase: 1,
+            title: '💧 Dam Water Release',
+            description: 'Upstream dam releasing water due to critical levels. Downstream barangays have 2 hours before water arrives.',
+            options: [
+              { text: 'Immediate forced evacuation of flood plains', effect: { evacuated: 1000, score: 150, time: -90, resources: { evacuation_trucks: -4, responders: -25 } }, feedback: 'Early evacuation ensured zero casualties from flooding.' },
+              { text: 'Alert barangay captains to begin voluntary evacuation', effect: { evacuated: 600, affected: 200, score: 80, time: -60 }, feedback: 'Voluntary evacuation was partially effective.' },
+              { text: 'Prepare rescue boats for deployment after flooding', effect: { casualties: 30, affected: 400, score: -20, time: -30, resources: { rescue_boats: -4 } }, feedback: 'Reactive approach resulted in preventable casualties.' }
+            ]
+          },
+          {
+            phase: 2,
+            title: '🚣 Stranded Residents in Sitio Riverside',
+            description: '80 families stranded on rooftops. Water at chest level and rising. Children and elderly among them.',
+            options: [
+              { text: 'Deploy all rescue boats with medical personnel', effect: { evacuated: 300, score: 130, time: -75, resources: { rescue_boats: -6, medical_teams: -2, responders: -15 } }, feedback: 'Comprehensive rescue saved all stranded families.' },
+              { text: 'Deploy rescue boats, request military helicopter support', effect: { evacuated: 280, score: 110, time: -90, resources: { rescue_boats: -4 }, metrics: { communicationScore: 15 } }, feedback: 'Air support accelerated rescue of critical cases.' },
+              { text: 'Prioritize children and elderly for first rescue trips', effect: { evacuated: 150, affected: 50, score: 80, time: -60, resources: { rescue_boats: -3 } }, feedback: 'Prioritization protected vulnerable but delayed others.' }
+            ]
+          },
+          {
+            phase: 3,
+            title: '🏫 Evacuation Center Flooded',
+            description: 'Elementary school evacuation center now flooded. 500 evacuees need to be relocated immediately.',
+            options: [
+              { text: 'Transfer all evacuees to gymnasium on higher ground', effect: { evacuated: 500, score: 100, time: -60, resources: { evacuation_trucks: -3, responders: -10 } }, feedback: 'Swift relocation prevented secondary displacement crisis.' },
+              { text: 'Move evacuees to upper floors of school building', effect: { affected: 100, score: 60, time: -30 }, feedback: 'Temporary measure provided shelter but poor conditions.' },
+              { text: 'Request provincial assistance for additional shelter', effect: { affected: 50, score: 80, time: -90, metrics: { communicationScore: 10 } }, feedback: 'Provincial support expanded shelter capacity.' }
+            ]
+          },
+          {
+            phase: 4,
+            title: '🦠 Waterborne Disease Outbreak Risk',
+            description: 'Health officer warns of potential leptospirosis outbreak. Contaminated flood water widespread.',
+            options: [
+              { text: 'Distribute water purification tablets and boots', effect: { score: 100, time: -45, resources: { relief_packs: -150 } }, feedback: 'Preventive measures significantly reduced disease cases.' },
+              { text: 'Set up medical checkpoints at evacuation centers', effect: { score: 80, time: -60, resources: { medical_teams: -2 } }, feedback: 'Health monitoring enabled early treatment.' },
+              { text: 'Issue public health advisory through loudspeakers', effect: { affected: 50, score: 50, time: -20, metrics: { communicationScore: 5 } }, feedback: 'Information campaign reached limited audience.' }
+            ]
+          },
+          {
+            phase: 5,
+            title: '🌧️ Second Wave Warning',
+            description: 'PAGASA reports another storm cell approaching. Expected to intensify flooding in 4 hours.',
+            options: [
+              { text: 'Expand evacuation to include medium-risk areas', effect: { evacuated: 800, score: 120, time: -90, resources: { evacuation_trucks: -4, responders: -20 } }, feedback: 'Proactive expansion prevented second wave casualties.' },
+              { text: 'Fortify current evacuation centers with supplies', effect: { score: 80, time: -60, resources: { relief_packs: -200 } }, feedback: 'Preparation helped weather the second wave.' },
+              { text: 'Request national government disaster declaration', effect: { score: 70, time: -120, metrics: { communicationScore: 20 } }, feedback: 'National attention brought additional resources.' }
+            ]
+          }
+        ]
+      }
+    };
+    
+    // ===== INITIALIZATION =====
+    async function initializeApp() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...defaultConfig, ...newConfig };
+            updateUIFromConfig();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+              },
+              {
+                get: () => cfg.surface_color || defaultConfig.surface_color,
+                set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+              },
+              {
+                get: () => cfg.primary_color || defaultConfig.primary_color,
+                set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+              },
+              {
+                get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['game_title', cfg.game_title || defaultConfig.game_title],
+            ['lgu_name', cfg.lgu_name || defaultConfig.lgu_name],
+            ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+      }
+      
+      if (window.dataSdk) {
+        const dataHandler = {
+          onDataChanged: (data) => {
+            gameRecords = data || [];
+            updateLeaderboardDisplay();
+          }
+        };
+        
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+      
+      updateUIFromConfig();
+    }
+    
+    function updateUIFromConfig() {
+      const mainTitle = document.getElementById('main-title');
+      const lguDisplay = document.getElementById('lgu-display');
+      const welcomeText = document.getElementById('welcome-text');
+      
+      if (mainTitle) mainTitle.textContent = config.game_title || defaultConfig.game_title;
+      if (lguDisplay) lguDisplay.textContent = config.lgu_name || defaultConfig.lgu_name;
+      if (welcomeText) welcomeText.textContent = config.welcome_message || defaultConfig.welcome_message;
+    }
+    
+    // ===== SCREEN NAVIGATION =====
+    function showScreen(screenId) {
+      const screens = ['title-screen', 'role-screen', 'scenario-screen', 'game-screen', 'results-screen'];
+      screens.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+    
+    function startGame() {
+      const nameInput = document.getElementById('player-name');
+      gameState.playerName = nameInput.value.trim() || 'EOC Trainee';
+      showScreen('role-screen');
+    }
+    
+    function selectRole(role) {
+      gameState.role = role;
+      showScreen('scenario-screen');
+    }
+    
+    function selectScenario(scenario) {
+      gameState.scenario = scenario;
+      initializeGame();
+      showScreen('game-screen');
+    }
+    
+    function goBack(screen) {
+      showScreen(screen + '-screen');
+    }
+    
+    // ===== GAME INITIALIZATION =====
+    function initializeGame() {
+      const scenario = scenarios[gameState.scenario];
+      
+      gameState.score = 0;
+      gameState.timeRemaining = 900;
+      gameState.currentPhase = 0;
+      gameState.decisions = [];
+      gameState.evacuated = 0;
+      gameState.affected = 0;
+      gameState.casualties = 0;
+      gameState.metrics = {
+        responseTime: 0,
+        resourceEfficiency: 100,
+        communicationScore: 100,
+        decisionQuality: 100
+      };
+      
+      Object.keys(gameState.resources).forEach(key => {
+        gameState.resources[key].count = gameState.resources[key].max;
+      });
+      
+      document.getElementById('scenario-icon').textContent = scenario.icon;
+      document.getElementById('scenario-name').textContent = scenario.name.toUpperCase();
+      document.getElementById('alert-level').innerHTML = `<span>⚠️</span><span class="font-bold text-${scenario.alertColor}-300 text-sm">${scenario.alertLevel}</span>`;
+      
+      initializeMap();
+      updateResourcesPanel();
+      startTimer();
+      
+      setTimeout(() => triggerNextEvent(), 2000);
+      
+      addCommLog('📻 EOC activated. All units report to stations.');
+      addCommLog(`🌐 ${scenario.name} monitoring in progress.`);
+    }
+    
+    function initializeMap() {
+      const mapContainer = document.getElementById('game-map');
+      mapContainer.innerHTML = '';
+      
+      const mapLayout = [
+        { name: 'Coastal Area', type: 'water', icon: '🌊' },
+        { name: 'Port', type: 'urban', icon: '⚓' },
+        { name: 'Downtown Center', type: 'urban', icon: '🏢' },
+        { name: 'Market District', type: 'urban', icon: '🏪' },
+        { name: 'Government Center', type: 'urban', icon: '🏛️' },
+        { name: 'Hospital', type: 'urban', icon: '🏥' },
+        { name: 'School District', type: 'urban', icon: '🏫' },
+        { name: 'Resort Area', type: 'land', icon: '🏨' },
+        { name: 'Forest Reserve', type: 'land', icon: '🌲' },
+        { name: 'Mountain', type: 'land', icon: '⛰️' },
+        { name: 'Ridge Area', type: 'land', icon: '🏔️' },
+        { name: 'Cliff Zone', type: 'land', icon: '🪨' },
+        { name: 'Fishing Village', type: 'urban', icon: '🎣' },
+        { name: 'River Bridge', type: 'urban', icon: '🌉' },
+        { name: 'Sports Complex', type: 'urban', icon: '⚽' },
+        { name: 'Commercial Area', type: 'urban', icon: '🏭' },
+        { name: 'Residential Sector', type: 'urban', icon: '🏘️' },
+        { name: 'Park Area', type: 'land', icon: '🌳' },
+        { name: 'Farm Fields', type: 'land', icon: '🌾' },
+        { name: 'Grassland', type: 'land', icon: '🌱' },
+        { name: 'Chapel', type: 'urban', icon: '⛪' },
+        { name: 'Community Center', type: 'urban', icon: '🏟️' },
+        { name: 'Industrial Zone', type: 'urban', icon: '🏗️' },
+        { name: 'Open Water', type: 'water', icon: '💧' },
+        { name: 'Riverside Purok', type: 'urban', icon: '🏠' },
+        { name: 'Main Highway', type: 'urban', icon: '🛣️' },
+        { name: 'Business District', type: 'urban', icon: '💼' },
+        { name: 'Housing Complex', type: 'urban', icon: '🏘️' },
+        { name: 'City Hall', type: 'urban', icon: '🏦' },
+        { name: 'Convention Center', type: 'urban', icon: '🎪' },
+        { name: 'Recreation Area', type: 'land', icon: '⛺' },
+        { name: 'Eco Park', type: 'land', icon: '🦋' },
+        { name: 'Wildlife Preserve', type: 'land', icon: '🦁' },
+        { name: 'Wetlands', type: 'water', icon: '🌿' },
+        { name: 'Canal System', type: 'water', icon: '🚣' },
+        { name: 'Pond', type: 'water', icon: '🐢' },
+        { name: 'Entertainment Zone', type: 'urban', icon: '🎭' },
+        { name: 'Shopping Mall', type: 'urban', icon: '🛍️' },
+        { name: 'Residential Area', type: 'urban', icon: '🏠' },
+        { name: 'Parking Lot', type: 'urban', icon: '🅿️' },
+        { name: 'Office Tower', type: 'urban', icon: '🏢' },
+        { name: 'Banking Sector', type: 'urban', icon: '🏦' },
+        { name: 'Library', type: 'urban', icon: '📚' },
+        { name: 'Mixed Park', type: 'land', icon: '🎡' },
+        { name: 'Garden Area', type: 'land', icon: '🌺' },
+        { name: 'Lake', type: 'water', icon: '🏞️' },
+        { name: 'Dam', type: 'water', icon: '🔧' },
+        { name: 'Reservoir', type: 'water', icon: '💧' }
+      ];
+      
+      gameState.mapCells = [];
+      
+      for (let i = 0; i < mapLayout.length; i++) {
+        const cellData = mapLayout[i];
+        const cellData_complete = {
+          id: i,
+          name: cellData.name,
+          type: cellData.type,
+          icon: cellData.icon,
+          status: 'normal',
+          population: cellData.type === 'urban' ? Math.floor(Math.random() * 500) + 200 : 0,
+          affected: 0,
+          evacuated: 0
+        };
+        
+        gameState.mapCells.push(cellData_complete);
+        
+        const cell = document.createElement('div');
+        cell.className = `cell cell-${cellData.type} group has-tooltip`;
+        cell.id = `cell-${i}`;
+        cell.onclick = () => selectMapCell(i);
+        
+        cell.innerHTML = `
+          <div class="text-3xl">${cellData.icon}</div>
+          <div class="cell-label">${cellData.name.substring(0, 10)}</div>
+          <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-3 group-hover:visible group-hover:opacity-100">
+            <div class="tooltip-content text-center">
+              <div class="font-bold text-sm">${cellData.name}</div>
+              <div class="text-xs mt-1">${cellData.type === 'urban' ? '👥 ' + cellData_complete.population + ' pop' : cellData.type === 'water' ? '💧 Water body' : '🌳 Natural area'}</div>
+            </div>
+          </div>
+        `;
+        
+        mapContainer.appendChild(cell);
+      }
+    }
+    
+    function selectMapCell(cellId) {
+      gameState.selectedCell = cellId;
+      const cell = gameState.mapCells[cellId];
+      const infoPanel = document.getElementById('selected-cell-info');
+      
+      infoPanel.classList.remove('hidden');
+      document.getElementById('cell-name').textContent = cell.name;
+      
+      let statusText = 'Status: ';
+      let statusColor = 'text-green-400';
+      
+      switch(cell.status) {
+        case 'affected':
+          statusText += 'Affected (' + cell.affected + ' people)';
+          statusColor = 'text-red-400';
+          break;
+        case 'flooded':
+          statusText += 'Flooded';
+          statusColor = 'text-violet-400';
+          break;
+        case 'evacuated':
+          statusText += 'Evacuated';
+          statusColor = 'text-amber-400';
+          break;
+        case 'safe':
+          statusText += 'Safe Zone';
+          statusColor = 'text-green-400';
+          break;
+        default:
+          statusText += 'Normal (Pop: ' + cell.population + ')';
+      }
+      
+      document.getElementById('cell-status').innerHTML = `<span class="${statusColor}">${statusText}</span>`;
+      
+      const actionsDiv = document.getElementById('cell-actions');
+      actionsDiv.innerHTML = '';
+      
+      if (cell.status === 'affected' && cell.affected > 0) {
+        actionsDiv.innerHTML = `
+          <button onclick="deployRescue(${cellId})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold transition-all relative group has-tooltip shadow-lg">
+            🚣 Rescue
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content whitespace-nowrap">Deploy rescue team to this area</div>
+            </div>
+          </button>
+        `;
+      } else if (cell.type === 'urban' && cell.status === 'normal') {
+        actionsDiv.innerHTML = `
+          <button onclick="preEvacuate(${cellId})" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm font-bold transition-all relative group has-tooltip shadow-lg">
+            📢 Pre-Evacuate
+            <div class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 group-hover:visible group-hover:opacity-100">
+              <div class="tooltip-content whitespace-
