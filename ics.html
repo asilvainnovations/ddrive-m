@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICS Command Simulator</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Roboto Condensed', sans-serif; }
+    
+    /* Liquid Glass Design System */
+    .glass-panel {
+      background: linear-gradient(135deg, 
+        rgba(30, 58, 138, 0.15) 0%, 
+        rgba(59, 130, 246, 0.08) 50%,
+        rgba(30, 58, 138, 0.12) 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      box-shadow: 
+        0 8px 32px rgba(30, 58, 138, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(30, 58, 138, 0.1);
+    }
+    
+    .glass-card {
+      background: linear-gradient(145deg,
+        rgba(59, 130, 246, 0.12) 0%,
+        rgba(30, 58, 138, 0.08) 100%);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid rgba(147, 197, 253, 0.25);
+      box-shadow: 
+        0 4px 24px rgba(30, 58, 138, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 
+        0 12px 40px rgba(59, 130, 246, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      border-color: rgba(147, 197, 253, 0.5);
+    }
+    
+    .glass-button {
+      background: linear-gradient(135deg,
+        rgba(59, 130, 246, 0.9) 0%,
+        rgba(37, 99, 235, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      box-shadow: 
+        0 4px 20px rgba(59, 130, 246, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 30px rgba(59, 130, 246, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    
+    .glass-button:active {
+      transform: translateY(0);
+    }
+    
+    .glass-input {
+      background: rgba(30, 58, 138, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .glass-input:focus {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+    
+    /* Futuristic Grid Background */
+    .grid-bg {
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    
+    /* Glowing Effects */
+    .glow-text {
+      text-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+    
+    .glow-border {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Progress Ring */
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+    
+    .progress-ring circle {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+    
+    /* Pulse Animation */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Scan Line Effect */
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    
+    .scanline::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.4), transparent);
+      animation: scanline 3s linear infinite;
+    }
+    
+    /* Score Bar Animation */
+    .score-bar {
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Fade In Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    .fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-slate-950 text-white overflow-auto">
+  <div id="app" class="min-h-full w-full grid-bg relative"><!-- Ambient Glow Effects -->
+   <div class="fixed top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+   <div class="fixed bottom-0 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div><!-- Main Container -->
+   <div class="relative z-10 p-4 md:p-8 max-w-7xl mx-auto"><!-- Header -->
+    <header class="glass-panel rounded-2xl p-6 mb-8 relative overflow-hidden scanline">
+     <div class="flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-4">
+       <div class="w-14 h-14 glass-card rounded-xl flex items-center justify-center glow-border">
+        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="app-title" class="text-2xl md:text-3xl font-bold text-blue-100 glow-text tracking-wide">ICS COMMAND SIMULATOR</h1>
+        <p id="welcome-msg" class="text-blue-300/80 text-sm tracking-widest uppercase">Philippine Incident Command System Training</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-3"><button id="leaderboard-btn" class="glass-button px-4 py-2 rounded-lg text-white font-medium flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg> Records </button>
+      </div>
+     </div>
+    </header><!-- Main Content Area -->
+    <main id="main-content"><!-- Welcome Screen -->
+     <div id="welcome-screen" class="space-y-8"><!-- Info Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="glass-card rounded-2xl p-6 fade-in fade-in-delay-1">
+        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+         </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-blue-100 mb-2">Role-Based Training</h3>
+        <p class="text-blue-300/70 text-sm">Master ICS positions: Incident Commander, Operations, Planning, Logistics, and Finance/Admin Chiefs</p>
+       </div>
+       <div class="glass-card rounded-2xl p-6 fade-in fade-in-delay-2">
+        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+         </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-blue-100 mb-2">Real Scenarios</h3>
+        <p class="text-blue-300/70 text-sm">Typhoons, earthquakes, floods, and mass casualty incidents based on Philippine disaster profiles</p>
+       </div>
+       <div class="glass-card rounded-2xl p-6 fade-in fade-in-delay-3">
+        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+         </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-blue-100 mb-2">Scientific Scoring</h3>
+        <p class="text-blue-300/70 text-sm">Multi-dimensional rubric: Decision Quality, Time Management, Coordination, and Communication</p>
+       </div>
+      </div><!-- Player Setup -->
+      <div class="glass-panel rounded-2xl p-8 fade-in fade-in-delay-4">
+       <h2 class="text-xl font-semibold text-blue-100 mb-6 flex items-center gap-3">
+        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg> Operator Registration</h2>
+       <div class="space-y-6">
+        <div><label for="player-name" class="block text-blue-200 text-sm font-medium mb-2">Operator Callsign</label> <input type="text" id="player-name" placeholder="Enter your name" class="glass-input w-full md:w-96 px-4 py-3 rounded-xl text-white placeholder-blue-400/50">
+        </div>
+        <div><label class="block text-blue-200 text-sm font-medium mb-3">Select ICS Role</label>
+         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="role-selection"><button data-role="incident_commander" class="role-btn glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50">
+           <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+           </div><p class="text-white font-medium text-sm">Incident Commander</p><p class="text-blue-400/60 text-xs">Overall Command</p></button> <button data-role="operations_chief" class="role-btn glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50">
+           <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+           </div><p class="text-white font-medium text-sm">Operations Chief</p><p class="text-blue-400/60 text-xs">Tactical Operations</p></button> <button data-role="planning_chief" class="role-btn glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50">
+           <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+           </div><p class="text-white font-medium text-sm">Planning Chief</p><p class="text-blue-400/60 text-xs">Information &amp; Plans</p></button> <button data-role="logistics_chief" class="role-btn glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50">
+           <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+           </div><p class="text-white font-medium text-sm">Logistics Chief</p><p class="text-blue-400/60 text-xs">Resources &amp; Support</p></button> <button data-role="finance_chief" class="role-btn glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50">
+           <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+           </div><p class="text-white font-medium text-sm">Finance/Admin</p><p class="text-blue-400/60 text-xs">Costs &amp; Personnel</p></button>
+         </div>
+        </div>
+        <div><label class="block text-blue-200 text-sm font-medium mb-3">Select Scenario</label>
+         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="scenario-selection"><button data-scenario="typhoon" class="scenario-btn glass-card p-4 rounded-xl text-left flex items-center gap-4 transition-all hover:border-blue-400/50">
+           <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white font-medium">Super Typhoon Response</p>
+            <p class="text-blue-400/60 text-xs">Signal No. 5 • Mass Evacuation • Multi-Agency</p>
+           </div></button> <button data-scenario="earthquake" class="scenario-btn glass-card p-4 rounded-xl text-left flex items-center gap-4 transition-all hover:border-blue-400/50">
+           <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white font-medium">Major Earthquake</p>
+            <p class="text-blue-400/60 text-xs">Magnitude 7.2 • USAR • Building Collapse</p>
+           </div></button> <button data-scenario="flood" class="scenario-btn glass-card p-4 rounded-xl text-left flex items-center gap-4 transition-all hover:border-blue-400/50">
+           <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white font-medium">Flash Flood Emergency</p>
+            <p class="text-blue-400/60 text-xs">Dam Overflow • Water Rescue • Evacuation Centers</p>
+           </div></button> <button data-scenario="mci" class="scenario-btn glass-card p-4 rounded-xl text-left flex items-center gap-4 transition-all hover:border-blue-400/50">
+           <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white font-medium">Mass Casualty Incident</p>
+            <p class="text-blue-400/60 text-xs">Industrial Accident • Triage • Hospital Surge</p>
+           </div></button>
+         </div>
+        </div>
+        <div class="pt-4"><button id="start-btn" class="glass-button px-8 py-4 rounded-xl text-white font-semibold text-lg tracking-wide flex items-center gap-3 pulse-glow">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg><span id="start-btn-text">INITIALIZE SIMULATION</span> </button>
+        </div>
+       </div>
+      </div>
+     </div><!-- Simulation Screen (Hidden by default) -->
+     <div id="simulation-screen" class="hidden space-y-6"><!-- Status Bar -->
+      <div class="glass-panel rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+       <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+         <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div><span class="text-blue-200 text-sm font-medium">ACTIVE</span>
+        </div>
+        <div class="text-blue-300 text-sm"><span class="text-blue-400/70">Role:</span> <span id="sim-role" class="font-medium">-</span>
+        </div>
+        <div class="text-blue-300 text-sm"><span class="text-blue-400/70">Scenario:</span> <span id="sim-scenario" class="font-medium">-</span>
+        </div>
+       </div>
+       <div class="flex items-center gap-4">
+        <div class="text-blue-300 text-sm flex items-center gap-2">
+         <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg><span id="timer" class="font-mono text-lg">05:00</span>
+        </div>
+        <div class="text-blue-300 text-sm">
+         Phase: <span id="phase-num" class="font-bold text-blue-100">1</span>/5
+        </div>
+       </div>
+      </div><!-- Scenario Briefing -->
+      <div id="scenario-briefing" class="glass-panel rounded-2xl p-6">
+       <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
+         <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+         </svg>
+        </div>
+        <div>
+         <h3 class="text-lg font-semibold text-blue-100 mb-2">SITUATION BRIEFING</h3>
+         <p id="briefing-text" class="text-blue-300/80 leading-relaxed">Loading scenario...</p>
+        </div>
+       </div>
+      </div><!-- Decision Panel -->
+      <div class="glass-panel rounded-2xl p-6">
+       <h3 class="text-lg font-semibold text-blue-100 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg> DECISION REQUIRED</h3>
+       <p id="question-text" class="text-blue-200 mb-6">Loading question...</p>
+       <div id="options-container" class="space-y-3"><!-- Options will be dynamically inserted -->
+       </div>
+      </div><!-- Live Scores -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+       <div class="glass-card rounded-xl p-4 text-center">
+        <p class="text-blue-400/70 text-xs uppercase tracking-wider mb-1">Decision</p>
+        <p id="live-decision" class="text-2xl font-bold text-blue-100">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-4 text-center">
+        <p class="text-blue-400/70 text-xs uppercase tracking-wider mb-1">Time</p>
+        <p id="live-time" class="text-2xl font-bold text-blue-100">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-4 text-center">
+        <p class="text-blue-400/70 text-xs uppercase tracking-wider mb-1">Coordination</p>
+        <p id="live-coord" class="text-2xl font-bold text-blue-100">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-4 text-center">
+        <p class="text-blue-400/70 text-xs uppercase tracking-wider mb-1">Communication</p>
+        <p id="live-comm" class="text-2xl font-bold text-blue-100">0</p>
+       </div>
+      </div>
+     </div><!-- Results Screen (Hidden by default) -->
+     <div id="results-screen" class="hidden space-y-8">
+      <div class="glass-panel rounded-2xl p-8 text-center">
+       <div class="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-6 glow-border">
+        <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+       </div>
+       <h2 class="text-3xl font-bold text-blue-100 mb-2 glow-text">SIMULATION COMPLETE</h2>
+       <p id="result-player" class="text-blue-300/80 mb-6">-</p><!-- Total Score Circle -->
+       <div class="relative w-48 h-48 mx-auto mb-8">
+        <svg class="progress-ring w-full h-full" viewbox="0 0 100 100"><circle class="stroke-blue-900/30" cx="50" cy="50" r="45" fill="none" stroke-width="8" /> <circle id="score-ring" class="stroke-blue-400" cx="50" cy="50" r="45" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283" />
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center"><span id="total-score" class="text-5xl font-bold text-blue-100">0</span> <span class="text-blue-400/70 text-sm uppercase tracking-wider">Total Score</span>
+        </div>
+       </div><!-- Score Breakdown -->
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+        <div class="glass-card rounded-xl p-4">
+         <div class="flex justify-between items-center mb-2"><span class="text-blue-300 text-sm">Decision Quality</span> <span id="result-decision" class="text-blue-100 font-bold">0/25</span>
+         </div>
+         <div class="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+          <div id="bar-decision" class="score-bar h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style="width: 0%"></div>
+         </div>
+        </div>
+        <div class="glass-card rounded-xl p-4">
+         <div class="flex justify-between items-center mb-2"><span class="text-blue-300 text-sm">Time Management</span> <span id="result-time" class="text-blue-100 font-bold">0/25</span>
+         </div>
+         <div class="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+          <div id="bar-time" class="score-bar h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full" style="width: 0%"></div>
+         </div>
+        </div>
+        <div class="glass-card rounded-xl p-4">
+         <div class="flex justify-between items-center mb-2"><span class="text-blue-300 text-sm">Coordination</span> <span id="result-coord" class="text-blue-100 font-bold">0/25</span>
+         </div>
+         <div class="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+          <div id="bar-coord" class="score-bar h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full" style="width: 0%"></div>
+         </div>
+        </div>
+        <div class="glass-card rounded-xl p-4">
+         <div class="flex justify-between items-center mb-2"><span class="text-blue-300 text-sm">Communication</span> <span id="result-comm" class="text-blue-100 font-bold">0/25</span>
+         </div>
+         <div class="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+          <div id="bar-comm" class="score-bar h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full" style="width: 0%"></div>
+         </div>
+        </div>
+       </div><!-- Performance Rating -->
+       <div class="glass-card rounded-xl p-6 max-w-md mx-auto mb-6">
+        <p class="text-blue-400/70 text-sm uppercase tracking-wider mb-2">Performance Rating</p>
+        <p id="performance-rating" class="text-2xl font-bold text-blue-100">-</p>
+        <p id="performance-desc" class="text-blue-300/70 text-sm mt-2">-</p>
+       </div>
+       <div class="flex justify-center gap-4"><button id="restart-btn" class="glass-button px-6 py-3 rounded-xl text-white font-medium flex items-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+         </svg> New Simulation </button>
+       </div>
+      </div>
+     </div><!-- Leaderboard Modal -->
+     <div id="leaderboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" id="modal-backdrop"></div>
+      <div class="glass-panel rounded-2xl p-6 w-full max-w-2xl max-h-[80%] overflow-auto relative z-10">
+       <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold text-blue-100 flex items-center gap-2">
+         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+         </svg> Training Records</h2><button id="close-modal" class="w-10 h-10 rounded-lg glass-card flex items-center justify-center hover:bg-blue-500/20 transition-colors">
+         <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+         </svg></button>
+       </div>
+       <div id="leaderboard-content" class="space-y-3">
+        <p class="text-blue-400/70 text-center py-8">No training records yet</p>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+  </div>
+  <script>
+    // ===== CONFIGURATION =====
+    const defaultConfig = {
+      app_title: 'ICS COMMAND SIMULATOR',
+      welcome_message: 'Philippine Incident Command System Training',
+      start_button_text: 'INITIALIZE SIMULATION',
+      background_color: '#020617',
+      surface_color: 'rgba(30, 58, 138, 0.15)',
+      text_color: '#bfdbfe',
+      primary_action_color: '#3b82f6',
+      secondary_action_color: '#1e3a8a',
+      font_family: 'Roboto Condensed',
+      font_size: 16
+    };
+    
+    let config = { ...defaultConfig };
+    let records = [];
+    
+    // ===== GAME STATE =====
+    let gameState = {
+      playerName: '',
+      selectedRole: null,
+      selectedScenario: null,
+      currentPhase: 0,
+      scores: { decision: 0, time: 0, coordination: 0, communication: 0 },
+      timerInterval: null,
+      timeRemaining: 300,
+      phaseStartTime: 0
+    };
+    
+    // ===== SCENARIOS DATA =====
+    const scenarios = {
+      typhoon: {
+        name: 'Super Typhoon Response',
+        briefing: 'A Super Typhoon with Signal No. 5 is making landfall in your area. Wind speeds exceed 220 km/h with storm surge warnings. Over 50,000 residents are in evacuation zones. Multiple barangays report power outages and communication failures. The Provincial DRRMO has activated the EOC and requests immediate ICS implementation.',
+        phases: {
+          incident_commander: [
+            { question: 'Initial reports indicate 12 barangays severely affected. What is your FIRST priority action?', options: [
+              { text: 'Establish Incident Command Post at a safe elevated location', points: { decision: 5, coordination: 4, communication: 3 }, correct: true },
+              { text: 'Immediately deploy all available rescue teams', points: { decision: 2, coordination: 1, communication: 1 } },
+              { text: 'Contact national agencies for additional resources', points: { decision: 3, coordination: 2, communication: 2 } },
+              { text: 'Begin damage assessment of all affected areas', points: { decision: 2, coordination: 2, communication: 1 } }
+            ]},
+            { question: 'The Mayor requests to take command of operations. How do you respond?', options: [
+              { text: 'Brief the Mayor and integrate them into Unified Command', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Transfer full command to the Mayor immediately', points: { decision: 1, coordination: 2, communication: 2 } },
+              { text: 'Politely decline and continue solo command', points: { decision: 2, coordination: 1, communication: 1 } },
+              { text: 'Ask the Mayor to handle media relations only', points: { decision: 3, coordination: 2, communication: 3 } }
+            ]},
+            { question: 'Multiple agencies are arriving. What ICS structure do you establish?', options: [
+              { text: 'Full ICS with all General Staff positions activated', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Operations and Logistics sections only', points: { decision: 3, coordination: 3, communication: 2 } },
+              { text: 'Let each agency operate independently', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Create ad-hoc teams based on availability', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'A rescue team reports finding 200 stranded residents but needs immediate evacuation assets. Your decision?', options: [
+              { text: 'Coordinate with Operations Chief to prioritize and allocate assets based on IAP', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Personally direct helicopter resources to the location', points: { decision: 2, coordination: 1, communication: 2 } },
+              { text: 'Tell them to wait until more resources arrive', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request military assistance directly', points: { decision: 3, coordination: 2, communication: 3 } }
+            ]},
+            { question: 'The incident is expected to last 72+ hours. What operational period structure do you implement?', options: [
+              { text: '12-hour operational periods with shift changes and planning meetings', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continuous 24-hour operations until incident resolved', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: '8-hour shifts like regular work schedule', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Let section chiefs decide their own schedules', points: { decision: 1, coordination: 1, communication: 2 } }
+            ]}
+          ],
+          operations_chief: [
+            { question: 'You receive reports of flooding in 8 barangays simultaneously. How do you organize tactical operations?', options: [
+              { text: 'Establish geographic divisions with Division Supervisors for each cluster', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Send one team to each barangay independently', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus all resources on the most affected area first', points: { decision: 3, coordination: 2, communication: 2 } },
+              { text: 'Wait for more complete damage reports before deploying', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'A rescue boat capsizes with 3 responders in floodwaters. What is your immediate action?', options: [
+              { text: 'Activate RIT (Rapid Intervention Team) protocol and redirect nearest water rescue unit', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Request IC to call for additional external rescue teams', points: { decision: 2, coordination: 3, communication: 3 } },
+              { text: 'Pull back all other operations until responders are safe', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Continue other operations while one team handles the rescue', points: { decision: 3, coordination: 3, communication: 2 } }
+            ]},
+            { question: 'Evacuees at a gymnasium report rising water levels inside. 400 people need immediate relocation. Your tactical decision?', options: [
+              { text: 'Coordinate staged evacuation using multiple transport modes with clear assembly points', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Request all available buses immediately', points: { decision: 3, coordination: 2, communication: 3 } },
+              { text: 'Advise evacuees to move to higher floors', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for water levels to stabilize', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Night operations are beginning. How do you modify tactical deployment?', options: [
+              { text: 'Consolidate teams, establish safety perimeters, deploy lighting equipment', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Continue all operations at the same pace', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Suspend all field operations until dawn', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Reduce team sizes to cover more area', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Two Division Supervisors report conflicting priorities for helicopter support. How do you resolve?', options: [
+              { text: 'Apply triage principles: life safety first, then property, then environment', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let them decide between themselves', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Escalate to IC for final decision', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Alternate helicopter between both divisions equally', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          planning_chief: [
+            { question: 'Multiple agencies have arrived with different mapping systems. How do you establish situational awareness?', options: [
+              { text: 'Establish unified Situation Unit with standardized GIS platform and regular SitReps', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Let each agency maintain their own situation displays', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Use only paper maps to avoid technical issues', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Adopt the most advanced agency\'s system', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'The IC requests an Incident Action Plan for the next operational period. What is your priority?', options: [
+              { text: 'Gather input from all section chiefs and develop objectives aligned with incident priorities', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Copy the previous operational period\'s plan', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Let each section write their own portion independently', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Create a generic all-hazards IAP template', points: { decision: 3, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Resource tracking shows 40% of deployed teams haven\'t checked in for 2 hours. Your action?', options: [
+              { text: 'Coordinate with Operations to verify team status and update resource tracking immediately', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Assume they are busy and continue normal tracking', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Report all missing teams to IC as potential casualties', points: { decision: 2, coordination: 2, communication: 3 } },
+              { text: 'Wait for the next scheduled check-in time', points: { decision: 2, coordination: 1, communication: 2 } }
+            ]},
+            { question: 'Weather forecast indicates a second typhoon approaching in 48 hours. What planning action do you initiate?', options: [
+              { text: 'Begin contingency planning, brief IC on potential scenarios, prepare alternate IAP', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Focus only on current incident, deal with new typhoon when it arrives', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Recommend immediate demobilization before second typhoon', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Inform media about the incoming threat', points: { decision: 2, coordination: 2, communication: 3 } }
+            ]},
+            { question: 'The Planning Meeting is scheduled but key personnel are still in the field. Your recommendation?', options: [
+              { text: 'Conduct virtual briefing with field personnel, document decisions, circulate minutes', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Postpone until all personnel return', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Proceed without field input, they can catch up later', points: { decision: 2, coordination: 1, communication: 2 } },
+              { text: 'Cancel the meeting and issue written instructions', points: { decision: 3, coordination: 2, communication: 3 } }
+            ]}
+          ],
+          logistics_chief: [
+            { question: 'Evacuation centers report shortage of food, water, and medicine for 15,000 evacuees. Priority action?', options: [
+              { text: 'Activate Supply Unit, coordinate with DSWD and partner agencies, establish distribution points', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Purchase supplies from nearest stores immediately', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request national government to send relief goods', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Ask evacuees to share what they have temporarily', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Three rescue vehicles have broken down. Spare parts are available but mechanics are limited. Your decision?', options: [
+              { text: 'Prioritize repairs by operational criticality, request mutual aid for additional mechanics', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Repair vehicles in order they broke down', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request new vehicles from other jurisdictions', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Cannibalize one vehicle to fix the other two', points: { decision: 3, coordination: 3, communication: 2 } }
+            ]},
+            { question: 'Communications are failing in remote barangays. How do you address this?', options: [
+              { text: 'Deploy portable repeaters, establish radio relay points, activate ham radio network', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Send messengers by motorcycle', points: { decision: 3, coordination: 2, communication: 2 } },
+              { text: 'Wait for telecom companies to restore service', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Pull teams out of areas with no communication', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'A staging area is flooded. 50+ responders need relocation and rehabilitation. Your action?', options: [
+              { text: 'Identify alternate staging area, coordinate phased relocation, ensure continuous operations', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Send responders home until flooding subsides', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Have responders work from their vehicles', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request ICP relocation', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Incoming resources from other provinces need reception and integration. How do you prepare?', options: [
+              { text: 'Establish check-in point, brief on local conditions, assign to sections based on capabilities', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Send them directly to where they\'re needed', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Have them wait until current resources are exhausted', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Let Operations Chief handle resource assignment', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          finance_chief: [
+            { question: 'Emergency procurement is needed for rescue equipment worth ₱5 million. What process do you follow?', options: [
+              { text: 'Invoke emergency procurement provisions, document justification, establish audit trail', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Process through normal bidding procedures', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Use personal funds and seek reimbursement later', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request IC to approve without documentation', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Responders have been working 16+ hours. What personnel management action do you recommend?', options: [
+              { text: 'Coordinate with Time Unit to track hours, ensure mandatory rest, arrange relief personnel', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let them continue as long as they\'re willing', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Order all responders to rest immediately', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Provide energy drinks and snacks to keep them going', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'A volunteer group wants to help but lacks insurance coverage. Your recommendation?', options: [
+              { text: 'Coordinate with accredited volunteer organizations, assign low-risk tasks with supervision', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Turn them away for liability reasons', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Accept them without restrictions', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Have them sign liability waivers', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Cost tracking shows expenditures exceeding initial Quick Response Fund allocation. Your action?', options: [
+              { text: 'Document costs accurately, prepare supplemental funding request, brief IC on fiscal status', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Reduce operations to stay within budget', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Continue spending and deal with budget later', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Transfer costs to other agency budgets', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Equipment from mutual aid partners is being used. How do you handle cost-sharing?', options: [
+              { text: 'Establish cost-share agreements, document equipment use, prepare for reimbursement process', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Assume partner agencies will absorb their own costs', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Calculate costs and bill them after the incident', points: { decision: 3, coordination: 2, communication: 3 } },
+              { text: 'Only track costs for local resources', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]}
+          ]
+        }
+      },
+      earthquake: {
+        name: 'Major Earthquake',
+        briefing: 'A magnitude 7.2 earthquake has struck at 2:47 PM. The epicenter is 15 km from the city center. Multiple building collapses reported in the commercial district. Initial reports indicate significant casualties. Aftershocks continue. The Provincial Disaster Risk Reduction Management Council has convened and activated the EOC.',
+        phases: {
+          incident_commander: [
+            { question: 'Multiple collapsed structures with trapped victims. What is your immediate command priority?', options: [
+              { text: 'Establish command, conduct rapid size-up, implement USAR response protocol', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Deploy all rescuers to the largest collapsed building', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for full damage assessment before acting', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request international USAR teams immediately', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Aftershock warning is issued. What command decision do you make?', options: [
+              { text: 'Order temporary evacuation of collapse zones, maintain rescue readiness, reassess after aftershock', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continue all rescue operations without pause', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Suspend all operations until seismic activity stops', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let individual team leaders decide', points: { decision: 2, coordination: 1, communication: 2 } }
+            ]},
+            { question: 'Hospital reports surge of casualties exceeding capacity. Your coordination action?', options: [
+              { text: 'Activate Mass Casualty Incident protocol, coordinate patient distribution across facilities', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Request field hospitals from national government', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Direct all casualties to the nearest hospital', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Set up treatment area at the collapse site', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Gas leaks and fire hazards are reported near rescue operations. Your decision?', options: [
+              { text: 'Establish hot zones, coordinate with utilities for isolation, integrate fire suppression', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Evacuate entire area immediately', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Continue rescue, hazmat teams will handle it', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request utility companies to shut off all services', points: { decision: 3, coordination: 3, communication: 4 } }
+            ]},
+            { question: 'Media is requesting access to collapse sites. How do you manage?', options: [
+              { text: 'Establish Joint Information Center, designate PIO, provide regular briefings', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Allow full media access for transparency', points: { decision: 1, coordination: 1, communication: 2 } },
+              { text: 'Ban all media from the incident area', points: { decision: 2, coordination: 2, communication: 1 } },
+              { text: 'Let individual agencies handle their own media', points: { decision: 2, coordination: 1, communication: 2 } }
+            ]}
+          ],
+          operations_chief: [
+            { question: 'You have 6 USAR teams and 15 reported collapse sites. How do you prioritize?', options: [
+              { text: 'Apply USAR prioritization: void space analysis, last known occupancy, structural stability', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Send one team to each of the largest buildings', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Respond to sites in order reports were received', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let team leaders choose their assignments', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'A rescuer is injured during operations. What is your immediate tactical response?', options: [
+              { text: 'Activate rescue of rescuer protocol, maintain incident within an incident structure', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continue operations while others help the injured', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Pause all operations at that site', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Send the injured to hospital, continue as normal', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Structural engineers report one building at imminent collapse risk with active rescue inside. Your decision?', options: [
+              { text: 'Implement emergency evacuation, establish collapse zone, reassess rescue approach', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Speed up rescue operations before collapse', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Ask rescuers to vote on continuing', points: { decision: 1, coordination: 1, communication: 2 } },
+              { text: 'Request additional shoring equipment', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'K-9 units detect live victims in multiple locations. How do you sequence rescue operations?', options: [
+              { text: 'Apply triage to trapped victims, prioritize by survivability and extraction difficulty', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Rescue closest victims first', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Split teams to work all locations simultaneously', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Focus on locations with most victims', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Operations have continued for 36 hours. Team fatigue is evident. Your tactical decision?', options: [
+              { text: 'Implement mandatory rest rotation, adjust operational tempo, maintain critical capabilities', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Push through - victims are still trapped', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Reduce operations to minimal level', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Let team leaders manage their own fatigue', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]}
+          ],
+          planning_chief: [
+            { question: 'Damage reports are coming from multiple sources with conflicting information. How do you establish common operating picture?', options: [
+              { text: 'Establish Situation Unit with standardized reporting, verify through multiple sources, regular updates', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Accept reports from most credible source only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait until ground teams verify all reports', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Create separate maps for each source', points: { decision: 2, coordination: 1, communication: 2 } }
+            ]},
+            { question: 'Seismologists predict 50% chance of magnitude 6+ aftershock. What planning action do you recommend?', options: [
+              { text: 'Develop contingency plan, brief all sections, identify evacuation triggers and rally points', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continue normal operations unless aftershock occurs', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Recommend suspending operations until risk decreases', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Issue warning but let sections decide response', points: { decision: 3, coordination: 2, communication: 3 } }
+            ]},
+            { question: 'The incident is transitioning from rescue to recovery phase. How do you plan this transition?', options: [
+              { text: 'Coordinate phased transition, adjust objectives, realign resources, document lessons learned', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Announce immediate transition to recovery', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let rescue operations wind down naturally', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Maintain rescue posture indefinitely', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'International USAR teams are en route with different protocols. How do you prepare for integration?', options: [
+              { text: 'Prepare integration briefing, assign liaisons, align to INSARAG coordination protocol', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Let them operate independently in assigned sectors', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Require them to follow only local protocols', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Assign them to support local teams', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Technical specialists identify potential secondary hazards (landslides, building collapses). What planning output do you provide?', options: [
+              { text: 'Develop hazard maps, establish exclusion zones, integrate into IAP, communicate to all sections', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Add hazard information to situation reports', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Let Operations handle tactical adjustments', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for hazards to materialize before planning', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]}
+          ],
+          logistics_chief: [
+            { question: 'Heavy rescue equipment is needed but roads are damaged. How do you solve the logistics challenge?', options: [
+              { text: 'Coordinate multi-modal transport: helicopter, alternate routes, local heavy equipment', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Wait for road repairs before deploying equipment', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request military airlift for all equipment', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Use only locally available equipment', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Base camp facilities are damaged. 200+ responders need food, rest, and decontamination. Your solution?', options: [
+              { text: 'Establish field support base, coordinate with private sector for services, rotate personnel', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let responders find their own arrangements', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Use only undamaged government facilities', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Request Red Cross to set up camp', points: { decision: 3, coordination: 4, communication: 3 } }
+            ]},
+            { question: 'Medical supplies at triage points are running low. Resupply is 6 hours away. What do you do?', options: [
+              { text: 'Coordinate emergency procurement locally, redistribute from other points, prioritize critical items', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Wait for scheduled resupply', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request hospitals to provide supplies', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Reduce medical operations to match supplies', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Communication equipment is failing due to dust and debris. Your maintenance approach?', options: [
+              { text: 'Establish equipment rotation, deploy backup systems, request technical support team', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Clean equipment when time permits', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Switch to cellular communications only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Use runners for critical messages', points: { decision: 3, coordination: 3, communication: 2 } }
+            ]},
+            { question: 'Fuel supplies are limited with no immediate resupply available. How do you manage?', options: [
+              { text: 'Implement fuel rationing, prioritize critical equipment, coordinate bulk procurement', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Continue normal usage until fuel runs out', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Stop all non-rescue vehicle operations', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Request military fuel supplies', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          finance_chief: [
+            { question: 'Emergency purchases exceed delegated authority limits. What financial process do you implement?', options: [
+              { text: 'Document emergency justification, brief IC for approval, maintain complete audit trail', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Stop all purchases until proper approval', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Process purchases and seek ratification later', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Have IC sign blank approval forms', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'International teams require local funding for operations. How do you handle?', options: [
+              { text: 'Establish reimbursement framework, document costs by team, coordinate with international liaison', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Have international teams fund themselves', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Provide cash advances without documentation', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Bill their governments after the incident', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Compensation claims from injured responders are arriving. What is your process?', options: [
+              { text: 'Establish claims unit, document all injuries, coordinate with HR and insurance carriers', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Process claims after incident conclusion', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Direct all claimants to their home agencies', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Approve all claims immediately', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Private contractors are offering services at inflated emergency rates. Your recommendation?', options: [
+              { text: 'Negotiate fair rates, document market conditions, establish cost reasonableness', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Accept any rate - lives are at stake', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Refuse all private contractors', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Report contractors for price gouging', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'End of operational period requires financial status report. What information do you compile?', options: [
+              { text: 'Comprehensive cost analysis: expenditures, commitments, projections, funding status', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Total expenditure amount only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for all receipts before reporting', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Provide verbal estimate to IC', points: { decision: 2, coordination: 2, communication: 3 } }
+            ]}
+          ]
+        }
+      },
+      flood: {
+        name: 'Flash Flood Emergency',
+        briefing: 'Continuous heavy rainfall for 72 hours has caused dam water levels to reach critical capacity. The spillway has been opened, causing downstream flooding. 25 barangays are affected with rising water levels. Multiple families are stranded on rooftops and elevated areas. The Municipal DRRMO has requested provincial assistance.',
+        phases: {
+          incident_commander: [
+            { question: 'Dam operators report controlled release will continue for 12+ hours. What is your initial command decision?', options: [
+              { text: 'Establish downstream incident management, coordinate multi-agency water rescue operations', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Focus on upstream dam monitoring', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for water levels to stabilize', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Begin immediate dam inspection', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Social media shows people refusing to evacuate despite rising waters. Your public safety decision?', options: [
+              { text: 'Coordinate forced evacuation through LGU authority, deploy rescue teams with security escort', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Respect their decision to stay', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Cut off utilities to force evacuation', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Document their refusal for liability purposes', points: { decision: 2, coordination: 2, communication: 3 } }
+            ]},
+            { question: 'Multiple rescue requests exceed current capacity. How do you manage command priorities?', options: [
+              { text: 'Implement triage for rescue requests, prioritize life safety, coordinate with incoming resources', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Respond to all requests equally', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus on areas with most stranded people', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Wait for additional resources', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Evacuation center capacity is exceeded. 3,000 evacuees need placement. Your coordination?', options: [
+              { text: 'Activate alternate facilities, coordinate with private sector, establish satellite evacuation points', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Pack more people into existing centers', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Send evacuees to other municipalities', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Ask evacuees to find their own shelter', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Weather forecast indicates rainfall will intensify tonight. What command preparation do you order?', options: [
+              { text: 'Pre-position resources, implement early warning, prepare for escalated operations', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continue current operational pace', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Reduce operations to conserve resources', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for rainfall to actually intensify', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]}
+          ],
+          operations_chief: [
+            { question: 'You have 8 rescue boats and 50+ stranded locations reported. How do you organize water rescue?', options: [
+              { text: 'Establish divisions by waterway, assign boat teams, implement coordinated sweep pattern', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Send boats to nearest stranded people', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus on areas with most stranded', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Let boat teams choose their areas', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Swift water conditions are dangerous but victims are visible. What rescue approach do you direct?', options: [
+              { text: 'Implement reach-throw-row-go sequence, deploy trained swift water teams only', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Send nearest boat immediately', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for water to recede', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Direct victims to self-rescue', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'A rescue boat engine fails mid-river with 12 rescued civilians. Your immediate tactical response?', options: [
+              { text: 'Deploy backup boat, establish drift monitoring, coordinate shoreline pickup point', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Tell them to paddle to shore', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for boat to drift to calm area', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request helicopter rescue', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Night operations are necessary but visibility is near zero on the water. Your decision?', options: [
+              { text: 'Deploy flood lights, use thermal imaging, limit operations to critical rescues', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Continue normal pace with flashlights', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Suspend all water operations until dawn', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Use only local fishermen who know the area', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Debris is clogging a major drainage channel, worsening flooding. How do you address?', options: [
+              { text: 'Coordinate with Public Works for debris removal, establish safety perimeter, monitor water levels', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Focus only on rescue, ignore debris', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Send rescue teams to clear debris', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for water to naturally clear debris', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]}
+          ],
+          planning_chief: [
+            { question: 'Flood prediction models show conflicting data. How do you establish planning assumptions?', options: [
+              { text: 'Consult with PAGASA, use conservative estimates, plan for worst-case scenario', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Use the most optimistic prediction', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Average all predictions', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Ignore predictions, respond to current conditions', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Water is receding in some areas but forecast shows more rain. What do you recommend to IC?', options: [
+              { text: 'Maintain operations, prepare for second wave, position resources for rapid escalation', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Begin demobilization of current forces', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Wait and see approach', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Scale down to minimum operations', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Resource tracking shows boats from multiple agencies without unified tracking. Your solution?', options: [
+              { text: 'Establish central resource tracking, assign unique identifiers, implement check-in/out system', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let each agency track their own resources', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Count resources once daily', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Track only government-owned resources', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Mapping shows some areas will remain flooded for days. What planning output do you develop?', options: [
+              { text: 'Long-term flood impact assessment, sustained operations plan, resource rotation schedule', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Update situation maps only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for conditions to change', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Focus only on immediate rescue needs', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Community leaders report missing persons but no formal tracking system exists. How do you address?', options: [
+              { text: 'Establish missing persons coordination center, standardize reporting, coordinate with rescue operations', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Let barangays track their own residents', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus on rescue, tracking can come later', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Refer all inquiries to police', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          logistics_chief: [
+            { question: 'Rescue boats are running low on fuel with resupply routes flooded. Your solution?', options: [
+              { text: 'Establish waterborne fuel resupply, coordinate with petroleum companies, pre-position fuel caches', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Reduce boat operations to conserve fuel', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for roads to clear', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request helicopter fuel delivery', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Evacuation centers need potable water - municipal supply is contaminated. How do you provide?', options: [
+              { text: 'Deploy water trucks, coordinate with bottled water suppliers, establish purification points', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Advise evacuees to boil tap water', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for water utility to restore service', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Request national assistance only', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Communications are failing due to damaged cell towers. Coordination is suffering. Your action?', options: [
+              { text: 'Deploy portable repeaters, activate emergency frequency network, establish communication schedule', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Use messengers by boat', points: { decision: 3, coordination: 2, communication: 2 } },
+              { text: 'Wait for telecom repairs', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Rely on satellite phones only', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Responders are working in contaminated floodwater. PPE supplies are limited. Your priority?', options: [
+              { text: 'Emergency PPE procurement, decontamination stations, health monitoring protocols', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Share available PPE among teams', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Continue operations without PPE', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Reduce operations requiring PPE', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Additional boats are arriving from other provinces. How do you prepare for reception?', options: [
+              { text: 'Establish staging area, brief on local hazards, integrate into resource tracking system', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Send them directly to Operations', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let them find their own launch points', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Hold them in reserve', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          finance_chief: [
+            { question: 'Boat rentals from private owners need immediate payment. How do you handle?', options: [
+              { text: 'Establish rental agreements, document usage, implement petty cash for urgent payments', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Promise payment after operations', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Use only government boats', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Pay whatever owners demand', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Evacuees are requesting cash assistance for basic needs. What system do you recommend?', options: [
+              { text: 'Coordinate with DSWD for emergency cash transfer, establish distribution system', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Distribute cash without documentation', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Provide in-kind assistance only', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Delay assistance until proper system established', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Vendor claims for emergency food supplies show inconsistent pricing. Your action?', options: [
+              { text: 'Establish price monitoring, negotiate fair rates, document market conditions', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Pay all claims as submitted', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Reject all overpriced claims', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Use government suppliers only', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Damage to government property (vehicles, equipment) is accumulating. What documentation do you initiate?', options: [
+              { text: 'Establish property damage tracking, document conditions, coordinate with COA for write-offs', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Document damage after operations conclude', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let operating agencies handle their own property', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus on operations, worry about property later', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Multiple agencies are incurring costs for shared operations. How do you handle cost allocation?', options: [
+              { text: 'Establish cost-sharing framework, track agency expenditures, prepare for reimbursement claims', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let each agency absorb own costs', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Bill all costs to lead agency', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Divide costs equally among agencies', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ]
+        }
+      },
+      mci: {
+        name: 'Mass Casualty Incident',
+        briefing: 'An explosion has occurred at an industrial facility during peak working hours. Initial reports indicate 200+ workers were in the affected area. Fire and structural damage are present. Multiple casualties with various injury severities. Hospital emergency departments are being overwhelmed with incoming patients.',
+        phases: {
+          incident_commander: [
+            { question: 'First units arrive at chaotic scene with walking wounded fleeing. Your initial command action?', options: [
+              { text: 'Establish command, initiate START triage, organize treatment and transport areas', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Begin treating most severely injured immediately', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for more resources before organizing', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Focus on fire suppression first', points: { decision: 2, coordination: 3, communication: 2 } }
+            ]},
+            { question: 'Scene has active fire, secondary explosion risk, and 50+ casualties visible. Priority decision?', options: [
+              { text: 'Establish unified command with fire, implement hot/warm/cold zones, prioritize life safety', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Evacuate all casualties before addressing fire', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Suppress fire completely before treating casualties', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Split resources equally between fire and medical', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Family members are arriving, demanding information and access. Your management approach?', options: [
+              { text: 'Establish family assistance center, deploy PIO, coordinate with social services', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Block all family members from the scene', points: { decision: 2, coordination: 2, communication: 1 } },
+              { text: 'Allow family members to search for relatives', points: { decision: 1, coordination: 1, communication: 2 } },
+              { text: 'Tell families to go to hospitals', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Hospitals report capacity issues - nearest trauma center is full. Distribution decision?', options: [
+              { text: 'Implement hospital distribution plan, activate mutual aid, consider field treatment expansion', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Continue sending to nearest hospital', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Hold patients at scene until hospitals clear', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Transport to hospitals outside the region', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Investigation team requests access to the scene while operations continue. Your decision?', options: [
+              { text: 'Coordinate phased access, protect evidence where safe, integrate investigators into ICS', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Deny all access until operations complete', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Give investigators full access', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let Operations Chief decide on access', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          operations_chief: [
+            { question: 'You need to triage 150+ casualties with limited initial resources. What system do you implement?', options: [
+              { text: 'START triage with color-coded tagging, establish treatment areas by priority', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Treat casualties in order found', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus on those most likely to survive', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Let individual medics triage their areas', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Triage identifies 30 RED (immediate), 45 YELLOW (delayed), 60 GREEN (minor), 15 BLACK (deceased). Treatment area organization?', options: [
+              { text: 'Separate treatment areas by category, staff proportional to severity, establish patient tracking', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'One treatment area for all categories', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Focus only on RED patients', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Send all patients directly to hospitals', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Secondary explosion risk is identified near treatment area. Immediate action?', options: [
+              { text: 'Relocate treatment area, maintain patient care continuity, coordinate with fire for hazard mitigation', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Evacuate all patients immediately without organization', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Continue treatment, fire will handle hazards', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Split patients between two locations', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Ambulance staging area is becoming congested with 20+ units. Your traffic management?', options: [
+              { text: 'Establish ambulance coordinator, implement one-way flow, staged loading', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let drivers manage themselves', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Move staging area further from scene', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Load all ambulances at once', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Walking wounded are self-transporting to hospitals, bypassing triage. How do you manage?', options: [
+              { text: 'Establish perimeter, direct walking wounded to minor treatment area, coordinate hospital notification', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Focus on serious casualties, ignore walking wounded', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Send responders to hospitals to help', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Announce on PA to return for proper treatment', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          planning_chief: [
+            { question: 'Multiple information sources provide conflicting casualty counts. How do you establish accurate situation?', options: [
+              { text: 'Establish situation unit with standardized counting, reconcile with hospital data, regular updates', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Use highest casualty estimate', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Wait for final count after operations', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Use only triage supervisor numbers', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Technical experts identify potential contamination (chemical, biological) from facility materials. Planning response?', options: [
+              { text: 'Brief IC immediately, recommend decontamination protocol, notify hospitals of potential exposure', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Wait for lab results before acting', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Add information to situation report', points: { decision: 2, coordination: 3, communication: 3 } },
+              { text: 'Let medical personnel assess need', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Incident will transition to investigation and recovery phases. What planning documentation do you prepare?', options: [
+              { text: 'Comprehensive incident documentation, demobilization plan, after-action review schedule', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Final situation report only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let investigators handle documentation', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Document only ICS operations', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Media is requesting casualty numbers and victim identities. Your information coordination?', options: [
+              { text: 'Coordinate with PIO, verify information before release, protect victim privacy, regular updates', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Release all information for transparency', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'No information until investigation complete', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let individual agencies brief media', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Resource demobilization is needed but operations continue. How do you plan phased release?', options: [
+              { text: 'Assess ongoing needs, prioritize release of specialized units, maintain core capability', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Release all resources when IC announces', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Keep all resources until completely finished', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let units self-demobilize when done', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]}
+          ],
+          logistics_chief: [
+            { question: 'Medical supplies are being consumed faster than anticipated. Resupply strategy?', options: [
+              { text: 'Emergency procurement from multiple suppliers, coordinate with hospitals for surge supplies', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Wait for normal supply chain', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Ration existing supplies', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request national stockpile only', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Ambulances from multiple agencies need fuel, crews need food. How do you organize support?', options: [
+              { text: 'Establish rehabilitation area, coordinate fuel delivery to staging, partner with food vendors', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Let crews handle their own needs', points: { decision: 1, coordination: 1, communication: 1 } },
+              { text: 'Release crews for meal breaks', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Set up one central location for all', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Specialized equipment (cutting tools, hydraulic lifters) is needed for patient extrication. Your action?', options: [
+              { text: 'Coordinate with fire rescue for equipment, request mutual aid for specialized tools', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Purchase equipment immediately', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Work with available tools only', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request military engineering support', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Communication system is overloaded with radio traffic. Your solution?', options: [
+              { text: 'Implement talk groups by function, establish communication plan, deploy additional channels', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Request radio silence except emergencies', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Switch to cell phones', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let units sort out communication issues', points: { decision: 1, coordination: 1, communication: 1 } }
+            ]},
+            { question: 'Night operations will require lighting, power, and shelter. How do you prepare?', options: [
+              { text: 'Deploy generators, light towers, tents, coordinate with utilities for power restoration', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Use vehicle headlights', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Reduce operations at night', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Request industrial facility to provide', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ],
+          finance_chief: [
+            { question: 'Mass casualty incident costs are mounting rapidly. What tracking system do you establish?', options: [
+              { text: 'Real-time cost tracking, categorize by type, document for potential reimbursement claims', points: { decision: 5, coordination: 4, communication: 4 }, correct: true },
+              { text: 'Track costs after incident concludes', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let each agency track own costs', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Estimate costs based on similar incidents', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Facility owner offers to pay all response costs. How do you document?', options: [
+              { text: 'Establish formal agreement, maintain detailed records, coordinate with legal counsel', points: { decision: 5, coordination: 5, communication: 5 }, correct: true },
+              { text: 'Accept offer verbally, document later', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Decline offer, use government funds', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let legal department handle after incident', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Multiple responders are injured during operations. Workers compensation documentation?', options: [
+              { text: 'Immediate injury documentation, coordinate with HR, track treatment costs by agency', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Document after responders recover', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let agencies handle their own claims', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Include in overall incident costs', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]},
+            { question: 'Overtime costs for prolonged operations need authorization. Your recommendation?', options: [
+              { text: 'Document operational necessity, seek emergency authorization, project total overtime liability', points: { decision: 5, coordination: 4, communication: 5 }, correct: true },
+              { text: 'Authorize all overtime automatically', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Limit overtime to reduce costs', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Let supervisors approve own overtime', points: { decision: 2, coordination: 2, communication: 2 } }
+            ]},
+            { question: 'Post-incident claims from vendors, contractors, and mutual aid partners are expected. What system do you prepare?', options: [
+              { text: 'Establish claims processing unit, document all agreements, prepare for audit compliance', points: { decision: 5, coordination: 5, communication: 4 }, correct: true },
+              { text: 'Process claims as they arrive', points: { decision: 2, coordination: 2, communication: 2 } },
+              { text: 'Defer all claims to legal department', points: { decision: 3, coordination: 3, communication: 3 } },
+              { text: 'Set deadline for claim submission', points: { decision: 3, coordination: 3, communication: 3 } }
+            ]}
+          ]
+        }
+      }
+    };
+    
+    // ===== ROLE NAMES =====
+    const roleNames = {
+      incident_commander: 'Incident Commander',
+      operations_chief: 'Operations Chief',
+      planning_chief: 'Planning Chief',
+      logistics_chief: 'Logistics Chief',
+      finance_chief: 'Finance/Admin Chief'
+    };
+    
+    // ===== PERFORMANCE RATINGS =====
+    function getPerformanceRating(score) {
+      if (score >= 90) return { rating: 'EXEMPLARY', desc: 'Outstanding ICS competency. Ready for complex, multi-agency incidents.' };
+      if (score >= 80) return { rating: 'PROFICIENT', desc: 'Strong command of ICS principles. Effective incident management.' };
+      if (score >= 70) return { rating: 'COMPETENT', desc: 'Adequate ICS application. Room for improvement in coordination.' };
+      if (score >= 60) return { rating: 'DEVELOPING', desc: 'Basic ICS understanding. Additional training recommended.' };
+      return { rating: 'NEEDS IMPROVEMENT', desc: 'Fundamental ICS concepts require reinforcement.' };
+    }
+    
+    // ===== ELEMENT SDK INITIALIZATION =====
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (cfg) => {
+          config = { ...defaultConfig, ...cfg };
+          applyConfig();
+        },
+        mapToCapabilities: (cfg) => ({
+          recolorables: [
+            {
+              get: () => cfg.background_color || defaultConfig.background_color,
+              set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+            },
+            {
+              get: () => cfg.surface_color || defaultConfig.surface_color,
+              set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+            },
+            {
+              get: () => cfg.text_color || defaultConfig.text_color,
+              set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+            },
+            {
+              get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+              set: (v) => { cfg.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+            },
+            {
+              get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (v) => { cfg.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => cfg.font_family || defaultConfig.font_family,
+            set: (v) => { cfg.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => cfg.font_size || defaultConfig.font_size,
+            set: (v) => { cfg.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ['app_title', cfg.app_title || defaultConfig.app_title],
+          ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message],
+          ['start_button_text', cfg.start_button_text || defaultConfig.start_button_text]
+        ])
+      });
+    }
+    
+    function applyConfig() {
+      const appTitle = document.getElementById('app-title');
+      const welcomeMsg = document.getElementById('welcome-msg');
+      const startBtnText = document.getElementById('start-btn-text');
+      
+      if (appTitle) appTitle.textContent = config.app_title || defaultConfig.app_title;
+      if (welcomeMsg) welcomeMsg.textContent = config.welcome_message || defaultConfig.welcome_message;
+      if (startBtnText) startBtnText.textContent = config.start_button_text || defaultConfig.start_button_text;
+      
+      // Apply font
+      const font = config.font_family || defaultConfig.font_family;
+      document.body.style.fontFamily = `${font}, sans-serif`;
+      
+      // Apply font size scaling
+      const baseSize = config.font_size || defaultConfig.font_size;
+      document.documentElement.style.fontSize = `${baseSize}px`;
+    }
+    
+    // ===== DATA SDK INITIALIZATION =====
+    const dataHandler = {
+      onDataChanged(data) {
+        records = data;
+        renderLeaderboard();
+      }
+    };
+    
+    if (window.dataSdk) {
+      window.dataSdk.init(dataHandler);
+    }
+    
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboard-content');
+      if (!container) return;
+      
+      if (records.length === 0) {
+        container.innerHTML = '<p class="text-blue-400/70 text-center py-8">No training records yet. Complete a simulation to see your results here.</p>';
+        return;
+      }
+      
+      const sorted = [...records].sort((a, b) => b.total_score - a.total_score);
+      
+      container.innerHTML = sorted.slice(0, 20).map((record, idx) => `
+        <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg ${idx < 3 ? 'bg-yellow-500/20' : 'bg-blue-500/20'} flex items-center justify-center flex-shrink-0">
+            <span class="${idx < 3 ? 'text-yellow-400' : 'text-blue-400'} font-bold">${idx + 1}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white font-medium truncate">${escapeHtml(record.player_name)}</p>
+            <p class="text-blue-400/60 text-xs">${roleNames[record.role]} • ${scenarios[record.scenario]?.name || record.scenario}</p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <p class="text-xl font-bold text-blue-100">${record.total_score}</p>
+            <p class="text-blue-400/60 text-xs">${new Date(record.completed_at).toLocaleDateString()}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // ===== UI EVENT HANDLERS =====
+    document.addEventListener('DOMContentLoaded', () => {
+      applyConfig();
+      
+      // Role selection
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('border-blue-400', 'bg-blue-500/20'));
+          btn.classList.add('border-blue-400', 'bg-blue-500/20');
+          gameState.selectedRole = btn.dataset.role;
+        });
+      });
+      
+      // Scenario selection
+      document.querySelectorAll('.scenario-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('border-blue-400', 'bg-blue-500/20'));
+          btn.classList.add('border-blue-400', 'bg-blue-500/20');
+          gameState.selectedScenario = btn.dataset.scenario;
+        });
+      });
+      
+      // Start button
+      document.getElementById('start-btn').addEventListener('click', startSimulation);
+      
+      // Restart button
+      document.getElementById('restart-btn').addEventListener('click', resetToWelcome);
+      
+      // Leaderboard modal
+      document.getElementById('leaderboard-btn').addEventListener('click', () => {
+        document.getElementById('leaderboard-modal').classList.remove('hidden');
+      });
+      
+      document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('leaderboard-modal').classList.add('hidden');
+      });
+      
+      document.getElementById('modal-backdrop').addEventListener('click', () => {
+        document.getElementById('leaderboard-modal').classList.add('hidden');
+      });
+    });
+    
+    function startSimulation() {
+      const playerName = document.getElementById('player-name').value.trim();
+      
+      if (!playerName) {
+        showToast('Please enter your name', 'error');
+        return;
+      }
+      
+      if (!gameState.selectedRole) {
+        showToast('Please select an ICS role', 'error');
+        return;
+      }
+      
+      if (!gameState.selectedScenario) {
+        showToast('Please select a scenario', 'error');
+        return;
+      }
+      
+      gameState.playerName = playerName;
+      gameState.currentPhase = 0;
+      gameState.scores = { decision: 0, time: 0, coordination: 0, communication: 0 };
+      gameState.timeRemaining = 300;
+      
+      // Switch screens
+      document.getElementById('welcome-screen').classList.add('hidden');
+      document.getElementById('simulation-screen').classList.remove('hidden');
+      document.getElementById('results-screen').classList.add('hidden');
+      
+      // Update status bar
+      document.getElementById('sim-role').textContent = roleNames[gameState.selectedRole];
+      document.getElementById('sim-scenario').textContent = scenarios[gameState.selectedScenario].name;
+      
+      // Show briefing
+      document.getElementById('briefing-text').textContent = scenarios[gameState.selectedScenario].briefing;
+      
+      // Start timer
+      startTimer();
+      
+      // Load first question
+      loadPhase();
+    }
+    
+    function startTimer() {
+      gameState.phaseStartTime = Date.now();
+      gameState.timerInterval = setInterval(() => {
+        gameState.timeRemaining--;
+        updateTimerDisplay();
+        
+        if (gameState.timeRemaining <= 0) {
+          // Auto-select worst option if time runs out
+          handleTimeout();
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+      const minutes = Math.floor(gameState.timeRemaining / 60);
+      const seconds = gameState.timeRemaining % 60;
+      document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      // Warning colors
+      const timerEl = document.getElementById('timer');
+      if (gameState.timeRemaining <= 30) {
+        timerEl.classList.add('text-red-400');
+      } else if (gameState.timeRemaining <= 60) {
+        timerEl.classList.add('text-amber-400');
+        timerEl.classList.remove('text-red-400');
+      } else {
+        timerEl.classList.remove('text-amber-400', 'text-red-400');
+      }
+    }
+    
+    function handleTimeout() {
+      // Give minimal points for timeout
+      gameState.scores.time += 0;
+      nextPhase();
+    }
+    
+    function loadPhase() {
+      const scenario = scenarios[gameState.selectedScenario];
+      const phases = scenario.phases[gameState.selectedRole];
+      
+      if (gameState.currentPhase >= phases.length) {
+        endSimulation();
+        return;
+      }
+      
+      const phase = phases[gameState.currentPhase];
+      
+      document.getElementById('phase-num').textContent = gameState.currentPhase + 1;
+      document.getElementById('question-text').textContent = phase.question;
+      
+      // Reset timer for phase
+      gameState.phaseStartTime = Date.now();
+      
+      // Render options
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = phase.options.map((opt, idx) => `
+        <button class="option-btn w-full glass-card p-4 rounded-xl text-left transition-all hover:border-blue-400/50 group" data-idx="${idx}">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/30 transition-colors">
+              <span class="text-blue-300 font-medium">${String.fromCharCode(65 + idx)}</span>
+            </div>
+            <p class="text-blue-100 leading-relaxed">${opt.text}</p>
+          </div>
+        </button>
+      `).join('');
+      
+      // Add click handlers
+      optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectOption(parseInt(btn.dataset.idx)));
+      });
+      
+      // Update live scores display
+      updateLiveScores();
+    }
+    
+    function selectOption(idx) {
+      const scenario = scenarios[gameState.selectedScenario];
+      const phase = scenario.phases[gameState.selectedRole][gameState.currentPhase];
+      const selected = phase.options[idx];
+      
+      // Calculate time bonus (faster = more points, max 5 points per phase)
+      const responseTime = (Date.now() - gameState.phaseStartTime) / 1000;
+      const timeBonus = Math.max(0, Math.round(5 - (responseTime / 12))); // 60 seconds for full points
+      
+      // Add points
+      gameState.scores.decision += selected.points.decision;
+      gameState.scores.time += timeBonus;
+      gameState.scores.coordination += selected.points.coordination;
+      gameState.scores.communication += selected.points.communication;
+      
+      // Visual feedback
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === idx) {
+          btn.classList.add(selected.correct ? 'border-green-400' : 'border-amber-400', 'bg-blue-500/20');
+        }
+        if (phase.options[i].correct && i !== idx) {
+          btn.classList.add('border-green-400/50');
+        }
+      });
+      
+      updateLiveScores();
+      
+      // Proceed to next phase after delay
+      setTimeout(nextPhase, 1500);
+    }
+    
+    function updateLiveScores() {
+      document.getElementById('live-decision').textContent = gameState.scores.decision;
+      document.getElementById('live-time').textContent = gameState.scores.time;
+      document.getElementById('live-coord').textContent = gameState.scores.coordination;
+      document.getElementById('live-comm').textContent = gameState.scores.communication;
+    }
+    
+    function nextPhase() {
+      gameState.currentPhase++;
+      loadPhase();
+    }
+    
+    async function endSimulation() {
+      clearInterval(gameState.timerInterval);
+      
+      const totalScore = gameState.scores.decision + gameState.scores.time + gameState.scores.coordination + gameState.scores.communication;
+      const performance = getPerformanceRating(totalScore);
+      
+      // Switch to results screen
+      document.getElementById('simulation-screen').classList.add('hidden');
+      document.getElementById('results-screen').classList.remove('hidden');
+      
+      // Update results
+      document.getElementById('result-player').textContent = `${gameState.playerName} • ${roleNames[gameState.selectedRole]} • ${scenarios[gameState.selectedScenario].name}`;
+      document.getElementById('total-score').textContent = totalScore;
+      
+      // Animate score ring
+      const ring = document.getElementById('score-ring');
+      const circumference = 283;
+      const offset = circumference - (totalScore / 100) * circumference;
+      setTimeout(() => {
+        ring.style.strokeDashoffset = offset;
+      }, 100);
+      
+      // Update breakdowns
+      document.getElementById('result-decision').textContent = `${gameState.scores.decision}/25`;
+      document.getElementById('result-time').textContent = `${gameState.scores.time}/25`;
+      document.getElementById('result-coord').textContent = `${gameState.scores.coordination}/25`;
+      document.getElementById('result-comm').textContent = `${gameState.scores.communication}/25`;
+      
+      // Animate bars
+      setTimeout(() => {
+        document.getElementById('bar-decision').style.width = `${(gameState.scores.decision / 25) * 100}%`;
+        document.getElementById('bar-time').style.width = `${(gameState.scores.time / 25) * 100}%`;
+        document.getElementById('bar-coord').style.width = `${(gameState.scores.coordination / 25) * 100}%`;
+        document.getElementById('bar-comm').style.width = `${(gameState.scores.communication / 25) * 100}%`;
+      }, 200);
+      
+      // Performance rating
+      document.getElementById('performance-rating').textContent = performance.rating;
+      document.getElementById('performance-desc').textContent = performance.desc;
+      
+      // Save to Data SDK
+      if (window.dataSdk && records.length < 999) {
+        const result = await window.dataSdk.create({
+          id: Date.now().toString(),
+          player_name: gameState.playerName,
+          role: gameState.selectedRole,
+          scenario: gameState.selectedScenario,
+          total_score: totalScore,
+          decision_score: gameState.scores.decision,
+          time_score: gameState.scores.time,
+          coordination_score: gameState.scores.coordination,
+          communication_score: gameState.scores.communication,
+          completed_at: new Date().toISOString()
+        });
+        
+        if (!result.isOk) {
+          console.error('Failed to save record:', result.error);
+        }
+      } else if (records.length >= 999) {
+        showToast('Maximum records reached', 'warning');
+      }
+    }
+    
+    function resetToWelcome() {
+      document.getElementById('results-screen').classList.add('hidden');
+      document.getElementById('simulation-screen').classList.add('hidden');
+      document.getElementById('welcome-screen').classList.remove('hidden');
+      
+      // Reset state
+      gameState.selectedRole = null;
+      gameState.selectedScenario = null;
+      
+      // Reset UI selections
+      document.querySelectorAll('.role-btn, .scenario-btn').forEach(btn => {
+        btn.classList.remove('border-blue-400', 'bg-blue-500/20');
+      });
+      
+      // Reset score ring
+      document.getElementById('score-ring').style.strokeDashoffset = 283;
+      document.getElementById('bar-decision').style.width = '0%';
+      document.getElementById('bar-time').style.width = '0%';
+      document.getElementById('bar-coord').style.width = '0%';
+      document.getElementById('bar-comm').style.width = '0%';
+    }
+    
+    // Toast notification system
+    function showToast(message, type = 'info') {
+      const existing = document.querySelector('.toast-message');
+      if (existing) existing.remove();
+      
+      const colors = {
+        info: 'bg-blue-500/90',
+        error: 'bg-red-500/90',
+        warning: 'bg-amber-500/90',
+        success: 'bg-green-500/90'
+      };
+      
+      const toast = document.createElement('div');
+      toast.className = `toast-message fixed bottom-8 left-1/2 -translate-x-1/2 ${colors[type]} backdrop-blur-lg text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d27458446df03b3',t:'MTc3MTg1NTQ1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
