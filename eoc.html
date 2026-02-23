@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOC STRAT-COM | Philippine ICS Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --deep-navy: #020b18;
+            --panel-bg: rgba(10, 25, 47, 0.85);
+            --border-glow: 0 0 10px rgba(0, 212, 255, 0.5);
+            --accent-cyan: #00f2ff;
+            --danger-red: #ff4d4d;
+            --success-green: #00ff88;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background-color: var(--deep-navy);
+            background-image: radial-gradient(circle at center, #0a192f 0%, #020b18 100%);
+            color: #e0f2f1;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Futuristic Grid Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #app-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 300px;
+            grid-template-rows: 80px 1fr 100px;
+            height: 100vh;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        /* Header / HUD */
+        header {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
+        }
+
+        .status-badge {
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+        }
+
+        /* Sidebar - Role Info & Metrics */
+        aside.left-panel {
+            grid-row: 2;
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-left: 4px solid var(--neon-blue);
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        /* Main Simulation Viewport */
+        main {
+            grid-row: 2;
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid var(--neon-blue);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 40px;
+            scrollbar-width: thin;
+        }
+
+        .scenario-box {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h2 { text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; color: var(--neon-blue); }
+
+        .decision-node {
+            background: rgba(0, 40, 80, 0.6);
+            border: 1px solid var(--accent-cyan);
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 4px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+            font-family: 'Roboto Condensed', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: inset 0 0 15px var(--neon-blue);
+        }
+
+        .role-tag {
+            font-size: 10px;
+            background: var(--neon-blue);
+            color: black;
+            padding: 2px 6px;
+            float: right;
+            border-radius: 2px;
+        }
+
+        /* Right Panel - Comms Log */
+        aside.right-panel {
+            grid-row: 2;
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            font-size: 13px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            padding-bottom: 5px;
+        }
+
+        .log-time { color: var(--neon-blue); margin-right: 5px; }
+
+        /* Footer - Progress */
+        footer {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            border-top: 1px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #111;
+            border: 1px solid var(--neon-blue);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-blue);
+            width: 0%;
+            box-shadow: 0 0 15px var(--neon-blue);
+            transition: 1s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Scoring Modal */
+        #results-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 11, 24, 0.95);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+        }
+
+        .results-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-blue);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .rubric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .rubric-item {
+            padding: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div id="results-overlay">
+    <div class="results-card">
+        <h1>SIMULATION COMPLETE</h1>
+        <p>After Action Report (AAR) - EOC Performance Summary</p>
+        
+        <div class="rubric-grid" id="final-rubric">
+            </div>
+
+        <button class="option-btn" style="text-align:center" onclick="location.reload()">REBOOT SYSTEM</button>
+    </div>
+</div>
+
+<div id="app-container">
+    <header>
+        <div class="status-badge">System: Active</div>
+        <h1 style="letter-spacing: 5px;">EOC STRAT-COM <span style="font-weight: 300; opacity: 0.7;">v4.0</span></h1>
+        <div id="clock" class="status-badge">08:00 AM</div>
+    </header>
+
+    <aside class="left-panel">
+        <div class="metric-card">
+            <small>POPULATION STATUS</small>
+            <div id="m-pop" class="metric-value">45,000</div>
+            <div style="font-size: 11px; opacity: 0.6;">Total in Hazard Zone</div>
+        </div>
+        <div class="metric-card">
+            <small>EVACUATION INDEX</small>
+            <div id="m-evac" class="metric-value">0%</div>
+        </div>
+        <div class="metric-card" style="border-left-color: var(--danger-red);">
+            <small>SAFETY / CASUALTIES</small>
+            <div id="m-safety" class="metric-value">0</div>
+        </div>
+        <div class="metric-card" style="border-left-color: var(--accent-cyan);">
+            <small>RESOURCE RESERVES</small>
+            <div id="m-logistics" class="metric-value">100%</div>
+        </div>
+    </aside>
+
+    <main id="game-view">
+        <div class="scenario-box">
+            <h2>INITIALIZING DISASTER SCENARIO...</h2>
+            <p>Scanning atmospheric conditions...</p>
+            <p style="color: var(--danger-red); font-weight: bold; margin-top: 10px;">[ALERT] TYPHOON 'KARDING' UPGRADED TO SUPER TYPHOON CATEGORY.</p>
+            <p>Landfall expected in the Municipality of Agos in 4 hours. You are the Incident Commander (IC).</p>
+            
+            <button class="option-btn" onclick="startGame()">ESTABLISH INCIDENT COMMAND</button>
+        </div>
+    </main>
+
+    <aside class="right-panel">
+        <h4 style="color: var(--neon-blue); margin-bottom: 10px; border-bottom: 1px solid;">COMMS LOG / INJECTS</h4>
+        <div id="comms-log">
+            <div class="log-entry"><span class="log-time">08:00</span> PAGASA issues Signal No. 4.</div>
+        </div>
+    </aside>
+
+    <footer>
+        <div style="margin-right: 20px; white-space: nowrap;">TIMELINE PROGRESS</div>
+        <div class="progress-bar-container">
+            <div id="prog-fill" class="progress-fill"></div>
+        </div>
+    </aside>
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    let state = {
+        pop: 45000,
+        evac: 0,
+        safety: 0, // Responder/Civilian casualties
+        logistics: 100,
+        trust: 50, // Public Information Officer metric
+        step: 0,
+        rubric: {
+            strategy: 0, // Planning/IC
+            safety: 0,   // Safety Officer
+            efficiency: 0,// Logistics/Finance
+            comms: 0     // PIO/Liaison
+        }
+    };
+
+    const commsLog = document.getElementById('comms-log');
+
+    function log(msg) {
+        const time = document.getElementById('clock').innerText;
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `<span class="log-time">${time}</span> ${msg}`;
+        commsLog.prepend(entry);
+    }
+
+    function updateHUD() {
+        document.getElementById('m-pop').innerText = state.pop.toLocaleString();
+        document.getElementById('m-evac').innerText = state.evac + "%";
+        document.getElementById('m-safety').innerText = state.safety;
+        document.getElementById('m-logistics').innerText = state.logistics + "%";
+        document.getElementById('prog-fill').style.width = (state.step / scenarios.length * 100) + "%";
+    }
+
+    // --- SCENARIO DATA (Philippine ICS Focused) ---
+    const scenarios = [
+        {
+            title: "PRE-LANDFALL: ACTIVATION",
+            desc: "PAGASA confirms landfall in 4 hours. Current evacuation rate is 10%. Local units are awaiting orders.",
+            options: [
+                {
+                    text: "[PLANNING] Order Mandatory Evacuation across all coastal barangays immediately.",
+                    impact: { evac: 40, logistics: -10, strategy: 25, comms: 10 },
+                    log: "IC ordered mandatory evacuation. Planning section preparing logistics routes."
+                },
+                {
+                    text: "[PIO] Focus on public alerts. Suggest voluntary evacuation to avoid panic.",
+                    impact: { evac: 15, trust: 20, strategy: 10, comms: 25 },
+                    log: "PIO issued voluntary warnings. High public trust but low movement."
+                }
+            ]
+        },
+        {
+            title: "OPERATIONAL CONFLICT: SAFETY VS. MISSION",
+            desc: "Winds have reached 150kph. Operations reports a family trapped in a flooded zone. Safety Officer warns of extreme risk to responders.",
+            options: [
+                {
+                    text: "[SAFETY] Halt all SAR operations until wind speed drops below safety thresholds.",
+                    impact: { safety: 0, pop: -200, strategy: 20, safety_score: 25 },
+                    log: "Safety Officer grounded teams. Responders safe, but casualties reported in Zone B."
+                },
+                {
+                    text: "[OPERATIONS] Deploy specialized water search and rescue (WASAR) team despite risks.",
+                    impact: { safety: 5, evac: 5, safety_score: -10, strategy: 10 },
+                    log: "High risk operation deployed. One responder injured. Family rescued."
+                }
+            ]
+        },
+        {
+            title: "LOGISTICS CRUNCH: SUPPLY CHAIN BREAK",
+            desc: "The main bridge to the northern evacuation center has collapsed. 5,000 evacuees are running out of food/water.",
+            options: [
+                {
+                    text: "[FINANCE/ADMIN] Fast-track emergency procurement for local vendor air-drops.",
+                    impact: { logistics: -30, strategy: 20, efficiency: 25 },
+                    log: "Finance approved emergency spending. Logistics coordinating local air-lifts."
+                },
+                {
+                    text: "[LIAISON] Coordinate with Philippine Coast Guard for sea-based delivery.",
+                    impact: { logistics: -10, strategy: 15, comms: 20 },
+                    log: "Liaison established sea-link. Slower response but cost-efficient."
+                }
+            ]
+        },
+        {
+            title: "PUBLIC INFO: RUMOR CONTROL",
+            desc: "Social media reports claim a nearby dam has failed. Panic is causing traffic gridlock, blocking rescue vehicles.",
+            options: [
+                {
+                    text: "[PIO] Broadcast official Dam Status Report every 15 minutes. Use Police to clear lanes.",
+                    impact: { evac: 10, trust: 25, comms: 25, efficiency: 10 },
+                    log: "PIO cleared rumors. Traffic congestion eased by law enforcement."
+                },
+                {
+                    text: "[IC] Prioritize military assets to clear roads; ignore rumors for now.",
+                    impact: { evac: 5, trust: -15, efficiency: 15 },
+                    log: "Roads cleared, but public panic continues to rise."
+                }
+            ]
+        }
+    ];
+
+    function startGame() {
+        state.step = 0;
+        renderStep();
+    }
+
+    function renderStep() {
+        if (state.step >= scenarios.length) {
+            showResults();
+            return;
+        }
+
+        const scene = scenarios[state.step];
+        const view = document.getElementById('game-view');
+        
+        view.innerHTML = `
+            <div class="scenario-box">
+                <div style="font-size: 12px; color: var(--accent-cyan);">STATION: EOC-PHILIPPINES // MISSION STEP ${state.step + 1}</div>
+                <h2>${scene.title}</h2>
+                <p style="font-size: 18px; line-height: 1.6;">${scene.desc}</p>
+                <div class="decision-node" id="options"></div>
+            </div>
+        `;
+
+        const optContainer = document.getElementById('options');
+        scene.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `${opt.text}`;
+            btn.onclick = () => handleChoice(opt);
+            optContainer.appendChild(btn);
+        });
+
+        updateHUD();
+    }
+
+    function handleChoice(opt) {
+        // Apply impacts
+        if (opt.impact.evac) state.evac += opt.impact.evac;
+        if (opt.impact.safety) state.safety += opt.impact.safety;
+        if (opt.impact.pop) state.pop += opt.impact.pop;
+        if (opt.impact.logistics) state.logistics += opt.impact.logistics;
+        
+        // Scientific Rubric Tracking
+        if (opt.impact.strategy) state.rubric.strategy += opt.impact.strategy;
+        if (opt.impact.safety_score) state.rubric.safety += opt.impact.safety_score;
+        if (opt.impact.efficiency) state.rubric.efficiency += opt.impact.efficiency;
+        if (opt.impact.comms) state.rubric.comms += opt.impact.comms;
+
+        // Caps
+        if (state.evac > 100) state.evac = 100;
+        if (state.logistics < 0) state.logistics = 0;
+
+        log(opt.log);
+        state.step++;
+        
+        // Update clock
+        let h = 8 + (state.step * 2);
+        document.getElementById('clock').innerText = `${h.toString().padStart(2, '0')}:00 AM`;
+
+        renderStep();
+    }
+
+    function showResults() {
+        document.getElementById('results-overlay').style.display = 'flex';
+        const rubricDiv = document.getElementById('final-rubric');
+        
+        const metrics = [
+            { label: "STRATEGIC ALIGNMENT (IC/PLANNING)", val: state.rubric.strategy, desc: "Evaluates objective setting and Incident Action Plan execution." },
+            { label: "OPERATIONAL SAFETY (SAFETY OFFICER)", val: state.rubric.safety, desc: "Measures the safety of responders and risk mitigation." },
+            { label: "RESOURCE EFFICIENCY (LOGISTICS/FINANCE)", val: state.rubric.efficiency, desc: "Measures procurement speed and resource optimization." },
+            { label: "PUBLIC TRUST & COORD (PIO/LIAISON)", val: state.rubric.comms, desc: "Evaluates information flow and stakeholder coordination." }
+        ];
+
+        rubricDiv.innerHTML = metrics.map(m => `
+            <div class="rubric-item">
+                <div style="font-size: 11px; color: var(--neon-blue);">${m.label}</div>
+                <div class="metric-value">${m.val}%</div>
+                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">${m.desc}</div>
+            </div>
+        `).join('');
+    }
+
+    updateHUD();
+</script>
+</body>
+</html>
