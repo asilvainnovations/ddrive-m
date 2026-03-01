@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+    <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>The Incident Command System in the Philippines: A Comprehensive Framework for Effective Disaster Response</title>
@@ -6,89 +8,134 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        'serif': ['Playfair Display', 'serif'],
-                        'sans': ['Inter', 'sans-serif'],
+                        'condensed': ['"Roboto Condensed"', 'sans-serif'],
+                        'sans': ['Poppins', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        'primary': '#1a1a1a',
-                        'secondary': '#4a5568',
-                        'accent': '#dc2626',
-                        'muted': '#64748b',
-                        'background': '#fafafa',
+                        'deep-blue': '#071428',
+                        'navy': '#0d2045',
+                        'blue-mid': '#1a3a6b',
+                        'blue-bright': '#1d6bbf',
+                        'light-blue': '#60a5fa',
+                        'neon-blue': '#00d4ff',
                         'surface': '#ffffff',
-                        'border': '#e2e8f0',
+                        'border': '#c3d9f0',
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --deep-blue: #071428;
+            --navy: #0d2045;
+            --blue-mid: #1a3a6b;
+            --blue-bright: #1d6bbf;
+            --light-blue: #60a5fa;
+            --neon-blue: #00d4ff;
+            --text-dark: #0a1628;
+            --text-mid: #1e3a5f;
+            --text-muted: #4a6a8a;
+            --surface: #ffffff;
+            --bg-page: #f0f6ff;
+            --border: #c3d9f0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* ─── PROSE ─────────────────────────────────────────── */
         .prose-custom {
             line-height: 1.75;
-            color: #334155;
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
         }
-        
+
         .prose-custom h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Roboto Condensed', sans-serif;
             font-weight: 700;
             font-size: 2.25rem;
-            line-height: 1.2;
+            line-height: 1.15;
             margin-bottom: 1.5rem;
-            color: #1e293b;
+            color: var(--deep-blue);
+            letter-spacing: -0.01em;
         }
-        
+
         .prose-custom h2 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
             font-size: 1.875rem;
-            line-height: 1.3;
+            line-height: 1.2;
             margin-top: 2.5rem;
             margin-bottom: 1rem;
-            color: #1e293b;
+            color: var(--deep-blue);
+            letter-spacing: -0.01em;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 0.75rem;
         }
-        
+
         .prose-custom h3 {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-weight: 600;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             line-height: 1.4;
             margin-top: 2rem;
             margin-bottom: 0.75rem;
-            color: #334155;
+            color: var(--blue-mid);
         }
-        
+
+        .prose-custom h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--blue-mid);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
         .prose-custom p {
             margin-bottom: 1.25rem;
+            color: var(--text-dark);
         }
-        
+
         .prose-custom blockquote {
-            border-left: 4px solid #dc2626;
-            padding-left: 1rem;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 1.25rem;
             margin-left: 0;
             font-style: italic;
-            color: #475569;
+            color: var(--text-mid);
             margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, rgba(0,212,255,0.07) 0%, transparent 100%);
+            padding: 1rem 1rem 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
         }
-        
+
         .citation-link {
-            color: #dc2626;
+            color: var(--blue-bright);
             text-decoration: none;
             font-weight: 500;
-            border-bottom: 1px dotted #dc2626;
+            border-bottom: 1px dotted var(--light-blue);
         }
-        
+
         .citation-link:hover {
-            background-color: #fef2f2;
-            border-bottom: 1px solid #dc2626;
+            color: var(--neon-blue);
+            border-bottom: 1px solid var(--neon-blue);
+            background-color: rgba(0,212,255,0.06);
+            border-radius: 2px;
         }
-        
+
+        /* ─── TOC ────────────────────────────────────────────── */
         .toc-fixed {
             position: fixed;
             top: 2rem;
@@ -97,102 +144,323 @@
             max-height: calc(100vh - 4rem);
             overflow-y: auto;
             z-index: 50;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: rgba(7,20,40,0.97);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 14px;
             padding: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px -5px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.1);
         }
-        
+
+        .toc-fixed h3 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            margin-bottom: 0.75rem;
+        }
+
         .toc-fixed a {
             display: block;
-            padding: 0.5rem 0;
-            font-size: 0.875rem;
-            color: #64748b;
+            padding: 0.35rem 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(147,197,253,0.75);
             text-decoration: none;
             border-left: 2px solid transparent;
             padding-left: 0.75rem;
             transition: all 0.2s ease;
         }
-        
+
         .toc-fixed a:hover {
-            color: #dc2626;
-            border-left-color: #dc2626;
-            background-color: #fef2f2;
+            color: var(--neon-blue);
+            border-left-color: var(--neon-blue);
+            background-color: rgba(0,212,255,0.08);
+            border-radius: 0 4px 4px 0;
         }
-        
+
         .toc-fixed a.active {
-            color: #1e293b;
-            border-left-color: #1e293b;
-            font-weight: 500;
+            color: #ffffff;
+            border-left-color: var(--neon-blue);
+            font-weight: 600;
         }
-        
+
+        /* ─── LAYOUT ─────────────────────────────────────────── */
         .content-main {
             margin-left: 320px;
             max-width: 900px;
             padding: 2rem;
         }
-        
+
+        /* ─── HERO ───────────────────────────────────────────── */
         .hero-gradient {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--navy) 50%, var(--blue-mid) 100%);
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.18) 0%, transparent 60%),
+                        radial-gradient(ellipse at 20% 80%, rgba(29,107,191,0.25) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Neon glow line accent */
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+        }
+
         .text-gradient {
-            background: linear-gradient(135deg, #1e293b 0%, #dc2626 100%);
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--neon-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
+        /* ─── BENTO CARDS ────────────────────────────────────── */
         .bento-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
-        
+
         @media (min-width: 640px) {
             .bento-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             }
         }
-        
+
         .bento-card {
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--neon-blue);
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px -4px rgba(13,32,69,0.12);
             transition: all 0.3s ease;
         }
-        
+
         .bento-card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 24px -4px rgba(0,212,255,0.18), 0 0 0 1px rgba(0,212,255,0.15);
+            transform: translateY(-3px);
         }
-        
+
+        .bento-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-blue) !important;
+            margin-top: 0;
+        }
+
+        .bento-card p {
+            color: var(--text-mid) !important;
+        }
+
+        /* ─── DATA VIZ CARDS ─────────────────────────────────── */
         .data-viz {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             padding: 2rem;
             margin: 2rem 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px -4px rgba(13,32,69,0.1);
         }
-        
-        /* Mermaid diagram container styles */
+
+        .data-viz h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* ─── TABLE STYLES ───────────────────────────────────── */
+        .data-viz table thead {
+            background: var(--navy) !important;
+        }
+
+        .data-viz table thead th {
+            color: #ffffff !important;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .data-viz table tbody td {
+            color: var(--text-dark);
+        }
+
+        /* ─── INNER CARDS (colored) ──────────────────────────── */
+        /* Deep blue card variants */
+        .card-deep {
+            background: var(--navy);
+            border-color: rgba(0,212,255,0.2);
+            color: #ffffff;
+        }
+
+        .card-deep * { color: #ffffff !important; }
+
+        /* Light blue variants for white-bg cards */
+        .bg-blue-50 { background-color: #eff6ff !important; }
+        .bg-blue-50 * { color: var(--text-dark) !important; }
+
+        .bg-red-50  { background-color: #eff6ff !important; border-color: #bae0fd !important; }
+        .bg-red-50  h5, .bg-red-50 p, .bg-red-50 li { color: var(--text-dark) !important; }
+        .bg-red-50  h5 { color: var(--navy) !important; }
+
+        .bg-green-50 { background-color: #e8f5ff !important; border-color: #93c5fd !important; }
+        .bg-green-50 h5, .bg-green-50 p, .bg-green-50 li { color: var(--text-dark) !important; }
+        .bg-green-50 h5 { color: var(--navy) !important; }
+
+        .bg-purple-50 { background-color: #eef2ff !important; border-color: #a5b4fc !important; }
+        .bg-purple-50 h5, .bg-purple-50 p, .bg-purple-50 li { color: var(--text-dark) !important; }
+        .bg-purple-50 h5 { color: var(--navy) !important; }
+
+        .bg-orange-50 { background-color: #eff6ff !important; border-color: #93c5fd !important; }
+        .bg-orange-50 h5, .bg-orange-50 p, .bg-orange-50 li { color: var(--text-dark) !important; }
+        .bg-orange-50 h5 { color: var(--navy) !important; }
+
+        .bg-indigo-50 { background-color: #eef2ff !important; border-color: #a5b4fc !important; }
+        .bg-indigo-50 h5, .bg-indigo-50 p, .bg-indigo-50 li { color: var(--text-dark) !important; }
+        .bg-indigo-50 h5 { color: var(--navy) !important; }
+
+        .bg-teal-50 { background-color: #e8f5ff !important; border-color: #7dd3fc !important; }
+        .bg-teal-50 h5, .bg-teal-50 p, .bg-teal-50 li { color: var(--text-dark) !important; }
+        .bg-teal-50 h5 { color: var(--navy) !important; }
+
+        .bg-yellow-50 { background-color: #eff8ff !important; border-color: #93c5fd !important; }
+        .bg-yellow-50 h5, .bg-yellow-50 p, .bg-yellow-50 li, .bg-yellow-50 ol li { color: var(--text-dark) !important; }
+        .bg-yellow-50 h5 { color: var(--navy) !important; }
+
+        .bg-gray-50 { background-color: #f0f6ff !important; }
+        .bg-gray-50 * { color: var(--text-dark) !important; }
+        .bg-gray-100 { background-color: #e8f0fa !important; }
+        .bg-gray-100 * { color: var(--text-dark) !important; }
+
+        /* Override border colors to blue palette */
+        .border-red-200   { border-color: #bae6fd !important; }
+        .border-blue-200  { border-color: #93c5fd !important; }
+        .border-green-200 { border-color: #7dd3fc !important; }
+        .border-purple-200 { border-color: #a5b4fc !important; }
+        .border-orange-200 { border-color: #93c5fd !important; }
+        .border-teal-200  { border-color: #67e8f9 !important; }
+        .border-yellow-200 { border-color: #7dd3fc !important; }
+        .border-indigo-200 { border-color: #a5b4fc !important; }
+        .border-gray-200  { border-color: #c3d9f0 !important; }
+
+        /* Table row accent colors → blue tones */
+        .bg-green-50.divide-y  td { color: var(--text-dark) !important; }
+
+        tr.bg-green-50  td { background-color: #e8f5ff !important; color: var(--text-dark) !important; }
+        tr.bg-blue-50   td { background-color: #eff6ff !important; color: var(--text-dark) !important; }
+        tr.bg-orange-50 td { background-color: #e8f0ff !important; color: var(--text-dark) !important; }
+        tr.bg-purple-50 td { background-color: #eef2ff !important; color: var(--text-dark) !important; }
+        tr.bg-red-50    td { background-color: #eff8ff !important; color: var(--text-dark) !important; }
+
+        /* Colored highlight boxes */
+        .bg-blue-50.border.border-blue-200.rounded-lg {
+            background: #eff6ff !important;
+        }
+        .bg-blue-50.border.border-blue-200.rounded-lg * { color: var(--text-dark) !important; }
+        .bg-blue-50.border.border-blue-200.rounded-lg h5 { color: var(--navy) !important; }
+
+        .bg-green-50.border.border-green-200.rounded-lg * { color: var(--text-dark) !important; }
+        .bg-green-50.border.border-green-200.rounded-lg h5 { color: var(--navy) !important; }
+
+        /* conclusion card */
+        .bg-blue-50.border.border-blue-200.rounded-lg.p-6 h3 {
+            font-family: 'Roboto Condensed', sans-serif !important;
+            color: var(--navy) !important;
+        }
+
+        /* Alert badge rows */
+        .bg-red-100 { background-color: #e8f5ff !important; border-color: #7dd3fc !important; }
+        .bg-red-100 * { color: var(--text-dark) !important; }
+        .border-red-300 { border-color: #60a5fa !important; }
+
+        .bg-yellow-100 { background-color: #eff6ff !important; border-color: #93c5fd !important; }
+        .bg-yellow-100 * { color: var(--text-dark) !important; }
+        .border-yellow-300 { border-color: #60a5fa !important; }
+
+        .bg-blue-100 { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
+        .bg-blue-100 * { color: var(--text-dark) !important; }
+        .border-blue-300 { border-color: #3b82f6 !important; }
+
+        /* Icon accent colors */
+        .text-accent { color: var(--neon-blue) !important; }
+        .text-red-600 { color: var(--blue-bright) !important; }
+        .text-blue-600 { color: var(--blue-bright) !important; }
+        .text-green-600 { color: #0891b2 !important; }
+        .text-orange-600 { color: #1d6bbf !important; }
+        .text-purple-600 { color: #4f46e5 !important; }
+        .text-indigo-600 { color: #3730a3 !important; }
+        .text-teal-600 { color: #0891b2 !important; }
+        .text-yellow-600 { color: #1d6bbf !important; }
+
+        /* Guidance system step circles */
+        .bg-blue-600 { background-color: var(--blue-bright) !important; }
+        .bg-green-600 { background-color: #0891b2 !important; }
+        .bg-yellow-600 { background-color: var(--blue-mid) !important; }
+        .bg-purple-600 { background-color: #4f46e5 !important; }
+
+        /* Muted text in cards */
+        .text-muted { color: var(--text-muted) !important; }
+        .text-red-700, .text-blue-700, .text-green-700,
+        .text-orange-700, .text-purple-700, .text-teal-700,
+        .text-yellow-700, .text-gray-700 {
+            color: var(--text-mid) !important;
+        }
+        .text-red-800, .text-blue-800, .text-green-800,
+        .text-orange-800, .text-purple-800, .text-teal-800,
+        .text-yellow-800, .text-gray-800 {
+            color: var(--navy) !important;
+        }
+        .text-red-600, .text-blue-600, .text-green-600,
+        .text-orange-600, .text-teal-600, .text-yellow-600 {
+            color: var(--text-muted) !important;
+        }
+        /* Keep icon colors intact */
+        i.text-red-600, i.text-blue-600, i.text-green-600,
+        i.text-orange-600, i.text-teal-600, i.text-yellow-600 {
+            color: var(--blue-bright) !important;
+        }
+        i.text-purple-600 { color: #4f46e5 !important; }
+        i.text-indigo-600 { color: #3730a3 !important; }
+
+        .text-red-500, .text-blue-500, .text-green-500,
+        .text-orange-500, .text-purple-500, .text-teal-500 {
+            color: var(--text-muted) !important;
+        }
+
+        /* Headline color overrides for certain headings */
+        h5.font-semibold { color: var(--navy) !important; }
+        h6.font-medium { color: var(--blue-mid) !important; }
+
+        /* ─── MERMAID ─────────────────────────────────────────── */
         .mermaid-container {
             display: flex;
             justify-content: center;
             min-height: 300px;
             max-height: 800px;
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+            background: var(--navy);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 14px;
             padding: 30px;
             margin: 30px 0;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(0,212,255,0.1);
             position: relative;
             overflow: hidden;
         }
@@ -209,8 +477,6 @@
             align-items: center;
             touch-action: none;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
@@ -222,144 +488,137 @@
             font-family: 'Inter', sans-serif !important;
         }
 
-        .mermaid-container .mermaid:active {
-            cursor: grabbing;
-        }
-
-        .mermaid-container.zoomed .mermaid {
-            height: 100%;
-            width: 100%;
-            cursor: grab;
-        }
+        .mermaid-container .mermaid:active { cursor: grabbing; }
 
         .mermaid-controls {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 12px;
+            right: 12px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             z-index: 20;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px;
+            background: rgba(7,20,40,0.9);
+            padding: 6px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0,212,255,0.2);
         }
 
         .mermaid-control-btn {
-            background: #ffffff;
-            border: 1px solid #d1d5db;
+            background: rgba(13,32,69,0.9);
+            border: 1px solid rgba(0,212,255,0.3);
             border-radius: 6px;
-            padding: 10px;
+            padding: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #374151;
-            font-size: 14px;
-            min-width: 36px;
-            height: 36px;
-            text-align: center;
+            color: var(--light-blue);
+            font-size: 13px;
+            min-width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .mermaid-control-btn:hover {
-            background: #f8fafc;
-            border-color: #3b82f6;
-            color: #3b82f6;
-            transform: translateY(-1px);
+            background: rgba(0,212,255,0.15);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
         }
 
-        .mermaid-control-btn:active {
-            transform: scale(0.95);
+        /* ─── TYPOGRAPHY OVERRIDES ───────────────────────────── */
+        .font-semibold { font-family: 'Poppins', sans-serif; }
+        .font-serif { font-family: 'Roboto Condensed', sans-serif !important; }
+        .font-medium { font-family: 'Inter', sans-serif; }
+
+        /* Hero title */
+        header h1 {
+            font-family: 'Roboto Condensed', sans-serif !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em;
         }
-        
+
+        header p, header span { color: rgba(255,255,255,0.9) !important; }
+
+        /* Nav items */
+        .bento-card .flex .font-semibold {
+            font-family: 'Poppins', sans-serif;
+            color: var(--deep-blue) !important;
+        }
+
+        /* Conclusion box */
+        .bg-blue-50.border.border-blue-200.rounded-lg.p-6 {
+            background: linear-gradient(135deg, #e8f4ff 0%, #dbeafe 100%) !important;
+        }
+
+        /* Total score box */
+        .bg-gray-100.p-4.rounded-lg {
+            background: var(--navy) !important;
+        }
+        .bg-gray-100.p-4.rounded-lg * { color: #ffffff !important; }
+
+        /* ─── RESPONSIVE ─────────────────────────────────────── */
         @media (max-width: 1280px) {
-            .toc-fixed {
-                display: none;
-            }
-            .content-main {
-                margin-left: 0;
-                max-width: 100%;
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .mermaid-control-btn:not(.reset-zoom) {
-                display: none;
-            }
-            .mermaid-controls {
-                top: auto;
-                bottom: 15px;
-                right: 15px;
-            }
+            .toc-fixed { display: none; }
+            .content-main { margin-left: 0; max-width: 100%; }
         }
 
         @media (max-width: 768px) {
-            .content-main {
-                padding: 1rem;
-            }
-            .prose-custom h1 {
-                font-size: 1.75rem;
-            }
-            .prose-custom h2 {
-                font-size: 1.5rem;
-            }
-            .bento-grid {
-                grid-template-columns: 1fr;
-            }
-            .mermaid-container {
-                padding: 15px;
-            }
-            .data-viz, .bento-card {
-                padding: 1rem;
-            }
+            .content-main { padding: 1rem; }
+            .prose-custom h1 { font-size: 1.75rem; }
+            .prose-custom h2 { font-size: 1.5rem; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .mermaid-container { padding: 15px; }
+            .data-viz, .bento-card { padding: 1rem; }
         }
     </style>
-  <base target="_blank">
+    <base target="_blank">
 </head>
 
-  <body class="bg-background font-sans">
+<body>
     <!-- Fixed Table of Contents -->
     <nav class="toc-fixed">
-      <h3 class="font-semibold text-sm text-primary mb-3">Contents</h3>
-      <a href="#introduction" class="text-xs">Introduction</a>
-      <a href="#structure" class="text-xs">ICS Structure &amp; Functions</a>
-      <a href="#national-structure" class="text-xs ml-3">National-Level ICS</a>
-      <a href="#local-structure" class="text-xs ml-3">Local-Level ICS</a>
-      <a href="#coordination" class="text-xs ml-3">Coordination Mechanisms</a>
-      <a href="#legal-framework" class="text-xs">Legal &amp; Policy Framework</a>
-      <a href="#ra10121" class="text-xs ml-3">RA 10121 Mandate</a>
-      <a href="#ndrrmc-guidelines" class="text-xs ml-3">NDRRMC Guidelines</a>
-      <a href="#ra12287" class="text-xs ml-3">RA 12287 Anticipatory Action</a>
-      <a href="#pscp" class="text-xs ml-3">Public Service Continuity</a>
-      <a href="#simulation-design" class="text-xs">Game-Based Simulation</a>
-      <a href="#design-principles" class="text-xs ml-3">Core Design Principles</a>
-      <a href="#role-system" class="text-xs ml-3">Role-Based Player System</a>
-      <a href="#scenario-framework" class="text-xs ml-3">Scenario Framework</a>
-      <a href="#interactive-features" class="text-xs ml-3">Interactive Features</a>
-      <a href="#scoring-rubrics" class="text-xs ml-3">Scoring &amp; Assessment</a>
-      <a href="#game-modes" class="text-xs ml-3">Single &amp; Multiplayer Modes</a>
-      <a href="#apple-compliance" class="text-xs ml-3">Apple HIG Compliance</a>
+      <h3>Contents</h3>
+      <a href="#introduction">Introduction</a>
+      <a href="#structure">ICS Structure &amp; Functions</a>
+      <a href="#national-structure" class="ml-3">National-Level ICS</a>
+      <a href="#local-structure" class="ml-3">Local-Level ICS</a>
+      <a href="#coordination" class="ml-3">Coordination Mechanisms</a>
+      <a href="#legal-framework">Legal &amp; Policy Framework</a>
+      <a href="#ra10121" class="ml-3">RA 10121 Mandate</a>
+      <a href="#ndrrmc-guidelines" class="ml-3">NDRRMC Guidelines</a>
+      <a href="#ra12287" class="ml-3">RA 12287 Anticipatory Action</a>
+      <a href="#pscp" class="ml-3">Public Service Continuity</a>
+      <a href="#simulation-design">Game-Based Simulation</a>
+      <a href="#design-principles" class="ml-3">Core Design Principles</a>
+      <a href="#role-system" class="ml-3">Role-Based Player System</a>
+      <a href="#scenario-framework" class="ml-3">Scenario Framework</a>
+      <a href="#interactive-features" class="ml-3">Interactive Features</a>
+      <a href="#scoring-rubrics" class="ml-3">Scoring &amp; Assessment</a>
+      <a href="#game-modes" class="ml-3">Single &amp; Multiplayer Modes</a>
+      <a href="#apple-compliance" class="ml-3">Apple HIG Compliance</a>
     </nav>
 
     <!-- Main Content -->
     <main class="content-main">
       <!-- Hero Section -->
-      <header class="hero-gradient text-white rounded-2xl p-8 mb-8 relative overflow-hidden">
+      <header class="hero-gradient rounded-2xl p-8 mb-8 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10">
-          <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/图片17.png" alt="Emergency response command center" class="w-full h-full object-cover" size="wallpaper" aspect="wide" style="photo" query="Philippines disaster command center" referrerpolicy="no-referrer" data-modified="1"/>
+          <img src="" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer"/>
         </div>
         <div class="relative z-10">
-          <h1 class="font-serif italic text-4xl md:text-5xl leading-tight mb-4">
+          <div class="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase" style="background:rgba(0,212,255,0.15);color:var(--neon-blue);border:1px solid rgba(0,212,255,0.3);font-family:'Poppins',sans-serif;">
+            Disaster Risk Reduction
+          </div>
+          <h1 class="font-condensed italic text-4xl md:text-5xl leading-tight mb-4">
             The <span class="text-gradient">Incident Command System</span> in the Philippines
           </h1>
-          <p class="text-xl opacity-90 mb-6 max-w-3xl">
+          <p class="text-xl opacity-90 mb-6 max-w-3xl" style="font-family:'Inter',sans-serif;color:rgba(255,255,255,0.85);">
             A comprehensive analysis of structure, legal framework, and game-based simulation design for capacity building
           </p>
-          <div class="flex flex-wrap gap-4 text-sm opacity-80">
-            <span class="flex items-center"><i class="fas fa-shield-alt mr-2"></i>Disaster Risk Reduction</span>
-            <span class="flex items-center"><i class="fas fa-network-wired mr-2"></i>Multi-Agency Coordination</span>
-            <span class="flex items-center"><i class="fas fa-gamepad mr-2"></i>Simulation Training</span>
+          <div class="flex flex-wrap gap-4 text-sm" style="color:rgba(147,197,253,0.85);font-family:'Inter',sans-serif;">
+            <span class="flex items-center gap-2"><i class="fas fa-shield-alt"></i>Disaster Risk Reduction</span>
+            <span class="flex items-center gap-2"><i class="fas fa-network-wired"></i>Multi-Agency Coordination</span>
+            <span class="flex items-center gap-2"><i class="fas fa-gamepad"></i>Simulation Training</span>
           </div>
         </div>
       </header>
@@ -368,24 +627,24 @@
       <div class="bento-grid mb-12">
         <div class="bento-card">
           <div class="flex items-center mb-3">
-            <i class="fas fa-building text-accent text-xl mr-3"></i>
+            <i class="fas fa-building text-xl mr-3" style="color:var(--neon-blue);"></i>
             <h3 class="font-semibold text-lg">National Structure</h3>
           </div>
-          <p class="text-sm text-muted">NDRRMC leads policy, OCD serves as operational arm, and NIMT provides deployable expertise nationwide</p>
+          <p class="text-sm" style="color:var(--text-muted);">NDRRMC leads policy, OCD serves as operational arm, and NIMT provides deployable expertise nationwide</p>
         </div>
         <div class="bento-card">
           <div class="flex items-center mb-3">
-            <i class="fas fa-gavel text-accent text-xl mr-3"></i>
+            <i class="fas fa-gavel text-xl mr-3" style="color:var(--neon-blue);"></i>
             <h3 class="font-semibold text-lg">Legal Framework</h3>
           </div>
-          <p class="text-sm text-muted">RA 10121 and RA 12287 provide comprehensive legal foundation with anticipatory action provisions</p>
+          <p class="text-sm" style="color:var(--text-muted);">RA 10121 and RA 12287 provide comprehensive legal foundation with anticipatory action provisions</p>
         </div>
         <div class="bento-card">
           <div class="flex items-center mb-3">
-            <i class="fas fa-gamepad text-accent text-xl mr-3"></i>
+            <i class="fas fa-gamepad text-xl mr-3" style="color:var(--neon-blue);"></i>
             <h3 class="font-semibold text-lg">Simulation Design</h3>
           </div>
-          <p class="text-sm text-muted">iOS/macOS native development with role-based multiplayer scenarios and competency scoring</p>
+          <p class="text-sm" style="color:var(--text-muted);">iOS/macOS native development with role-based multiplayer scenarios and competency scoring</p>
         </div>
       </div>
 
@@ -405,7 +664,7 @@
         </p>
       </section>
 
-      <!-- ICS Structure &amp; Functions -->
+      <!-- ICS Structure & Functions -->
       <section id="structure" class="prose-custom">
         <h2>Structure and Functions of ICS at National and Local Government Levels</h2>
 
@@ -419,65 +678,45 @@
 
           <div class="mermaid-container">
             <div class="mermaid-controls">
-              <button class="mermaid-control-btn zoom-in" title="放大">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="mermaid-control-btn zoom-out" title="缩小">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="mermaid-control-btn reset-zoom" title="重置">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-              <button class="mermaid-control-btn fullscreen" title="全屏查看">
-                <i class="fas fa-expand"></i>
-              </button>
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
             </div>
             <div class="mermaid">
               graph TD
-              A[&#34;NDRRMC
-              <br/>Policy Level
-              <br/>Secretary of National Defense, Chair&#34;] --&gt; B[&#34;OCD
-              <br/>Operational Arm
-              <br/>Administrator, Executive&#34;]
-              A --&gt; C[&#34;NIMT
-              <br/>Deployable Asset
-              <br/>32 Certified Instructors&#34;]
-              B --&gt; D[&#34;RDRRMCs
-              <br/>Regional Coordination
-              <br/>All Administrative Regions&#34;]
-              D --&gt; E[&#34;LDRRMCs
-              <br/>Local Implementation
-              <br/>Provinces/Cities/Municipalities&#34;]
-              E --&gt; F[&#34;BDRRMCs
-              <br/>Barangay Level
-              <br/>Frontline Response&#34;]
+              A["NDRRMC<br/>Policy Level<br/>Secretary of National Defense, Chair"] --> B["OCD<br/>Operational Arm<br/>Administrator, Executive"]
+              A --> C["NIMT<br/>Deployable Asset<br/>32 Certified Instructors"]
+              B --> D["RDRRMCs<br/>Regional Coordination<br/>All Administrative Regions"]
+              D --> E["LDRRMCs<br/>Local Implementation<br/>Provinces/Cities/Municipalities"]
+              E --> F["BDRRMCs<br/>Barangay Level<br/>Frontline Response"]
 
-              style A fill:#dc2626,stroke:#1e293b,stroke-width:3px,color:#ffffff
-              style B fill:#2563eb,stroke:#1e293b,stroke-width:3px,color:#ffffff
-              style C fill:#059669,stroke:#1e293b,stroke-width:3px,color:#ffffff
-              style D fill:#7c3aed,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style E fill:#ea580c,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style F fill:#16a34a,stroke:#1e293b,stroke-width:2px,color:#ffffff
+              style A fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#ffffff
+              style B fill:#1a3a6b,stroke:#00d4ff,stroke-width:3px,color:#ffffff
+              style C fill:#0d2045,stroke:#60a5fa,stroke-width:3px,color:#ffffff
+              style D fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style E fill:#2563eb,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style F fill:#0891b2,stroke:#93c5fd,stroke-width:2px,color:#ffffff
             </div>
           </div>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">National ICS Leadership Elements</h4>
+            <h4>National ICS Leadership Elements</h4>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                <h5 class="font-semibold text-red-800 mb-2">NDRRMC</h5>
-                <p class="text-sm text-red-700"><strong>Policy formulation and strategic direction</strong></p>
-                <p class="text-xs text-red-600 mt-2">Council meetings, policy issuance, resource allocation, declaration recommendations</p>
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">NDRRMC</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Policy formulation and strategic direction</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Council meetings, policy issuance, resource allocation, declaration recommendations</p>
               </div>
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h5 class="font-semibold text-blue-800 mb-2">OCD</h5>
-                <p class="text-sm text-blue-700"><strong>Operational implementation and secretariat</strong></p>
-                <p class="text-xs text-blue-600 mt-2">Training administration, NIMT deployment, 24/7 monitoring, regional supervision</p>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">OCD</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Operational implementation and secretariat</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Training administration, NIMT deployment, 24/7 monitoring, regional supervision</p>
               </div>
-              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h5 class="font-semibold text-green-800 mb-2">NIMT</h5>
-                <p class="text-sm text-green-700"><strong>Deployable on-scene management expertise</strong></p>
-                <p class="text-xs text-green-600 mt-2">Rapid deployment to complex incidents, unified command establishment</p>
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">NIMT</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Deployable on-scene management expertise</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Rapid deployment to complex incidents, unified command establishment</p>
               </div>
             </div>
           </div>
@@ -492,39 +731,39 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">ICS General Staff Structure</h4>
+            <h4>ICS General Staff Structure</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-tasks text-orange-600 mr-2"></i>
-                  <h5 class="font-semibold text-orange-800">Operations</h5>
+                  <i class="fas fa-tasks mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Operations</h5>
                 </div>
-                <p class="text-sm text-orange-700 mb-2">Operations Section Chief</p>
-                <p class="text-xs text-orange-600">All tactical activities: search and rescue, evacuation, EMS, fire suppression</p>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Operations Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">All tactical activities: search and rescue, evacuation, EMS, fire suppression</p>
               </div>
-              <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-chart-line text-purple-600 mr-2"></i>
-                  <h5 class="font-semibold text-purple-800">Planning</h5>
+                  <i class="fas fa-chart-line mr-2" style="color:#4f46e5;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Planning</h5>
                 </div>
-                <p class="text-sm text-purple-700 mb-2">Planning Section Chief</p>
-                <p class="text-xs text-purple-600">Situation assessment, IAP development, resource tracking, documentation</p>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Planning Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Situation assessment, IAP development, resource tracking, documentation</p>
               </div>
-              <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-truck text-indigo-600 mr-2"></i>
-                  <h5 class="font-semibold text-indigo-800">Logistics</h5>
+                  <i class="fas fa-truck mr-2" style="color:var(--blue-mid);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Logistics</h5>
                 </div>
-                <p class="text-sm text-indigo-700 mb-2">Logistics Section Chief</p>
-                <p class="text-xs text-indigo-600">Resource procurement, facilities, transportation, communications, maintenance</p>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Logistics Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Resource procurement, facilities, transportation, communications, maintenance</p>
               </div>
-              <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-calculator text-teal-600 mr-2"></i>
-                  <h5 class="font-semibold text-teal-800">Finance/Admin</h5>
+                  <i class="fas fa-calculator mr-2" style="color:#0891b2;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Finance/Admin</h5>
                 </div>
-                <p class="text-sm text-teal-700 mb-2">Finance/Admin Section Chief</p>
-                <p class="text-xs text-teal-600">Cost tracking, procurement, time recording, compensation and claims</p>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Finance/Admin Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Cost tracking, procurement, time recording, compensation and claims</p>
               </div>
             </div>
           </div>
@@ -548,48 +787,23 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">ICS Activation by Government Level</h4>
+            <h4>ICS Activation by Government Level</h4>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead style="background:var(--navy);">
                   <tr>
-                    <th class="px-4 py-2 text-left font-semibold">Government Level</th>
-                    <th class="px-4 py-2 text-left font-semibold">Activating Body</th>
-                    <th class="px-4 py-2 text-left font-semibold">Default Incident Commander</th>
-                    <th class="px-4 py-2 text-left font-semibold">Activation Threshold</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Government Level</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Activating Body</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Default Incident Commander</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Activation Threshold</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                  <tr class="bg-green-50">
-                    <td class="px-4 py-2 font-medium">Barangay</td>
-                    <td class="px-4 py-2">BDRRMC</td>
-                    <td class="px-4 py-2">Barangay Captain</td>
-                    <td class="px-4 py-2">Single barangay affected</td>
-                  </tr>
-                  <tr class="bg-blue-50">
-                    <td class="px-4 py-2 font-medium">Municipal/City</td>
-                    <td class="px-4 py-2">City/Municipal DRRMC</td>
-                    <td class="px-4 py-2">Mayor</td>
-                    <td class="px-4 py-2">Two or more barangays affected</td>
-                  </tr>
-                  <tr class="bg-orange-50">
-                    <td class="px-4 py-2 font-medium">Provincial</td>
-                    <td class="px-4 py-2">Provincial DRRRMC</td>
-                    <td class="px-4 py-2">Governor</td>
-                    <td class="px-4 py-2">Multiple cities/municipalities affected</td>
-                  </tr>
-                  <tr class="bg-purple-50">
-                    <td class="px-4 py-2 font-medium">Regional</td>
-                    <td class="px-4 py-2">Regional DRRMC</td>
-                    <td class="px-4 py-2">Variable</td>
-                    <td class="px-4 py-2">Two or more provinces affected</td>
-                  </tr>
-                  <tr class="bg-red-50">
-                    <td class="px-4 py-2 font-medium">National</td>
-                    <td class="px-4 py-2">NDRRMC</td>
-                    <td class="px-4 py-2">NIMT IC</td>
-                    <td class="px-4 py-2">Two or more regions affected</td>
-                  </tr>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Barangay</td><td class="px-4 py-2" style="color:var(--text-dark);">BDRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Barangay Captain</td><td class="px-4 py-2" style="color:var(--text-dark);">Single barangay affected</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Municipal/City</td><td class="px-4 py-2" style="color:var(--text-dark);">City/Municipal DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Mayor</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more barangays affected</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Provincial</td><td class="px-4 py-2" style="color:var(--text-dark);">Provincial DRRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Governor</td><td class="px-4 py-2" style="color:var(--text-dark);">Multiple cities/municipalities affected</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Regional</td><td class="px-4 py-2" style="color:var(--text-dark);">Regional DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Variable</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more provinces affected</td></tr>
+                  <tr style="background:#1a3a6b;"><td class="px-4 py-2 font-medium" style="color:#ffffff;">National</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">NDRRMC</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">NIMT IC</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">Two or more regions affected</td></tr>
                 </tbody>
               </table>
             </div>
@@ -625,45 +839,36 @@
 
           <div class="mermaid-container">
             <div class="mermaid-controls">
-              <button class="mermaid-control-btn zoom-in" title="放大">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="mermaid-control-btn zoom-out" title="缩小">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="mermaid-control-btn reset-zoom" title="重置">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-              <button class="mermaid-control-btn fullscreen" title="全屏查看">
-                <i class="fas fa-expand"></i>
-              </button>
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
             </div>
             <div class="mermaid">
               flowchart TD
-              A[&#34;Local Incident
-              <br/>Commander&#34;] --&gt;|&#34;Request for Assistance&#34;| B[&#34;OCD Regional Office&#34;]
-              B --&gt; C{&#34;Request Evaluation&#34;}
-              C --&gt;|&#34;Within Local Capacity&#34;| D[&#34;Local Resources Only&#34;]
-              C --&gt;|&#34;Exceeds Local Capacity&#34;| E[&#34;Forward to NDRRMC&#34;]
-              E --&gt; F{&#34;National Resource Assessment&#34;}
-              F --&gt;|&#34;Available&#34;| G[&#34;Deploy NIMT&#34;]
-              F --&gt;|&#34;Unavailable&#34;| H[&#34;Coordinate with Other Regions&#34;]
-              G --&gt; I[&#34;Unified Command Establishment&#34;]
-              H --&gt; I
-              D --&gt; J[&#34;Local ICS Operations&#34;]
-              I --&gt; K[&#34;Integrated Response Operations&#34;]
+              A["Local Incident<br/>Commander"] -->|"Request for Assistance"| B["OCD Regional Office"]
+              B --> C{"Request Evaluation"}
+              C -->|"Within Local Capacity"| D["Local Resources Only"]
+              C -->|"Exceeds Local Capacity"| E["Forward to NDRRMC"]
+              E --> F{"National Resource Assessment"}
+              F -->|"Available"| G["Deploy NIMT"]
+              F -->|"Unavailable"| H["Coordinate with Other Regions"]
+              G --> I["Unified Command Establishment"]
+              H --> I
+              D --> J["Local ICS Operations"]
+              I --> K["Integrated Response Operations"]
 
-              style A fill:#16a34a,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style B fill:#2563eb,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style C fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style D fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style E fill:#7c3aed,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style F fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style G fill:#059669,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style H fill:#ea580c,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style I fill:#6b7280,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style J fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style K fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
+              style A fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style B fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style C fill:#1a3a6b,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style D fill:#0d2045,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style E fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style F fill:#1a3a6b,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style G fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style H fill:#2563eb,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style I fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style J fill:#0d2045,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style K fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
             </div>
           </div>
 
@@ -673,31 +878,31 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Agency Contributions to ICS Operations</h4>
+            <h4>Agency Contributions to ICS Operations</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
-                  <h5 class="font-semibold text-blue-800">PNP</h5>
+                  <i class="fas fa-shield-alt mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">PNP</h5>
                 </div>
-                <p class="text-xs text-blue-600">Law enforcement, security, traffic control, SAR</p>
-                <p class="text-xs text-blue-500 mt-1">Typical Roles: Safety Officer, Operations Branch Director</p>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Law enforcement, security, traffic control, SAR</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Safety Officer, Operations Branch Director</p>
               </div>
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-fire text-red-600 mr-2"></i>
-                  <h5 class="font-semibold text-red-800">BFP</h5>
+                  <i class="fas fa-fire mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">BFP</h5>
                 </div>
-                <p class="text-xs text-red-600">Fire suppression, technical rescue, hazmat response</p>
-                <p class="text-xs text-red-500 mt-1">Typical Roles: Operations Section Chief, Hazmat Branch</p>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Fire suppression, technical rescue, hazmat response</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Operations Section Chief, Hazmat Branch</p>
               </div>
-              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-helicopter text-green-600 mr-2"></i>
-                  <h5 class="font-semibold text-green-800">AFP</h5>
+                  <i class="fas fa-helicopter mr-2" style="color:#0891b2;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">AFP</h5>
                 </div>
-                <p class="text-xs text-green-600">Strategic lift, engineering, field hospitals</p>
-                <p class="text-xs text-green-500 mt-1">Typical Roles: Logistics Section Chief, Operations Branch</p>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Strategic lift, engineering, field hospitals</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Logistics Section Chief, Operations Branch</p>
               </div>
             </div>
           </div>
@@ -721,32 +926,32 @@
           </blockquote>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Institutional Arrangements under RA 10121</h4>
+            <h4>Institutional Arrangements under RA 10121</h4>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                <h5 class="font-semibold text-red-800 mb-3">NDRRMC</h5>
-                <p class="text-sm text-red-700 mb-2"><strong>Policy-making body</strong></p>
-                <ul class="text-xs text-red-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">NDRRMC</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Policy-making body</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Develop ICS policies and guidelines</li>
                   <li>• Approve training standards</li>
                   <li>• Monitor implementation</li>
                   <li>• Coordinate international obligations</li>
                 </ul>
               </div>
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h5 class="font-semibold text-blue-800 mb-3">OCD</h5>
-                <p class="text-sm text-blue-700 mb-2"><strong>Implementing arm</strong></p>
-                <ul class="text-xs text-blue-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">OCD</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Implementing arm</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Administer ICS training programs</li>
                   <li>• Certify instructors</li>
                   <li>• Maintain NIMT</li>
                   <li>• Provide technical assistance</li>
                 </ul>
               </div>
-              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h5 class="font-semibold text-green-800 mb-3">Local DRRM Councils</h5>
-                <p class="text-sm text-green-700 mb-2"><strong>Activating authorities</strong></p>
-                <ul class="text-xs text-green-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Local DRRM Councils</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Activating authorities</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Establish local ICS capability</li>
                   <li>• Activate for incidents</li>
                   <li>• Request national assistance</li>
@@ -765,42 +970,22 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">ICS Training Progression</h4>
+            <h4>ICS Training Progression</h4>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead style="background:var(--navy);">
                   <tr>
-                    <th class="px-4 py-2 text-left font-semibold">Course Level</th>
-                    <th class="px-4 py-2 text-left font-semibold">Duration</th>
-                    <th class="px-4 py-2 text-left font-semibold">Target Audience</th>
-                    <th class="px-4 py-2 text-left font-semibold">Core Content</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Course Level</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Duration</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Target Audience</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Core Content</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                  <tr class="bg-blue-50">
-                    <td class="px-4 py-2 font-medium">ICS Basic/Intermediate</td>
-                    <td class="px-4 py-2">5 days</td>
-                    <td class="px-4 py-2">All DRRM personnel, first responders</td>
-                    <td class="px-4 py-2">ICS fundamentals, organization, basic command</td>
-                  </tr>
-                  <tr class="bg-purple-50">
-                    <td class="px-4 py-2 font-medium">Integrated Planning</td>
-                    <td class="px-4 py-2">10-11 days</td>
-                    <td class="px-4 py-2">Planning Section personnel, aspiring ICs</td>
-                    <td class="px-4 py-2">IAP development, resource tracking, situation assessment</td>
-                  </tr>
-                  <tr class="bg-green-50">
-                    <td class="px-4 py-2 font-medium">Position-Specific (Section Chief)</td>
-                    <td class="px-4 py-2">2-4 days each</td>
-                    <td class="px-4 py-2">Designated Section Chiefs</td>
-                    <td class="px-4 py-2">Advanced functional management by section</td>
-                  </tr>
-                  <tr class="bg-orange-50">
-                    <td class="px-4 py-2 font-medium">Incident Commander</td>
-                    <td class="px-4 py-2">4 days</td>
-                    <td class="px-4 py-2">Designated ICs, senior officials</td>
-                    <td class="px-4 py-2">Complex incident management, unified command</td>
-                  </tr>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">ICS Basic/Intermediate</td><td class="px-4 py-2" style="color:var(--text-dark);">5 days</td><td class="px-4 py-2" style="color:var(--text-dark);">All DRRM personnel, first responders</td><td class="px-4 py-2" style="color:var(--text-dark);">ICS fundamentals, organization, basic command</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Integrated Planning</td><td class="px-4 py-2" style="color:var(--text-dark);">10-11 days</td><td class="px-4 py-2" style="color:var(--text-dark);">Planning Section personnel, aspiring ICs</td><td class="px-4 py-2" style="color:var(--text-dark);">IAP development, resource tracking, situation assessment</td></tr>
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Position-Specific (Section Chief)</td><td class="px-4 py-2" style="color:var(--text-dark);">2-4 days each</td><td class="px-4 py-2" style="color:var(--text-dark);">Designated Section Chiefs</td><td class="px-4 py-2" style="color:var(--text-dark);">Advanced functional management by section</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander</td><td class="px-4 py-2" style="color:var(--text-dark);">4 days</td><td class="px-4 py-2" style="color:var(--text-dark);">Designated ICs, senior officials</td><td class="px-4 py-2" style="color:var(--text-dark);">Complex incident management, unified command</td></tr>
                 </tbody>
               </table>
             </div>
@@ -815,66 +1000,34 @@
           <h3>Republic Act 12287: The State of Imminent Disaster Act</h3>
 
           <p>
-            <strong>Republic Act 12287</strong>, enacted on <strong>September 12, 2025</strong>, establishes the <strong>world&#39;s first national legislation institutionalizing anticipatory action</strong> in disaster risk reduction and management <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>
-            <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[59]</a>
-            <a href="https://www.wfp.org/news/philippines-passes-landmark-legislation-anticipatory-action-protect-communities-disasters" class="citation-link">[62]</a>. The law creates the &#34;State of Imminent Disaster&#34; declaration mechanism, enabling proactive measures before disaster impact based on scientific forecasts.
+            <strong>Republic Act 12287</strong>, enacted on <strong>September 12, 2025</strong>, establishes the <strong>world&#39;s first national legislation institutionalizing anticipatory action</strong> in disaster risk reduction and management <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>. The law creates the &#34;State of Imminent Disaster&#34; declaration mechanism, enabling proactive measures before disaster impact based on scientific forecasts.
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">State of Imminent Disaster Declaration Framework</h4>
+            <h4>State of Imminent Disaster Declaration Framework</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                <h5 class="font-semibold text-red-800 mb-3 flex items-center">
-                  <i class="fas fa-flag mr-2"></i>National Level
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-3 flex items-center" style="color:var(--navy);font-family:'Poppins',sans-serif;">
+                  <i class="fas fa-flag mr-2" style="color:var(--blue-bright);"></i>National Level
                 </h5>
                 <div class="space-y-2 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-red-700">Declaring Authority:</span>
-                    <span class="font-medium">President of the Philippines</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-red-700">Recommending Body:</span>
-                    <span class="font-medium">NDRRMC</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-red-700">Assessment Basis:</span>
-                    <span class="font-medium">PAGASA, PHIVOLCS, etc.</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-red-700">Lead Time:</span>
-                    <span class="font-medium">3 days (extendable to 5)</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-red-700">Duration:</span>
-                    <span class="font-medium">30 days (extendable)</span>
-                  </div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Declaring Authority:</span><span class="font-medium" style="color:var(--text-dark);">President of the Philippines</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Recommending Body:</span><span class="font-medium" style="color:var(--text-dark);">NDRRMC</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Assessment Basis:</span><span class="font-medium" style="color:var(--text-dark);">PAGASA, PHIVOLCS, etc.</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Lead Time:</span><span class="font-medium" style="color:var(--text-dark);">3 days (extendable to 5)</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Duration:</span><span class="font-medium" style="color:var(--text-dark);">30 days (extendable)</span></div>
                 </div>
               </div>
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h5 class="font-semibold text-blue-800 mb-3 flex items-center">
-                  <i class="fas fa-building mr-2"></i>Local Level
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-3 flex items-center" style="color:var(--navy);font-family:'Poppins',sans-serif;">
+                  <i class="fas fa-building mr-2" style="color:var(--blue-bright);"></i>Local Level
                 </h5>
                 <div class="space-y-2 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-blue-700">Declaring Authority:</span>
-                    <span class="font-medium">Local Chief Executive</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-blue-700">Recommending Body:</span>
-                    <span class="font-medium">Regional DRRM Council</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-blue-700">Assessment Basis:</span>
-                    <span class="font-medium">Regional assessment with national support</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-blue-700">Lead Time:</span>
-                    <span class="font-medium">Aligned with national or independent</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-blue-700">Duration:</span>
-                    <span class="font-medium">30 days (extendable)</span>
-                  </div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Declaring Authority:</span><span class="font-medium" style="color:var(--text-dark);">Local Chief Executive</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Recommending Body:</span><span class="font-medium" style="color:var(--text-dark);">Regional DRRM Council</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Assessment Basis:</span><span class="font-medium" style="color:var(--text-dark);">Regional assessment with national support</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Lead Time:</span><span class="font-medium" style="color:var(--text-dark);">Aligned with national or independent</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Duration:</span><span class="font-medium" style="color:var(--text-dark);">30 days (extendable)</span></div>
                 </div>
               </div>
             </div>
@@ -889,9 +1042,9 @@
             The <strong>eight specified anticipatory measures</strong> all require ICS-coordinated implementation <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>:
           </p>
 
-          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 my-6">
-            <h5 class="font-semibold text-yellow-800 mb-3">RA 12287 Anticipatory Measures</h5>
-            <ol class="text-sm text-yellow-700 space-y-1">
+          <div class="rounded-lg p-4 my-6 border" style="background:linear-gradient(135deg,#e8f4ff,#dbeafe);border-color:#93c5fd;">
+            <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">RA 12287 Anticipatory Measures</h5>
+            <ol class="text-sm space-y-1" style="color:var(--text-dark);">
               <li>1. Public information advisories and warnings</li>
               <li>2. Mobilization and strategic pre-positioning of inter-agency response teams</li>
               <li>3. Pre-emptive or forced evacuation of affected populations</li>
@@ -913,44 +1066,40 @@
           <h3>Public Services Continuity Guidelines</h3>
 
           <p>
-            <strong>Public Service Continuity Planning (PSCP)</strong> ensures that essential government services continue during and after disasters, complementing ICS operations by addressing the administrative and service delivery dimensions of crisis response <a href="https://www.pinamalayan.gov.ph/wp-content/uploads/2023/06/PSCP_2024.pdf" class="citation-link">[19]</a>
-            <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[54]</a>
-            <a href="https://ncr.dilg.gov.ph/dilg-ncr-finalizes-its-public-service-continuity-plan/" class="citation-link">[242]</a>.
+            <strong>Public Service Continuity Planning (PSCP)</strong> ensures that essential government services continue during and after disasters, complementing ICS operations by addressing the administrative and service delivery dimensions of crisis response <a href="https://www.pinamalayan.gov.ph/wp-content/uploads/2023/06/PSCP_2024.pdf" class="citation-link">[19]</a>.
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Municipality of Pinamalayan PSCP Implementation</h4>
-            <div class="bg-gray-50 p-4 rounded-lg">
+            <h4>Municipality of Pinamalayan PSCP Implementation</h4>
+            <div class="rounded-lg p-4" style="background:#f0f6ff;">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h5 class="font-semibold text-gray-800 mb-2">Activating Authority</h5>
-                  <p class="text-sm text-gray-600">Municipal Mayor as head of Local DRRM Council</p>
-
-                  <h5 class="font-semibold text-gray-800 mb-2 mt-4">Incident Management Structure</h5>
-                  <ul class="text-sm text-gray-600 space-y-1">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Activating Authority</h5>
+                  <p class="text-sm" style="color:var(--text-dark);">Municipal Mayor as head of Local DRRM Council</p>
+                  <h5 class="font-semibold mb-2 mt-4" style="color:var(--navy);font-family:'Poppins',sans-serif;">Incident Management Structure</h5>
+                  <ul class="text-sm space-y-1" style="color:var(--text-dark);">
                     <li>• IMT with Deputy IC, PIO, Safety Officer, Liaison Officer</li>
                     <li>• Section Chiefs for Operations, Planning, Logistics, Finance</li>
                   </ul>
                 </div>
                 <div>
-                  <h5 class="font-semibold text-gray-800 mb-2">Response Teams</h5>
-                  <ul class="text-sm text-gray-600 space-y-1">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Response Teams</h5>
+                  <ul class="text-sm space-y-1" style="color:var(--text-dark);">
                     <li>• Search and Rescue</li>
                     <li>• Evacuation and Relief Operation</li>
                     <li>• Emergency Medical Services</li>
                     <li>• Fire Suppression/Prevention</li>
                     <li>• Security and Safety</li>
                   </ul>
-
-                  <h5 class="font-semibold text-gray-800 mb-2 mt-4">Exercise Requirements</h5>
-                  <p class="text-sm text-gray-600">Table Top Exercises twice monthly; quarterly drills; annual full-scale exercise</p>
+                  <h5 class="font-semibold mb-2 mt-4" style="color:var(--navy);font-family:'Poppins',sans-serif;">Exercise Requirements</h5>
+                  <p class="text-sm" style="color:var(--text-dark);">Table Top Exercises twice monthly; quarterly drills; annual full-scale exercise</p>
                 </div>
               </div>
             </div>
           </div>
 
           <p>
-            <strong>NDRRMC Memorandum No. 2, s. 2023</strong> adopted the <strong>PSCP Guidebook 2nd Edition</strong>, establishing the Continuity Plan Core Team as the organizational link to ICS operations <a href="https://rbmes-api.ndrrmc.gov.ph/download/NDRRMC-AR-2023.pdf" class="citation-link">[248]</a>. The Philippine Disaster Resilience Foundation (PDRF), in partnership with OCD and DILG, has led technical assistance through a mentorship program combining self-paced online modules with webinar workshops.
+            <strong>NDRRMC Memorandum No. 2, s. 2023</strong> adopted the <strong>PSCP Guidebook 2nd Edition</strong>, establishing the Continuity Plan Core Team as the organizational link to ICS operations. The Philippine Disaster Resilience Foundation (PDRF), in partnership with OCD and DILG, has led technical assistance through a mentorship program combining self-paced online modules with webinar workshops.
           </p>
         </div>
       </section>
@@ -977,42 +1126,42 @@
           </blockquote>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Competency-Based Progression Framework</h4>
+            <h4>Competency-Based Progression Framework</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h5 class="font-semibold text-green-800 mb-2">Basic Level</h5>
-                <p class="text-xs text-green-700 mb-2"><strong>Single hazard, single jurisdiction</strong></p>
-                <ul class="text-xs text-green-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Basic Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Single hazard, single jurisdiction</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Clear objectives, adequate resources</li>
                   <li>• Limited time pressure</li>
                   <li>• ICS fundamentals focus</li>
                   <li>• Organizational structure basics</li>
                 </ul>
               </div>
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h5 class="font-semibold text-blue-800 mb-2">Intermediate Level</h5>
-                <p class="text-xs text-blue-700 mb-2"><strong>Multi-agency coordination required</strong></p>
-                <ul class="text-xs text-blue-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Intermediate Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Multi-agency coordination required</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Resource constraints, prioritization</li>
                   <li>• Multiple operational periods</li>
                   <li>• Resource prioritization skills</li>
                   <li>• Inter-agency negotiation practice</li>
                 </ul>
               </div>
-              <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                <h5 class="font-semibold text-orange-800 mb-2">Advanced Level</h5>
-                <p class="text-xs text-orange-700 mb-2"><strong>Multi-jurisdiction, unified command</strong></p>
-                <ul class="text-xs text-orange-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Advanced Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Multi-jurisdiction, unified command</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Political sensitivities, media scrutiny</li>
                   <li>• Prolonged duration challenges</li>
                   <li>• Complex command arrangements</li>
                   <li>• Strategic stakeholder management</li>
                 </ul>
               </div>
-              <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                <h5 class="font-semibold text-purple-800 mb-2">Position-Specific</h5>
-                <p class="text-xs text-purple-700 mb-2"><strong>Deep specialization in single role</strong></p>
-                <ul class="text-xs text-purple-600 space-y-1">
+              <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Position-Specific</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Deep specialization in single role</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
                   <li>• Realistic interdependencies</li>
                   <li>• Expert-level performance focus</li>
                   <li>• Mentorship capability development</li>
@@ -1027,22 +1176,20 @@
             <strong>Native iOS/macOS development for Apple ecosystem compliance</strong> ensures optimal performance, security, and user experience on devices widely used in Philippine government and education. <strong>Swift and SwiftUI</strong> provide modern frameworks for creating responsive, accessible interfaces that adapt seamlessly across iPhone, iPad, and Mac.
           </p>
 
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-            <h5 class="font-semibold text-blue-800 mb-3">Technical Architecture Components</h5>
+          <div class="rounded-lg p-4 my-6 border" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue);font-family:'Poppins',sans-serif;">Technical Architecture Components</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h6 class="font-medium text-blue-700 mb-2">Cross-platform Multiplayer</h6>
-                <p class="text-xs text-blue-600">Game Center for matchmaking + custom backend for complex state synchronization</p>
-
-                <h6 class="font-medium text-blue-700 mb-2 mt-3">Cloud-based Scenario Repository</h6>
-                <p class="text-xs text-blue-600">iCloud with intelligent local caching; version control for content updates</p>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Cross-platform Multiplayer</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">Game Center for matchmaking + custom backend for complex state synchronization</p>
+                <h6 class="font-medium mb-2 mt-3" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Cloud-based Scenario Repository</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">iCloud with intelligent local caching; version control for content updates</p>
               </div>
               <div>
-                <h6 class="font-medium text-blue-700 mb-2">Progress Synchronization</h6>
-                <p class="text-xs text-blue-600">iCloud Core Data with conflict resolution for seamless cross-device experience</p>
-
-                <h6 class="font-medium text-blue-700 mb-2 mt-3">Real-time Multiplayer State</h6>
-                <p class="text-xs text-blue-600">Authoritative server with client-side prediction for consistency and responsiveness</p>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Progress Synchronization</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">iCloud Core Data with conflict resolution for seamless cross-device experience</p>
+                <h6 class="font-medium mb-2 mt-3" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Real-time Multiplayer State</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">Authoritative server with client-side prediction for consistency and responsiveness</p>
               </div>
             </div>
           </div>
@@ -1057,48 +1204,23 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Command Role Performance Framework</h4>
+            <h4>Command Role Performance Framework</h4>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead style="background:var(--navy);">
                   <tr>
-                    <th class="px-4 py-2 text-left font-semibold">Command Role</th>
-                    <th class="px-4 py-2 text-left font-semibold">Primary Simulation Activities</th>
-                    <th class="px-4 py-2 text-left font-semibold">Key Performance Indicators</th>
-                    <th class="px-4 py-2 text-left font-semibold">Common Failure Modes</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Command Role</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Primary Simulation Activities</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Key Performance Indicators</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Common Failure Modes</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                  <tr class="bg-red-50">
-                    <td class="px-4 py-2 font-medium">Incident Commander</td>
-                    <td class="px-4 py-2 text-xs">Objective setting, strategy approval, resource authorization</td>
-                    <td class="px-4 py-2 text-xs">Incident outcome quality, safety record, resource efficiency</td>
-                    <td class="px-4 py-2 text-xs">Micromanagement, failure to delegate, decision paralysis</td>
-                  </tr>
-                  <tr class="bg-orange-50">
-                    <td class="px-4 py-2 font-medium">Operations Section Chief</td>
-                    <td class="px-4 py-2 text-xs">Tactical assignment, branch coordination, safety monitoring</td>
-                    <td class="px-4 py-2 text-xs">Task completion rate, responder safety, tactical effectiveness</td>
-                    <td class="px-4 py-2 text-xs">Tactical fragmentation, inadequate span of control, safety oversight</td>
-                  </tr>
-                  <tr class="bg-purple-50">
-                    <td class="px-4 py-2 font-medium">Planning Section Chief</td>
-                    <td class="px-4 py-2 text-xs">Information collection, situation assessment, IAP development</td>
-                    <td class="px-4 py-2 text-xs">Situation awareness accuracy, planning timeliness, forecast quality</td>
-                    <td class="px-4 py-2 text-xs">Information overload, analysis paralysis, planning-production disconnect</td>
-                  </tr>
-                  <tr class="bg-blue-50">
-                    <td class="px-4 py-2 font-medium">Logistics Section Chief</td>
-                    <td class="px-4 py-2 text-xs">Resource procurement, facility management, personnel support</td>
-                    <td class="px-4 py-2 text-xs">Resource availability, support response time, cost efficiency</td>
-                    <td class="px-4 py-2 text-xs">Reactive logistics, inadequate sustainability planning, procurement delays</td>
-                  </tr>
-                  <tr class="bg-green-50">
-                    <td class="px-4 py-2 font-medium">Finance/Admin Section Chief</td>
-                    <td class="px-4 py-2 text-xs">Cost tracking, procurement administration, time recording</td>
-                    <td class="px-4 py-2 text-xs">Financial documentation completeness, cost control, audit readiness</td>
-                    <td class="px-4 py-2 text-xs">Postponed documentation, inadequate cost projection, non-compliance</td>
-                  </tr>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Objective setting, strategy approval, resource authorization</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Incident outcome quality, safety record, resource efficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Micromanagement, failure to delegate, decision paralysis</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Operations Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Tactical assignment, branch coordination, safety monitoring</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Task completion rate, responder safety, tactical effectiveness</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Tactical fragmentation, inadequate span of control, safety oversight</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Planning Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Information collection, situation assessment, IAP development</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Situation awareness accuracy, planning timeliness, forecast quality</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Information overload, analysis paralysis, planning-production disconnect</td></tr>
+                  <tr style="background:#e8f4ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Logistics Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Resource procurement, facility management, personnel support</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Resource availability, support response time, cost efficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Reactive logistics, inadequate sustainability planning, procurement delays</td></tr>
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Finance/Admin Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Cost tracking, procurement administration, time recording</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Financial documentation completeness, cost control, audit readiness</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Postponed documentation, inadequate cost projection, non-compliance</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1115,23 +1237,23 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Agency Representative Coordination Dynamics</h4>
+            <h4>Agency Representative Coordination Dynamics</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-fire text-red-600 mr-2"></i>
-                  <h5 class="font-semibold text-red-800">Fire/Rescue (BFP)</h5>
+                  <i class="fas fa-fire mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Fire/Rescue (BFP)</h5>
                 </div>
-                <p class="text-xs text-red-700 mb-2"><strong>Capabilities:</strong> Fire suppression, technical rescue, hazmat response</p>
-                <p class="text-xs text-red-600"><strong>Friction Points:</strong> Resource competition for specialized equipment; safety authority conflicts with operational pressure</p>
+                <p class="text-xs mb-2" style="color:var(--text-mid);"><strong>Capabilities:</strong> Fire suppression, technical rescue, hazmat response</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Friction Points:</strong> Resource competition for specialized equipment; safety authority conflicts with operational pressure</p>
               </div>
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
-                  <h5 class="font-semibold text-blue-800">Police (PNP)</h5>
+                  <i class="fas fa-shield-alt mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Police (PNP)</h5>
                 </div>
-                <p class="text-xs text-blue-700 mb-2"><strong>Capabilities:</strong> Law enforcement, security, traffic control, criminal investigation</p>
-                <p class="text-xs text-blue-600"><strong>Friction Points:</strong> Jurisdictional authority boundaries; information classification vs. operational need-to-know</p>
+                <p class="text-xs mb-2" style="color:var(--text-mid);"><strong>Capabilities:</strong> Law enforcement, security, traffic control, criminal investigation</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Friction Points:</strong> Jurisdictional authority boundaries; information classification vs. operational need-to-know</p>
               </div>
             </div>
           </div>
@@ -1146,34 +1268,34 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Philippine-Specific Hazard Scenarios</h4>
+            <h4>Philippine-Specific Hazard Scenarios</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-hurricane text-blue-600 mr-2"></i>
-                  <h5 class="font-semibold text-blue-800">Typhoon &#34;Bayani&#34;</h5>
+                  <i class="fas fa-hurricane mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Typhoon &#34;Bayani&#34;</h5>
                 </div>
-                <p class="text-xs text-blue-700 mb-2"><strong>Category 4 landfall with storm surge</strong></p>
-                <p class="text-xs text-blue-600 mb-2"><strong>Complexity:</strong> Multi-jurisdiction, extended duration, resource competition</p>
-                <p class="text-xs text-blue-500"><strong>Philippine Elements:</strong> RA 12287 anticipatory action, PAGASA warning system, informal settlement vulnerability</p>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Category 4 landfall with storm surge</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> Multi-jurisdiction, extended duration, resource competition</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> RA 12287 anticipatory action, PAGASA warning system, informal settlement vulnerability</p>
               </div>
-              <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-mountain text-orange-600 mr-2"></i>
-                  <h5 class="font-semibold text-orange-800">&#34;Big One&#34; Earthquake</h5>
+                  <i class="fas fa-mountain mr-2" style="color:var(--blue-mid);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">&#34;Big One&#34; Earthquake</h5>
                 </div>
-                <p class="text-xs text-orange-700 mb-2"><strong>M7.2 Metro Manila earthquake scenario</strong></p>
-                <p class="text-xs text-orange-600 mb-2"><strong>Complexity:</strong> No-notice onset, USAR integration, mass casualty</p>
-                <p class="text-xs text-orange-500"><strong>Philippine Elements:</strong> MM building typologies, PHIVOLCS coordination, private hospital surge</p>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">M7.2 Metro Manila earthquake scenario</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> No-notice onset, USAR integration, mass casualty</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> MM building typologies, PHIVOLCS coordination, private hospital surge</p>
               </div>
-              <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+              <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#60a5fa;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-volcano text-red-600 mr-2"></i>
-                  <h5 class="font-semibold text-red-800">Taal Volcano Escalation</h5>
+                  <i class="fas fa-volcano mr-2" style="color:#2563eb;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Taal Volcano Escalation</h5>
                 </div>
-                <p class="text-xs text-red-700 mb-2"><strong>Alert Level 3-4 progression</strong></p>
-                <p class="text-xs text-red-600 mb-2"><strong>Complexity:</strong> Scientific uncertainty, extended duration, evacuation fatigue</p>
-                <p class="text-xs text-red-500"><strong>Philippine Elements:</strong> PHIVOLCS alert interpretation, tourism disruption, livestock evacuation</p>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Alert Level 3-4 progression</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> Scientific uncertainty, extended duration, evacuation fatigue</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> PHIVOLCS alert interpretation, tourism disruption, livestock evacuation</p>
               </div>
             </div>
           </div>
@@ -1190,52 +1312,44 @@
 
           <div class="mermaid-container">
             <div class="mermaid-controls">
-              <button class="mermaid-control-btn zoom-in" title="放大">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="mermaid-control-btn zoom-out" title="缩小">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="mermaid-control-btn reset-zoom" title="重置">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-              <button class="mermaid-control-btn fullscreen" title="全屏查看">
-                <i class="fas fa-expand"></i>
-              </button>
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
             </div>
             <div class="mermaid">
               timeline
               title Incident Management Timeline
 
-              section &#34;Pre-Incident&#34;
-              24-72 hours : &#34;Forecast monitoring&#34;
-              : &#34;Risk assessment&#34;
-              : &#34;Declaration decision&#34;
-              : &#34;Anticipatory measures&#34;
-              : &#34;Resource pre-positioning&#34;
-              : &#34;Public warning&#34;
-              : &#34;Evacuation initiation&#34;
+              section "Pre-Incident"
+              24-72 hours : "Forecast monitoring"
+              : "Risk assessment"
+              : "Declaration decision"
+              : "Anticipatory measures"
+              : "Resource pre-positioning"
+              : "Public warning"
+              : "Evacuation initiation"
 
-              section &#34;Initial Response&#34;
-              0-24 hours : &#34;Rapid situation assessment&#34;
-              : &#34;Life safety operations&#34;
-              : &#34;Resource deployment&#34;
-              : &#34;ICS organization&#34;
-              : &#34;Immediate needs ID&#34;
+              section "Initial Response"
+              0-24 hours : "Rapid situation assessment"
+              : "Life safety operations"
+              : "Resource deployment"
+              : "ICS organization"
+              : "Immediate needs ID"
 
-              section &#34;Sustained Operations&#34;
-              24 hours - days/weeks : &#34;Multiple operational periods&#34;
-              : &#34;Formal IAP development&#34;
-              : &#34;Resource rotation&#34;
-              : &#34;Fatigue management&#34;
-              : &#34;Adaptive strategy&#34;
+              section "Sustained Operations"
+              24 hours - days/weeks : "Multiple operational periods"
+              : "Formal IAP development"
+              : "Resource rotation"
+              : "Fatigue management"
+              : "Adaptive strategy"
 
-              section &#34;Demobilization&#34;
-              Final 24-48 hours : &#34;Resource release&#34;
-              : &#34;Documentation completion&#34;
-              : &#34;Cost capture&#34;
-              : &#34;Recovery handover&#34;
-              : &#34;After-action initiation&#34;
+              section "Demobilization"
+              Final 24-48 hours : "Resource release"
+              : "Documentation completion"
+              : "Cost capture"
+              : "Recovery handover"
+              : "After-action initiation"
             </div>
           </div>
         </div>
@@ -1248,20 +1362,20 @@
             <strong>Touch-optimized command interface for iPad/iPhone</strong> follows Apple HIG specifications with 44×44 point minimum touch targets, ensuring reliable activation under time pressure. The interface employs hierarchical information architecture with drill-down capability to unit details, resource status, and communication logs.
           </p>
 
-          <div class="bg-green-50 border border-green-200 rounded-lg p-4 my-6">
-            <h5 class="font-semibold text-green-800 mb-3">Drag-and-Drop Resource Allocation Features</h5>
+          <div class="rounded-lg p-4 my-6 border" style="background:linear-gradient(135deg,#e0f2fe,#dbeafe);border-color:#7dd3fc;">
+            <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Drag-and-Drop Resource Allocation Features</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h6 class="font-medium text-green-700 mb-2">Visual Feedback</h6>
-                <ul class="text-xs text-green-600 space-y-1">
+                <h6 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Visual Feedback</h6>
+                <ul class="text-xs space-y-1" style="color:var(--text-dark);">
                   <li>• Resource icon follows touch with transparency indicating validity</li>
                   <li>• Drop zone indication: green (appropriate), yellow (suboptimal), red (incompatible)</li>
                   <li>• Assignment confirmation with haptic feedback and animation</li>
                 </ul>
               </div>
               <div>
-                <h6 class="font-medium text-green-700 mb-2">Advanced Operations</h6>
-                <ul class="text-xs text-green-600 space-y-1">
+                <h6 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Advanced Operations</h6>
+                <ul class="text-xs space-y-1" style="color:var(--text-dark);">
                   <li>• Batch operations with multi-select for large-scale resource movement</li>
                   <li>• Undo functionality for error recovery and experimentation</li>
                   <li>• Gesture-based map navigation and situation board manipulation</li>
@@ -1281,35 +1395,23 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Guidance System Hierarchy</h4>
+            <h4>Guidance System Hierarchy</h4>
             <div class="space-y-3">
-              <div class="flex items-start bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3">1</div>
-                <div>
-                  <h5 class="font-semibold text-blue-800">Quick Definition</h5>
-                  <p class="text-xs text-blue-600">Brief hover/long-press on term → 1-2 sentence explanation with related terms</p>
-                </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:var(--blue-bright);color:#ffffff;font-family:'Poppins',sans-serif;">1</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Quick Definition</h5><p class="text-xs" style="color:var(--text-dark);">Brief hover/long-press on term → 1-2 sentence explanation with related terms</p></div>
               </div>
-              <div class="flex items-start bg-green-50 p-3 rounded-lg border border-green-200">
-                <div class="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3">2</div>
-                <div>
-                  <h5 class="font-semibold text-green-800">Detailed Explanation</h5>
-                  <p class="text-xs text-green-600">Tap &#34;More&#34; → Full concept description with procedural context</p>
-                </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:#0891b2;color:#ffffff;font-family:'Poppins',sans-serif;">2</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Detailed Explanation</h5><p class="text-xs" style="color:var(--text-dark);">Tap "More" → Full concept description with procedural context</p></div>
               </div>
-              <div class="flex items-start bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                <div class="bg-yellow-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3">3</div>
-                <div>
-                  <h5 class="font-semibold text-yellow-800">Procedural Guide</h5>
-                  <p class="text-xs text-yellow-600">Role-specific help → Step-by-step checklist for common tasks</p>
-                </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:var(--blue-mid);color:#ffffff;font-family:'Poppins',sans-serif;">3</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Procedural Guide</h5><p class="text-xs" style="color:var(--text-dark);">Role-specific help → Step-by-step checklist for common tasks</p></div>
               </div>
-              <div class="flex items-start bg-purple-50 p-3 rounded-lg border border-purple-200">
-                <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3">4</div>
-                <div>
-                  <h5 class="font-semibold text-purple-800">Regulatory Reference</h5>
-                  <p class="text-xs text-purple-600">&#34;Legal basis&#34; link → Citation to RA 10121, RA 12287, NDRRMC guidelines with relevant text</p>
-                </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:#4f46e5;color:#ffffff;font-family:'Poppins',sans-serif;">4</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Regulatory Reference</h5><p class="text-xs" style="color:var(--text-dark);">"Legal basis" link → Citation to RA 10121, RA 12287, NDRRMC guidelines with relevant text</p></div>
               </div>
             </div>
           </div>
@@ -1320,34 +1422,34 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Alert Priority Hierarchy</h4>
+            <h4>Alert Priority Hierarchy</h4>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="bg-red-100 p-4 rounded-lg border-2 border-red-300">
+              <div class="p-4 rounded-lg border-2" style="background:#071428;border-color:#00d4ff;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
-                  <h5 class="font-semibold text-red-800">Emergency</h5>
+                  <i class="fas fa-exclamation-triangle mr-2" style="color:var(--neon-blue);"></i>
+                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Emergency</h5>
                 </div>
-                <p class="text-xs text-red-700 mb-2">Full-screen red overlay, persistent until acknowledged</p>
-                <p class="text-xs text-red-600">Distinctive alarm tone, strong continuous haptic, blocks interaction</p>
-                <p class="text-xs text-red-500 mt-2"><strong>Example:</strong> Imminent responder safety threat</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Full-screen overlay, persistent until acknowledged</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.75);">Distinctive alarm tone, strong continuous haptic, blocks interaction</p>
+                <p class="text-xs mt-2" style="color:var(--neon-blue);"><strong>Example:</strong> Imminent responder safety threat</p>
               </div>
-              <div class="bg-yellow-100 p-4 rounded-lg border-2 border-yellow-300">
+              <div class="p-4 rounded-lg border-2" style="background:#0d2045;border-color:#60a5fa;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-exclamation-circle text-yellow-600 mr-2"></i>
-                  <h5 class="font-semibold text-yellow-800">Urgent</h5>
+                  <i class="fas fa-exclamation-circle mr-2" style="color:var(--light-blue);"></i>
+                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Urgent</h5>
                 </div>
-                <p class="text-xs text-yellow-700 mb-2">Banner alert, prominent but non-blocking</p>
-                <p class="text-xs text-yellow-600">Single alert tone, moderate single haptic, auto-dismisses after timeout</p>
-                <p class="text-xs text-yellow-500 mt-2"><strong>Example:</strong> Resource request denial, status change</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Banner alert, prominent but non-blocking</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.75);">Single alert tone, moderate single haptic, auto-dismisses after timeout</p>
+                <p class="text-xs mt-2" style="color:var(--light-blue);"><strong>Example:</strong> Resource request denial, status change</p>
               </div>
-              <div class="bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
+              <div class="p-4 rounded-lg border-2" style="background:#1a3a6b;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
-                  <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                  <h5 class="font-semibold text-blue-800">Routine</h5>
+                  <i class="fas fa-info-circle mr-2" style="color:#93c5fd;"></i>
+                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Routine</h5>
                 </div>
-                <p class="text-xs text-blue-700 mb-2">Status bar indicator, subtle badge</p>
-                <p class="text-xs text-blue-600">No audio, no haptic, background awareness</p>
-                <p class="text-xs text-blue-500 mt-2"><strong>Example:</strong> Situation report available, scheduled reminder</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Status bar indicator, subtle badge</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.75);">No audio, no haptic, background awareness</p>
+                <p class="text-xs mt-2" style="color:#93c5fd;"><strong>Example:</strong> Situation report available, scheduled reminder</p>
               </div>
             </div>
           </div>
@@ -1362,51 +1464,51 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Six-Domain Competency Assessment Framework</h4>
+            <h4>Six-Domain Competency Assessment Framework</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-4">
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <h5 class="font-semibold text-blue-800 mb-2">Situation Evaluation (28 pts)</h5>
-                  <p class="text-xs text-blue-700 mb-2">Capacity to gather, analyze, and interpret incident information</p>
-                  <p class="text-xs text-blue-600"><strong>Indicators:</strong> Information completeness, hazard identification accuracy, critical factor recognition</p>
+                <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Situation Evaluation (28 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to gather, analyze, and interpret incident information</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Information completeness, hazard identification accuracy, critical factor recognition</p>
                 </div>
-                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <h5 class="font-semibold text-green-800 mb-2">Command Decision-Making (28 pts)</h5>
-                  <p class="text-xs text-green-700 mb-2">Capacity to establish appropriate objectives and select effective strategies</p>
-                  <p class="text-xs text-green-600"><strong>Indicators:</strong> Objective clarity, strategy alignment, safety consideration, adaptation to change</p>
+                <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Command Decision-Making (28 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to establish appropriate objectives and select effective strategies</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Objective clarity, strategy alignment, safety consideration, adaptation to change</p>
                 </div>
-                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                  <h5 class="font-semibold text-red-800 mb-2">Response Activities (43 pts)</h5>
-                  <p class="text-xs text-red-700 mb-2">Capacity to order, deploy, and manage resources to achieve tactical objectives</p>
-                  <p class="text-xs text-red-600"><strong>Indicators:</strong> Resource request timeliness, tactical positioning, task clarity, resource utilization</p>
+                <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Response Activities (43 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to order, deploy, and manage resources to achieve tactical objectives</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Resource request timeliness, tactical positioning, task clarity, resource utilization</p>
                 </div>
               </div>
               <div class="space-y-4">
-                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <h5 class="font-semibold text-purple-800 mb-2">Progress Management (35 pts)</h5>
-                  <p class="text-xs text-purple-700 mb-2">Capacity to plan, execute, and adapt operations across multiple periods</p>
-                  <p class="text-xs text-purple-600"><strong>Indicators:</strong> IAP quality, objective achievement, organizational modification, sustained effectiveness</p>
+                <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Progress Management (35 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to plan, execute, and adapt operations across multiple periods</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> IAP quality, objective achievement, organizational modification, sustained effectiveness</p>
                 </div>
-                <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                  <h5 class="font-semibold text-orange-800 mb-2">Communication (26 pts)</h5>
-                  <p class="text-xs text-orange-700 mb-2">Capacity to exchange information clearly, completely, and appropriately</p>
-                  <p class="text-xs text-orange-600"><strong>Indicators:</strong> Radio protocol adherence, briefing clarity, proactive distribution, responsiveness</p>
+                <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Communication (26 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to exchange information clearly, completely, and appropriately</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Radio protocol adherence, briefing clarity, proactive distribution, responsiveness</p>
                 </div>
-                <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
-                  <h5 class="font-semibold text-teal-800 mb-2">Crisis Leadership (40 pts)</h5>
-                  <p class="text-xs text-teal-700 mb-2">Capacity to maintain effective performance under pressure and coordinate team functioning</p>
-                  <p class="text-xs text-teal-600"><strong>Indicators:</strong> Composure maintenance, effective delegation, ethical reasoning, conflict management</p>
+                <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#0891b2;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Crisis Leadership (40 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to maintain effective performance under pressure and coordinate team functioning</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Composure maintenance, effective delegation, ethical reasoning, conflict management</p>
                 </div>
               </div>
             </div>
-            <div class="bg-gray-100 p-4 rounded-lg mt-4">
+            <div class="p-4 rounded-lg mt-4" style="background:var(--navy);">
               <div class="flex justify-between items-center">
-                <span class="font-semibold text-gray-800">Total Possible Score:</span>
-                <span class="text-xl font-bold text-gray-800">200 points</span>
+                <span class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Total Possible Score:</span>
+                <span class="text-xl font-bold" style="color:var(--neon-blue);">200 points</span>
               </div>
               <div class="flex justify-between items-center mt-2">
-                <span class="font-semibold text-gray-800">Passing Threshold:</span>
-                <span class="text-lg font-bold text-green-600">160 points (80%)</span>
+                <span class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Passing Threshold:</span>
+                <span class="text-lg font-bold" style="color:var(--light-blue);">160 points (80%)</span>
               </div>
             </div>
           </div>
@@ -1423,64 +1525,56 @@
 
           <div class="mermaid-container">
             <div class="mermaid-controls">
-              <button class="mermaid-control-btn zoom-in" title="放大">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="mermaid-control-btn zoom-out" title="缩小">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="mermaid-control-btn reset-zoom" title="重置">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-              <button class="mermaid-control-btn fullscreen" title="全屏查看">
-                <i class="fas fa-expand"></i>
-              </button>
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
             </div>
             <div class="mermaid">
               graph LR
-              A[&#34;Scenario Completion&#34;] --&gt; B[&#34;Immediate Performance Summary&#34;]
-              B --&gt; C[&#34;Overall Result: Pass/Conditional/Failure&#34;]
-              B --&gt; D[&#34;Key Event Highlights&#34;]
-              B --&gt; E[&#34;Comparative Context&#34;]
+              A["Scenario Completion"] --> B["Immediate Performance Summary"]
+              B --> C["Overall Result: Pass/Conditional/Failure"]
+              B --> D["Key Event Highlights"]
+              B --> E["Comparative Context"]
 
-              A --&gt; F[&#34;Detailed Debriefing&#34;]
-              F --&gt; G[&#34;Domain Score Breakdown&#34;]
-              F --&gt; H[&#34;Critical Moment Analysis&#34;]
-              F --&gt; I[&#34;Expert Comparison&#34;]
-              F --&gt; J[&#34;Improvement Recommendations&#34;]
+              A --> F["Detailed Debriefing"]
+              F --> G["Domain Score Breakdown"]
+              F --> H["Critical Moment Analysis"]
+              F --> I["Expert Comparison"]
+              F --> J["Improvement Recommendations"]
 
-              A --&gt; K[&#34;Replay Functionality&#34;]
-              K --&gt; L[&#34;Full Scenario Replay&#34;]
-              K --&gt; M[&#34;Decision Point Analysis&#34;]
-              K --&gt; N[&#34;Alternative Exploration&#34;]
-              K --&gt; O[&#34;Collaborative Debriefing&#34;]
+              A --> K["Replay Functionality"]
+              K --> L["Full Scenario Replay"]
+              K --> M["Decision Point Analysis"]
+              K --> N["Alternative Exploration"]
+              K --> O["Collaborative Debriefing"]
 
-              J --&gt; P[&#34;Targeted Development Plan&#34;]
-              P --&gt; Q[&#34;Automated Suggestions&#34;]
-              P --&gt; R[&#34;Instructor Override&#34;]
-              P --&gt; S[&#34;Resource Linking&#34;]
-              P --&gt; T[&#34;Goal Setting&#34;]
+              J --> P["Targeted Development Plan"]
+              P --> Q["Automated Suggestions"]
+              P --> R["Instructor Override"]
+              P --> S["Resource Linking"]
+              P --> T["Goal Setting"]
 
-              style A fill:#2563eb,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style B fill:#7c3aed,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style C fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style D fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style E fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style F fill:#7c3aed,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style G fill:#059669,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style H fill:#059669,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style I fill:#059669,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style J fill:#059669,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style K fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style L fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style M fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style N fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style O fill:#dc2626,stroke:#1e293b,stroke-width:2px,color:#ffffff
-              style P fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
-              style Q fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
-              style R fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
-              style S fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
-              style T fill:#1e293b,stroke:#dc2626,stroke-width:3px,color:#ffffff
+              style A fill:#1d6bbf,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style B fill:#1a3a6b,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style C fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style D fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style E fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style F fill:#1a3a6b,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style G fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style H fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style I fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style J fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style K fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style L fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style M fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style N fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style O fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style P fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style Q fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style R fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style S fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style T fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
             </div>
           </div>
         </div>
@@ -1494,48 +1588,23 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Career Progression Path</h4>
+            <h4>Career Progression Path</h4>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead style="background:var(--navy);">
                   <tr>
-                    <th class="px-4 py-2 text-left font-semibold">Career Stage</th>
-                    <th class="px-4 py-2 text-left font-semibold">Unlock Requirements</th>
-                    <th class="px-4 py-2 text-left font-semibold">Available Content</th>
-                    <th class="px-4 py-2 text-left font-semibold">Certification Path</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Career Stage</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Unlock Requirements</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Available Content</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Certification Path</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                  <tr class="bg-green-50">
-                    <td class="px-4 py-2 font-medium">Responder</td>
-                    <td class="px-4 py-2 text-xs">Initial account creation</td>
-                    <td class="px-4 py-2 text-xs">Basic ICS tutorial; observer role; terminology quizzes</td>
-                    <td class="px-4 py-2 text-xs">—</td>
-                  </tr>
-                  <tr class="bg-blue-50">
-                    <td class="px-4 py-2 font-medium">Operations Specialist</td>
-                    <td class="px-4 py-2 text-xs">Complete Basic ICS tutorial</td>
-                    <td class="px-4 py-2 text-xs">Operations Section member roles; single-period incidents</td>
-                    <td class="px-4 py-2 text-xs">ICS-100 equivalent</td>
-                  </tr>
-                  <tr class="bg-purple-50">
-                    <td class="px-4 py-2 font-medium">Section Chief Candidate</td>
-                    <td class="px-4 py-2 text-xs">Demonstrate specialist proficiency</td>
-                    <td class="px-4 py-2 text-xs">Section Chief roles; multi-period incidents</td>
-                    <td class="px-4 py-2 text-xs">ICS-200 equivalent</td>
-                  </tr>
-                  <tr class="bg-orange-50">
-                    <td class="px-4 py-2 font-medium">Incident Commander Candidate</td>
-                    <td class="px-4 py-2 text-xs">Proficiency in 2 Section Chief roles</td>
-                    <td class="px-4 py-2 text-xs">IC role; unified command as deputy; complex scenarios</td>
-                    <td class="px-4 py-2 text-xs">ICS-300 equivalent</td>
-                  </tr>
-                  <tr class="bg-red-50">
-                    <td class="px-4 py-2 font-medium">Certified IC</td>
-                    <td class="px-4 py-2 text-xs">Pass comprehensive IC assessment</td>
-                    <td class="px-4 py-2 text-xs">All roles and scenarios; expert complexity; mentorship</td>
-                    <td class="px-4 py-2 text-xs">ICS-400 equivalent; National Cadre</td>
-                  </tr>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Responder</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Initial account creation</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Basic ICS tutorial; observer role; terminology quizzes</td><td class="px-4 py-2 text-xs" style="color:var(--text-muted);">—</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Operations Specialist</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Complete Basic ICS tutorial</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Operations Section member roles; single-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-100 equivalent</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Section Chief Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Demonstrate specialist proficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Section Chief roles; multi-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-200 equivalent</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Proficiency in 2 Section Chief roles</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">IC role; unified command as deputy; complex scenarios</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-300 equivalent</td></tr>
+                  <tr style="background:var(--navy);"><td class="px-4 py-2 font-medium" style="color:#ffffff;">Certified IC</td><td class="px-4 py-2 text-xs" style="color:rgba(147,197,253,0.9);">Pass comprehensive IC assessment</td><td class="px-4 py-2 text-xs" style="color:rgba(147,197,253,0.9);">All roles and scenarios; expert complexity; mentorship</td><td class="px-4 py-2 text-xs" style="color:var(--neon-blue);">ICS-400 equivalent; National Cadre</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1544,7 +1613,8 @@
           <h4>Multiplayer Collaboration</h4>
           <p>
             <strong>Synchronized team-based incident command</strong> enables authentic coordination practice. Role specialization with interdependent responsibilities creates genuine teamwork requirements, while voice and text communication integration supports realistic coordination.
-          </p></div>
+          </p>
+        </div>
 
         <div id="apple-compliance">
           <h3>Apple Human Interface Guidelines Compliance</h3>
@@ -1555,39 +1625,39 @@
           </p>
 
           <div class="data-viz">
-            <h4 class="font-semibold text-lg mb-4">Apple HIG Compliance Matrix</h4>
+            <h4>Apple HIG Compliance Matrix</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h5 class="font-semibold text-gray-800 mb-3">Visual Design</h5>
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Visual Design</h5>
                 <div class="space-y-2">
-                  <div class="bg-blue-50 p-3 rounded border border-blue-200">
-                    <h6 class="font-medium text-blue-800 text-sm">Hierarchy</h6>
-                    <p class="text-xs text-blue-600">Primary incident status prominent; secondary information accessible through progressive disclosure</p>
+                  <div class="p-3 rounded border" style="background:#dbeafe;border-color:#93c5fd;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Hierarchy</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Primary incident status prominent; secondary information accessible through progressive disclosure</p>
                   </div>
-                  <div class="bg-green-50 p-3 rounded border border-green-200">
-                    <h6 class="font-medium text-green-800 text-sm">Harmony</h6>
-                    <p class="text-xs text-green-600">Visual design aligned with iOS/macOS system aesthetics; subtle color for status indication</p>
+                  <div class="p-3 rounded border" style="background:#e0f2fe;border-color:#38bdf8;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Harmony</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Visual design aligned with iOS/macOS system aesthetics; subtle color for status indication</p>
                   </div>
-                  <div class="bg-purple-50 p-3 rounded border border-purple-200">
-                    <h6 class="font-medium text-purple-800 text-sm">Consistency</h6>
-                    <p class="text-xs text-purple-600">Standard iOS navigation patterns; platform-typical iconography; predictable interaction behaviors</p>
+                  <div class="p-3 rounded border" style="background:#eef2ff;border-color:#a5b4fc;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Consistency</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Standard iOS navigation patterns; platform-typical iconography; predictable interaction behaviors</p>
                   </div>
                 </div>
               </div>
               <div>
-                <h5 class="font-semibold text-gray-800 mb-3">Accessibility</h5>
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Accessibility</h5>
                 <div class="space-y-2">
-                  <div class="bg-orange-50 p-3 rounded border border-orange-200">
-                    <h6 class="font-medium text-orange-800 text-sm">VoiceOver Support</h6>
-                    <p class="text-xs text-orange-600">Non-visual operation with descriptive labeling, logical navigation, audio/haptic feedback</p>
+                  <div class="p-3 rounded border" style="background:#eff6ff;border-color:#60a5fa;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">VoiceOver Support</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Non-visual operation with descriptive labeling, logical navigation, audio/haptic feedback</p>
                   </div>
-                  <div class="bg-teal-50 p-3 rounded border border-teal-200">
-                    <h6 class="font-medium text-teal-800 text-sm">Dynamic Type</h6>
-                    <p class="text-xs text-teal-600">Responsive layout with full Dynamic Type range support; minimum truncation</p>
+                  <div class="p-3 rounded border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Dynamic Type</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Responsive layout with full Dynamic Type range support; minimum truncation</p>
                   </div>
-                  <div class="bg-red-50 p-3 rounded border border-red-200">
-                    <h6 class="font-medium text-red-800 text-sm">Reduce Motion</h6>
-                    <p class="text-xs text-red-600">Options for animation sensitivity with static representations and subtle transitions</p>
+                  <div class="p-3 rounded border" style="background:#dbeafe;border-color:#93c5fd;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Reduce Motion</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Options for animation sensitivity with static representations and subtle transitions</p>
                   </div>
                 </div>
               </div>
@@ -1604,12 +1674,12 @@
             <strong>Game Center achievements and multiplayer matchmaking</strong> leverage Apple&#39;s social gaming infrastructure. iCloud save and cross-device progress sync enable seamless experience continuity, while SharePlay support facilitates collaborative remote training sessions.
           </p>
 
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 my-6">
-            <h5 class="font-semibold text-gray-800 mb-3">System Integration Features</h5>
+          <div class="rounded-lg p-4 my-6 border" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue);font-family:'Poppins',sans-serif;">System Integration Features</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h6 class="font-medium text-gray-700 mb-2">Game Center Integration</h6>
-                <ul class="text-xs text-gray-600 space-y-1">
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Game Center Integration</h6>
+                <ul class="text-xs space-y-1" style="color:rgba(147,197,253,0.85);">
                   <li>• Training milestones and scenario-specific achievements</li>
                   <li>• Time-based leaderboards for challenge scenarios</li>
                   <li>• Quick join matchmaking and friend invitations</li>
@@ -1617,8 +1687,8 @@
                 </ul>
               </div>
               <div>
-                <h6 class="font-medium text-gray-700 mb-2">iCloud &amp; SharePlay</h6>
-                <ul class="text-xs text-gray-600 space-y-1">
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">iCloud &amp; SharePlay</h6>
+                <ul class="text-xs space-y-1" style="color:rgba(147,197,253,0.85);">
                   <li>• Seamless scenario progress and performance history sync</li>
                   <li>• Push notifications for training reminders and updates</li>
                   <li>• SharePlay for collaborative remote training sessions</li>
@@ -1651,20 +1721,20 @@
           The integration with Apple&#39;s Human Interface Guidelines ensures that the resulting application will be accessible, inclusive, and engaging for users across the Philippine government and civil society sectors. The emphasis on anticipatory action capabilities, multi-agency coordination, and unified command scenarios reflects the evolving nature of disaster risk reduction in the Philippines and positions the country as a global leader in comprehensive disaster management training innovation.
         </p>
 
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
-          <h3 class="font-serif text-xl font-semibold text-blue-800 mb-4">Key Implementation Success Factors</h3>
+        <div class="rounded-lg p-6 mt-8 border" style="background:linear-gradient(135deg,#e8f4ff,#dbeafe);border-color:#93c5fd;">
+          <h3 style="font-family:'Roboto Condensed',sans-serif;font-weight:700;font-size:1.25rem;color:var(--navy);margin-bottom:1rem;">Key Implementation Success Factors</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 class="font-medium text-blue-700 mb-2">Technical Excellence</h4>
-              <ul class="text-sm text-blue-600 space-y-1">
+              <h4 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Technical Excellence</h4>
+              <ul class="text-sm space-y-1" style="color:var(--text-dark);">
                 <li>• Native iOS/macOS development for optimal performance</li>
                 <li>• Apple HIG compliance for accessibility and usability</li>
                 <li>• Cloud-based content delivery for scalability</li>
               </ul>
             </div>
             <div>
-              <h4 class="font-medium text-blue-700 mb-2">Educational Impact</h4>
-              <ul class="text-sm text-blue-600 space-y-1">
+              <h4 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Educational Impact</h4>
+              <ul class="text-sm space-y-1" style="color:var(--text-dark);">
                 <li>• Competency-based progression aligned with ICS standards</li>
                 <li>• Scenario-based learning with Philippine-specific hazards</li>
                 <li>• Multiplayer coordination for authentic team training</li>
@@ -1680,68 +1750,49 @@
     </main>
 
     <script>
-        // Initialize Mermaid
         document.addEventListener('DOMContentLoaded', function() {
             mermaid.initialize({ 
                 startOnLoad: true,
                 theme: 'base',
                 themeVariables: {
-                    // Primary colors with good contrast
-                    primaryColor: '#ffffff',
-                    primaryTextColor: '#1e293b',
-                    primaryBorderColor: '#dc2626',
-                    lineColor: '#334155',
-                    
-                    // Secondary colors
-                    secondaryColor: '#f8fafc',
-                    secondaryTextColor: '#1e293b',
-                    secondaryBorderColor: '#64748b',
-                    
-                    // Tertiary colors
-                    tertiaryColor: '#f1f5f9',
-                    tertiaryTextColor: '#1e293b',
-                    tertiaryBorderColor: '#94a3b8',
-                    
-                    // Background and text
-                    background: '#ffffff',
-                    mainBkg: '#ffffff',
-                    secondBkg: '#f8fafc',
-                    tertiaryBkg: '#f1f5f9',
-                    
-                    // Node-specific colors with high contrast
-                    cScale0: '#dc2626',  // Red - white text
-                    cScale1: '#2563eb',  // Blue - white text  
-                    cScale2: '#059669',  // Green - white text
-                    cScale3: '#7c3aed',  // Purple - white text
-                    cScale4: '#ea580c',  // Orange - white text
-                    cScale5: '#0891b2',  // Cyan - white text
-                    
-                    // Additional colors for timeline and other diagrams
-                    altBackground: '#f8fafc',
-                    nodeBorder: '#334155',
-                    clusterBkg: '#f1f5f9',
-                    clusterBorder: '#64748b',
-                    defaultLinkColor: '#334155',
-                    titleColor: '#1e293b',
-                    edgeLabelBackground: '#ffffff',
-                    
-                    // Text colors for different backgrounds
+                    primaryColor: '#1a3a6b',
+                    primaryTextColor: '#ffffff',
+                    primaryBorderColor: '#00d4ff',
+                    lineColor: '#60a5fa',
+                    secondaryColor: '#0d2045',
+                    secondaryTextColor: '#ffffff',
+                    secondaryBorderColor: '#60a5fa',
+                    tertiaryColor: '#071428',
+                    tertiaryTextColor: '#ffffff',
+                    tertiaryBorderColor: '#93c5fd',
+                    background: '#0d2045',
+                    mainBkg: '#1a3a6b',
+                    secondBkg: '#0d2045',
+                    tertiaryBkg: '#071428',
+                    cScale0: '#071428',
+                    cScale1: '#1a3a6b',
+                    cScale2: '#0d2045',
+                    cScale3: '#1d6bbf',
+                    cScale4: '#2563eb',
+                    cScale5: '#0891b2',
+                    nodeBorder: '#00d4ff',
+                    clusterBkg: '#0d2045',
+                    clusterBorder: '#60a5fa',
+                    defaultLinkColor: '#60a5fa',
+                    titleColor: '#00d4ff',
+                    edgeLabelBackground: '#0d2045',
                     nodeTextColor: '#ffffff',
-                    textColor: '#1e293b',
-                    labelTextColor: '#1e293b',
-                    
-                    // Ensure high contrast for all text
-                    darkTextColor: '#1e293b',
+                    textColor: '#ffffff',
+                    labelTextColor: '#ffffff',
+                    darkTextColor: '#ffffff',
                     lightTextColor: '#ffffff',
-                    
-                    // Timeline specific colors
-                    activeTaskBkgColor: '#dc2626',
-                    activeTaskBorderColor: '#b91c1c',
-                    gridColor: '#e2e8f0',
-                    section0: '#f8fafc',
-                    section1: '#f1f5f9',
-                    section2: '#e2e8f0',
-                    section3: '#cbd5e1'
+                    activeTaskBkgColor: '#1d6bbf',
+                    activeTaskBorderColor: '#00d4ff',
+                    gridColor: '#1a3a6b',
+                    section0: '#071428',
+                    section1: '#0d2045',
+                    section2: '#1a3a6b',
+                    section3: '#1d6bbf'
                 },
                 flowchart: {
                     useMaxWidth: false,
@@ -1749,297 +1800,89 @@
                     curve: 'basis',
                     padding: 20
                 },
-                timeline: {
-                    useMaxWidth: false,
-                    padding: 20
-                },
+                timeline: { useMaxWidth: false, padding: 20 },
                 fontFamily: 'Inter, sans-serif',
                 fontSize: 14,
                 securityLevel: 'loose'
             });
 
-            // Initialize Mermaid Controls for zoom and pan
             initializeMermaidControls();
         });
 
-        // Initialize Mermaid Controls for zoom and pan
         function initializeMermaidControls() {
             const containers = document.querySelectorAll('.mermaid-container');
-
             containers.forEach(container => {
-            const mermaidElement = container.querySelector('.mermaid');
-            let scale = 1;
-            let isDragging = false;
-            let startX, startY, translateX = 0, translateY = 0;
+                const mermaidElement = container.querySelector('.mermaid');
+                let scale = 1, isDragging = false;
+                let startX, startY, translateX = 0, translateY = 0;
+                let isTouch = false, initialDistance = 0, initialScale = 1, isPinching = false;
 
-            // 触摸相关状态
-            let isTouch = false;
-            let touchStartTime = 0;
-            let initialDistance = 0;
-            let initialScale = 1;
-            let isPinching = false;
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                const resetBtn = container.querySelector('.reset-zoom');
+                const fullscreenBtn = container.querySelector('.fullscreen');
 
-            // Zoom controls
-            const zoomInBtn = container.querySelector('.zoom-in');
-            const zoomOutBtn = container.querySelector('.zoom-out');
-            const resetBtn = container.querySelector('.reset-zoom');
-            const fullscreenBtn = container.querySelector('.fullscreen');
-
-            function updateTransform() {
-                mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-
-                if (scale > 1) {
-                container.classList.add('zoomed');
-                } else {
-                container.classList.remove('zoomed');
+                function updateTransform() {
+                    mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                    container.classList.toggle('zoomed', scale > 1);
+                    mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
                 }
 
-                mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
-            }
+                if (zoomInBtn) zoomInBtn.addEventListener('click', () => { scale = Math.min(scale * 1.25, 4); updateTransform(); });
+                if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { scale = Math.max(scale / 1.25, 0.3); if (scale <= 1) { translateX = 0; translateY = 0; } updateTransform(); });
+                if (resetBtn) resetBtn.addEventListener('click', () => { scale = 1; translateX = 0; translateY = 0; updateTransform(); });
+                if (fullscreenBtn) fullscreenBtn.addEventListener('click', () => { (container.requestFullscreen || container.webkitRequestFullscreen || (() => {})).call(container); });
 
-            if (zoomInBtn) {
-                zoomInBtn.addEventListener('click', () => {
-                scale = Math.min(scale * 1.25, 4);
-                updateTransform();
+                mermaidElement.addEventListener('mousedown', (e) => { if (isTouch) return; isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY; updateTransform(); e.preventDefault(); });
+                document.addEventListener('mousemove', (e) => { if (isDragging && !isTouch) { translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(); } });
+                document.addEventListener('mouseup', () => { if (isDragging && !isTouch) { isDragging = false; updateTransform(); } });
+
+                function getTouchDistance(t1, t2) { return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); }
+
+                mermaidElement.addEventListener('touchstart', (e) => {
+                    isTouch = true;
+                    if (e.touches.length === 1) { isPinching = false; isDragging = true; startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY; }
+                    else if (e.touches.length === 2) { isPinching = true; isDragging = false; initialDistance = getTouchDistance(e.touches[0], e.touches[1]); initialScale = scale; }
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1 && isDragging && !isPinching) { translateX = e.touches[0].clientX - startX; translateY = e.touches[0].clientY - startY; updateTransform(); }
+                    else if (e.touches.length === 2 && isPinching) { const d = getTouchDistance(e.touches[0], e.touches[1]); if (initialDistance > 0) { scale = Math.min(Math.max(initialScale * (d / initialDistance), 0.3), 4); updateTransform(); } }
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchend', (e) => { if (e.touches.length === 0) { isDragging = false; isPinching = false; initialDistance = 0; setTimeout(() => { isTouch = false; }, 100); } else if (e.touches.length === 1 && isPinching) { isPinching = false; isDragging = true; startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY; } updateTransform(); });
+
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+                    if (newScale !== scale) { const r = newScale / scale; translateX *= r; translateY *= r; scale = newScale; if (scale <= 1) { translateX = 0; translateY = 0; } updateTransform(); }
                 });
-            }
-
-            if (zoomOutBtn) {
-                zoomOutBtn.addEventListener('click', () => {
-                scale = Math.max(scale / 1.25, 0.3);
-                if (scale <= 1) {
-                    translateX = 0;
-                    translateY = 0;
-                }
-                updateTransform();
-                });
-            }
-
-            if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                scale = 1;
-                translateX = 0;
-                translateY = 0;
-                updateTransform();
-                });
-            }
-
-            if (fullscreenBtn) {
-                fullscreenBtn.addEventListener('click', () => {
-                if (container.requestFullscreen) {
-                    container.requestFullscreen();
-                } else if (container.webkitRequestFullscreen) {
-                    container.webkitRequestFullscreen();
-                } else if (container.msRequestFullscreen) {
-                    container.msRequestFullscreen();
-                }
-                });
-            }
-
-            // Mouse Events
-            mermaidElement.addEventListener('mousedown', (e) => {
-                if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
-
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                mermaidElement.style.cursor = 'grabbing';
-                updateTransform();
-                e.preventDefault();
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (isDragging && !isTouch) {
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                updateTransform();
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (isDragging && !isTouch) {
-                isDragging = false;
-                mermaidElement.style.cursor = 'grab';
-                updateTransform();
-                }
-            });
-
-            document.addEventListener('mouseleave', () => {
-                if (isDragging && !isTouch) {
-                isDragging = false;
-                mermaidElement.style.cursor = 'grab';
-                updateTransform();
-                }
-            });
-
-            // 获取两点之间的距离
-            function getTouchDistance(touch1, touch2) {
-                return Math.hypot(
-                touch2.clientX - touch1.clientX,
-                touch2.clientY - touch1.clientY
-                );
-            }
-
-            // Touch Events - 触摸事件处理
-            mermaidElement.addEventListener('touchstart', (e) => {
-                isTouch = true;
-                touchStartTime = Date.now();
-
-                if (e.touches.length === 1) {
-                // 单指拖动
-                isPinching = false;
-                isDragging = true;
-
-                const touch = e.touches[0];
-                startX = touch.clientX - translateX;
-                startY = touch.clientY - translateY;
-
-                } else if (e.touches.length === 2) {
-                // 双指缩放
-                isPinching = true;
-                isDragging = false;
-
-                const touch1 = e.touches[0];
-                const touch2 = e.touches[1];
-                initialDistance = getTouchDistance(touch1, touch2);
-                initialScale = scale;
-                }
-
-                e.preventDefault();
-            }, { passive: false });
-
-            mermaidElement.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 1 && isDragging && !isPinching) {
-                // 单指拖动
-                const touch = e.touches[0];
-                translateX = touch.clientX - startX;
-                translateY = touch.clientY - startY;
-                updateTransform();
-
-                } else if (e.touches.length === 2 && isPinching) {
-                // 双指缩放
-                const touch1 = e.touches[0];
-                const touch2 = e.touches[1];
-                const currentDistance = getTouchDistance(touch1, touch2);
-
-                if (initialDistance > 0) {
-                    const newScale = Math.min(Math.max(
-                    initialScale * (currentDistance / initialDistance),
-                    0.3
-                    ), 4);
-                    scale = newScale;
-                    updateTransform();
-                }
-                }
-
-                e.preventDefault();
-            }, { passive: false });
-
-            mermaidElement.addEventListener('touchend', (e) => {
-                // 重置状态
-                if (e.touches.length === 0) {
-                isDragging = false;
-                isPinching = false;
-                initialDistance = 0;
-
-                // 延迟重置isTouch，避免鼠标事件立即触发
-                setTimeout(() => {
-                    isTouch = false;
-                }, 100);
-                } else if (e.touches.length === 1 && isPinching) {
-                // 从双指变为单指，切换为拖动模式
-                isPinching = false;
-                isDragging = true;
-
-                const touch = e.touches[0];
-                startX = touch.clientX - translateX;
-                startY = touch.clientY - translateY;
-                }
 
                 updateTransform();
-            });
-
-            mermaidElement.addEventListener('touchcancel', (e) => {
-                isDragging = false;
-                isPinching = false;
-                initialDistance = 0;
-
-                setTimeout(() => {
-                isTouch = false;
-                }, 100);
-
-                updateTransform();
-            });
-
-            // Enhanced wheel zoom with better center point handling
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                const rect = container.getBoundingClientRect();
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                const delta = e.deltaY > 0 ? 0.9 : 1.1;
-                const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
-
-                // Adjust translation to zoom towards center
-                if (newScale !== scale) {
-                const scaleDiff = newScale / scale;
-                translateX = translateX * scaleDiff;
-                translateY = translateY * scaleDiff;
-                scale = newScale;
-
-                if (scale <= 1) {
-                    translateX = 0;
-                    translateY = 0;
-                }
-
-                updateTransform();
-                }
-            });
-
-            // Initialize display
-            updateTransform();
             });
         }
 
-        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
-        // Active section highlighting in TOC
         function updateActiveTOC() {
             const sections = document.querySelectorAll('section[id], div[id]');
             const tocLinks = document.querySelectorAll('.toc-fixed a');
-            
             let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 200) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
+            sections.forEach(section => { if (pageYOffset >= section.offsetTop - 200) current = section.getAttribute('id'); });
+            tocLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === '#' + current) link.classList.add('active'); });
         }
 
         window.addEventListener('scroll', updateActiveTOC);
-        updateActiveTOC(); // Initial call
+        updateActiveTOC();
     </script>
-  
 </body>
 </html>
