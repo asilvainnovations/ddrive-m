@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-    <head>
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>The Incident Command System in the Philippines: A Comprehensive Framework for Effective Disaster Response</title>
@@ -445,9 +443,42 @@
             color: var(--text-muted) !important;
         }
 
-        /* Headline color overrides for certain headings */
-        h5.font-semibold { color: var(--navy) !important; }
-        h6.font-medium { color: var(--blue-mid) !important; }
+        /* ─── HEADLINE COLOR — scoped to light containers only ── */
+        .data-viz h5,
+        .bento-card h5,
+        .prose-custom h5 { color: var(--navy) !important; }
+
+        .data-viz h6,
+        .bento-card h6,
+        .prose-custom h6 { color: var(--blue-mid) !important; }
+
+        /* ─── DARK SECTION SYSTEM ────────────────────────────── */
+        /* Apply class="dark-section" to any container with a dark background */
+        .dark-section {
+            color: #ffffff !important;
+        }
+        .dark-section h1, .dark-section h2, .dark-section h3,
+        .dark-section h4, .dark-section h5, .dark-section h6 {
+            color: #ffffff !important;
+        }
+        .dark-section p, .dark-section li, .dark-section td,
+        .dark-section th, .dark-section span, .dark-section cite,
+        .dark-section strong, .dark-section em, .dark-section label {
+            color: #ffffff !important;
+        }
+        /* Links inside dark sections use neon blue */
+        .dark-section a { color: var(--neon-blue) !important; }
+        /* Sub-headings in dark sections stay bright */
+        .dark-section .section-label { color: var(--neon-blue) !important; }
+
+        /* ─── HERO — force all children white ────────────────── */
+        .hero-gradient *:not(.text-gradient) {
+            color: #ffffff !important;
+        }
+        .hero-gradient .text-gradient {
+            -webkit-text-fill-color: transparent !important;
+            color: transparent !important;
+        }
 
         /* ─── MERMAID ─────────────────────────────────────────── */
         .mermaid-container {
@@ -486,6 +517,36 @@
             display: block;
             margin: 0 auto;
             font-family: 'Inter', sans-serif !important;
+        }
+
+        /* ── Force all SVG text/tspan inside mermaid to white ── */
+        .mermaid-container svg text,
+        .mermaid-container svg tspan,
+        .mermaid-container svg .label,
+        .mermaid-container svg .nodeLabel,
+        .mermaid-container svg .edgeLabel {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+        }
+        /* Edge label backgrounds need contrast too */
+        .mermaid-container svg .edgeLabel rect,
+        .mermaid-container svg .labelBkg {
+            fill: #0d2045 !important;
+            stroke: #60a5fa !important;
+        }
+        /* Marker arrows */
+        .mermaid-container svg marker path {
+            fill: #60a5fa !important;
+        }
+        /* Timeline section labels */
+        .mermaid-container svg .taskText,
+        .mermaid-container svg .taskTextOutsideRight,
+        .mermaid-container svg .taskTextOutsideLeft {
+            fill: #ffffff !important;
+        }
+        .mermaid-container svg .sectionTitle {
+            fill: var(--neon-blue) !important;
+            font-weight: 700;
         }
 
         .mermaid-container .mermaid:active { cursor: grabbing; }
@@ -550,11 +611,7 @@
             background: linear-gradient(135deg, #e8f4ff 0%, #dbeafe 100%) !important;
         }
 
-        /* Total score box */
-        .bg-gray-100.p-4.rounded-lg {
-            background: var(--navy) !important;
-        }
-        .bg-gray-100.p-4.rounded-lg * { color: #ffffff !important; }
+        /* Score totals box is handled via .dark-section class directly */
 
         /* ─── RESPONSIVE ─────────────────────────────────────── */
         @media (max-width: 1280px) {
@@ -803,7 +860,7 @@
                   <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Municipal/City</td><td class="px-4 py-2" style="color:var(--text-dark);">City/Municipal DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Mayor</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more barangays affected</td></tr>
                   <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Provincial</td><td class="px-4 py-2" style="color:var(--text-dark);">Provincial DRRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Governor</td><td class="px-4 py-2" style="color:var(--text-dark);">Multiple cities/municipalities affected</td></tr>
                   <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Regional</td><td class="px-4 py-2" style="color:var(--text-dark);">Regional DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Variable</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more provinces affected</td></tr>
-                  <tr style="background:#1a3a6b;"><td class="px-4 py-2 font-medium" style="color:#ffffff;">National</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">NDRRMC</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">NIMT IC</td><td class="px-4 py-2" style="color:rgba(255,255,255,0.85);">Two or more regions affected</td></tr>
+                  <tr style="background:#1a3a6b;"><td class="px-4 py-2 font-medium" style="color:#ffffff !important;">National</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">NDRRMC</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">NIMT IC</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">Two or more regions affected</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1176,8 +1233,8 @@
             <strong>Native iOS/macOS development for Apple ecosystem compliance</strong> ensures optimal performance, security, and user experience on devices widely used in Philippine government and education. <strong>Swift and SwiftUI</strong> provide modern frameworks for creating responsive, accessible interfaces that adapt seamlessly across iPhone, iPad, and Mac.
           </p>
 
-          <div class="rounded-lg p-4 my-6 border" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
-            <h5 class="font-semibold mb-3" style="color:var(--neon-blue);font-family:'Poppins',sans-serif;">Technical Architecture Components</h5>
+          <div class="rounded-lg p-4 my-6 border dark-section" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue) !important;font-family:'Poppins',sans-serif;">Technical Architecture Components</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Cross-platform Multiplayer</h6>
@@ -1424,32 +1481,32 @@
           <div class="data-viz">
             <h4>Alert Priority Hierarchy</h4>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="p-4 rounded-lg border-2" style="background:#071428;border-color:#00d4ff;">
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#071428;border-color:#00d4ff;">
                 <div class="flex items-center mb-2">
                   <i class="fas fa-exclamation-triangle mr-2" style="color:var(--neon-blue);"></i>
-                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Emergency</h5>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Emergency</h5>
                 </div>
-                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Full-screen overlay, persistent until acknowledged</p>
-                <p class="text-xs" style="color:rgba(147,197,253,0.75);">Distinctive alarm tone, strong continuous haptic, blocks interaction</p>
-                <p class="text-xs mt-2" style="color:var(--neon-blue);"><strong>Example:</strong> Imminent responder safety threat</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Full-screen overlay, persistent until acknowledged</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">Distinctive alarm tone, strong continuous haptic, blocks interaction</p>
+                <p class="text-xs mt-2" style="color:var(--neon-blue) !important;"><strong>Example:</strong> Imminent responder safety threat</p>
               </div>
-              <div class="p-4 rounded-lg border-2" style="background:#0d2045;border-color:#60a5fa;">
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#0d2045;border-color:#60a5fa;">
                 <div class="flex items-center mb-2">
                   <i class="fas fa-exclamation-circle mr-2" style="color:var(--light-blue);"></i>
-                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Urgent</h5>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Urgent</h5>
                 </div>
-                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Banner alert, prominent but non-blocking</p>
-                <p class="text-xs" style="color:rgba(147,197,253,0.75);">Single alert tone, moderate single haptic, auto-dismisses after timeout</p>
-                <p class="text-xs mt-2" style="color:var(--light-blue);"><strong>Example:</strong> Resource request denial, status change</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Banner alert, prominent but non-blocking</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">Single alert tone, moderate single haptic, auto-dismisses after timeout</p>
+                <p class="text-xs mt-2" style="color:var(--light-blue) !important;"><strong>Example:</strong> Resource request denial, status change</p>
               </div>
-              <div class="p-4 rounded-lg border-2" style="background:#1a3a6b;border-color:#93c5fd;">
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#1a3a6b;border-color:#93c5fd;">
                 <div class="flex items-center mb-2">
                   <i class="fas fa-info-circle mr-2" style="color:#93c5fd;"></i>
-                  <h5 class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Routine</h5>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Routine</h5>
                 </div>
-                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.9);">Status bar indicator, subtle badge</p>
-                <p class="text-xs" style="color:rgba(147,197,253,0.75);">No audio, no haptic, background awareness</p>
-                <p class="text-xs mt-2" style="color:#93c5fd;"><strong>Example:</strong> Situation report available, scheduled reminder</p>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Status bar indicator, subtle badge</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">No audio, no haptic, background awareness</p>
+                <p class="text-xs mt-2" style="color:#93c5fd !important;"><strong>Example:</strong> Situation report available, scheduled reminder</p>
               </div>
             </div>
           </div>
@@ -1501,14 +1558,14 @@
                 </div>
               </div>
             </div>
-            <div class="p-4 rounded-lg mt-4" style="background:var(--navy);">
+            <div class="p-4 rounded-lg mt-4 dark-section" style="background:var(--navy);">
               <div class="flex justify-between items-center">
-                <span class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Total Possible Score:</span>
-                <span class="text-xl font-bold" style="color:var(--neon-blue);">200 points</span>
+                <span class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Total Possible Score:</span>
+                <span class="text-xl font-bold" style="color:var(--neon-blue) !important;">200 points</span>
               </div>
               <div class="flex justify-between items-center mt-2">
-                <span class="font-semibold" style="color:#ffffff;font-family:'Poppins',sans-serif;">Passing Threshold:</span>
-                <span class="text-lg font-bold" style="color:var(--light-blue);">160 points (80%)</span>
+                <span class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Passing Threshold:</span>
+                <span class="text-lg font-bold" style="color:var(--light-blue) !important;">160 points (80%)</span>
               </div>
             </div>
           </div>
@@ -1604,7 +1661,7 @@
                   <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Operations Specialist</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Complete Basic ICS tutorial</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Operations Section member roles; single-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-100 equivalent</td></tr>
                   <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Section Chief Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Demonstrate specialist proficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Section Chief roles; multi-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-200 equivalent</td></tr>
                   <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Proficiency in 2 Section Chief roles</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">IC role; unified command as deputy; complex scenarios</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-300 equivalent</td></tr>
-                  <tr style="background:var(--navy);"><td class="px-4 py-2 font-medium" style="color:#ffffff;">Certified IC</td><td class="px-4 py-2 text-xs" style="color:rgba(147,197,253,0.9);">Pass comprehensive IC assessment</td><td class="px-4 py-2 text-xs" style="color:rgba(147,197,253,0.9);">All roles and scenarios; expert complexity; mentorship</td><td class="px-4 py-2 text-xs" style="color:var(--neon-blue);">ICS-400 equivalent; National Cadre</td></tr>
+                  <tr style="background:var(--navy);"><td class="px-4 py-2 font-medium" style="color:#ffffff !important;">Certified IC</td><td class="px-4 py-2 text-xs" style="color:rgba(200,225,255,0.95) !important;">Pass comprehensive IC assessment</td><td class="px-4 py-2 text-xs" style="color:rgba(200,225,255,0.95) !important;">All roles and scenarios; expert complexity; mentorship</td><td class="px-4 py-2 text-xs" style="color:var(--neon-blue) !important;">ICS-400 equivalent; National Cadre</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1674,8 +1731,8 @@
             <strong>Game Center achievements and multiplayer matchmaking</strong> leverage Apple&#39;s social gaming infrastructure. iCloud save and cross-device progress sync enable seamless experience continuity, while SharePlay support facilitates collaborative remote training sessions.
           </p>
 
-          <div class="rounded-lg p-4 my-6 border" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
-            <h5 class="font-semibold mb-3" style="color:var(--neon-blue);font-family:'Poppins',sans-serif;">System Integration Features</h5>
+          <div class="rounded-lg p-4 my-6 border dark-section" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue) !important;font-family:'Poppins',sans-serif;">System Integration Features</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Game Center Integration</h6>
@@ -1807,7 +1864,70 @@
             });
 
             initializeMermaidControls();
+
+            // ── Run contrast enforcer after mermaid renders ──────
+            // Mermaid renders async; poll until all SVGs are present
+            let attempts = 0;
+            const svgPoller = setInterval(() => {
+                const svgs = document.querySelectorAll('.mermaid-container svg');
+                if (svgs.length > 0 || attempts > 40) {
+                    clearInterval(svgPoller);
+                    fixSVGContrast();
+                }
+                attempts++;
+            }, 150);
+
+            // Also run general dark-bg contrast check once
+            setTimeout(fixDarkContainerContrast, 800);
         });
+
+        /* ── Force all SVG text inside mermaid containers to white ── */
+        function fixSVGContrast() {
+            document.querySelectorAll('.mermaid-container svg').forEach(svg => {
+                // All text and tspan
+                svg.querySelectorAll('text, tspan').forEach(el => {
+                    el.setAttribute('fill', '#ffffff');
+                    el.style.fill = '#ffffff';
+                    el.style.color = '#ffffff';
+                });
+                // All foreignObject content (HTML labels in flowcharts)
+                svg.querySelectorAll('foreignObject *').forEach(el => {
+                    el.style.color = '#ffffff';
+                });
+                // Edge label text backgrounds
+                svg.querySelectorAll('.edgeLabel rect, .labelBkg').forEach(el => {
+                    el.setAttribute('fill', '#0d2045');
+                    el.style.fill = '#0d2045';
+                });
+                // Connector arrows
+                svg.querySelectorAll('marker path, marker polygon').forEach(el => {
+                    el.setAttribute('fill', '#60a5fa');
+                    el.style.fill = '#60a5fa';
+                });
+            });
+        }
+
+        /* ── Check any remaining dark containers and enforce white text ── */
+        function fixDarkContainerContrast() {
+            // Covers elements with inline dark background styles
+            document.querySelectorAll('[style]').forEach(el => {
+                const s = el.getAttribute('style') || '';
+                const isDark = s.includes('var(--navy)') || s.includes('var(--deep-blue)') ||
+                               s.includes('#0d2045') || s.includes('#071428') ||
+                               s.includes('#1a3a6b') || s.includes('#1d3a6b');
+                if (!isDark) return;
+
+                // Walk all child text elements that don't have their own bg
+                el.querySelectorAll('p, span, li, td, th, h1, h2, h3, h4, h5, h6, cite, strong, em, a').forEach(child => {
+                    const cs = window.getComputedStyle(child);
+                    const bg = cs.backgroundColor;
+                    const isTransparent = !bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent';
+                    if (isTransparent && !child.style.color) {
+                        child.style.color = '#ffffff';
+                    }
+                });
+            });
+        }
 
         function initializeMermaidControls() {
             const containers = document.querySelectorAll('.mermaid-container');
@@ -1884,5 +2004,4 @@
         window.addEventListener('scroll', updateActiveTOC);
         updateActiveTOC();
     </script>
-</body>
-</html>
+</body></html>
