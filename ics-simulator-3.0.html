@@ -3,13 +3,13 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DDRiVE-M ICS</title>
+  <title>DDRiVE-M ICS Simulation</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="/_sdk/data_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Poppins:wght@400;500;600;700;800&amp;family=Roboto+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -201,137 +201,213 @@
       stroke-width: 2;
       stroke-dasharray: 5, 5;
     }
+
+    /* ── CIRCULAR LOGO MASK ── */
+    .logo-circle {
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #0f2847 0%, #1a2d4a 100%);
+      border: 2px solid rgba(0, 212, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .logo-circle-sm  { width: 2rem;  height: 2rem;  }
+    .logo-circle-md  { width: 3rem;  height: 3rem;  }
+    .logo-circle-lg  { width: 6rem;  height: 6rem;  }
+    .logo-circle-xl  { width: 7rem;  height: 7rem;  }
+
+    /* ── READABILITY: force white on any residual deep-blue text ── */
+    .text-white-force, .force-white { color: #ffffff !important; }
+
+    /* Hero description text – explicit white */
+    .hero-description { color: #ffffff !important; }
+
+    /* Section body text that was previously too dim */
+    .body-text { color: rgba(255,255,255,0.88) !important; }
+
+    /* Learn ICS hero button */
+    .btn-learn-ics {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.75rem;
+      border: 2px solid #00d4ff;
+      color: #00d4ff;
+      font-family: 'Roboto Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .btn-learn-ics:hover {
+      background: rgba(0, 212, 255, 0.12);
+      box-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
+      transform: translateY(-2px);
+      color: #ffffff;
+    }
+    .btn-learn-ics svg { transition: transform 0.3s ease; }
+    .btn-learn-ics:hover svg { transform: translateX(3px); }
   </style>
   <style>body { box-sizing: border-box; }</style>
  </head>
  <body class="h-full bg-deep-blue text-white font-inter overflow-auto">
   <div id="app" class="min-h-full w-full">
-   <!-- Loading Screen -->
+
+   <!-- ═══════════════════════════════════════════════
+        LOADING SCREEN
+   ════════════════════════════════════════════════ -->
    <div id="loading-screen" class="fixed inset-0 bg-deep-blue flex items-center justify-center z-50">
     <div class="text-center">
      <div class="relative w-32 h-32 mx-auto mb-8">
       <div class="absolute inset-0 border-4 border-neon-blue/20 rounded-full"></div>
-      <div class="absolute inset-0 border-4 border-transparent border-t-neon-blue rounded-full animate-spin"></div><img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="DDRiVE-M Logo" class="absolute inset-4 w-24 h-24 object-contain animate-float" loading="lazy" onerror="this.style.display='none';">
+      <div class="absolute inset-0 border-4 border-transparent border-t-neon-blue rounded-full animate-spin"></div>
+      <!-- Circular logo -->
+      <div class="absolute inset-4 logo-circle logo-circle-xl animate-float" style="width:96px;height:96px;border-width:2px;">
+       <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763"
+            alt="DDRiVE-M Logo"
+            loading="lazy"
+            onerror="this.parentElement.style.background='linear-gradient(135deg,#3b82f6,#00d4ff)';">
+      </div>
      </div>
      <h2 class="font-poppins text-2xl font-bold gradient-text mb-2">DDRiVE-M ICS</h2>
-     <p class="text-light-blue/70 font-condensed">Initializing Simulation...</p>
+     <p class="text-white/70 font-condensed">Initializing Simulation...</p>
     </div>
-   </div><!-- Main Menu Screen -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        MAIN MENU
+   ════════════════════════════════════════════════ -->
    <div id="main-menu" class="hidden min-h-full w-full flex flex-col">
-    <!-- Header -->
+
+    <!-- Header — Learn ICS button REMOVED, leaderboard + help remain -->
     <header class="glass-card border-b border-neon-blue/20 px-6 py-4">
      <div class="max-w-7xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-4">
-       <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="Logo" class="w-12 h-12 object-contain" loading="lazy" onerror="this.style.background='linear-gradient(135deg, #3b82f6, #00d4ff)'; this.style.borderRadius='8px';">
+       <!-- Circular header logo (md) -->
+       <div class="logo-circle logo-circle-md">
+        <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763"
+             alt="Logo" loading="lazy"
+             onerror="this.parentElement.style.background='linear-gradient(135deg,#3b82f6,#00d4ff)';">
+       </div>
        <div>
         <h1 id="app-title" class="font-poppins text-xl font-bold gradient-text">DDRiVE-M ICS Simulation</h1>
-        <p class="text-xs text-light-blue/60 font-condensed">Incident Command System Training Platform</p>
+        <p class="text-xs text-white/60 font-condensed">Incident Command System Training Platform</p>
        </div>
       </div>
       <div class="flex items-center gap-4">
-       <a href="https://asilvainnovations.com/ics" target="_blank" rel="noopener noreferrer" class="tooltip-container px-4 py-2 btn-secondary rounded-lg font-condensed font-medium text-neon-blue hover:text-white transition-all"> <span class="tooltip">Learn ICS Framework</span>
-        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.248 6.253 2 10.502 2 15.5c0 5.289 3.071 9.338 10 13.456 6.929-4.118 10-8.167 10-13.456 0-4.998-4.248-9.247-10-9.247z"></path>
-        </svg> Learn ICS </a> <button id="btn-leaderboard" class="tooltip-container px-4 py-2 btn-secondary rounded-lg font-condensed font-medium text-neon-blue hover:text-white"> <span class="tooltip">View Rankings</span>
-        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-        </svg> Leaderboard </button> <button id="btn-help" class="tooltip-container p-2 rounded-lg border border-light-blue/30 hover:border-neon-blue transition-colors"> <span class="tooltip">Help &amp; Tutorial</span>
-        <svg class="w-5 h-5 text-light-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg></button>
+       <button id="btn-leaderboard" class="tooltip-container px-4 py-2 btn-secondary rounded-lg font-condensed font-medium text-neon-blue hover:text-white">
+        <span class="tooltip">View Rankings</span>
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        Leaderboard
+       </button>
+       <button id="btn-help" class="tooltip-container p-2 rounded-lg border border-white/30 hover:border-neon-blue transition-colors">
+        <span class="tooltip">Help &amp; Tutorial</span>
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+       </button>
       </div>
      </div>
-    </header><!-- Hero Section -->
+    </header>
+
     <main class="flex-1 overflow-auto">
      <div class="max-w-7xl mx-auto px-6 py-12">
-      <!-- Welcome Banner -->
+
+      <!-- Welcome Banner — Learn ICS button ADDED at bottom -->
       <div class="glass-card rounded-2xl p-8 mb-12 animate-slide-up relative overflow-hidden">
        <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-neon-blue/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
        <div class="relative z-10">
-        <h2 id="welcome-text" class="font-poppins text-4xl font-bold mb-4">Welcome to the Incident Command System Simulation</h2>
-        <p class="text-light-blue/80 text-lg max-w-3xl font-inter leading-relaxed">Master emergency response coordination through immersive role-based scenarios. Learn the DDRiVE-M methodology and develop critical incident management skills.</p>
+        <h2 id="welcome-text" class="font-poppins text-4xl font-bold mb-4 text-white">
+         Welcome to the Incident Command System Simulation
+        </h2>
+        <p class="text-white/85 text-lg max-w-3xl font-inter leading-relaxed mb-6 hero-description">
+         Master emergency response coordination through immersive role-based scenarios. Learn the DDRiVE-M methodology and develop critical incident management skills.
+        </p>
+        <!-- ── Learn ICS button now lives here ── -->
+        <a href="https://asilvainnovations.github.io/ddrive-m/understanding-ics.html"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="btn-learn-ics">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6.253v13m0-13C6.248 6.253 2 10.502 2 15.5c0 5.289 3.071 9.338 10 13.456 6.929-4.118 10-8.167 10-13.456 0-4.998-4.248-9.247-10-9.247z"></path>
+         </svg>
+         Learn ICS Framework
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+         </svg>
+        </a>
        </div>
-      </div><!-- Game Mode Selection -->
+      </div>
+
+      <!-- Game Mode Selection -->
       <div class="grid lg:grid-cols-2 gap-8 mb-12">
-       <!-- Single Player -->
        <div class="glass-card rounded-2xl p-8 animate-slide-up delay-100 hover:border-neon-blue/50 transition-all cursor-pointer group" id="mode-single">
         <div class="flex items-start gap-6">
          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-light-blue to-neon-blue flex items-center justify-center flex-shrink-0 group-hover:animate-pulse-glow">
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-          </svg>
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
          </div>
          <div>
-          <h3 class="font-poppins text-2xl font-bold mb-2 group-hover:text-neon-blue transition-colors">Single Player</h3>
-          <p class="text-light-blue/70 mb-4">Practice incident command independently. Learn at your own pace with AI-driven scenarios and real-time feedback.</p>
+          <h3 class="font-poppins text-2xl font-bold mb-2 text-white group-hover:text-neon-blue transition-colors">Single Player</h3>
+          <p class="text-white/75 mb-4">Practice incident command independently. Learn at your own pace with AI-driven scenarios and real-time feedback.</p>
           <ul class="space-y-2 text-sm">
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Self-paced learning</li>
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Multiple ICS roles</li>
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Detailed performance analytics</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Self-paced learning</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Multiple ICS roles</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Detailed performance analytics</li>
           </ul>
          </div>
         </div>
-       </div><!-- Multi Player -->
+       </div>
+
        <div class="glass-card rounded-2xl p-8 animate-slide-up delay-200 hover:border-neon-blue/50 transition-all cursor-pointer group" id="mode-multi">
         <div class="flex items-start gap-6">
          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-glow to-light-blue flex items-center justify-center flex-shrink-0 group-hover:animate-pulse-glow">
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-          </svg>
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
          </div>
          <div>
-          <h3 class="font-poppins text-2xl font-bold mb-2 group-hover:text-neon-blue transition-colors">Multi Player</h3>
-          <p class="text-light-blue/70 mb-4">Collaborate with team members in real-time. Coordinate responses across different ICS roles simultaneously.</p>
+          <h3 class="font-poppins text-2xl font-bold mb-2 text-white group-hover:text-neon-blue transition-colors">Multi Player</h3>
+          <p class="text-white/75 mb-4">Collaborate with team members in real-time. Coordinate responses across different ICS roles simultaneously.</p>
           <ul class="space-y-2 text-sm">
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Team coordination training</li>
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Up to 5 concurrent players</li>
-           <li class="flex items-center gap-2 text-cyan-glow">
-            <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>Team performance metrics</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Team coordination training</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Up to 5 concurrent players</li>
+           <li class="flex items-center gap-2 text-cyan-glow"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Team performance metrics</li>
           </ul>
          </div>
         </div>
        </div>
-      </div><!-- Quick Stats -->
+      </div>
+
+      <!-- Quick Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
        <div class="glass-card rounded-xl p-6 text-center animate-slide-up delay-300">
-        <div class="text-3xl font-bold gradient-text font-poppins" id="stat-sessions">
-         0
-        </div>
-        <div class="text-sm text-light-blue/60 font-condensed">
-         Training Sessions
-        </div>
+        <div class="text-3xl font-bold gradient-text font-poppins" id="stat-sessions">0</div>
+        <div class="text-sm text-white/60 font-condensed">Training Sessions</div>
        </div>
        <div class="glass-card rounded-xl p-6 text-center animate-slide-up delay-400">
-        <div class="text-3xl font-bold gradient-text font-poppins" id="stat-avg-score">
-         0%
-        </div>
-        <div class="text-sm text-light-blue/60 font-condensed">
-         Average Score
-        </div>
+        <div class="text-3xl font-bold gradient-text font-poppins" id="stat-avg-score">0%</div>
+        <div class="text-sm text-white/60 font-condensed">Average Score</div>
        </div>
        <div class="glass-card rounded-xl p-6 text-center animate-slide-up delay-300">
-        <div class="text-3xl font-bold gradient-text font-poppins">
-         6
-        </div>
-        <div class="text-sm text-light-blue/60 font-condensed">
-         ICS Roles
-        </div>
+        <div class="text-3xl font-bold gradient-text font-poppins">6</div>
+        <div class="text-sm text-white/60 font-condensed">ICS Roles</div>
        </div>
        <div class="glass-card rounded-xl p-6 text-center animate-slide-up delay-400">
-        <div class="text-3xl font-bold gradient-text font-poppins">
-         5
-        </div>
-        <div class="text-sm text-light-blue/60 font-condensed">
-         Scenarios
-        </div>
+        <div class="text-3xl font-bold gradient-text font-poppins">5</div>
+        <div class="text-sm text-white/60 font-condensed">Scenarios</div>
        </div>
-      </div><!-- ICS Framework Overview -->
+      </div>
+
+      <!-- ICS Framework Overview -->
       <div class="glass-card rounded-2xl p-8 animate-slide-up delay-500">
        <h3 class="font-poppins text-2xl font-bold mb-6 gradient-text">DDRiVE-M ICS Framework</h3>
        <div class="grid md:grid-cols-3 gap-6">
@@ -339,36 +415,46 @@
          <div class="w-12 h-12 rounded-lg bg-light-blue/20 flex items-center justify-center mb-4">
           <span class="text-2xl font-bold text-neon-blue">D</span>
          </div>
-         <h4 class="font-poppins font-semibold mb-2">Detect &amp; Direct</h4>
-         <p class="text-sm text-light-blue/70">Early warning systems, initial assessment, and establishing command structure.</p>
+         <h4 class="font-poppins font-semibold mb-2 text-white">Detect &amp; Direct</h4>
+         <p class="text-sm text-white/70">Early warning systems, initial assessment, and establishing command structure.</p>
         </div>
         <div class="bg-surface-light/50 rounded-xl p-6">
          <div class="w-12 h-12 rounded-lg bg-light-blue/20 flex items-center justify-center mb-4">
           <span class="text-2xl font-bold text-neon-blue">R</span>
          </div>
-         <h4 class="font-poppins font-semibold mb-2">Respond &amp; Recover</h4>
-         <p class="text-sm text-light-blue/70">Resource deployment, tactical operations, and restoration activities.</p>
+         <h4 class="font-poppins font-semibold mb-2 text-white">Respond &amp; Recover</h4>
+         <p class="text-sm text-white/70">Resource deployment, tactical operations, and restoration activities.</p>
         </div>
         <div class="bg-surface-light/50 rounded-xl p-6">
          <div class="w-12 h-12 rounded-lg bg-light-blue/20 flex items-center justify-center mb-4">
           <span class="text-2xl font-bold text-neon-blue">M</span>
          </div>
-         <h4 class="font-poppins font-semibold mb-2">Mitigate</h4>
-         <p class="text-sm text-light-blue/70">Risk reduction, lessons learned, and preparedness improvement.</p>
+         <h4 class="font-poppins font-semibold mb-2 text-white">Mitigate</h4>
+         <p class="text-sm text-white/70">Risk reduction, lessons learned, and preparedness improvement.</p>
         </div>
        </div>
       </div>
      </div>
     </main>
-   </div><!-- Setup Screen -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        SETUP SCREEN
+   ════════════════════════════════════════════════ -->
    <div id="setup-screen" class="hidden min-h-full w-full flex flex-col">
     <header class="glass-card border-b border-neon-blue/20 px-6 py-4">
      <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <button id="btn-back-setup" class="flex items-center gap-2 text-light-blue hover:text-neon-blue transition-colors">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-       </svg><span class="font-condensed">Back to Menu</span> </button>
+      <button id="btn-back-setup" class="flex items-center gap-2 text-white hover:text-neon-blue transition-colors">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+       <span class="font-condensed">Back to Menu</span>
+      </button>
       <div class="flex items-center gap-3">
-       <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="Logo" class="w-8 h-8 object-contain" loading="lazy" onerror="this.style.background='linear-gradient(135deg, #3b82f6, #00d4ff)'; this.style.borderRadius='4px';"> <span class="font-poppins font-semibold gradient-text">Setup Training Session</span>
+       <div class="logo-circle logo-circle-sm">
+        <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763"
+             alt="Logo" loading="lazy"
+             onerror="this.parentElement.style.background='linear-gradient(135deg,#3b82f6,#00d4ff)';">
+       </div>
+       <span class="font-poppins font-semibold gradient-text">Setup Training Session</span>
       </div>
      </div>
     </header>
@@ -376,221 +462,215 @@
      <div class="max-w-5xl mx-auto px-6">
       <!-- Player Info -->
       <div class="glass-card rounded-2xl p-8 mb-8 animate-slide-up">
-       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-        </svg> Player Information</h3>
+       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        Player Information
+       </h3>
        <div class="grid md:grid-cols-2 gap-6">
         <div>
-         <label class="block text-sm font-condensed text-light-blue/70 mb-2" for="player-name">Your Name</label> <input type="text" id="player-name" placeholder="Enter your name" class="w-full bg-surface border border-light-blue/30 rounded-lg px-4 py-3 text-white placeholder-light-blue/40 focus:border-neon-blue transition-colors">
+         <label class="block text-sm font-condensed text-white/70 mb-2" for="player-name">Your Name</label>
+         <input type="text" id="player-name" placeholder="Enter your name"
+                class="w-full bg-surface border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/40 focus:border-neon-blue transition-colors">
         </div>
         <div>
-         <label class="block text-sm font-condensed text-light-blue/70 mb-2" for="player-org">Organization (Optional)</label> <input type="text" id="player-org" placeholder="Your organization" class="w-full bg-surface border border-light-blue/30 rounded-lg px-4 py-3 text-white placeholder-light-blue/40 focus:border-neon-blue transition-colors">
+         <label class="block text-sm font-condensed text-white/70 mb-2" for="player-org">Organization (Optional)</label>
+         <input type="text" id="player-org" placeholder="Your organization"
+                class="w-full bg-surface border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/40 focus:border-neon-blue transition-colors">
         </div>
        </div>
-      </div><!-- Role Selection -->
+      </div>
+
+      <!-- Role Selection -->
       <div class="glass-card rounded-2xl p-8 mb-8 animate-slide-up delay-100">
-       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-        </svg> Select Your ICS Role</h3>
-       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="role-grid">
-        <!-- Roles will be rendered here -->
-       </div>
-      </div><!-- Scenario Selection -->
+       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+        Select Your ICS Role
+       </h3>
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="role-grid"></div>
+      </div>
+
+      <!-- Scenario Selection -->
       <div class="glass-card rounded-2xl p-8 mb-8 animate-slide-up delay-200">
-       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-        </svg> Choose Scenario</h3>
-       <div class="space-y-4" id="scenario-list">
-        <!-- Scenarios will be rendered here -->
-       </div>
-      </div><!-- Difficulty Selection -->
+       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+        Choose Scenario
+       </h3>
+       <div class="space-y-4" id="scenario-list"></div>
+      </div>
+
+      <!-- Difficulty Selection -->
       <div class="glass-card rounded-2xl p-8 mb-8 animate-slide-up delay-300">
-       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-        </svg> Difficulty Level</h3>
-       <div class="grid grid-cols-3 gap-4" id="difficulty-grid">
-        <!-- Difficulty options will be rendered here -->
-       </div>
-      </div><!-- Start Button -->
+       <h3 class="font-poppins text-xl font-bold mb-6 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        Difficulty Level
+       </h3>
+       <div class="grid grid-cols-3 gap-4" id="difficulty-grid"></div>
+      </div>
+
+      <!-- Start Button -->
       <div class="text-center">
-       <button id="btn-start-game" class="btn-primary px-12 py-4 rounded-xl font-poppins font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" disabled>
-        <svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg> Start Simulation </button>
+       <button id="btn-start-game" class="btn-primary px-12 py-4 rounded-xl font-poppins font-semibold text-lg text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" disabled>
+        <svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Start Simulation
+       </button>
       </div>
      </div>
     </main>
-   </div><!-- Game Screen -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        GAME SCREEN
+   ════════════════════════════════════════════════ -->
    <div id="game-screen" class="hidden h-full w-full flex flex-col">
-    <!-- Game Header -->
     <header class="glass-card border-b border-neon-blue/20 px-4 py-3 flex-shrink-0">
      <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-       <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="Logo" class="w-8 h-8 object-contain" loading="lazy" onerror="this.style.background='linear-gradient(135deg, #3b82f6, #00d4ff)'; this.style.borderRadius='4px';">
+       <div class="logo-circle logo-circle-sm">
+        <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763"
+             alt="Logo" loading="lazy"
+             onerror="this.parentElement.style.background='linear-gradient(135deg,#3b82f6,#00d4ff)';">
+       </div>
        <div>
-        <div class="font-condensed text-xs text-light-blue/60">
-         ACTIVE SCENARIO
-        </div>
-        <div class="font-poppins font-semibold text-sm" id="game-scenario-name">
-         -
-        </div>
+        <div class="font-condensed text-xs text-white/60">ACTIVE SCENARIO</div>
+        <div class="font-poppins font-semibold text-sm text-white" id="game-scenario-name">-</div>
        </div>
       </div>
       <div class="flex items-center gap-6">
        <div class="text-center">
-        <div class="font-condensed text-xs text-light-blue/60">
-         ROLE
-        </div>
-        <div class="font-semibold text-neon-blue text-sm" id="game-role-name">
-         -
-        </div>
+        <div class="font-condensed text-xs text-white/60">ROLE</div>
+        <div class="font-semibold text-neon-blue text-sm" id="game-role-name">-</div>
        </div>
        <div class="text-center">
-        <div class="font-condensed text-xs text-light-blue/60">
-         TIME
-        </div>
-        <div class="font-mono font-bold text-lg gradient-text" id="game-timer">
-         00:00
-        </div>
+        <div class="font-condensed text-xs text-white/60">TIME</div>
+        <div class="font-mono font-bold text-lg gradient-text" id="game-timer">00:00</div>
        </div>
        <div class="text-center">
-        <div class="font-condensed text-xs text-light-blue/60">
-         PHASE
-        </div>
-        <div class="font-semibold text-cyan-glow text-sm" id="game-phase">
-         Detection
-        </div>
-       </div><button id="btn-pause-game" class="tooltip-container p-2 rounded-lg border border-light-blue/30 hover:border-neon-blue transition-colors"> <span class="tooltip">Pause Simulation</span>
-        <svg class="w-5 h-5 text-light-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg></button>
+        <div class="font-condensed text-xs text-white/60">PHASE</div>
+        <div class="font-semibold text-cyan-glow text-sm" id="game-phase">Detection</div>
+       </div>
+       <button id="btn-pause-game" class="tooltip-container p-2 rounded-lg border border-white/30 hover:border-neon-blue transition-colors">
+        <span class="tooltip">Pause Simulation</span>
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+       </button>
       </div>
      </div>
-    </header><!-- Game Content -->
+    </header>
+
     <main class="flex-1 overflow-hidden flex">
-     <!-- Left Panel - Scenario & Decisions -->
+     <!-- Left Panel -->
      <div class="flex-1 overflow-auto p-6">
       <!-- Scenario Briefing -->
       <div class="glass-card rounded-xl p-6 mb-6 animate-slide-up">
        <div class="flex items-start gap-4">
         <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
-         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-         </svg>
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         </div>
         <div class="flex-1">
-         <h3 class="font-poppins font-bold text-lg mb-2" id="situation-title">Situation Update</h3>
-         <p class="text-light-blue/80 leading-relaxed" id="situation-description">Loading scenario...</p>
+         <h3 class="font-poppins font-bold text-lg mb-2 text-white" id="situation-title">Situation Update</h3>
+         <p class="text-white/80 leading-relaxed" id="situation-description">Loading scenario...</p>
         </div>
        </div>
-      </div><!-- Decision Panel -->
+      </div>
+
+      <!-- Decision Panel -->
       <div class="glass-card rounded-xl p-6 mb-6 animate-slide-up delay-100">
-       <h3 class="font-poppins font-bold text-lg mb-4 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg> Decision Required</h3>
-       <p class="text-light-blue/70 mb-4" id="decision-prompt">What action should you take?</p>
-       <div class="space-y-3" id="decision-options">
-        <!-- Decision options will be rendered here -->
-       </div>
+       <h3 class="font-poppins font-bold text-lg mb-4 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Decision Required
+       </h3>
+       <p class="text-white/70 mb-4" id="decision-prompt">What action should you take?</p>
+       <div class="space-y-3" id="decision-options"></div>
        <div class="mt-6 flex gap-4">
-        <button id="btn-submit-decision" class="btn-primary px-6 py-3 rounded-lg font-condensed font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled> Submit Decision </button> <button id="btn-request-info" class="btn-secondary px-6 py-3 rounded-lg font-condensed font-semibold text-neon-blue"> Request More Info </button>
-       </div>
-      </div><!-- Communication Log -->
-      <div class="glass-card rounded-xl p-6 animate-slide-up delay-200">
-       <h3 class="font-poppins font-bold text-lg mb-4 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-        </svg> Communication Log</h3>
-       <div class="h-48 overflow-auto space-y-3" id="comm-log">
-        <!-- Communication entries will be rendered here -->
+        <button id="btn-submit-decision" class="btn-primary px-6 py-3 rounded-lg font-condensed font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed" disabled>Submit Decision</button>
+        <button id="btn-request-info" class="btn-secondary px-6 py-3 rounded-lg font-condensed font-semibold text-neon-blue">Request More Info</button>
        </div>
       </div>
-     </div><!-- Right Panel - Status & Resources -->
+
+      <!-- Communication Log -->
+      <div class="glass-card rounded-xl p-6 animate-slide-up delay-200">
+       <h3 class="font-poppins font-bold text-lg mb-4 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        Communication Log
+       </h3>
+       <div class="h-48 overflow-auto space-y-3" id="comm-log"></div>
+      </div>
+     </div>
+
+     <!-- Right Panel -->
      <div class="w-80 border-l border-neon-blue/20 bg-surface/50 overflow-auto p-4 flex-shrink-0">
-      <!-- Current Score -->
+      <!-- Score -->
       <div class="glass-card rounded-xl p-4 mb-4">
-       <h4 class="font-condensed text-xs text-light-blue/60 mb-3">PERFORMANCE SCORE</h4>
+       <h4 class="font-condensed text-xs text-white/60 mb-3">PERFORMANCE SCORE</h4>
        <div class="relative w-24 h-24 mx-auto mb-4">
         <svg class="w-24 h-24 transform -rotate-90">
-         <circle cx="48" cy="48" r="45" stroke="#1a2d4a" stroke-width="6" fill="none" /> <circle id="score-ring" cx="48" cy="48" r="45" stroke="url(#scoreGradient)" stroke-width="6" fill="none" class="score-ring" /> <defs>
-          <lineargradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-           <stop offset="0%" stop-color="#3b82f6" />
-           <stop offset="100%" stop-color="#00d4ff" />
-          </lineargradient>
-         </defs>
+         <circle cx="48" cy="48" r="45" stroke="#1a2d4a" stroke-width="6" fill="none" />
+         <circle id="score-ring" cx="48" cy="48" r="45" stroke="url(#scoreGradient)" stroke-width="6" fill="none" class="score-ring" />
+         <defs><linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6" /><stop offset="100%" stop-color="#00d4ff" /></linearGradient></defs>
         </svg>
         <div class="absolute inset-0 flex items-center justify-center">
          <span class="text-2xl font-bold gradient-text font-poppins" id="current-score">0</span>
         </div>
        </div>
-       <div class="text-center text-sm text-light-blue/60 font-condensed">
-        Points
-       </div>
-      </div><!-- Performance Metrics -->
+       <div class="text-center text-sm text-white/60 font-condensed">Points</div>
+      </div>
+
+      <!-- Performance Metrics -->
       <div class="glass-card rounded-xl p-4 mb-4">
-       <h4 class="font-condensed text-xs text-light-blue/60 mb-3">PERFORMANCE METRICS</h4>
+       <h4 class="font-condensed text-xs text-white/60 mb-3">PERFORMANCE METRICS</h4>
        <div class="space-y-3">
         <div>
-         <div class="flex justify-between text-xs mb-1">
-          <span class="text-light-blue/70">Command</span> <span class="text-neon-blue font-semibold" id="metric-command">0%</span>
-         </div>
-         <div class="h-2 bg-surface rounded-full overflow-hidden">
-          <div id="bar-command" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: 0%"></div>
-         </div>
+         <div class="flex justify-between text-xs mb-1"><span class="text-white/70">Command</span><span class="text-neon-blue font-semibold" id="metric-command">0%</span></div>
+         <div class="h-2 bg-surface rounded-full overflow-hidden"><div id="bar-command" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:0%"></div></div>
         </div>
         <div>
-         <div class="flex justify-between text-xs mb-1">
-          <span class="text-light-blue/70">Coordination</span> <span class="text-neon-blue font-semibold" id="metric-coordination">0%</span>
-         </div>
-         <div class="h-2 bg-surface rounded-full overflow-hidden">
-          <div id="bar-coordination" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: 0%"></div>
-         </div>
+         <div class="flex justify-between text-xs mb-1"><span class="text-white/70">Coordination</span><span class="text-neon-blue font-semibold" id="metric-coordination">0%</span></div>
+         <div class="h-2 bg-surface rounded-full overflow-hidden"><div id="bar-coordination" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:0%"></div></div>
         </div>
         <div>
-         <div class="flex justify-between text-xs mb-1">
-          <span class="text-light-blue/70">Communication</span> <span class="text-neon-blue font-semibold" id="metric-communication">0%</span>
-         </div>
-         <div class="h-2 bg-surface rounded-full overflow-hidden">
-          <div id="bar-communication" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: 0%"></div>
-         </div>
+         <div class="flex justify-between text-xs mb-1"><span class="text-white/70">Communication</span><span class="text-neon-blue font-semibold" id="metric-communication">0%</span></div>
+         <div class="h-2 bg-surface rounded-full overflow-hidden"><div id="bar-communication" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:0%"></div></div>
         </div>
         <div>
-         <div class="flex justify-between text-xs mb-1">
-          <span class="text-light-blue/70">Decision Making</span> <span class="text-neon-blue font-semibold" id="metric-decision">0%</span>
-         </div>
-         <div class="h-2 bg-surface rounded-full overflow-hidden">
-          <div id="bar-decision" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: 0%"></div>
-         </div>
+         <div class="flex justify-between text-xs mb-1"><span class="text-white/70">Decision Making</span><span class="text-neon-blue font-semibold" id="metric-decision">0%</span></div>
+         <div class="h-2 bg-surface rounded-full overflow-hidden"><div id="bar-decision" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:0%"></div></div>
         </div>
         <div>
-         <div class="flex justify-between text-xs mb-1">
-          <span class="text-light-blue/70">Time Management</span> <span class="text-neon-blue font-semibold" id="metric-time">0%</span>
-         </div>
-         <div class="h-2 bg-surface rounded-full overflow-hidden">
-          <div id="bar-time" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: 0%"></div>
-         </div>
+         <div class="flex justify-between text-xs mb-1"><span class="text-white/70">Time Management</span><span class="text-neon-blue font-semibold" id="metric-time">0%</span></div>
+         <div class="h-2 bg-surface rounded-full overflow-hidden"><div id="bar-time" class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:0%"></div></div>
         </div>
        </div>
-      </div><!-- Resources Status -->
+      </div>
+
+      <!-- Resources -->
       <div class="glass-card rounded-xl p-4 mb-4">
-       <h4 class="font-condensed text-xs text-light-blue/60 mb-3">AVAILABLE RESOURCES</h4>
-       <div class="space-y-2" id="resources-list">
-        <!-- Resources will be rendered here -->
-       </div>
-      </div><!-- ICS Organization Chart Mini -->
+       <h4 class="font-condensed text-xs text-white/60 mb-3">AVAILABLE RESOURCES</h4>
+       <div class="space-y-2" id="resources-list"></div>
+      </div>
+
+      <!-- Org Chart Mini -->
       <div class="glass-card rounded-xl p-4">
-       <h4 class="font-condensed text-xs text-light-blue/60 mb-3">ICS ORGANIZATION</h4>
-       <div class="text-center" id="org-chart-mini">
-        <!-- Mini org chart will be rendered here -->
-       </div>
+       <h4 class="font-condensed text-xs text-white/60 mb-3">ICS ORGANIZATION</h4>
+       <div class="text-center" id="org-chart-mini"></div>
       </div>
      </div>
     </main>
-   </div><!-- Results Screen -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        RESULTS SCREEN
+   ════════════════════════════════════════════════ -->
    <div id="results-screen" class="hidden min-h-full w-full flex flex-col">
     <header class="glass-card border-b border-neon-blue/20 px-6 py-4">
      <div class="max-w-7xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-4">
-       <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="Logo" class="w-10 h-10 object-contain" loading="lazy" onerror="this.style.background='linear-gradient(135deg, #3b82f6, #00d4ff)'; this.style.borderRadius='8px';">
+       <div class="logo-circle logo-circle-md">
+        <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763"
+             alt="Logo" loading="lazy"
+             onerror="this.parentElement.style.background='linear-gradient(135deg,#3b82f6,#00d4ff)';">
+       </div>
        <div>
         <h1 class="font-poppins text-xl font-bold gradient-text">Simulation Complete</h1>
-        <p class="text-xs text-light-blue/60 font-condensed">Performance Assessment Report</p>
+        <p class="text-xs text-white/60 font-condensed">Performance Assessment Report</p>
        </div>
       </div>
      </div>
@@ -599,90 +679,103 @@
      <div class="max-w-5xl mx-auto px-6">
       <!-- Overall Score -->
       <div class="glass-card rounded-2xl p-8 mb-8 text-center animate-scale-in">
-       <h2 class="font-poppins text-2xl font-bold mb-6">Overall Performance</h2>
+       <h2 class="font-poppins text-2xl font-bold mb-6 text-white">Overall Performance</h2>
        <div class="relative w-48 h-48 mx-auto mb-6">
         <svg class="w-48 h-48 transform -rotate-90">
-         <circle cx="96" cy="96" r="88" stroke="#1a2d4a" stroke-width="12" fill="none" /> <circle id="final-score-ring" cx="96" cy="96" r="88" stroke="url(#finalScoreGradient)" stroke-width="12" fill="none" stroke-dasharray="553" stroke-dashoffset="553" style="transition: stroke-dashoffset 1.5s ease-out" /> <defs>
-          <lineargradient id="finalScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-           <stop offset="0%" stop-color="#3b82f6" />
-           <stop offset="100%" stop-color="#00d4ff" />
-          </lineargradient>
-         </defs>
+         <circle cx="96" cy="96" r="88" stroke="#1a2d4a" stroke-width="12" fill="none" />
+         <circle id="final-score-ring" cx="96" cy="96" r="88" stroke="url(#finalScoreGradient)" stroke-width="12" fill="none" stroke-dasharray="553" stroke-dashoffset="553" style="transition: stroke-dashoffset 1.5s ease-out" />
+         <defs><linearGradient id="finalScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6" /><stop offset="100%" stop-color="#00d4ff" /></linearGradient></defs>
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-         <span class="text-5xl font-bold gradient-text font-poppins" id="final-score">0</span> <span class="text-light-blue/60 text-sm font-condensed">Points</span>
+         <span class="text-5xl font-bold gradient-text font-poppins" id="final-score">0</span>
+         <span class="text-white/60 text-sm font-condensed">Points</span>
         </div>
        </div>
        <div class="inline-block px-6 py-2 rounded-full bg-gradient-to-r from-light-blue/20 to-neon-blue/20 border border-neon-blue/50">
         <span class="font-poppins font-semibold text-lg gradient-text" id="performance-grade">Calculating...</span>
        </div>
-      </div><!-- Detailed Metrics -->
+      </div>
+
+      <!-- Detailed Metrics -->
       <div class="grid md:grid-cols-2 gap-6 mb-8">
-       <!-- Scientific Rubric Assessment -->
        <div class="glass-card rounded-2xl p-6 animate-slide-up delay-100">
-        <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3">
-         <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-         </svg> Scientific Rubric Assessment</h3>
-        <div class="space-y-4" id="rubric-results">
-         <!-- Rubric items will be rendered here -->
-        </div>
-       </div><!-- Competency Breakdown -->
+        <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3 text-white">
+         <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+         Scientific Rubric Assessment
+        </h3>
+        <div class="space-y-4" id="rubric-results"></div>
+       </div>
        <div class="glass-card rounded-2xl p-6 animate-slide-up delay-200">
-        <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3">
-         <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
-         </svg> ICS Competency Breakdown</h3>
-        <div class="space-y-3" id="competency-breakdown">
-         <!-- Competency items will be rendered here -->
-        </div>
+        <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3 text-white">
+         <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+         ICS Competency Breakdown
+        </h3>
+        <div class="space-y-3" id="competency-breakdown"></div>
        </div>
-      </div><!-- Recommendations -->
+      </div>
+
+      <!-- Recommendations -->
       <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-up delay-300">
-       <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3">
-        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-        </svg> Recommendations for Improvement</h3>
-       <div class="grid md:grid-cols-2 gap-4" id="recommendations-list">
-        <!-- Recommendations will be rendered here -->
-       </div>
-      </div><!-- Action Buttons -->
+       <h3 class="font-poppins text-lg font-bold mb-4 flex items-center gap-3 text-white">
+        <svg class="w-6 h-6 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+        Recommendations for Improvement
+       </h3>
+       <div class="grid md:grid-cols-2 gap-4" id="recommendations-list"></div>
+      </div>
+
+      <!-- Action Buttons -->
       <div class="flex flex-wrap gap-4 justify-center">
-       <button id="btn-play-again" class="btn-primary px-8 py-4 rounded-xl font-poppins font-semibold">
-        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg> Play Again </button> <button id="btn-try-different" class="btn-secondary px-8 py-4 rounded-xl font-poppins font-semibold text-neon-blue">
-        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-        </svg> Try Different Role </button> <button id="btn-back-menu" class="px-8 py-4 rounded-xl font-poppins font-semibold border border-light-blue/30 hover:border-neon-blue transition-colors">
-        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-        </svg> Back to Menu </button>
+       <button id="btn-play-again" class="btn-primary px-8 py-4 rounded-xl font-poppins font-semibold text-white">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        Play Again
+       </button>
+       <button id="btn-try-different" class="btn-secondary px-8 py-4 rounded-xl font-poppins font-semibold text-neon-blue">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+        Try Different Role
+       </button>
+       <button id="btn-back-menu" class="px-8 py-4 rounded-xl font-poppins font-semibold text-white border border-white/30 hover:border-neon-blue transition-colors">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        Back to Menu
+       </button>
       </div>
      </div>
     </main>
-   </div><!-- Leaderboard Modal -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        LEADERBOARD MODAL
+   ════════════════════════════════════════════════ -->
    <div id="leaderboard-modal" class="hidden fixed inset-0 bg-deep-blue/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="glass-card rounded-2xl max-w-2xl w-full max-h-[90%] overflow-hidden animate-scale-in">
      <div class="p-6 border-b border-neon-blue/20 flex items-center justify-between">
-      <h2 class="font-poppins text-2xl font-bold gradient-text">Leaderboard</h2><button id="btn-close-leaderboard" class="p-2 rounded-lg hover:bg-surface transition-colors">
-       <svg class="w-6 h-6 text-light-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-       </svg></button>
+      <h2 class="font-poppins text-2xl font-bold gradient-text">Leaderboard</h2>
+      <button id="btn-close-leaderboard" class="p-2 rounded-lg hover:bg-surface transition-colors">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
      </div>
-     <div class="p-6 overflow-auto max-h-[60%]" id="leaderboard-content">
-      <!-- Leaderboard entries will be rendered here -->
-     </div>
+     <div class="p-6 overflow-auto max-h-[60%]" id="leaderboard-content"></div>
     </div>
-   </div><!-- Help Modal -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        HELP MODAL
+   ════════════════════════════════════════════════ -->
    <div id="help-modal" class="hidden fixed inset-0 bg-deep-blue/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="glass-card rounded-2xl max-w-3xl w-full max-h-[90%] overflow-hidden animate-scale-in">
      <div class="p-6 border-b border-neon-blue/20 flex items-center justify-between">
-      <h2 class="font-poppins text-2xl font-bold gradient-text">How to Play</h2><button id="btn-close-help" class="p-2 rounded-lg hover:bg-surface transition-colors">
-       <svg class="w-6 h-6 text-light-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-       </svg></button>
+      <h2 class="font-poppins text-2xl font-bold gradient-text">How to Play</h2>
+      <button id="btn-close-help" class="p-2 rounded-lg hover:bg-surface transition-colors">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
      </div>
      <div class="p-6 overflow-auto max-h-[60%] space-y-6">
       <div>
        <h3 class="font-poppins font-bold text-lg mb-2 text-neon-blue">What is DDRiVE-M ICS?</h3>
-       <p class="text-light-blue/80">The DDRiVE-M Incident Command System is a standardized approach to emergency management that covers Detection, Direction, Response, Recovery, and Mitigation phases.</p>
+       <p class="text-white/80">The DDRiVE-M Incident Command System is a standardized approach to emergency management that covers Detection, Direction, Response, Recovery, and Mitigation phases.</p>
       </div>
       <div>
        <h3 class="font-poppins font-bold text-lg mb-2 text-neon-blue">How to Play</h3>
-       <ol class="space-y-2 text-light-blue/80 list-decimal list-inside">
+       <ol class="space-y-2 text-white/80 list-decimal list-inside">
         <li>Select your preferred game mode (Single or Multi-player)</li>
         <li>Enter your name and choose an ICS role</li>
         <li>Select a disaster scenario and difficulty level</li>
@@ -693,8 +786,8 @@
       </div>
       <div>
        <h3 class="font-poppins font-bold text-lg mb-2 text-neon-blue">Scoring System</h3>
-       <p class="text-light-blue/80 mb-2">Your performance is assessed across 5 competency areas:</p>
-       <ul class="space-y-1 text-light-blue/70 text-sm">
+       <p class="text-white/80 mb-2">Your performance is assessed across 5 competency areas:</p>
+       <ul class="space-y-1 text-white/70 text-sm">
         <li>• <strong>Command (20%)</strong>: Leadership and authority decisions</li>
         <li>• <strong>Coordination (20%)</strong>: Inter-agency collaboration</li>
         <li>• <strong>Communication (20%)</strong>: Information flow management</li>
@@ -704,296 +797,138 @@
       </div>
      </div>
     </div>
-   </div><!-- Pause Modal -->
+   </div>
+
+   <!-- ═══════════════════════════════════════════════
+        PAUSE MODAL
+   ════════════════════════════════════════════════ -->
    <div id="pause-modal" class="hidden fixed inset-0 bg-deep-blue/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="glass-card rounded-2xl max-w-md w-full animate-scale-in text-center p-8">
      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-light-blue to-neon-blue flex items-center justify-center">
-      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg>
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
      </div>
-     <h2 class="font-poppins text-2xl font-bold mb-4">Simulation Paused</h2>
-     <p class="text-light-blue/70 mb-8">Take your time. Your progress has been saved.</p>
+     <h2 class="font-poppins text-2xl font-bold mb-4 text-white">Simulation Paused</h2>
+     <p class="text-white/70 mb-8">Take your time. Your progress has been saved.</p>
      <div class="space-y-3">
-      <button id="btn-resume-game" class="w-full btn-primary py-4 rounded-xl font-poppins font-semibold"> Resume Simulation </button> <button id="btn-quit-game" class="w-full btn-secondary py-4 rounded-xl font-poppins font-semibold text-neon-blue"> Quit to Menu </button>
+      <button id="btn-resume-game" class="w-full btn-primary py-4 rounded-xl font-poppins font-semibold text-white">Resume Simulation</button>
+      <button id="btn-quit-game" class="w-full btn-secondary py-4 rounded-xl font-poppins font-semibold text-neon-blue">Quit to Menu</button>
      </div>
     </div>
    </div>
   </div>
+
   <script>
     // ============ GAME DATA ============
     const ICS_ROLES = [
-      {
-        id: 'incident_commander',
-        name: 'Incident Commander',
-        abbrev: 'IC',
-        description: 'Overall responsibility for incident management. Establishes objectives and priorities.',
-        icon: '👨‍✈️',
-        color: 'from-red-500 to-orange-500',
-        responsibilities: ['Set objectives', 'Approve IAP', 'Coordinate staff', 'Ensure safety']
-      },
-      {
-        id: 'operations_chief',
-        name: 'Operations Section Chief',
-        abbrev: 'OSC',
-        description: 'Manages all tactical operations. Directs and coordinates all incident tactical operations.',
-        icon: '🎯',
-        color: 'from-orange-500 to-yellow-500',
-        responsibilities: ['Direct tactics', 'Manage resources', 'Execute IAP', 'Report to IC']
-      },
-      {
-        id: 'planning_chief',
-        name: 'Planning Section Chief',
-        abbrev: 'PSC',
-        description: 'Responsible for collection, evaluation, and dissemination of incident information.',
-        icon: '📋',
-        color: 'from-green-500 to-teal-500',
-        responsibilities: ['Gather intel', 'Prepare IAP', 'Track resources', 'Document']
-      },
-      {
-        id: 'logistics_chief',
-        name: 'Logistics Section Chief',
-        abbrev: 'LSC',
-        description: 'Provides facilities, services, and materials in support of the incident.',
-        icon: '📦',
-        color: 'from-blue-500 to-indigo-500',
-        responsibilities: ['Supply resources', 'Arrange transport', 'Setup facilities', 'Support staff']
-      },
-      {
-        id: 'finance_admin',
-        name: 'Finance/Admin Section Chief',
-        abbrev: 'FAC',
-        description: 'Monitors incident costs and provides accounting and procurement services.',
-        icon: '💰',
-        color: 'from-purple-500 to-pink-500',
-        responsibilities: ['Track costs', 'Process claims', 'Manage contracts', 'Time keeping']
-      },
-      {
-        id: 'public_info',
-        name: 'Public Information Officer',
-        abbrev: 'PIO',
-        description: 'Interface with media and public. Coordinates release of incident information.',
-        icon: '📢',
-        color: 'from-cyan-500 to-blue-500',
-        responsibilities: ['Media relations', 'Public updates', 'Rumor control', 'Social media']
-      }
+      { id: 'incident_commander', name: 'Incident Commander', abbrev: 'IC', description: 'Overall responsibility for incident management. Establishes objectives and priorities.', icon: '👨‍✈️', color: 'from-red-500 to-orange-500', responsibilities: ['Set objectives', 'Approve IAP', 'Coordinate staff', 'Ensure safety'] },
+      { id: 'operations_chief', name: 'Operations Section Chief', abbrev: 'OSC', description: 'Manages all tactical operations. Directs and coordinates all incident tactical operations.', icon: '🎯', color: 'from-orange-500 to-yellow-500', responsibilities: ['Direct tactics', 'Manage resources', 'Execute IAP', 'Report to IC'] },
+      { id: 'planning_chief', name: 'Planning Section Chief', abbrev: 'PSC', description: 'Responsible for collection, evaluation, and dissemination of incident information.', icon: '📋', color: 'from-green-500 to-teal-500', responsibilities: ['Gather intel', 'Prepare IAP', 'Track resources', 'Document'] },
+      { id: 'logistics_chief', name: 'Logistics Section Chief', abbrev: 'LSC', description: 'Provides facilities, services, and materials in support of the incident.', icon: '📦', color: 'from-blue-500 to-indigo-500', responsibilities: ['Supply resources', 'Arrange transport', 'Setup facilities', 'Support staff'] },
+      { id: 'finance_admin', name: 'Finance/Admin Section Chief', abbrev: 'FAC', description: 'Monitors incident costs and provides accounting and procurement services.', icon: '💰', color: 'from-purple-500 to-pink-500', responsibilities: ['Track costs', 'Process claims', 'Manage contracts', 'Time keeping'] },
+      { id: 'public_info', name: 'Public Information Officer', abbrev: 'PIO', description: 'Interface with media and public. Coordinates release of incident information.', icon: '📢', color: 'from-cyan-500 to-blue-500', responsibilities: ['Media relations', 'Public updates', 'Rumor control', 'Social media'] }
     ];
 
     const SCENARIOS = [
-      {
-        id: 'earthquake',
-        name: 'Major Earthquake Response',
-        type: 'Natural Disaster',
-        description: 'A 7.2 magnitude earthquake has struck the metropolitan area causing widespread damage.',
-        icon: '🌋',
-        difficulty_base: 1,
-        phases: [
-          {
-            id: 'detection',
-            name: 'Detection & Assessment',
-            situation: 'A 7.2 magnitude earthquake has just occurred at 08:47 AM. Multiple buildings have collapsed in the downtown area. Communication networks are partially down. Initial reports indicate numerous casualties.',
-            decisions: [
-              { id: 'a', text: 'Immediately activate Emergency Operations Center and all first responders', score: { command: 95, coordination: 90, communication: 85, decision: 95, time: 90 } },
-              { id: 'b', text: 'Wait for complete damage assessment before taking action', score: { command: 30, coordination: 40, communication: 50, decision: 25, time: 20 } },
-              { id: 'c', text: 'Activate only fire and rescue services initially', score: { command: 60, coordination: 55, communication: 60, decision: 50, time: 70 } },
-              { id: 'd', text: 'Issue public advisory and begin partial activation', score: { command: 75, coordination: 70, communication: 80, decision: 70, time: 75 } }
-            ]
-          },
-          {
-            id: 'response',
-            name: 'Immediate Response',
-            situation: 'Search and rescue teams are deployed. Hospitals are overwhelmed with casualties. Several fires have broken out due to gas leaks. Roads are blocked by debris.',
-            decisions: [
-              { id: 'a', text: 'Establish unified command with all agencies and prioritize life safety', score: { command: 95, coordination: 95, communication: 90, decision: 95, time: 85 } },
-              { id: 'b', text: 'Focus all resources on fire suppression first', score: { command: 50, coordination: 45, communication: 55, decision: 40, time: 60 } },
-              { id: 'c', text: 'Request immediate state/federal assistance before local assessment', score: { command: 60, coordination: 65, communication: 70, decision: 55, time: 50 } },
-              { id: 'd', text: 'Divide resources equally among all affected areas', score: { command: 70, coordination: 60, communication: 65, decision: 60, time: 70 } }
-            ]
-          },
-          {
-            id: 'recovery',
-            name: 'Recovery Operations',
-            situation: 'Active search and rescue is concluding. Thousands are displaced and need shelter. Critical infrastructure assessment is ongoing. Media is requesting updates.',
-            decisions: [
-              { id: 'a', text: 'Transition to recovery while maintaining some SAR, open shelters, brief media', score: { command: 90, coordination: 90, communication: 95, decision: 90, time: 85 } },
-              { id: 'b', text: 'Continue full SAR operations indefinitely', score: { command: 40, coordination: 50, communication: 45, decision: 35, time: 30 } },
-              { id: 'c', text: 'Immediately shift all resources to infrastructure repair', score: { command: 45, coordination: 40, communication: 50, decision: 40, time: 55 } },
-              { id: 'd', text: 'Focus on media management and public communication only', score: { command: 55, coordination: 50, communication: 80, decision: 50, time: 60 } }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'flood',
-        name: 'Flash Flood Emergency',
-        type: 'Natural Disaster',
-        description: 'Heavy rainfall has caused flash flooding, threatening communities along the river valley.',
-        icon: '🌊',
-        difficulty_base: 0.9,
-        phases: [
-          {
-            id: 'detection',
-            name: 'Early Warning',
-            situation: 'Weather service has issued a flash flood warning. River levels are rising rapidly. Several low-lying communities are at risk. You have approximately 2 hours before flooding begins.',
-            decisions: [
-              { id: 'a', text: 'Issue immediate evacuation orders for all at-risk areas', score: { command: 90, coordination: 85, communication: 95, decision: 90, time: 95 } },
-              { id: 'b', text: 'Monitor situation and wait for confirmed flooding', score: { command: 25, coordination: 30, communication: 40, decision: 20, time: 15 } },
-              { id: 'c', text: 'Advise voluntary evacuation and prepare shelters', score: { command: 70, coordination: 75, communication: 80, decision: 70, time: 75 } },
-              { id: 'd', text: 'Focus on sandbagging and flood control measures only', score: { command: 50, coordination: 55, communication: 45, decision: 45, time: 60 } }
-            ]
-          },
-          {
-            id: 'response',
-            name: 'Flood Response',
-            situation: 'Flooding has begun. Multiple water rescues are needed. Road access is compromised. Some residents refused to evacuate.',
-            decisions: [
-              { id: 'a', text: 'Deploy swift water rescue teams, establish rescue coordination center', score: { command: 95, coordination: 90, communication: 85, decision: 95, time: 90 } },
-              { id: 'b', text: 'Wait for water levels to stabilize before rescue operations', score: { command: 20, coordination: 25, communication: 30, decision: 15, time: 10 } },
-              { id: 'c', text: 'Focus on preventing further flood damage to infrastructure', score: { command: 45, coordination: 50, communication: 40, decision: 35, time: 45 } },
-              { id: 'd', text: 'Coordinate with neighboring jurisdictions for mutual aid', score: { command: 75, coordination: 85, communication: 80, decision: 75, time: 70 } }
-            ]
-          },
-          {
-            id: 'recovery',
-            name: 'Post-Flood Recovery',
-            situation: 'Flood waters are receding. Extensive property damage is evident. Water contamination is a concern. Displaced residents need assistance.',
-            decisions: [
-              { id: 'a', text: 'Begin damage assessment, issue water advisories, coordinate relief efforts', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
-              { id: 'b', text: 'Allow residents to return immediately to assess their own damage', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 45 } },
-              { id: 'c', text: 'Focus exclusively on debris removal and road clearing', score: { command: 55, coordination: 50, communication: 45, decision: 50, time: 65 } },
-              { id: 'd', text: 'Request state disaster declaration before local assessment', score: { command: 60, coordination: 65, communication: 70, decision: 55, time: 50 } }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'hazmat',
-        name: 'Industrial Chemical Spill',
-        type: 'Technological Disaster',
-        description: 'A major chemical spill at an industrial facility threatens nearby communities.',
-        icon: '☢️',
-        difficulty_base: 1.1,
-        phases: [
-          {
-            id: 'detection',
-            name: 'Initial Response',
-            situation: 'A tanker truck carrying chlorine gas has overturned near a residential area. A visible gas cloud is forming. Initial reports of respiratory distress from nearby residents.',
-            decisions: [
-              { id: 'a', text: 'Establish hot zone, evacuate downwind areas, activate HAZMAT team', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 95 } },
-              { id: 'b', text: 'Send firefighters to investigate the scene first', score: { command: 30, coordination: 35, communication: 40, decision: 20, time: 25 } },
-              { id: 'c', text: 'Issue shelter-in-place orders for all nearby residents', score: { command: 70, coordination: 75, communication: 80, decision: 75, time: 80 } },
-              { id: 'd', text: 'Contact the chemical company for guidance before action', score: { command: 40, coordination: 50, communication: 55, decision: 35, time: 30 } }
-            ]
-          },
-          {
-            id: 'response',
-            name: 'Containment Operations',
-            situation: 'HAZMAT team is on scene. The leak continues. Wind direction is shifting toward a school. Hospitals are receiving exposure victims.',
-            decisions: [
-              { id: 'a', text: 'Expand evacuation zone, coordinate with school for immediate evacuation', score: { command: 95, coordination: 95, communication: 90, decision: 95, time: 90 } },
-              { id: 'b', text: 'Focus all resources on stopping the leak at the source', score: { command: 60, coordination: 55, communication: 50, decision: 55, time: 65 } },
-              { id: 'c', text: 'Shelter school in place and continue current operations', score: { command: 40, coordination: 45, communication: 50, decision: 35, time: 50 } },
-              { id: 'd', text: 'Request federal EPA response team assistance', score: { command: 70, coordination: 75, communication: 70, decision: 65, time: 55 } }
-            ]
-          },
-          {
-            id: 'recovery',
-            name: 'Decontamination & Recovery',
-            situation: 'The leak has been contained. Air quality monitoring shows improving conditions. Evacuees are asking when they can return home.',
-            decisions: [
-              { id: 'a', text: 'Conduct systematic air monitoring, phased reentry, health screening', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
-              { id: 'b', text: 'Allow immediate return once leak is stopped', score: { command: 25, coordination: 30, communication: 35, decision: 20, time: 40 } },
-              { id: 'c', text: 'Keep evacuation in place until federal all-clear', score: { command: 55, coordination: 60, communication: 65, decision: 50, time: 40 } },
-              { id: 'd', text: 'Focus only on cleanup, let residents decide on return', score: { command: 35, coordination: 40, communication: 45, decision: 30, time: 55 } }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'wildfire',
-        name: 'Wildfire Emergency',
-        type: 'Natural Disaster',
-        description: 'A fast-moving wildfire threatens multiple communities in the wildland-urban interface.',
-        icon: '🔥',
-        difficulty_base: 1.0,
-        phases: [
-          {
-            id: 'detection',
-            name: 'Fire Detection',
-            situation: 'A wildfire has been reported in the hills above three residential communities. High winds are forecast. Fire is currently 5% contained and growing rapidly.',
-            decisions: [
-              { id: 'a', text: 'Issue evacuation warnings, pre-position resources, establish IC', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 90 } },
-              { id: 'b', text: 'Wait for fire to approach communities before evacuation', score: { command: 25, coordination: 30, communication: 35, decision: 20, time: 15 } },
-              { id: 'c', text: 'Focus on direct fire attack to contain at current location', score: { command: 65, coordination: 60, communication: 55, decision: 60, time: 70 } },
-              { id: 'd', text: 'Request state firefighting resources immediately', score: { command: 75, coordination: 80, communication: 75, decision: 70, time: 65 } }
-            ]
-          },
-          {
-            id: 'response',
-            name: 'Fire Suppression',
-            situation: 'Fire has jumped containment lines. One community is now under mandatory evacuation. Aircraft support is limited due to wind. Some residents are refusing to leave.',
-            decisions: [
-              { id: 'a', text: 'Prioritize life safety, document non-evacuees, protect critical infrastructure', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 85 } },
-              { id: 'b', text: 'Use law enforcement to forcibly remove non-evacuees', score: { command: 50, coordination: 55, communication: 45, decision: 40, time: 60 } },
-              { id: 'c', text: 'Concentrate all resources on direct fire attack', score: { command: 45, coordination: 50, communication: 40, decision: 40, time: 55 } },
-              { id: 'd', text: 'Pull back all personnel and let fire burn through community', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 30 } }
-            ]
-          },
-          {
-            id: 'recovery',
-            name: 'Post-Fire Recovery',
-            situation: 'Fire is 80% contained. Dozens of structures destroyed. Residents want to return to assess damage. Debris and ash pose health hazards.',
-            decisions: [
-              { id: 'a', text: 'Establish escorted tours, begin damage assessment, coordinate with insurance', score: { command: 90, coordination: 90, communication: 85, decision: 90, time: 80 } },
-              { id: 'b', text: 'Keep all areas closed until 100% containment', score: { command: 55, coordination: 60, communication: 65, decision: 50, time: 45 } },
-              { id: 'c', text: 'Allow unrestricted access for property owners', score: { command: 35, coordination: 40, communication: 50, decision: 30, time: 55 } },
-              { id: 'd', text: 'Focus exclusively on final fire suppression efforts', score: { command: 50, coordination: 45, communication: 40, decision: 45, time: 60 } }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'pandemic',
-        name: 'Disease Outbreak Response',
-        type: 'Public Health Emergency',
-        description: 'A novel infectious disease outbreak requires coordinated public health response.',
-        icon: '🦠',
-        difficulty_base: 1.2,
-        phases: [
-          {
-            id: 'detection',
-            name: 'Outbreak Detection',
-            situation: 'Local hospitals report unusual cluster of severe respiratory illness. 15 cases confirmed, 3 fatalities. Disease appears highly contagious with unknown origin.',
-            decisions: [
-              { id: 'a', text: 'Activate public health emergency, begin contact tracing, coordinate with CDC', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 90 } },
-              { id: 'b', text: 'Wait for CDC confirmation before taking action', score: { command: 30, coordination: 40, communication: 45, decision: 25, time: 20 } },
-              { id: 'c', text: 'Issue public health advisory without emergency declaration', score: { command: 65, coordination: 60, communication: 70, decision: 60, time: 70 } },
-              { id: 'd', text: 'Focus on hospital surge capacity only', score: { command: 50, coordination: 55, communication: 50, decision: 45, time: 55 } }
-            ]
-          },
-          {
-            id: 'response',
-            name: 'Containment Measures',
-            situation: 'Cases have doubled in 48 hours. Source identified as a community event. Healthcare workers are becoming infected. Public is anxious for information.',
-            decisions: [
-              { id: 'a', text: 'Implement isolation protocols, establish testing sites, provide regular updates', score: { command: 90, coordination: 95, communication: 95, decision: 90, time: 85 } },
-              { id: 'b', text: 'Immediately lockdown all public gatherings', score: { command: 60, coordination: 55, communication: 50, decision: 55, time: 65 } },
-              { id: 'c', text: 'Focus resources on protecting healthcare workers only', score: { command: 50, coordination: 55, communication: 45, decision: 45, time: 55 } },
-              { id: 'd', text: 'Minimize public communication to prevent panic', score: { command: 35, coordination: 40, communication: 20, decision: 30, time: 45 } }
-            ]
-          },
-          {
-            id: 'recovery',
-            name: 'Long-term Management',
-            situation: 'Outbreak appears controlled. New cases decreasing. Treatment protocols established. Community wants to return to normal activities.',
-            decisions: [
-              { id: 'a', text: 'Phase out restrictions gradually, maintain surveillance, conduct after-action review', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
-              { id: 'b', text: 'Immediately lift all restrictions', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 50 } },
-              { id: 'c', text: 'Maintain all restrictions indefinitely', score: { command: 45, coordination: 50, communication: 55, decision: 40, time: 35 } },
-              { id: 'd', text: 'Transfer all operations to routine public health', score: { command: 60, coordination: 65, communication: 60, decision: 55, time: 70 } }
-            ]
-          }
-        ]
-      }
+      { id: 'earthquake', name: 'Major Earthquake Response', type: 'Natural Disaster', description: 'A 7.2 magnitude earthquake has struck the metropolitan area causing widespread damage.', icon: '🌋', difficulty_base: 1, phases: [
+        { id: 'detection', name: 'Detection & Assessment', situation: 'A 7.2 magnitude earthquake has just occurred at 08:47 AM. Multiple buildings have collapsed in the downtown area. Communication networks are partially down. Initial reports indicate numerous casualties.', decisions: [
+          { id: 'a', text: 'Immediately activate Emergency Operations Center and all first responders', score: { command: 95, coordination: 90, communication: 85, decision: 95, time: 90 } },
+          { id: 'b', text: 'Wait for complete damage assessment before taking action', score: { command: 30, coordination: 40, communication: 50, decision: 25, time: 20 } },
+          { id: 'c', text: 'Activate only fire and rescue services initially', score: { command: 60, coordination: 55, communication: 60, decision: 50, time: 70 } },
+          { id: 'd', text: 'Issue public advisory and begin partial activation', score: { command: 75, coordination: 70, communication: 80, decision: 70, time: 75 } }
+        ]},
+        { id: 'response', name: 'Immediate Response', situation: 'Search and rescue teams are deployed. Hospitals are overwhelmed with casualties. Several fires have broken out due to gas leaks. Roads are blocked by debris.', decisions: [
+          { id: 'a', text: 'Establish unified command with all agencies and prioritize life safety', score: { command: 95, coordination: 95, communication: 90, decision: 95, time: 85 } },
+          { id: 'b', text: 'Focus all resources on fire suppression first', score: { command: 50, coordination: 45, communication: 55, decision: 40, time: 60 } },
+          { id: 'c', text: 'Request immediate state/federal assistance before local assessment', score: { command: 60, coordination: 65, communication: 70, decision: 55, time: 50 } },
+          { id: 'd', text: 'Divide resources equally among all affected areas', score: { command: 70, coordination: 60, communication: 65, decision: 60, time: 70 } }
+        ]},
+        { id: 'recovery', name: 'Recovery Operations', situation: 'Active search and rescue is concluding. Thousands are displaced and need shelter. Critical infrastructure assessment is ongoing. Media is requesting updates.', decisions: [
+          { id: 'a', text: 'Transition to recovery while maintaining some SAR, open shelters, brief media', score: { command: 90, coordination: 90, communication: 95, decision: 90, time: 85 } },
+          { id: 'b', text: 'Continue full SAR operations indefinitely', score: { command: 40, coordination: 50, communication: 45, decision: 35, time: 30 } },
+          { id: 'c', text: 'Immediately shift all resources to infrastructure repair', score: { command: 45, coordination: 40, communication: 50, decision: 40, time: 55 } },
+          { id: 'd', text: 'Focus on media management and public communication only', score: { command: 55, coordination: 50, communication: 80, decision: 50, time: 60 } }
+        ]}
+      ]},
+      { id: 'flood', name: 'Flash Flood Emergency', type: 'Natural Disaster', description: 'Heavy rainfall has caused flash flooding, threatening communities along the river valley.', icon: '🌊', difficulty_base: 0.9, phases: [
+        { id: 'detection', name: 'Early Warning', situation: 'Weather service has issued a flash flood warning. River levels are rising rapidly. Several low-lying communities are at risk. You have approximately 2 hours before flooding begins.', decisions: [
+          { id: 'a', text: 'Issue immediate evacuation orders for all at-risk areas', score: { command: 90, coordination: 85, communication: 95, decision: 90, time: 95 } },
+          { id: 'b', text: 'Monitor situation and wait for confirmed flooding', score: { command: 25, coordination: 30, communication: 40, decision: 20, time: 15 } },
+          { id: 'c', text: 'Advise voluntary evacuation and prepare shelters', score: { command: 70, coordination: 75, communication: 80, decision: 70, time: 75 } },
+          { id: 'd', text: 'Focus on sandbagging and flood control measures only', score: { command: 50, coordination: 55, communication: 45, decision: 45, time: 60 } }
+        ]},
+        { id: 'response', name: 'Flood Response', situation: 'Flooding has begun. Multiple water rescues are needed. Road access is compromised. Some residents refused to evacuate.', decisions: [
+          { id: 'a', text: 'Deploy swift water rescue teams, establish rescue coordination center', score: { command: 95, coordination: 90, communication: 85, decision: 95, time: 90 } },
+          { id: 'b', text: 'Wait for water levels to stabilize before rescue operations', score: { command: 20, coordination: 25, communication: 30, decision: 15, time: 10 } },
+          { id: 'c', text: 'Focus on preventing further flood damage to infrastructure', score: { command: 45, coordination: 50, communication: 40, decision: 35, time: 45 } },
+          { id: 'd', text: 'Coordinate with neighboring jurisdictions for mutual aid', score: { command: 75, coordination: 85, communication: 80, decision: 75, time: 70 } }
+        ]},
+        { id: 'recovery', name: 'Post-Flood Recovery', situation: 'Flood waters are receding. Extensive property damage is evident. Water contamination is a concern. Displaced residents need assistance.', decisions: [
+          { id: 'a', text: 'Begin damage assessment, issue water advisories, coordinate relief efforts', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
+          { id: 'b', text: 'Allow residents to return immediately to assess their own damage', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 45 } },
+          { id: 'c', text: 'Focus exclusively on debris removal and road clearing', score: { command: 55, coordination: 50, communication: 45, decision: 50, time: 65 } },
+          { id: 'd', text: 'Request state disaster declaration before local assessment', score: { command: 60, coordination: 65, communication: 70, decision: 55, time: 50 } }
+        ]}
+      ]},
+      { id: 'hazmat', name: 'Industrial Chemical Spill', type: 'Technological Disaster', description: 'A major chemical spill at an industrial facility threatens nearby communities.', icon: '☢️', difficulty_base: 1.1, phases: [
+        { id: 'detection', name: 'Initial Response', situation: 'A tanker truck carrying chlorine gas has overturned near a residential area. A visible gas cloud is forming. Initial reports of respiratory distress from nearby residents.', decisions: [
+          { id: 'a', text: 'Establish hot zone, evacuate downwind areas, activate HAZMAT team', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 95 } },
+          { id: 'b', text: 'Send firefighters to investigate the scene first', score: { command: 30, coordination: 35, communication: 40, decision: 20, time: 25 } },
+          { id: 'c', text: 'Issue shelter-in-place orders for all nearby residents', score: { command: 70, coordination: 75, communication: 80, decision: 75, time: 80 } },
+          { id: 'd', text: 'Contact the chemical company for guidance before action', score: { command: 40, coordination: 50, communication: 55, decision: 35, time: 30 } }
+        ]},
+        { id: 'response', name: 'Containment Operations', situation: 'HAZMAT team is on scene. The leak continues. Wind direction is shifting toward a school. Hospitals are receiving exposure victims.', decisions: [
+          { id: 'a', text: 'Expand evacuation zone, coordinate with school for immediate evacuation', score: { command: 95, coordination: 95, communication: 90, decision: 95, time: 90 } },
+          { id: 'b', text: 'Focus all resources on stopping the leak at the source', score: { command: 60, coordination: 55, communication: 50, decision: 55, time: 65 } },
+          { id: 'c', text: 'Shelter school in place and continue current operations', score: { command: 40, coordination: 45, communication: 50, decision: 35, time: 50 } },
+          { id: 'd', text: 'Request federal EPA response team assistance', score: { command: 70, coordination: 75, communication: 70, decision: 65, time: 55 } }
+        ]},
+        { id: 'recovery', name: 'Decontamination & Recovery', situation: 'The leak has been contained. Air quality monitoring shows improving conditions. Evacuees are asking when they can return home.', decisions: [
+          { id: 'a', text: 'Conduct systematic air monitoring, phased reentry, health screening', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
+          { id: 'b', text: 'Allow immediate return once leak is stopped', score: { command: 25, coordination: 30, communication: 35, decision: 20, time: 40 } },
+          { id: 'c', text: 'Keep evacuation in place until federal all-clear', score: { command: 55, coordination: 60, communication: 65, decision: 50, time: 40 } },
+          { id: 'd', text: 'Focus only on cleanup, let residents decide on return', score: { command: 35, coordination: 40, communication: 45, decision: 30, time: 55 } }
+        ]}
+      ]},
+      { id: 'wildfire', name: 'Wildfire Emergency', type: 'Natural Disaster', description: 'A fast-moving wildfire threatens multiple communities in the wildland-urban interface.', icon: '🔥', difficulty_base: 1.0, phases: [
+        { id: 'detection', name: 'Fire Detection', situation: 'A wildfire has been reported in the hills above three residential communities. High winds are forecast. Fire is currently 5% contained and growing rapidly.', decisions: [
+          { id: 'a', text: 'Issue evacuation warnings, pre-position resources, establish IC', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 90 } },
+          { id: 'b', text: 'Wait for fire to approach communities before evacuation', score: { command: 25, coordination: 30, communication: 35, decision: 20, time: 15 } },
+          { id: 'c', text: 'Focus on direct fire attack to contain at current location', score: { command: 65, coordination: 60, communication: 55, decision: 60, time: 70 } },
+          { id: 'd', text: 'Request state firefighting resources immediately', score: { command: 75, coordination: 80, communication: 75, decision: 70, time: 65 } }
+        ]},
+        { id: 'response', name: 'Fire Suppression', situation: 'Fire has jumped containment lines. One community is now under mandatory evacuation. Aircraft support is limited due to wind. Some residents are refusing to leave.', decisions: [
+          { id: 'a', text: 'Prioritize life safety, document non-evacuees, protect critical infrastructure', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 85 } },
+          { id: 'b', text: 'Use law enforcement to forcibly remove non-evacuees', score: { command: 50, coordination: 55, communication: 45, decision: 40, time: 60 } },
+          { id: 'c', text: 'Concentrate all resources on direct fire attack', score: { command: 45, coordination: 50, communication: 40, decision: 40, time: 55 } },
+          { id: 'd', text: 'Pull back all personnel and let fire burn through community', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 30 } }
+        ]},
+        { id: 'recovery', name: 'Post-Fire Recovery', situation: 'Fire is 80% contained. Dozens of structures destroyed. Residents want to return to assess damage. Debris and ash pose health hazards.', decisions: [
+          { id: 'a', text: 'Establish escorted tours, begin damage assessment, coordinate with insurance', score: { command: 90, coordination: 90, communication: 85, decision: 90, time: 80 } },
+          { id: 'b', text: 'Keep all areas closed until 100% containment', score: { command: 55, coordination: 60, communication: 65, decision: 50, time: 45 } },
+          { id: 'c', text: 'Allow unrestricted access for property owners', score: { command: 35, coordination: 40, communication: 50, decision: 30, time: 55 } },
+          { id: 'd', text: 'Focus exclusively on final fire suppression efforts', score: { command: 50, coordination: 45, communication: 40, decision: 45, time: 60 } }
+        ]}
+      ]},
+      { id: 'pandemic', name: 'Disease Outbreak Response', type: 'Public Health Emergency', description: 'A novel infectious disease outbreak requires coordinated public health response.', icon: '🦠', difficulty_base: 1.2, phases: [
+        { id: 'detection', name: 'Outbreak Detection', situation: 'Local hospitals report unusual cluster of severe respiratory illness. 15 cases confirmed, 3 fatalities. Disease appears highly contagious with unknown origin.', decisions: [
+          { id: 'a', text: 'Activate public health emergency, begin contact tracing, coordinate with CDC', score: { command: 95, coordination: 90, communication: 90, decision: 95, time: 90 } },
+          { id: 'b', text: 'Wait for CDC confirmation before taking action', score: { command: 30, coordination: 40, communication: 45, decision: 25, time: 20 } },
+          { id: 'c', text: 'Issue public health advisory without emergency declaration', score: { command: 65, coordination: 60, communication: 70, decision: 60, time: 70 } },
+          { id: 'd', text: 'Focus on hospital surge capacity only', score: { command: 50, coordination: 55, communication: 50, decision: 45, time: 55 } }
+        ]},
+        { id: 'response', name: 'Containment Measures', situation: 'Cases have doubled in 48 hours. Source identified as a community event. Healthcare workers are becoming infected. Public is anxious for information.', decisions: [
+          { id: 'a', text: 'Implement isolation protocols, establish testing sites, provide regular updates', score: { command: 90, coordination: 95, communication: 95, decision: 90, time: 85 } },
+          { id: 'b', text: 'Immediately lockdown all public gatherings', score: { command: 60, coordination: 55, communication: 50, decision: 55, time: 65 } },
+          { id: 'c', text: 'Focus resources on protecting healthcare workers only', score: { command: 50, coordination: 55, communication: 45, decision: 45, time: 55 } },
+          { id: 'd', text: 'Minimize public communication to prevent panic', score: { command: 35, coordination: 40, communication: 20, decision: 30, time: 45 } }
+        ]},
+        { id: 'recovery', name: 'Long-term Management', situation: 'Outbreak appears controlled. New cases decreasing. Treatment protocols established. Community wants to return to normal activities.', decisions: [
+          { id: 'a', text: 'Phase out restrictions gradually, maintain surveillance, conduct after-action review', score: { command: 90, coordination: 90, communication: 90, decision: 90, time: 85 } },
+          { id: 'b', text: 'Immediately lift all restrictions', score: { command: 30, coordination: 35, communication: 40, decision: 25, time: 50 } },
+          { id: 'c', text: 'Maintain all restrictions indefinitely', score: { command: 45, coordination: 50, communication: 55, decision: 40, time: 35 } },
+          { id: 'd', text: 'Transfer all operations to routine public health', score: { command: 60, coordination: 65, communication: 60, decision: 55, time: 70 } }
+        ]}
+      ]}
     ];
 
     const DIFFICULTY_LEVELS = [
@@ -1012,74 +947,42 @@
 
     // ============ GAME STATE ============
     let gameState = {
-      mode: 'single',
-      playerName: '',
-      playerOrg: '',
-      selectedRole: null,
-      selectedScenario: null,
-      difficulty: 'intermediate',
-      currentPhase: 0,
-      score: 0,
+      mode: 'single', playerName: '', playerOrg: '',
+      selectedRole: null, selectedScenario: null, difficulty: 'intermediate',
+      currentPhase: 0, score: 0,
       metrics: { command: 0, coordination: 0, communication: 0, decision: 0, time: 0 },
-      decisions: [],
-      startTime: null,
-      elapsedTime: 0,
-      timerInterval: null,
-      isPaused: false,
-      communicationLog: []
+      decisions: [], startTime: null, elapsedTime: 0,
+      timerInterval: null, isPaused: false, communicationLog: []
     };
 
     let allRecords = [];
 
-    // ============ DEFAULT CONFIG ============
     const defaultConfig = {
       app_title: 'DDRiVE-M ICS Simulation',
       welcome_message: 'Welcome to the Incident Command System Simulation',
-      background_color: '#0a1628',
-      surface_color: '#1a2d4a',
-      text_color: '#ffffff',
-      primary_action: '#3b82f6',
-      secondary_action: '#00d4ff'
+      background_color: '#0a1628', surface_color: '#1a2d4a',
+      text_color: '#ffffff', primary_action: '#3b82f6', secondary_action: '#00d4ff'
     };
 
-    // ============ ELEMENT SDK SETUP ============
     if (window.elementSdk) {
       window.elementSdk.init({
         defaultConfig,
         onConfigChange: async (config) => {
           const title = config.app_title || defaultConfig.app_title;
           const welcome = config.welcome_message || defaultConfig.welcome_message;
-          
           document.getElementById('app-title').textContent = title;
           document.getElementById('welcome-text').textContent = welcome;
           document.title = title;
         },
         mapToCapabilities: (config) => ({
           recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
-            },
-            {
-              get: () => config.surface_color || defaultConfig.surface_color,
-              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-            },
-            {
-              get: () => config.primary_action || defaultConfig.primary_action,
-              set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); }
-            },
-            {
-              get: () => config.secondary_action || defaultConfig.secondary_action,
-              set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); }
-            }
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+            { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
           ],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
+          borderables: [], fontEditable: undefined, fontSizeable: undefined
         }),
         mapToEditPanelValues: (config) => new Map([
           ['app_title', config.app_title || defaultConfig.app_title],
@@ -1088,25 +991,15 @@
       });
     }
 
-    // ============ DATA SDK SETUP ============
     if (window.dataSdk) {
-      const dataHandler = {
-        onDataChanged(data) {
-          allRecords = data;
-          updateStats();
-        }
-      };
-      
-      window.dataSdk.init(dataHandler).then(result => {
-        if (!result.isOk) {
-          console.error('Failed to initialize data SDK');
-        }
-      });
+      window.dataSdk.init({
+        onDataChanged(data) { allRecords = data; updateStats(); }
+      }).then(result => { if (!result.isOk) console.error('Failed to initialize data SDK'); });
     }
 
     // ============ UI FUNCTIONS ============
     function showScreen(screenId) {
-      ['loading-screen', 'main-menu', 'setup-screen', 'game-screen', 'results-screen'].forEach(id => {
+      ['loading-screen','main-menu','setup-screen','game-screen','results-screen'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
       document.getElementById(screenId).classList.remove('hidden');
@@ -1124,21 +1017,18 @@
       grid.innerHTML = ICS_ROLES.map(role => `
         <div class="role-card glass-card rounded-xl p-4 cursor-pointer border-2 border-transparent" data-role="${role.id}">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 rounded-lg bg-gradient-to-br ${role.color} flex items-center justify-center text-2xl">
-              ${role.icon}
-            </div>
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br ${role.color} flex items-center justify-center text-2xl">${role.icon}</div>
             <div>
-              <h4 class="font-poppins font-semibold text-sm">${role.name}</h4>
+              <h4 class="font-poppins font-semibold text-sm text-white">${role.name}</h4>
               <span class="text-xs text-neon-blue font-condensed">${role.abbrev}</span>
             </div>
           </div>
-          <p class="text-xs text-light-blue/70 mb-3">${role.description}</p>
+          <p class="text-xs text-white/70 mb-3">${role.description}</p>
           <div class="flex flex-wrap gap-1">
-            ${role.responsibilities.slice(0, 2).map(r => `<span class="text-xs bg-surface-light px-2 py-1 rounded">${r}</span>`).join('')}
+            ${role.responsibilities.slice(0,2).map(r => `<span class="text-xs bg-surface-light px-2 py-1 rounded text-white/80">${r}</span>`).join('')}
           </div>
         </div>
       `).join('');
-
       grid.querySelectorAll('.role-card').forEach(card => {
         card.addEventListener('click', () => {
           grid.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
@@ -1154,18 +1044,15 @@
       list.innerHTML = SCENARIOS.map(scenario => `
         <div class="decision-option glass-card rounded-xl p-4 cursor-pointer border-2 border-transparent" data-scenario="${scenario.id}">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl bg-surface-light flex items-center justify-center text-3xl flex-shrink-0">
-              ${scenario.icon}
-            </div>
+            <div class="w-14 h-14 rounded-xl bg-surface-light flex items-center justify-center text-3xl flex-shrink-0">${scenario.icon}</div>
             <div class="flex-1">
-              <h4 class="font-poppins font-semibold">${scenario.name}</h4>
+              <h4 class="font-poppins font-semibold text-white">${scenario.name}</h4>
               <p class="text-xs text-neon-blue font-condensed mb-1">${scenario.type}</p>
-              <p class="text-sm text-light-blue/70">${scenario.description}</p>
+              <p class="text-sm text-white/70">${scenario.description}</p>
             </div>
           </div>
         </div>
       `).join('');
-
       list.querySelectorAll('.decision-option').forEach(card => {
         card.addEventListener('click', () => {
           list.querySelectorAll('.decision-option').forEach(c => c.classList.remove('selected'));
@@ -1181,11 +1068,10 @@
       grid.innerHTML = DIFFICULTY_LEVELS.map(diff => `
         <div class="decision-option glass-card rounded-xl p-4 cursor-pointer border-2 border-transparent text-center ${diff.id === 'intermediate' ? 'selected' : ''}" data-difficulty="${diff.id}">
           <div class="text-3xl mb-2">${diff.icon}</div>
-          <h4 class="font-poppins font-semibold">${diff.name}</h4>
-          <p class="text-xs text-light-blue/70 mt-1">${diff.description}</p>
+          <h4 class="font-poppins font-semibold text-white">${diff.name}</h4>
+          <p class="text-xs text-white/70 mt-1">${diff.description}</p>
         </div>
       `).join('');
-
       grid.querySelectorAll('.decision-option').forEach(card => {
         card.addEventListener('click', () => {
           grid.querySelectorAll('.decision-option').forEach(c => c.classList.remove('selected'));
@@ -1198,59 +1084,45 @@
     function validateSetup() {
       const nameInput = document.getElementById('player-name');
       const startBtn = document.getElementById('btn-start-game');
-      const isValid = nameInput.value.trim() && gameState.selectedRole && gameState.selectedScenario;
-      startBtn.disabled = !isValid;
+      startBtn.disabled = !(nameInput.value.trim() && gameState.selectedRole && gameState.selectedScenario);
     }
 
     // ============ GAME FUNCTIONS ============
     function startGame() {
       gameState.playerName = document.getElementById('player-name').value.trim();
       gameState.playerOrg = document.getElementById('player-org').value.trim();
-      gameState.currentPhase = 0;
-      gameState.score = 0;
+      gameState.currentPhase = 0; gameState.score = 0;
       gameState.metrics = { command: 0, coordination: 0, communication: 0, decision: 0, time: 0 };
-      gameState.decisions = [];
-      gameState.startTime = Date.now();
-      gameState.elapsedTime = 0;
-      gameState.communicationLog = [];
-      gameState.isPaused = false;
+      gameState.decisions = []; gameState.startTime = Date.now();
+      gameState.elapsedTime = 0; gameState.communicationLog = []; gameState.isPaused = false;
 
       const role = ICS_ROLES.find(r => r.id === gameState.selectedRole);
       const scenario = SCENARIOS.find(s => s.id === gameState.selectedScenario);
-      const difficulty = DIFFICULTY_LEVELS.find(d => d.id === gameState.difficulty);
 
       document.getElementById('game-scenario-name').textContent = scenario.name;
       document.getElementById('game-role-name').textContent = role.abbrev;
 
       showScreen('game-screen');
-      loadPhase();
-      startTimer();
-      renderResources();
-      renderOrgChart();
+      loadPhase(); startTimer(); renderResources(); renderOrgChart();
     }
 
     function loadPhase() {
       const scenario = SCENARIOS.find(s => s.id === gameState.selectedScenario);
       const phase = scenario.phases[gameState.currentPhase];
-      
       document.getElementById('game-phase').textContent = phase.name;
       document.getElementById('situation-title').textContent = phase.name;
       document.getElementById('situation-description').textContent = phase.situation;
-      
       addCommunication('system', `Phase ${gameState.currentPhase + 1}: ${phase.name}`, phase.situation);
-      
       renderDecisions(phase.decisions);
     }
 
     function renderDecisions(decisions) {
       const container = document.getElementById('decision-options');
       container.innerHTML = decisions.map((dec, idx) => `
-        <div class="decision-option rounded-lg p-4 cursor-pointer border-2 border-light-blue/30 hover:border-neon-blue/50 transition-all" data-decision="${dec.id}">
+        <div class="decision-option rounded-lg p-4 cursor-pointer border-2 border-white/20 hover:border-neon-blue/50 transition-all" data-decision="${dec.id}">
           <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full bg-surface-light flex items-center justify-center font-bold text-neon-blue flex-shrink-0">
-              ${String.fromCharCode(65 + idx)}
-            </div>
-            <p class="text-sm text-light-blue/90">${dec.text}</p>
+            <div class="w-8 h-8 rounded-full bg-surface-light flex items-center justify-center font-bold text-neon-blue flex-shrink-0">${String.fromCharCode(65+idx)}</div>
+            <p class="text-sm text-white/90">${dec.text}</p>
           </div>
         </div>
       `).join('');
@@ -1264,12 +1136,7 @@
           document.getElementById('btn-submit-decision').disabled = false;
         });
       });
-
-      document.getElementById('btn-submit-decision').onclick = () => {
-        if (selectedDecision) {
-          submitDecision(selectedDecision);
-        }
-      };
+      document.getElementById('btn-submit-decision').onclick = () => { if (selectedDecision) submitDecision(selectedDecision); };
     }
 
     function submitDecision(decisionId) {
@@ -1277,47 +1144,31 @@
       const phase = scenario.phases[gameState.currentPhase];
       const decision = phase.decisions.find(d => d.id === decisionId);
       const difficulty = DIFFICULTY_LEVELS.find(d => d.id === gameState.difficulty);
-
-      // Calculate scores with difficulty multiplier
       const scoreMultiplier = difficulty.multiplier * scenario.difficulty_base;
-      
+
       Object.keys(decision.score).forEach(key => {
         gameState.metrics[key] = Math.round((gameState.metrics[key] + decision.score[key]) / (gameState.decisions.length + 2) * (gameState.decisions.length + 1) + decision.score[key] / (gameState.decisions.length + 2));
       });
+      gameState.decisions.push({ phase: gameState.currentPhase, decision: decisionId, score: decision.score });
 
-      gameState.decisions.push({
-        phase: gameState.currentPhase,
-        decision: decisionId,
-        score: decision.score
-      });
-
-      // Update score display
-      const totalScore = Math.round(
-        RUBRIC_CRITERIA.reduce((sum, criteria) => sum + gameState.metrics[criteria.id] * criteria.weight, 0) * scoreMultiplier
-      );
+      const totalScore = Math.round(RUBRIC_CRITERIA.reduce((sum, c) => sum + gameState.metrics[c.id] * c.weight, 0) * scoreMultiplier);
       gameState.score = totalScore;
-
       updateScoreDisplay();
       addCommunication('decision', 'Decision Made', decision.text);
 
-      // Move to next phase or end game
       gameState.currentPhase++;
       if (gameState.currentPhase < scenario.phases.length) {
         setTimeout(loadPhase, 1500);
       } else {
         setTimeout(endGame, 1500);
       }
-
       document.getElementById('btn-submit-decision').disabled = true;
     }
 
     function updateScoreDisplay() {
       document.getElementById('current-score').textContent = gameState.score;
-      
       const ring = document.getElementById('score-ring');
-      const offset = 283 - (283 * gameState.score / 100);
-      ring.style.strokeDashoffset = offset;
-
+      ring.style.strokeDashoffset = 283 - (283 * gameState.score / 100);
       Object.keys(gameState.metrics).forEach(key => {
         document.getElementById(`metric-${key}`).textContent = Math.round(gameState.metrics[key]) + '%';
         document.getElementById(`bar-${key}`).style.width = gameState.metrics[key] + '%';
@@ -1327,13 +1178,7 @@
     function addCommunication(type, title, message) {
       const log = document.getElementById('comm-log');
       const time = formatTime(gameState.elapsedTime);
-      const icons = {
-        system: '📢',
-        decision: '✅',
-        info: 'ℹ️',
-        alert: '⚠️'
-      };
-      
+      const icons = { system: '📢', decision: '✅', info: 'ℹ️', alert: '⚠️' };
       const entry = document.createElement('div');
       entry.className = 'glass-card rounded-lg p-3 animate-slide-in-right';
       entry.innerHTML = `
@@ -1342,66 +1187,52 @@
           <div class="flex-1">
             <div class="flex justify-between items-center mb-1">
               <span class="font-condensed font-semibold text-sm text-neon-blue">${title}</span>
-              <span class="text-xs text-light-blue/50">${time}</span>
+              <span class="text-xs text-white/50">${time}</span>
             </div>
-            <p class="text-xs text-light-blue/70">${message}</p>
+            <p class="text-xs text-white/70">${message}</p>
           </div>
-        </div>
-      `;
+        </div>`;
       log.prepend(entry);
-      
       gameState.communicationLog.push({ type, title, message, time });
     }
 
     function renderResources() {
       const list = document.getElementById('resources-list');
       const resources = [
-        { name: 'Fire Units', count: 12, icon: '🚒' },
-        { name: 'EMS Units', count: 8, icon: '🚑' },
-        { name: 'Police Units', count: 15, icon: '🚔' },
-        { name: 'Helicopters', count: 2, icon: '🚁' },
+        { name: 'Fire Units', count: 12, icon: '🚒' }, { name: 'EMS Units', count: 8, icon: '🚑' },
+        { name: 'Police Units', count: 15, icon: '🚔' }, { name: 'Helicopters', count: 2, icon: '🚁' },
         { name: 'Shelters', count: 5, icon: '🏠' }
       ];
-      
       list.innerHTML = resources.map(r => `
         <div class="flex items-center justify-between p-2 rounded-lg bg-surface-light/50">
           <div class="flex items-center gap-2">
             <span>${r.icon}</span>
-            <span class="text-xs font-condensed">${r.name}</span>
+            <span class="text-xs font-condensed text-white/80">${r.name}</span>
           </div>
           <span class="text-xs font-semibold text-neon-blue">${r.count}</span>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
     function renderOrgChart() {
       const chart = document.getElementById('org-chart-mini');
-      const role = ICS_ROLES.find(r => r.id === gameState.selectedRole);
-      
       chart.innerHTML = `
         <div class="space-y-2">
-          <div class="inline-block px-3 py-1 rounded bg-gradient-to-r from-red-500/50 to-orange-500/50 text-xs font-condensed">IC</div>
+          <div class="inline-block px-3 py-1 rounded bg-gradient-to-r from-red-500/50 to-orange-500/50 text-xs font-condensed text-white">IC</div>
           <div class="flex justify-center gap-2 text-xs">
-            ${ICS_ROLES.slice(1, 5).map(r => `
-              <div class="px-2 py-1 rounded ${r.id === gameState.selectedRole ? 'bg-neon-blue/30 border border-neon-blue' : 'bg-surface-light'} font-condensed">
-                ${r.abbrev}
-              </div>
+            ${ICS_ROLES.slice(1,5).map(r => `
+              <div class="px-2 py-1 rounded ${r.id === gameState.selectedRole ? 'bg-neon-blue/30 border border-neon-blue text-white' : 'bg-surface-light text-white/70'} font-condensed">${r.abbrev}</div>
             `).join('')}
           </div>
-          <div class="text-xs text-light-blue/60 mt-2">You: ${role.name}</div>
-        </div>
-      `;
+          <div class="text-xs text-white/60 mt-2">You: ${ICS_ROLES.find(r => r.id === gameState.selectedRole)?.name}</div>
+        </div>`;
     }
 
     function startTimer() {
       const difficulty = DIFFICULTY_LEVELS.find(d => d.id === gameState.difficulty);
-      
       gameState.timerInterval = setInterval(() => {
         if (!gameState.isPaused) {
           gameState.elapsedTime++;
           document.getElementById('game-timer').textContent = formatTime(gameState.elapsedTime);
-          
-          // Time pressure affects score
           if (gameState.elapsedTime > difficulty.timeLimit * 0.8) {
             gameState.metrics.time = Math.max(0, gameState.metrics.time - 0.1);
           }
@@ -1410,46 +1241,22 @@
     }
 
     function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
     }
 
-    function pauseGame() {
-      gameState.isPaused = true;
-      document.getElementById('pause-modal').classList.remove('hidden');
-    }
-
-    function resumeGame() {
-      gameState.isPaused = false;
-      document.getElementById('pause-modal').classList.add('hidden');
-    }
-
-    function quitGame() {
-      clearInterval(gameState.timerInterval);
-      document.getElementById('pause-modal').classList.add('hidden');
-      showScreen('main-menu');
-    }
+    function pauseGame() { gameState.isPaused = true; document.getElementById('pause-modal').classList.remove('hidden'); }
+    function resumeGame() { gameState.isPaused = false; document.getElementById('pause-modal').classList.add('hidden'); }
+    function quitGame() { clearInterval(gameState.timerInterval); document.getElementById('pause-modal').classList.add('hidden'); showScreen('main-menu'); }
 
     async function endGame() {
       clearInterval(gameState.timerInterval);
-      
-      const role = ICS_ROLES.find(r => r.id === gameState.selectedRole);
-      const scenario = SCENARIOS.find(s => s.id === gameState.selectedScenario);
       const difficulty = DIFFICULTY_LEVELS.find(d => d.id === gameState.difficulty);
+      const finalScore = Math.round(RUBRIC_CRITERIA.reduce((sum, c) => sum + gameState.metrics[c.id] * c.weight, 0) * difficulty.multiplier);
 
-      // Calculate final scores
-      const finalScore = Math.round(
-        RUBRIC_CRITERIA.reduce((sum, c) => sum + gameState.metrics[c.id] * c.weight, 0) * difficulty.multiplier
-      );
-
-      // Save to data SDK
       if (window.dataSdk && allRecords.length < 999) {
         const record = {
-          player_id: Date.now().toString(),
-          player_name: gameState.playerName,
-          role: gameState.selectedRole,
-          scenario_id: gameState.selectedScenario,
+          player_id: Date.now().toString(), player_name: gameState.playerName,
+          role: gameState.selectedRole, scenario_id: gameState.selectedScenario,
           score: finalScore,
           command_score: Math.round(gameState.metrics.command),
           coordination_score: Math.round(gameState.metrics.coordination),
@@ -1458,214 +1265,150 @@
           time_management_score: Math.round(gameState.metrics.time),
           completed_at: new Date().toISOString(),
           duration_seconds: gameState.elapsedTime,
-          difficulty: gameState.difficulty,
-          mode: gameState.mode
+          difficulty: gameState.difficulty, mode: gameState.mode
         };
-
         const result = await window.dataSdk.create(record);
-        if (!result.isOk) {
-          console.error('Failed to save game record');
-        }
+        if (!result.isOk) console.error('Failed to save game record');
       }
-
-      // Show results
       showScreen('results-screen');
       renderResults(finalScore);
     }
 
     function renderResults(finalScore) {
-      // Animate score ring
       setTimeout(() => {
-        const ring = document.getElementById('final-score-ring');
-        const offset = 553 - (553 * finalScore / 100);
-        ring.style.strokeDashoffset = offset;
+        document.getElementById('final-score-ring').style.strokeDashoffset = 553 - (553 * finalScore / 100);
         document.getElementById('final-score').textContent = finalScore;
       }, 300);
 
-      // Determine grade
       let grade = 'Needs Improvement';
       if (finalScore >= 90) grade = 'Exceptional - Expert Level';
       else if (finalScore >= 80) grade = 'Proficient - Advanced';
       else if (finalScore >= 70) grade = 'Competent - Intermediate';
       else if (finalScore >= 60) grade = 'Developing - Basic';
-      
       document.getElementById('performance-grade').textContent = grade;
 
-      // Render rubric results
-      const rubricContainer = document.getElementById('rubric-results');
-      rubricContainer.innerHTML = RUBRIC_CRITERIA.map(criteria => {
+      document.getElementById('rubric-results').innerHTML = RUBRIC_CRITERIA.map(criteria => {
         const score = gameState.metrics[criteria.id];
-        let level = 'Needs Work';
-        let color = 'text-red-400';
+        let level = 'Needs Work', color = 'text-red-400';
         if (score >= 85) { level = 'Exemplary'; color = 'text-green-400'; }
-        else if (score >= 70) { level = 'Proficient'; color = 'text-cyan-glow'; }
+        else if (score >= 70) { level = 'Proficient'; color = 'text-cyan-400'; }
         else if (score >= 55) { level = 'Developing'; color = 'text-yellow-400'; }
-        
         return `
           <div class="p-3 bg-surface-light/50 rounded-lg">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-condensed text-sm">${criteria.name}</span>
+              <span class="font-condensed text-sm text-white">${criteria.name}</span>
               <span class="text-xs ${color} font-semibold">${level}</span>
             </div>
             <div class="h-2 bg-surface rounded-full overflow-hidden mb-1">
-              <div class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width: ${score}%"></div>
+              <div class="h-full bg-gradient-to-r from-light-blue to-neon-blue progress-bar" style="width:${score}%"></div>
             </div>
-            <div class="flex justify-between text-xs text-light-blue/60">
-              <span>${criteria.description}</span>
-              <span>${Math.round(score)}%</span>
+            <div class="flex justify-between text-xs text-white/60">
+              <span>${criteria.description}</span><span>${Math.round(score)}%</span>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
 
-      // Render competency breakdown
-      const competencyContainer = document.getElementById('competency-breakdown');
-      competencyContainer.innerHTML = Object.entries(gameState.metrics).map(([key, value]) => {
+      document.getElementById('competency-breakdown').innerHTML = Object.entries(gameState.metrics).map(([key, value]) => {
         const criteria = RUBRIC_CRITERIA.find(c => c.id === key);
         return `
           <div class="flex items-center gap-3">
             <div class="flex-1">
               <div class="flex justify-between text-sm mb-1">
-                <span class="font-condensed">${criteria.name}</span>
+                <span class="font-condensed text-white">${criteria.name}</span>
                 <span class="text-neon-blue font-semibold">${Math.round(value)}%</span>
               </div>
               <div class="h-2 bg-surface rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-light-blue to-neon-blue" style="width: ${value}%; transition: width 1s ease-out"></div>
+                <div class="h-full bg-gradient-to-r from-light-blue to-neon-blue" style="width:${value}%; transition:width 1s ease-out"></div>
               </div>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
 
-      // Render recommendations
       const recommendations = [];
       if (gameState.metrics.command < 70) recommendations.push({ icon: '👨‍✈️', text: 'Focus on establishing clear command authority early in incidents' });
       if (gameState.metrics.coordination < 70) recommendations.push({ icon: '🤝', text: 'Practice inter-agency coordination and unified command scenarios' });
       if (gameState.metrics.communication < 70) recommendations.push({ icon: '📢', text: 'Improve information sharing protocols and stakeholder updates' });
       if (gameState.metrics.decision < 70) recommendations.push({ icon: '🎯', text: 'Study decision-making frameworks and practice rapid assessment' });
       if (gameState.metrics.time < 70) recommendations.push({ icon: '⏱️', text: 'Work on prioritization skills and time-critical decision making' });
-      
       if (recommendations.length === 0) {
         recommendations.push({ icon: '🌟', text: 'Excellent performance! Consider mentoring others or trying expert difficulty' });
         recommendations.push({ icon: '📚', text: 'Explore advanced ICS courses to further develop leadership skills' });
       }
-
       document.getElementById('recommendations-list').innerHTML = recommendations.map(rec => `
         <div class="p-4 bg-surface-light/50 rounded-lg flex items-start gap-3">
           <span class="text-2xl">${rec.icon}</span>
-          <p class="text-sm text-light-blue/80">${rec.text}</p>
-        </div>
-      `).join('');
+          <p class="text-sm text-white/80">${rec.text}</p>
+        </div>`).join('');
     }
 
     function showLeaderboard() {
       const modal = document.getElementById('leaderboard-modal');
       const content = document.getElementById('leaderboard-content');
-      
-      const sorted = [...allRecords].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 20);
-      
+      const sorted = [...allRecords].sort((a,b) => (b.score||0)-(a.score||0)).slice(0,20);
+
       if (sorted.length === 0) {
         content.innerHTML = `
           <div class="text-center py-12">
             <div class="text-6xl mb-4">🏆</div>
-            <p class="text-light-blue/70">No scores yet. Complete a simulation to appear on the leaderboard!</p>
-          </div>
-        `;
+            <p class="text-white/70">No scores yet. Complete a simulation to appear on the leaderboard!</p>
+          </div>`;
       } else {
         content.innerHTML = `
           <div class="space-y-3">
             ${sorted.map((record, idx) => {
               const role = ICS_ROLES.find(r => r.id === record.role);
               const scenario = SCENARIOS.find(s => s.id === record.scenario_id);
-              const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-              
+              const medal = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`#${idx+1}`;
               return `
-                <div class="flex items-center gap-4 p-4 rounded-lg bg-surface-light/50 ${idx < 3 ? 'border border-neon-blue/30' : ''}">
-                  <div class="w-10 h-10 flex items-center justify-center font-bold ${idx < 3 ? 'text-2xl' : 'text-light-blue/60'}">
-                    ${medal}
-                  </div>
+                <div class="flex items-center gap-4 p-4 rounded-lg bg-surface-light/50 ${idx<3?'border border-neon-blue/30':''}">
+                  <div class="w-10 h-10 flex items-center justify-center font-bold ${idx<3?'text-2xl':'text-white/60'}">${medal}</div>
                   <div class="flex-1">
-                    <div class="font-semibold">${record.player_name || 'Anonymous'}</div>
-                    <div class="text-xs text-light-blue/60">
-                      ${role?.abbrev || 'Unknown'} • ${scenario?.name || 'Unknown Scenario'}
-                    </div>
+                    <div class="font-semibold text-white">${record.player_name||'Anonymous'}</div>
+                    <div class="text-xs text-white/60">${role?.abbrev||'Unknown'} • ${scenario?.name||'Unknown Scenario'}</div>
                   </div>
                   <div class="text-right">
-                    <div class="text-xl font-bold gradient-text">${record.score || 0}%</div>
-                    <div class="text-xs text-light-blue/50">${record.difficulty || 'N/A'}</div>
+                    <div class="text-xl font-bold gradient-text">${record.score||0}%</div>
+                    <div class="text-xs text-white/50">${record.difficulty||'N/A'}</div>
                   </div>
-                </div>
-              `;
+                </div>`;
             }).join('')}
-          </div>
-        `;
+          </div>`;
       }
-      
       modal.classList.remove('hidden');
     }
 
     // ============ EVENT LISTENERS ============
-    document.getElementById('mode-single').addEventListener('click', () => {
-      gameState.mode = 'single';
-      showScreen('setup-screen');
-    });
-
-    document.getElementById('mode-multi').addEventListener('click', () => {
-      gameState.mode = 'multi';
-      showScreen('setup-screen');
-    });
-
+    document.getElementById('mode-single').addEventListener('click', () => { gameState.mode = 'single'; showScreen('setup-screen'); });
+    document.getElementById('mode-multi').addEventListener('click', () => { gameState.mode = 'multi'; showScreen('setup-screen'); });
     document.getElementById('btn-back-setup').addEventListener('click', () => showScreen('main-menu'));
     document.getElementById('btn-start-game').addEventListener('click', startGame);
     document.getElementById('btn-pause-game').addEventListener('click', pauseGame);
     document.getElementById('btn-resume-game').addEventListener('click', resumeGame);
     document.getElementById('btn-quit-game').addEventListener('click', quitGame);
-
     document.getElementById('btn-play-again').addEventListener('click', startGame);
     document.getElementById('btn-try-different').addEventListener('click', () => showScreen('setup-screen'));
     document.getElementById('btn-back-menu').addEventListener('click', () => showScreen('main-menu'));
-
     document.getElementById('btn-leaderboard').addEventListener('click', showLeaderboard);
-    document.getElementById('btn-close-leaderboard').addEventListener('click', () => {
-      document.getElementById('leaderboard-modal').classList.add('hidden');
-    });
-
-    document.getElementById('btn-help').addEventListener('click', () => {
-      document.getElementById('help-modal').classList.remove('hidden');
-    });
-    document.getElementById('btn-close-help').addEventListener('click', () => {
-      document.getElementById('help-modal').classList.add('hidden');
-    });
-
+    document.getElementById('btn-close-leaderboard').addEventListener('click', () => document.getElementById('leaderboard-modal').classList.add('hidden'));
+    document.getElementById('btn-help').addEventListener('click', () => document.getElementById('help-modal').classList.remove('hidden'));
+    document.getElementById('btn-close-help').addEventListener('click', () => document.getElementById('help-modal').classList.add('hidden'));
     document.getElementById('player-name').addEventListener('input', validateSetup);
-
     document.getElementById('btn-request-info').addEventListener('click', () => {
-      const scenario = SCENARIOS.find(s => s.id === gameState.selectedScenario);
-      const phase = scenario.phases[gameState.currentPhase];
       addCommunication('info', 'Additional Information', 'Current phase requires immediate attention. Consider life safety as top priority. Resources are limited.');
     });
 
-    // Close modals on backdrop click
-    ['leaderboard-modal', 'help-modal', 'pause-modal'].forEach(id => {
+    ['leaderboard-modal','help-modal','pause-modal'].forEach(id => {
       document.getElementById(id).addEventListener('click', (e) => {
-        if (e.target.id === id) {
-          document.getElementById(id).classList.add('hidden');
-        }
+        if (e.target.id === id) document.getElementById(id).classList.add('hidden');
       });
     });
 
-    // ============ INITIALIZATION ============
+    // ============ INIT ============
     function init() {
-      renderRoles();
-      renderScenarios();
-      renderDifficulties();
-      
-      setTimeout(() => {
-        showScreen('main-menu');
-      }, 2000);
+      renderRoles(); renderScenarios(); renderDifficulties();
+      setTimeout(() => showScreen('main-menu'), 2000);
     }
-
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d56c88785e60425',t:'MTc3MjM1MzY1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ </body>
 </html>
