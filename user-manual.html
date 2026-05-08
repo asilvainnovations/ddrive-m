@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDRiVE-M — User Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+DESIGN TOKENS — DDRiVE-M Emergency/DRRM Theme
+============================================================ */
+:root {
+  /* Core palette — deep slate + emergency orange + teal */
+  --slate-950: #020A0F;
+  --slate-900: #060F17;
+  --slate-850: #0A1520;
+  --slate-800: #0E1D2C;
+  --slate-700: #152840;
+  --slate-600: #1E3A58;
+  --slate-500: #2A5080;
+  --teal-600:  #0F7A6E;
+  --teal-500:  #14B8A6;
+  --teal-400:  #2DD4BF;
+  --teal-300:  #5EEAD4;
+  --orange-600:#C05621;
+  --orange-500:#EA580C;
+  --orange-400:#F97316;
+  --orange-300:#FB923C;
+  --amber-500: #F59E0B;
+  --amber-400: #FBBF24;
+  --red-500:   #EF4444;
+  --red-400:   #F87171;
+  --green-500: #22C55E;
+  --green-400: #4ADE80;
+  --blue-500:  #3B82F6;
+  --blue-400:  #60A5FA;
+  --indigo-500:#6366F1;
+
+  /* Glass */
+  --glass-bg:           rgba(255,255,255,0.055);
+  --glass-bg-hover:     rgba(255,255,255,0.085);
+  --glass-border:       rgba(255,255,255,0.1);
+  --glass-border-strong:rgba(255,255,255,0.18);
+  --glass-shadow:       0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
+  --glass-inset:        inset 0 1px 0 rgba(255,255,255,0.1);
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-ui:      'DM Sans', sans-serif;
+  --font-data:    'JetBrains Mono', monospace;
+
+  /* Radius */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* Text */
+  --text-primary:   rgba(255,255,255,0.93);
+  --text-secondary: rgba(255,255,255,0.62);
+  --text-tertiary:  rgba(255,255,255,0.35);
+
+  /* Layout */
+  --sidebar-w: 284px;
+  --header-h:  64px;
+
+  /* Brand accent */
+  --accent-1: #F97316;
+  --accent-2: #14B8A6;
+  --accent-3: #6366F1;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-ui); background: var(--slate-900); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+
+/* ============================================================ BACKGROUND ============================================================ */
+.app-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.12; animation: orb-drift 24s ease-in-out infinite; }
+.bg-orb-1 { width: 800px; height: 800px; background: radial-gradient(circle, #1E3A58, transparent); top: -300px; left: -250px; animation-delay: 0s; }
+.bg-orb-2 { width: 600px; height: 600px; background: radial-gradient(circle, #0F7A6E, transparent); top: 30%; right: -180px; animation-delay: -9s; }
+.bg-orb-3 { width: 500px; height: 500px; background: radial-gradient(circle, #C05621, transparent); bottom: -150px; left: 28%; animation-delay: -18s; opacity: 0.08; }
+.bg-orb-4 { width: 350px; height: 350px; background: radial-gradient(circle, #6366F1, transparent); top: 55%; left: 8%; animation-delay: -5s; opacity: 0.09; }
+.bg-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 48px 48px; }
+.bg-hexagons { position: absolute; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='86.6'%3E%3Cpolygon points='50,0 100,25 100,75 50,100 0,75 0,25' fill='none' stroke='%23F97316' stroke-width='1'/%3E%3C/svg%3E"); background-size: 60px 52px; }
+@keyframes orb-drift { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(32px,-28px) scale(1.09); } 66% { transform: translate(-22px,20px) scale(0.92); } }
+
+/* ============================================================ HEADER ============================================================ */
+.top-bar { position: fixed; top: 0; left: 0; right: 0; height: var(--header-h); z-index: 1000; display: flex; align-items: center; padding: 0 24px; gap: 16px; background: rgba(6,15,23,0.92); backdrop-filter: blur(36px) saturate(200%); border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 32px rgba(0,0,0,0.35); }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.logo-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(249,115,22,0.4); box-shadow: 0 0 0 4px rgba(249,115,22,0.12), 0 4px 14px rgba(0,0,0,0.4); object-fit: cover; }
+.logo-text { font-family: var(--font-display); font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #fff 0%, var(--teal-300) 60%, var(--orange-300) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.3px; }
+.logo-badge { font-family: var(--font-data); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; background: linear-gradient(135deg, var(--orange-500), var(--orange-400)); color: white; padding: 2px 7px; border-radius: 4px; align-self: flex-start; margin-top: 2px; }
+.header-center { flex: 1; display: flex; align-items: center; justify-content: center; }
+.manual-badge { font-family: var(--font-data); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-tertiary); }
+.manual-badge span { color: var(--teal-400); margin: 0 6px; }
+.header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.version-chip { padding: 5px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-full); font-size: 11px; font-family: var(--font-data); color: var(--text-secondary); }
+.btn-print { padding: 8px 16px; background: linear-gradient(135deg, var(--orange-500), var(--orange-600)); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-full); color: white; font-family: var(--font-ui); font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(234,88,12,0.38); }
+.btn-print:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(234,88,12,0.5); }
+
+/* ============================================================ LAYOUT ============================================================ */
+.layout { display: flex; padding-top: var(--header-h); min-height: 100vh; position: relative; z-index: 1; }
+
+/* ============================================================ SIDEBAR ============================================================ */
+.sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; width: var(--sidebar-w); z-index: 900; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; background: rgba(6,15,23,0.82); backdrop-filter: blur(32px) saturate(180%); border-right: 1px solid var(--glass-border); padding-bottom: 24px; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.sidebar-top { padding: 20px 16px 10px; }
+.sidebar-heading { font-family: var(--font-data); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-tertiary); margin-bottom: 14px; }
+.toc-section { margin-bottom: 4px; }
+.toc-section-label { padding: 6px 16px 4px; font-family: var(--font-data); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-tertiary); }
+.toc-link { display: flex; align-items: center; gap: 10px; padding: 9px 14px; margin: 1px 8px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.18s ease; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; user-select: none; }
+.toc-link:hover { background: var(--glass-bg); color: var(--text-primary); }
+.toc-link.active { background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(20,184,166,0.08)); color: white; border: 1px solid rgba(249,115,22,0.25); box-shadow: 0 2px 12px rgba(249,115,22,0.14), inset 0 1px 0 rgba(255,255,255,0.06); }
+.toc-link .toc-num { width: 20px; height: 20px; border-radius: 4px; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-family: var(--font-data); font-weight: 700; flex-shrink: 0; color: var(--teal-400); }
+.toc-link.active .toc-num { background: var(--orange-500); border-color: transparent; color: white; border-radius: 4px; }
+.toc-link .toc-icon { font-size: 13px; flex-shrink: 0; }
+.progress-track { margin: 16px 16px 0; padding: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); }
+.progress-label { font-size: 9px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.progress-bar { height: 3px; background: rgba(255,255,255,0.07); border-radius: var(--radius-full); overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange-500), var(--teal-500)); border-radius: var(--radius-full); transition: width 0.4s ease; }
+
+/* ============================================================ CONTENT ============================================================ */
+.content { flex: 1; margin-left: var(--sidebar-w); padding: 48px 52px 80px; max-width: calc(100% - var(--sidebar-w)); }
+
+/* ============================================================ HERO ============================================================ */
+.hero { position: relative; border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 44px; }
+.hero-banner { width: 100%; height: 260px; object-fit: cover; display: block; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.hero-body { position: relative; padding: 36px 44px 40px; background: linear-gradient(135deg, rgba(6,15,23,0.97) 0%, rgba(14,29,44,0.93) 50%, rgba(15,122,110,0.15) 100%); border: 1px solid var(--glass-border-strong); border-top: none; border-radius: 0 0 var(--radius-xl) var(--radius-xl); backdrop-filter: blur(20px); }
+.hero-body::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--orange-500), var(--teal-500), var(--indigo-500)); }
+.hero-inner { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: 28px; }
+.hero-logo-wrap { flex-shrink: 0; }
+.hero-logo-img { width: 88px; height: 88px; border-radius: 50%; border: 3px solid rgba(249,115,22,0.35); box-shadow: 0 0 0 6px rgba(249,115,22,0.1), 0 0 0 12px rgba(249,115,22,0.05), 0 12px 40px rgba(0,0,0,0.45); object-fit: cover; animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.hero-text { flex: 1; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3); border-radius: var(--radius-full); font-size: 10px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--orange-300); margin-bottom: 14px; }
+.hero-title { font-family: var(--font-display); font-size: clamp(24px, 3.5vw, 40px); font-weight: 800; line-height: 1.12; margin-bottom: 10px; background: linear-gradient(135deg, #fff 0%, var(--teal-300) 50%, var(--orange-300) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+.hero-subtitle { font-size: 14px; color: var(--text-secondary); line-height: 1.72; max-width: 600px; margin-bottom: 24px; }
+.hero-meta { display: flex; gap: 18px; flex-wrap: wrap; }
+.hero-meta-item { display: flex; align-items: center; gap: 7px; font-size: 11px; font-family: var(--font-data); color: var(--text-secondary); }
+.hero-meta-item .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal-400); animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ============================================================ FRAMEWORK IMAGE ============================================================ */
+.framework-section { margin-bottom: 44px; }
+.framework-img-wrap { border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--glass-border-strong); box-shadow: var(--glass-shadow); }
+.framework-img { width: 100%; display: block; border-radius: var(--radius-xl); }
+.framework-caption { text-align: center; margin-top: 12px; font-family: var(--font-data); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; }
+
+/* ============================================================ SECTION ============================================================ */
+.section { margin-bottom: 52px; scroll-margin-top: 88px; animation: section-in 0.5s ease both; }
+@keyframes section-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.section-num { width: 40px; height: 40px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--orange-600), var(--orange-500)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 15px; font-weight: 700; flex-shrink: 0; box-shadow: 0 4px 14px rgba(234,88,12,0.38); }
+.section-title { font-family: var(--font-display); font-size: 21px; font-weight: 700; background: linear-gradient(135deg, white, var(--teal-300)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 3px; }
+.section-subtitle { font-size: 11px; font-family: var(--font-data); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ============================================================ COLLAPSIBLE CARDS ============================================================ */
+.coll-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); margin-bottom: 10px; overflow: hidden; transition: border-color 0.25s ease, box-shadow 0.25s ease; position: relative; }
+.coll-card:hover { border-color: rgba(255,255,255,0.16); }
+.coll-card.open { border-color: rgba(249,115,22,0.3); box-shadow: 0 4px 24px rgba(249,115,22,0.1); }
+.coll-header { display: flex; align-items: center; gap: 14px; padding: 16px 20px; cursor: pointer; user-select: none; transition: background 0.18s ease; }
+.coll-header:hover { background: var(--glass-bg-hover); }
+.coll-card.open .coll-header { background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(20,184,166,0.04)); }
+.coll-header-icon { width: 34px; height: 34px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: all 0.25s ease; }
+.coll-card.open .coll-header-icon { background: linear-gradient(135deg, var(--orange-500), var(--orange-600)); border-color: transparent; box-shadow: 0 4px 12px rgba(234,88,12,0.32); }
+.coll-header-text { flex: 1; }
+.coll-header-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.coll-header-sub { font-size: 10px; font-family: var(--font-data); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.8px; }
+.coll-chevron { width: 24px; height: 24px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--teal-400); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), background 0.2s ease; flex-shrink: 0; }
+.coll-card.open .coll-chevron { transform: rotate(180deg); background: var(--orange-500); border-color: transparent; color: white; }
+.coll-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.38s cubic-bezier(0.4,0,0.2,1); }
+.coll-card.open .coll-body { grid-template-rows: 1fr; }
+.coll-body-inner { overflow: hidden; padding: 0 20px; transition: padding 0.38s ease; }
+.coll-card.open .coll-body-inner { padding: 0 20px 20px; }
+.coll-card.open::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, var(--orange-500), var(--teal-500)); border-radius: 2px 0 0 2px; }
+
+/* ============================================================ GLASS CARDS ============================================================ */
+.glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 22px; box-shadow: var(--glass-shadow), var(--glass-inset); margin-bottom: 14px; transition: all 0.28s cubic-bezier(0.4,0,0.2,1); }
+.glass-card:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); transform: translateY(-2px); }
+.glass-card.accent-top { position: relative; }
+.glass-card.accent-top::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-accent, linear-gradient(90deg, var(--orange-500), var(--teal-500))); border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.card-h3 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.card-h3 .ch-icon { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+
+/* ============================================================ PROSE ============================================================ */
+.prose p { font-size: 14px; line-height: 1.78; color: var(--text-secondary); margin-bottom: 12px; }
+.prose p strong { color: var(--text-primary); font-weight: 600; }
+.prose ol, .prose ul { margin: 8px 0 16px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.prose ol { counter-reset: ol-cnt; }
+.prose ol li, .prose ul li { position: relative; padding: 9px 14px 9px 42px; font-size: 13px; line-height: 1.65; color: var(--text-secondary); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-md); transition: background 0.18s ease; }
+.prose ol li:hover, .prose ul li:hover { background: rgba(255,255,255,0.055); }
+.prose ol li strong, .prose ul li strong { color: var(--text-primary); font-weight: 600; }
+.prose ol li::before { counter-increment: ol-cnt; content: counter(ol-cnt); position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 4px; background: var(--orange-500); color: white; font-size: 10px; font-family: var(--font-data); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.prose ul li::before { content: '▸'; position: absolute; left: 14px; top: 10px; color: var(--teal-400); font-size: 11px; }
+.prose h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 22px 0 10px; display: flex; align-items: center; gap: 8px; }
+.prose h3::before { content: ''; display: block; width: 3px; height: 16px; background: linear-gradient(180deg, var(--orange-400), var(--teal-500)); border-radius: 2px; flex-shrink: 0; }
+.prose h4 { font-family: var(--font-data); font-size: 11px; font-weight: 700; color: var(--teal-400); text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 8px; }
+
+/* ============================================================ CALLOUTS ============================================================ */
+.callout { display: flex; gap: 14px; padding: 15px 18px; border-radius: var(--radius-lg); margin: 16px 0; border: 1px solid; }
+.callout-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+.callout-title { font-family: var(--font-ui); font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.callout-text { font-size: 13px; line-height: 1.65; }
+.callout-text strong { font-weight: 600; }
+.callout-text ul { margin: 6px 0 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.callout-text ul li { position: relative; padding-left: 16px; font-size: 13px; line-height: 1.6; background: none; border: none; }
+.callout-text ul li::before { content: '•'; position: absolute; left: 0; top: 0; }
+.callout-info { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.28); }
+.callout-info .callout-title { color: var(--blue-400); }
+.callout-info .callout-text, .callout-info .callout-text li::before { color: rgba(147,197,253,0.9); }
+.callout-success { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.28); }
+.callout-success .callout-title { color: var(--green-400); }
+.callout-success .callout-text, .callout-success .callout-text li::before { color: rgba(74,222,128,0.9); }
+.callout-warning { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.28); }
+.callout-warning .callout-title { color: var(--amber-400); }
+.callout-warning .callout-text, .callout-warning .callout-text li::before { color: rgba(251,191,36,0.9); }
+.callout-danger { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.28); }
+.callout-danger .callout-title { color: var(--red-400); }
+.callout-danger .callout-text, .callout-danger .callout-text li::before { color: rgba(248,113,113,0.9); }
+.callout-ai { background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(99,102,241,0.05)); border-color: rgba(20,184,166,0.28); position: relative; overflow: hidden; }
+.callout-ai::before { content: '◈'; position: absolute; right: 14px; top: 10px; font-size: 30px; opacity: 0.06; }
+.callout-ai .callout-title { color: var(--teal-400); }
+.callout-ai .callout-text, .callout-ai .callout-text li::before { color: rgba(94,234,212,0.85); }
+
+/* ============================================================ EXAMPLE BOX ============================================================ */
+.example-box { background: linear-gradient(135deg, rgba(249,115,22,0.07), rgba(20,184,166,0.04)); border-left: 3px solid var(--orange-500); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 13px 16px; margin: 14px 0; font-size: 13px; line-height: 1.65; color: var(--text-secondary); }
+.example-box strong { color: var(--orange-300); font-weight: 600; }
+
+/* ============================================================ DATA TABLE ============================================================ */
+.data-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--glass-border); margin: 14px 0; font-size: 13px; }
+.data-table th { background: rgba(10,21,32,0.88); color: var(--teal-400); font-family: var(--font-data); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--glass-border); }
+.data-table td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-secondary); line-height: 1.55; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.025); }
+.data-table td:first-child { font-weight: 600; color: var(--text-primary); }
+.data-table td strong { color: var(--text-primary); font-weight: 600; }
+
+/* ============================================================ STATUS BADGES ============================================================ */
+.status-badges { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: var(--radius-full); font-size: 11px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid; }
+.badge-green   { background: rgba(34,197,94,0.1);   color: #4ADE80; border-color: rgba(34,197,94,0.28); }
+.badge-yellow  { background: rgba(245,158,11,0.1);  color: #FBBF24; border-color: rgba(245,158,11,0.28); }
+.badge-red     { background: rgba(239,68,68,0.1);   color: #F87171; border-color: rgba(239,68,68,0.28); }
+.badge-orange  { background: rgba(249,115,22,0.1);  color: #FB923C; border-color: rgba(249,115,22,0.28); }
+.badge-teal    { background: rgba(20,184,166,0.1);  color: #2DD4BF; border-color: rgba(20,184,166,0.28); }
+.badge-blue    { background: rgba(59,130,246,0.1);  color: #60A5FA; border-color: rgba(59,130,246,0.28); }
+.badge-indigo  { background: rgba(99,102,241,0.1);  color: #818CF8; border-color: rgba(99,102,241,0.28); }
+.badge-gray    { background: rgba(255,255,255,0.06);color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.14); }
+
+/* ============================================================ GRID LAYOUTS ============================================================ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.qr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+.qr-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 14px; transition: all 0.2s ease; }
+.qr-card:hover { background: var(--glass-bg-hover); transform: translateY(-2px); }
+.qr-label { font-size: 9px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
+.qr-label::before { content: ''; display: block; width: 3px; height: 11px; background: var(--card-color, var(--orange-500)); border-radius: 2px; }
+.qr-value { font-family: var(--font-data); font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.6; }
+.qr-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+/* ============================================================ TOOLTIPS ============================================================ */
+.tip { position: relative; display: inline; cursor: help; color: var(--teal-400); border-bottom: 1px dashed rgba(45,212,191,0.4); transition: color 0.18s ease; }
+.tip:hover { color: var(--teal-300); }
+.tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); background: rgba(6,15,23,0.97); color: var(--text-primary); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; font-family: var(--font-ui); line-height: 1.5; width: max-content; max-width: 240px; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; z-index: 9999; border: 1px solid rgba(249,115,22,0.38); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.tip::before { content: ''; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%) translateY(4px); border: 5px solid transparent; border-top-color: rgba(249,115,22,0.38); opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; z-index: 9999; }
+.tip:hover::after, .tip:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================================ PHASE TAGS ============================================================ */
+.phase-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 10px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; border: 1px solid; margin-bottom: 6px; }
+.phase-1 { background: rgba(239,68,68,0.1);  color: #F87171; border-color: rgba(239,68,68,0.25); }
+.phase-2 { background: rgba(249,115,22,0.1); color: #FB923C; border-color: rgba(249,115,22,0.25); }
+.phase-3 { background: rgba(245,158,11,0.1); color: #FBBF24; border-color: rgba(245,158,11,0.25); }
+.phase-4 { background: rgba(34,197,94,0.1);  color: #4ADE80; border-color: rgba(34,197,94,0.25); }
+.phase-5 { background: rgba(20,184,166,0.1); color: #2DD4BF; border-color: rgba(20,184,166,0.25); }
+.phase-6 { background: rgba(59,130,246,0.1); color: #60A5FA; border-color: rgba(59,130,246,0.25); }
+.phase-7 { background: rgba(99,102,241,0.1); color: #818CF8; border-color: rgba(99,102,241,0.25); }
+
+/* ============================================================ FAQ ============================================================ */
+.faq-item { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); margin-bottom: 7px; overflow: hidden; }
+.faq-item.open { border-color: rgba(249,115,22,0.28); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-primary); user-select: none; transition: background 0.18s ease; }
+.faq-q:hover { background: var(--glass-bg-hover); }
+.faq-chevron { width: 20px; height: 20px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 10px; transition: transform 0.25s ease; flex-shrink: 0; color: var(--teal-400); }
+.faq-item.open .faq-chevron { transform: rotate(180deg); background: var(--orange-500); border-color: transparent; color: white; }
+.faq-a { display: none; padding: 12px 18px 14px; font-size: 13px; line-height: 1.72; color: var(--text-secondary); border-top: 1px solid rgba(255,255,255,0.05); }
+.faq-item.open .faq-a { display: block; }
+
+/* ============================================================ FLOW STEPS ============================================================ */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin: 12px 0; }
+.flow-step { display: flex; gap: 14px; position: relative; }
+.flow-step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 34px; bottom: -8px; width: 2px; background: linear-gradient(180deg, rgba(249,115,22,0.45), rgba(20,184,166,0.18)); }
+.flow-step-num { width: 32px; height: 32px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--orange-500), var(--orange-600)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-family: var(--font-data); font-weight: 700; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(234,88,12,0.3); margin-top: 2px; }
+.flow-step-body { flex: 1; padding-bottom: 18px; }
+.flow-step-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.flow-step-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ============================================================ METRIC CARDS ============================================================ */
+.metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0; }
+.metric-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 14px 16px; text-align: center; transition: all 0.2s ease; }
+.metric-card:hover { background: var(--glass-bg-hover); transform: translateY(-2px); }
+.metric-card .mc-icon { font-size: 20px; margin-bottom: 6px; }
+.metric-card .mc-label { font-size: 9px; font-family: var(--font-data); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 4px; }
+.metric-card .mc-value { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+
+/* ============================================================ SCROLL PROGRESS ============================================================ */
+.scroll-progress { position: fixed; top: var(--header-h); left: var(--sidebar-w); right: 0; height: 2px; background: linear-gradient(90deg, var(--orange-500), var(--teal-500), var(--indigo-500)); transform-origin: left; transform: scaleX(0); z-index: 999; transition: transform 0.1s linear; }
+.back-top { position: fixed; bottom: 28px; right: 28px; z-index: 999; width: 42px; height: 42px; border-radius: 50%; background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border-strong); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; transition: all 0.22s ease; opacity: 0; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+.back-top.visible { opacity: 1; pointer-events: all; }
+.back-top:hover { background: var(--orange-500); border-color: transparent; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(234,88,12,0.4); }
+
+/* ============================================================ FOOTER ============================================================ */
+.footer { position: relative; z-index: 1; background: rgba(6,15,23,0.85); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); padding: 40px 52px; margin-left: var(--sidebar-w); }
+.footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-bottom: 28px; }
+.footer-col-title { font-family: var(--font-data); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-tertiary); margin-bottom: 12px; }
+.footer-col p, .footer-col a { font-size: 13px; color: var(--text-secondary); line-height: 1.8; display: block; text-decoration: none; transition: color 0.18s; }
+.footer-col a:hover { color: var(--teal-300); }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.05); }
+.footer-brand { font-family: var(--font-display); font-size: 14px; font-weight: 800; background: linear-gradient(135deg, white, var(--teal-300), var(--orange-300)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.footer-copy { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-data); }
+
+/* ============================================================ SCROLLBAR ============================================================ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(249,115,22,0.4); }
+
+/* ============================================================ UTILITIES ============================================================ */
+.mt-4 { margin-top: 16px; }
+.mb-4 { margin-bottom: 16px; }
+
+/* ============================================================ RESPONSIVE ============================================================ */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-284px); }
+  .content { margin-left: 0; padding: 32px 20px 60px; max-width: 100%; }
+  .footer { margin-left: 0; padding: 32px 20px; }
+  .footer-grid, .grid-2, .grid-3, .grid-4, .qr-grid, .metric-row { grid-template-columns: 1fr; }
+  .scroll-progress { left: 0; }
+}
+@media print {
+  .sidebar, .top-bar, .back-top, .scroll-progress { display: none !important; }
+  .content { margin-left: 0; padding: 0; }
+  .footer { margin-left: 0; }
+  .section { break-inside: avoid; }
+  .glass-card, .coll-card { box-shadow: none; border: 1px solid #ddd; background: #f9fafb; }
+  body { background: white; color: #0A1520; }
+  .coll-body { display: block !important; }
+  .coll-body-inner { padding: 0 20px 20px !important; overflow: visible !important; }
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="app-bg">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-orb bg-orb-4"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-hexagons"></div>
+</div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</div>
+
+<!-- HEADER -->
+<header class="top-bar">
+  <a class="logo" href="#">
+    <img src="https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png" class="logo-img" alt="DDRiVE-M">
+    <div>
+      <div class="logo-text">DDRiVE-M</div>
+    </div>
+    <span class="logo-badge">DRRM</span>
+  </a>
+  <div class="header-center">
+    <span class="manual-badge">User Manual <span>·</span> v1.0</span>
+  </div>
+  <div class="header-right">
+    <div class="version-chip">📅 May 2026</div>
+    <button class="btn-print" onclick="window.print()">🖨️ Print Manual</button>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-heading">Table of Contents</div>
+    </div>
+    <div class="toc-section">
+      <a class="toc-link active" href="#welcome" onclick="setActive(this)"><span class="toc-num">1</span><span class="toc-icon">👋</span>Welcome & Getting Started</a>
+      <a class="toc-link" href="#first-login" onclick="setActive(this)"><span class="toc-num">2</span><span class="toc-icon">🔐</span>Your First Login</a>
+      <a class="toc-link" href="#dashboard" onclick="setActive(this)"><span class="toc-num">3</span><span class="toc-icon">📊</span>Understanding the Dashboard</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">Phase Modules</div>
+      <a class="toc-link" href="#phase1" onclick="setActive(this)"><span class="toc-num">4</span><span class="toc-icon">🔴</span>Phase 1: Detection</a>
+      <a class="toc-link" href="#phase2" onclick="setActive(this)"><span class="toc-num">5</span><span class="toc-icon">🔬</span>Phase 2: Diagnosis</a>
+      <a class="toc-link" href="#phase3" onclick="setActive(this)"><span class="toc-num">6</span><span class="toc-icon">🚨</span>Phase 3: Response</a>
+      <a class="toc-link" href="#phase4" onclick="setActive(this)"><span class="toc-num">7</span><span class="toc-icon">🏛</span>Phase 4: Integration</a>
+      <a class="toc-link" href="#phase5" onclick="setActive(this)"><span class="toc-num">8</span><span class="toc-icon">🎮</span>Phase 5: Validation</a>
+      <a class="toc-link" href="#phase6" onclick="setActive(this)"><span class="toc-num">9</span><span class="toc-icon">📋</span>Phase 6: Enhancement</a>
+      <a class="toc-link" href="#phase7" onclick="setActive(this)"><span class="toc-num">10</span><span class="toc-icon">📡</span>Phase 7: Monitoring</a>
+      <a class="toc-link" href="#documents" onclick="setActive(this)"><span class="toc-num">11</span><span class="toc-icon">📁</span>Documents Module</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">System & Tools</div>
+      <a class="toc-link" href="#system-tools" onclick="setActive(this)"><span class="toc-num">12</span><span class="toc-icon">🛠</span>System Tools</a>
+      <a class="toc-link" href="#ai-assistant" onclick="setActive(this)"><span class="toc-num">13</span><span class="toc-icon">🤖</span>DDRiVER AI Assistant</a>
+      <a class="toc-link" href="#settings" onclick="setActive(this)"><span class="toc-num">14</span><span class="toc-icon">⚙️</span>Account Settings</a>
+      <a class="toc-link" href="#support" onclick="setActive(this)"><span class="toc-num">15</span><span class="toc-icon">❓</span>Help & Support</a>
+      <a class="toc-link" href="#glossary" onclick="setActive(this)"><span class="toc-num">16</span><span class="toc-icon">📖</span>Glossary</a>
+    </div>
+    <div class="progress-track">
+      <div class="progress-label"><span>Reading Progress</span><span id="progressPct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="sidebarProgress" style="width:0%"></div></div>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HERO BANNER -->
+    <div class="hero">
+      <img src="https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20Banner.png" class="hero-banner" alt="DDRiVE-M Banner">
+      <div class="hero-body">
+        <div class="hero-inner">
+          <div class="hero-logo-wrap">
+            <img src="https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png" class="hero-logo-img" alt="DDRiVE-M Logo">
+          </div>
+          <div class="hero-text">
+            <div class="hero-eyebrow">🛡 Official Documentation</div>
+            <h1 class="hero-title">DDRiVE-M<br>User Manual</h1>
+            <p class="hero-subtitle">Complete guide to the Disaster Risk Reduction & Management Intelligence Value Engine - Metro. Your command center for hazard tracking, incident response, resilience planning, and real-time DRRM operations across the Philippines.</p>
+            <div class="hero-meta">
+              <div class="hero-meta-item"><div class="dot"></div> Version 1.0.0</div>
+              <div class="hero-meta-item"><div class="dot"></div> Last Updated May 8, 2026</div>
+              <div class="hero-meta-item"><div class="dot"></div> 7 Phases · 80+ Features</div>
+              <div class="hero-meta-item"><div class="dot"></div> Prepared by ASilva Innovations</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRAMEWORK IMAGE -->
+    <div class="framework-section">
+      <div class="framework-img-wrap">
+        <img src="https://appimize.app/assets/apps/user_1097/images/493f05493f25_122_1097.png" class="framework-img" alt="DDRiVE-M Framework">
+      </div>
+      <p class="framework-caption">DDRiVE-M Intelligence Framework — 7-Phase DRRM Operations Cycle</p>
+    </div>
+
+    <!-- ============================= SECTION 1: WELCOME ============================= -->
+    <section class="section" id="welcome">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title">Welcome & Getting Started</div>
+          <div class="section-subtitle">What is DDRiVE-M · Who it's for · System requirements</div>
+        </div>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">🛡</div>
+        <div class="callout-body">
+          <div class="callout-title">What is DDRiVE-M?</div>
+          <div class="callout-text">DDRiVE-M stands for <strong>Disaster Risk Reduction &amp; Management Intelligence Value Engine - Metro</strong>. It's your command center for tracking hazards, managing risks, responding to incidents, and building resilience across the Philippines. Whether you're at NDRRMC headquarters, an LGU disaster office, or monitoring remotely — DDRiVE-M keeps you informed and ready.</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">👥</div>
+          <div class="coll-header-text"><div class="coll-header-title">Who Should Use This Manual?</div><div class="coll-header-sub">User types and coverage scope</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>User Type</th><th>Who They Are</th><th>What This Covers</th></tr></thead>
+            <tbody>
+              <tr><td>Command Staff</td><td>NDRRMC, OCD officials</td><td>Strategic oversight, cross-agency coordination</td></tr>
+              <tr><td>Field Operators</td><td>LGU responders, emergency teams</td><td>Incident management, real-time updates</td></tr>
+              <tr><td>Analysts</td><td>Risk assessors, planners</td><td>Data analysis, reporting, compliance</td></tr>
+              <tr><td>Administrators</td><td>System admins, IT staff</td><td>Configuration, security, settings</td></tr>
+              <tr><td>General Users</td><td>All authorized personnel</td><td>Basic navigation, standard operations</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">✅</div>
+          <div class="coll-header-text"><div class="coll-header-title">Before You Begin: Requirements & Account Setup</div><div class="coll-header-sub">System requirements and getting your account</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-2" style="margin-top:4px; gap:14px;">
+            <div>
+              <div class="prose"><h3>System Requirements</h3><ul>
+                <li><strong>Internet:</strong> Stable connection required for real-time data sync</li>
+                <li><strong>Browser:</strong> Chrome, Firefox, Safari, or Edge (modern versions)</li>
+                <li><strong>Device:</strong> Laptop/desktop preferred; mobile fully supported</li>
+                <li><strong>Account:</strong> Registered account with permission level assigned</li>
+              </ul></div>
+            </div>
+            <div>
+              <div class="prose"><h3>Getting Your Account</h3><ol>
+                <li>Contact your organization's DDRiVE-M administrator</li>
+                <li>Provide your name, position, and organization</li>
+                <li>Wait for welcome email with login credentials</li>
+                <li>Use initial password to log in on first access</li>
+                <li>Change password immediately after first login</li>
+              </ol></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- Phase Overview Grid -->
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🗺</div>
+          <div class="coll-header-text"><div class="coll-header-title">The Seven-Phase Intelligence Cycle</div><div class="coll-header-sub">Detection through Monitoring</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-3" style="gap:10px; margin-top:6px;" id="seven-phases">
+            <div style="padding:13px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-1">Phase 1</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">🔴 Detection</div><div style="font-size:12px;color:var(--text-secondary);">Monitor official agency feeds (PAGASA, PHIVOLCS, NOAH, NDRRMC)</div></div>
+            <div style="padding:13px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-2">Phase 2</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">🔬 Diagnosis</div><div style="font-size:12px;color:var(--text-secondary);">Classify and analyze risks using ISO 31000 matrix and AI scanner</div></div>
+            <div style="padding:13px; background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-3">Phase 3</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">🚨 Response</div><div style="font-size:12px;color:var(--text-secondary);">Manage incidents from initial report through resolution</div></div>
+            <div style="padding:13px; background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-4">Phase 4</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">🏛 Integration</div><div style="font-size:12px;color:var(--text-secondary);">Align with UNDRR 10 Essentials for city resilience assessment</div></div>
+            <div style="padding:13px; background:rgba(20,184,166,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-5">Phase 5</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">🎮 Validation</div><div style="font-size:12px;color:var(--text-secondary);">Train personnel via simulated scenarios and EOC/ICS simulators</div></div>
+            <div style="padding:13px; background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-6">Phase 6</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">📋 Enhancement</div><div style="font-size:12px;color:var(--text-secondary);">Generate AI-powered DRRM plans aligned with Philippine law</div></div>
+            <div style="grid-column:1/-1; padding:13px; background:rgba(99,102,241,0.07); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-7">Phase 7</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;">📡 Monitoring</div><div style="font-size:12px;color:var(--text-secondary);">Coordinate communication and broadcast emergency alerts across all personnel</div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 2: FIRST LOGIN ============================= -->
+    <section class="section" id="first-login">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div>
+          <div class="section-title">Your First Login</div>
+          <div class="section-subtitle">Login process · first-login checklist · session management</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🔑</div>
+          <div class="coll-header-text"><div class="coll-header-title">Step-by-Step Login & Screen Components</div><div class="coll-header-sub">Login fields, options, and first-time actions</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-2" style="gap:14px; margin-top:6px;">
+            <div>
+              <div class="prose"><h3>Login Process</h3><ol>
+                <li>Navigate to the DDRiVE-M application URL</li>
+                <li>Enter your registered <strong>email address</strong> in the input field</li>
+                <li>Enter your <strong>password</strong> (masked characters)</li>
+                <li>Check <strong>"Remember Me"</strong> if using a personal device</li>
+                <li>Click <strong>"Sign In"</strong> button to submit</li>
+                <li>You'll land on the main Dashboard</li>
+              </ol></div>
+            </div>
+            <div>
+              <table class="data-table" style="margin-top:4px;">
+                <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td>Email Field</td><td>Enter registered email address</td></tr>
+                  <tr><td>Password Field</td><td>Masked input for security</td></tr>
+                  <tr><td>"Remember Me"</td><td>Stay logged in on personal device</td></tr>
+                  <tr><td>Sign In Button</td><td>Submit credentials</td></tr>
+                  <tr><td>Forgot Password</td><td>Initiate password reset</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="callout callout-success" style="margin-top:12px;">
+            <div class="callout-icon">✅</div>
+            <div class="callout-body">
+              <div class="callout-title">First Login Checklist</div>
+              <div class="callout-text"><ul>
+                <li>Review Profile Information — Top Bar → Click avatar</li>
+                <li>Change Default Password — Settings → Security</li>
+                <li>Enable Two-Factor Authentication — Settings → Security</li>
+                <li>Explore Dashboard — Main landing page</li>
+                <li>Check Notifications — Bell icon top-right</li>
+                <li>Save Settings Preferences — Settings menu</li>
+              </ul></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">⚠️</div>
+          <div class="coll-header-text"><div class="coll-header-title">Common Login Issues & Session Timeout</div><div class="coll-header-sub">Troubleshoot access problems and understand session limits</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Problem</th><th>Possible Cause</th><th>Solution</th></tr></thead>
+            <tbody>
+              <tr><td>"Invalid credentials"</td><td>Wrong email/password</td><td>Double-check spelling; try password reset</td></tr>
+              <tr><td>Account locked out</td><td>Too many failed attempts</td><td>Wait 30 minutes or contact support</td></tr>
+              <tr><td>Browser not working</td><td>Outdated version</td><td>Update Chrome/Firefox/Safari</td></tr>
+              <tr><td>Slow loading</td><td>Poor internet connection</td><td>Check connection strength and speed</td></tr>
+              <tr><td>Session expired</td><td>Auto-logout after inactivity</td><td>Log in again with saved password</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⏱️</div>
+            <div class="callout-body">
+              <div class="callout-title">Session Timeout Notice</div>
+              <div class="callout-text">For security, sessions expire automatically after: <strong>30 minutes of inactivity</strong>, <strong>24 hours maximum uptime</strong>, or after a password change. A warning toast notification will appear: <em>"Your session is about to expire"</em> — with options to extend or save work.</div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 3: DASHBOARD ============================= -->
+    <section class="section" id="dashboard">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div>
+          <div class="section-title">Understanding the Dashboard</div>
+          <div class="section-subtitle">Quick stats · phase cards · alerts feed · agency hazards</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📊</div>
+        <div class="callout-body">
+          <div class="callout-title">Your Home Base</div>
+          <div class="callout-text">The Dashboard is where you begin every day. It gives a quick overview of everything happening across all phases without navigating through multiple menus. All metrics update in real-time.</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📈</div>
+          <div class="coll-header-text"><div class="coll-header-title">Quick Stats Grid</div><div class="coll-header-sub">Eight key metrics at a glance</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-4" style="margin-top:8px; gap:10px;">
+            <div style="padding:14px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">⚠️</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Total Risks</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Tracked items</div></div>
+            <div style="padding:14px; background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🛡</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Resilience</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Preparedness score</div></div>
+            <div style="padding:14px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🚨</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Open Incidents</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Unresolved events</div></div>
+            <div style="padding:14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🔴</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Critical Alerts</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">High-severity hazards</div></div>
+            <div style="padding:14px; background:rgba(20,184,166,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">👥</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Responders</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Currently deployed</div></div>
+            <div style="padding:14px; background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🎯</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Completed Drills</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Training exercises</div></div>
+            <div style="padding:14px; background:rgba(99,102,241,0.07); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">📋</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Compliance Rate</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Regulatory adherence</div></div>
+            <div style="padding:14px; background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🏙</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;">Pop. Covered</div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Residents protected</div></div>
+          </div>
+          <div class="callout callout-info" style="margin-top:14px;">
+            <div class="callout-icon">ℹ️</div>
+            <div class="callout-body"><div class="callout-title">How to Interpret Metrics</div><div class="callout-text">Green trend arrow (+) = improvement since last check. Red trend arrow (−) = decline needs attention. Hover over any metric card for additional context and details.</div></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🃏</div>
+          <div class="coll-header-text"><div class="coll-header-title">Seven Phase Cards & Alert Feeds</div><div class="coll-header-sub">Navigation shortcuts, critical alerts, and agency hazard table</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><h3>Phase Cards (Middle Grid)</h3><p>Seven clickable cards navigate directly to each module. Each card shows: phase number (1–7), icon symbol, live data count, and status label. Hover reveals an "Open →" pointer. Clicking takes you directly to that workspace with filters pre-applied.</p></div>
+          <table class="data-table" style="margin-top:10px;">
+            <thead><tr><th>Alert Type</th><th>Color Code</th><th>Action Needed</th></tr></thead>
+            <tbody>
+              <tr><td><span class="status-badge badge-red" style="font-size:10px;padding:2px 8px;">Critical</span></td><td>Red border</td><td>Immediate response required</td></tr>
+              <tr><td><span class="status-badge badge-yellow" style="font-size:10px;padding:2px 8px;">Warning</span></td><td>Amber border</td><td>Review within 24 hours</td></tr>
+              <tr><td><span class="status-badge badge-blue" style="font-size:10px;padding:2px 8px;">Info</span></td><td>Blue border</td><td>Monitor status only</td></tr>
+            </tbody>
+          </table>
+          <div class="prose" style="margin-top:14px;"><h3>Multi-Agency Hazard Feed</h3><p>Live stream of hazard data from official Philippine agencies — filter by single agency or view all combined. Sort by severity (Critical first) or date (newest first).</p></div>
+          <table class="data-table">
+            <thead><tr><th>Agency</th><th>Data Source</th><th>Typical Events</th></tr></thead>
+            <tbody>
+              <tr><td>PAGASA</td><td>Weather service</td><td>Typhoons, rainfall, wind advisories</td></tr>
+              <tr><td>PHIVOLCS</td><td>Seismic agency</td><td>Earthquakes, volcanic activity</td></tr>
+              <tr><td>NOAH</td><td>Flood monitoring</td><td>River levels, storm surge warnings</td></tr>
+              <tr><td>NDRRMC</td><td>National command</td><td>Multi-agency coordination updates</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 4: PHASE 1 DETECTION ============================= -->
+    <section class="section" id="phase1">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div>
+          <div class="section-title">Phase 1: Detection Module</div>
+          <div class="section-subtitle">Track and monitor all disaster types from official government feeds</div>
+        </div>
+      </div>
+      <div class="callout callout-danger">
+        <div class="callout-icon">🔴</div>
+        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">Track and monitor all types of disasters coming from official government feeds. This is where new threats enter the system. Navigation: <strong>Dashboard → Detection card</strong> or <strong>Sidebar → Phase 1 Detection</strong></div></div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🗺</div>
+          <div class="coll-header-text"><div class="coll-header-title">Screen Layout & Agency Monitoring Cards</div><div class="coll-header-sub">Map view, feeds, and classification panel</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-2" style="gap:12px; margin-top:8px;">
+            <div style="padding:13px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md);">
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">① Agency Monitoring Cards</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Four colorful cards for PAGASA, PHIVOLCS, NOAH, NDRRMC. Click to filter feed by that agency only. Green "LIVE" badge = real-time updating.</div>
+            </div>
+            <div style="padding:13px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md);">
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">② Geospatial Threat Map</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Interactive Google Maps view. <span style="color:#F87171;">Red pin</span> = Critical · <span style="color:#FB923C;">Orange pin</span> = High · <span style="color:#FBBF24;">Yellow pin</span> = Medium severity.</div>
+            </div>
+            <div style="padding:13px; background:rgba(20,184,166,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md);">
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">③ Hazard Classification Panel</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">List of threat types with counts. Quick summary of what kinds of disasters are affecting which areas.</div>
+            </div>
+            <div style="padding:13px; background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.2); border-radius:var(--radius-md);">
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">④ Active Hazard Feed</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Detailed table with full information: ID, name, location, severity, detected date. Click any row to open detail modal.</div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">➕</div>
+          <div class="coll-header-text"><div class="coll-header-title">Reporting a New Hazard & Viewing Details</div><div class="coll-header-sub">Manual hazard entry and escalation workflow</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="flow-steps" style="margin-top:8px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Click "Report Hazard" button</div><div class="flow-step-desc">Opens the hazard reporting form modal.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill out all form fields</div><div class="flow-step-desc">Agency (dropdown), Hazard type, Name (custom title), Location, Coordinates (optional; auto-filled defaults available), Severity (Low/Medium/High/Critical).</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Click "Save to Supabase"</div><div class="flow-step-desc">Toast confirmation appears. New hazard is immediately visible in all live feeds.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Escalate if needed</div><div class="flow-step-desc">Click any hazard row to open detail modal → click <strong>"Escalate to Response"</strong> for incidents requiring action.</div></div></div>
+          </div>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-body"><div class="callout-title">Best Practice</div><div class="callout-text">Always escalate critical hazards promptly to the Response Module for full incident tracking and resource assignment.</div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 5: PHASE 2 DIAGNOSIS ============================= -->
+    <section class="section" id="phase2">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div>
+          <div class="section-title">Phase 2: Diagnosis Module</div>
+          <div class="section-subtitle">Analyze and classify risks using ISO 31000 standards</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📊</div>
+          <div class="coll-header-text"><div class="coll-header-title">ISO 31000 Risk Matrix (5×5 Grid)</div><div class="coll-header-sub">Likelihood × Impact scoring and color-coded priority</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><p>A visual 5×5 chart showing where your risks fall based on <strong>Likelihood</strong> (how often will this happen, scale 1–5) and <strong>Impact</strong> (how bad will consequences be, scale 1–5). Multiply Likelihood × Impact = Risk Score.</p></div>
+          <table class="data-table">
+            <thead><tr><th>Color</th><th>Score Range</th><th>Priority</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><span class="status-badge badge-gray" style="font-size:10px;padding:2px 8px;">Green Cell</span></td><td>1–5</td><td>Low</td><td>Monitor occasionally</td></tr>
+              <tr><td><span class="status-badge badge-yellow" style="font-size:10px;padding:2px 8px;">Amber Cell</span></td><td>6–11</td><td>Medium</td><td>Track and prepare contingencies</td></tr>
+              <tr><td><span class="status-badge badge-orange" style="font-size:10px;padding:2px 8px;">Orange Cell</span></td><td>12–19</td><td>High</td><td>Prepare action plans, monitor closely</td></tr>
+              <tr><td><span class="status-badge badge-red" style="font-size:10px;padding:2px 8px;">Red Cell</span></td><td>20–25</td><td>Critical</td><td>Immediate response — allocate resources now</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🤖</div>
+          <div class="coll-header-text"><div class="coll-header-title">AI Vulnerability Scanner & Risk Registry</div><div class="coll-header-sub">Machine learning analysis and risk management table</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="callout callout-ai" style="margin-top:8px;">
+            <div class="callout-icon">◈</div>
+            <div class="callout-body">
+              <div class="callout-title">AI Vulnerability Scanner</div>
+              <div class="callout-text">Machine learning tool trained on Philippine disaster history. Analyzes your registry for patterns across five domains: <strong>Physical Infrastructure</strong>, <strong>Environmental Conditions</strong>, <strong>Operational Continuity</strong>, <strong>Cyber/Digital Systems</strong>, and <strong>Organizational Capacity</strong>. Lower percentage = higher vulnerability = focus improvement efforts there.</div>
+            </div>
+          </div>
+          <div class="prose" style="margin-top:14px;"><h3>Adding a New Risk</h3><ol>
+            <li>Click <strong>"+ Add Risk"</strong> button in the Risk Registry section</li>
+            <li>Fill form: Risk Title (required), Category (dropdown), Likelihood score (1–5), Impact score (1–5), Owner department</li>
+            <li>System <strong>calculates score automatically</strong> (L × I)</li>
+            <li>Click <strong>"Register Risk"</strong> — confirmation toast appears, entry shows in table immediately</li>
+          </ol></div>
+          <table class="data-table" style="margin-top:10px;">
+            <thead><tr><th>Column</th><th>Description</th><th>Editable?</th></tr></thead>
+            <tbody>
+              <tr><td>ID</td><td>Unique identifier (R-001, R-002…)</td><td>No (auto-generated)</td></tr>
+              <tr><td>Title</td><td>Risk name/description</td><td>Yes</td></tr>
+              <tr><td>Category</td><td>Strategic, Financial, Operational, etc.</td><td>Yes</td></tr>
+              <tr><td>L×I</td><td>Likelihood × Impact calculation</td><td>Calculated</td></tr>
+              <tr><td>Level</td><td>Low / Medium / High / Critical badge</td><td>Calculated</td></tr>
+              <tr><td>Owner</td><td>Department responsible</td><td>Yes</td></tr>
+              <tr><td>Status</td><td>Open, Closed, Under Review</td><td>Yes</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 6: PHASE 3 RESPONSE ============================= -->
+    <section class="section" id="phase3">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div>
+          <div class="section-title">Phase 3: Response Module</div>
+          <div class="section-subtitle">Manage incidents from initial report through resolution</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📋</div>
+          <div class="coll-header-text"><div class="coll-header-title">Incident Management Cards & Progress Tracking</div><div class="coll-header-sub">Card anatomy, progress advancement, and status tracking</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><p>Each open incident displays as an individual card with: ID Number (INC-001…), Title, Priority Badge, Assigned Person, ETA, Progress Bar (visual percentage), and Status Label.</p></div>
+          <div class="grid-2" style="gap:12px; margin-top:10px;">
+            <div>
+              <div style="font-family:var(--font-data);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary);margin-bottom:8px;">Priority Badges</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(239,68,68,0.08);border-radius:var(--radius-md);border:1px solid rgba(239,68,68,0.18);"><span class="status-badge badge-red" style="font-size:10px;padding:2px 8px;">Critical</span><span style="font-size:12px;color:var(--text-secondary);">Immediate action required</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(249,115,22,0.08);border-radius:var(--radius-md);border:1px solid rgba(249,115,22,0.18);"><span class="status-badge badge-orange" style="font-size:10px;padding:2px 8px;">High</span><span style="font-size:12px;color:var(--text-secondary);">Escalating situation</span></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(245,158,11,0.08);border-radius:var(--radius-md);border:1px solid rgba(245,158,11,0.18);"><span class="status-badge badge-yellow" style="font-size:10px;padding:2px 8px;">Other</span><span style="font-size:12px;color:var(--text-secondary);">Standard monitoring</span></div>
+              </div>
+            </div>
+            <div class="prose">
+              <h4>Advancing Incident Progress</h4>
+              <ol>
+                <li>Verify readiness to advance the stage</li>
+                <li>Click <strong>"Advance +10%"</strong> button on the incident card</li>
+                <li>Progress bar fills automatically in 10% increments</li>
+                <li>At 100%, status changes to <strong>"Completed"</strong></li>
+              </ol>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🤖</div>
+          <div class="coll-header-text"><div class="coll-header-title">AI Treatment Canvas & Protocol Library</div><div class="coll-header-sub">Four risk strategies and agency SOPs</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Strategy</th><th>When to Use</th><th>Color</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Avoid</strong></td><td>Eliminate the risk entirely — remove the source</td><td><span style="color:#F87171;">Red</span></td></tr>
+              <tr><td><strong>Reduce</strong></td><td>Lower probability or impact through mitigation</td><td><span style="color:#FB923C;">Orange</span></td></tr>
+              <tr><td><strong>Transfer</strong></td><td>Share risk via insurance or partnership</td><td><span style="color:#60A5FA;">Blue</span></td></tr>
+              <tr><td><strong>Accept</strong></td><td>Acknowledge and monitor — cost of mitigation too high</td><td><span style="color:#4ADE80;">Green</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-ai" style="margin-top:12px;">
+            <div class="callout-icon">◈</div>
+            <div class="callout-body"><div class="callout-title">Generating AI Recommendations</div><div class="callout-text">Scroll to the AI Treatment Canvas section → click <strong>"Generate AI Mitigation Strategies"</strong>. The system suggests <strong>12 customized approaches</strong> based on your registered risks and incident data. Review each suggestion for applicability to your context.</div></div>
+          </div>
+          <table class="data-table" style="margin-top:12px;">
+            <thead><tr><th>Agency</th><th>Protocol Name</th><th>Available SOPs</th></tr></thead>
+            <tbody>
+              <tr><td>DTI</td><td>Trade Continuity</td><td>8 procedures</td></tr>
+              <tr><td>DILG</td><td>LGU Emergency</td><td>12 procedures</td></tr>
+              <tr><td>LGU</td><td>Local Controls</td><td>25 procedures</td></tr>
+              <tr><td>DOH</td><td>Health Emergencies</td><td>14 procedures</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 7: PHASE 4 INTEGRATION ============================= -->
+    <section class="section" id="phase4">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div>
+          <div class="section-title">Phase 4: Integration Module</div>
+          <div class="section-subtitle">UNDRR 10 Essentials framework for city resilience assessment</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🏛</div>
+          <div class="coll-header-text"><div class="coll-header-title">UNDRR Resilience Scorecard & 10 Essentials</div><div class="coll-header-sub">Composite scoring and individual essential breakdown</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-3" style="gap:12px; margin-top:8px;">
+            <div style="padding:14px; background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Current Score</div><div style="font-size:22px;font-weight:700;color:#4ADE80;">avg/10</div><div style="font-size:11px;color:var(--text-tertiary);">Average of all essentials</div></div>
+            <div style="padding:14px; background:rgba(20,184,166,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Rating</div><div style="font-size:22px;font-weight:700;color:#2DD4BF;">GOOD</div><div style="font-size:11px;color:var(--text-tertiary);">Score ≥70 = GOOD, ≥85 = EXCELLENT</div></div>
+            <div style="padding:14px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">2026 Target</div><div style="font-size:22px;font-weight:700;color:#FB923C;">85/100</div><div style="font-size:11px;color:var(--text-tertiary);">Official NDRRMC goal</div></div>
+          </div>
+          <div class="prose" style="margin-top:14px;"><h4>The 10 Essentials Breakdown</h4>
+            <ul>
+              <li><strong>E1 — Organize for Disaster Resilience</strong> (Governance structures)</li>
+              <li><strong>E2 — Identify &amp; Understand Risk Scenarios</strong> (Risk intelligence)</li>
+              <li><strong>E3 — Strengthen Financial Capability</strong> (LDRRMF management)</li>
+              <li><strong>E4 — Pursue Resilient Urban Development</strong> (Land use planning)</li>
+              <li><strong>E5 — Safeguard Natural Buffers</strong> (Environmental protection)</li>
+              <li><strong>E6 — Strengthen Institutional Capacity</strong> (Capacity building)</li>
+              <li><strong>E7 — Understand Societal Capacity</strong> (Community engagement)</li>
+              <li><strong>E8 — Increase Infrastructure Resilience</strong> (Critical systems)</li>
+              <li><strong>E9 — Ensure Effective Disaster Response</strong> (Response protocols)</li>
+              <li><strong>E10 — Expedite Recovery &amp; Build Back Better</strong> (Post-disaster recovery)</li>
+            </ul>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📝</div>
+          <div class="coll-header-text"><div class="coll-header-title">Starting an Assessment & SPARC Tool</div><div class="coll-header-sub">Preliminary vs detailed assessment options</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Type</th><th>Duration</th><th>Questions</th><th>Complexity</th></tr></thead>
+            <tbody>
+              <tr><td>Preliminary</td><td>1–2 days</td><td>47 indicators</td><td>High-level survey</td></tr>
+              <tr><td>Detailed</td><td>1–4 months</td><td>117 indicators</td><td>Comprehensive multi-stakeholder</td></tr>
+            </tbody>
+          </table>
+          <div class="flow-steps" style="margin-top:14px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Click "Start Assessment" button</div><div class="flow-step-desc">Choose preliminary or detailed assessment type.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Download related guidelines</div><div class="flow-step-desc">Reference notes and scoring criteria provided with each assessment.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Access SPARC Organizational Resilience Tool</div><div class="flow-step-desc">Click <strong>"Access SPARC Tool"</strong> — opens in new browser tab. Complete independently and return. Conduct quarterly assessments to track long-term improvements.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Generate Gap Analysis</div><div class="flow-step-desc">Click <strong>"+ Generate Gap Analysis"</strong> to identify weak essentials requiring targeted improvement action.</div></div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 8: PHASE 5 VALIDATION ============================= -->
+    <section class="section" id="phase5">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div>
+          <div class="section-title">Phase 5: Validation Module</div>
+          <div class="section-subtitle">Train personnel through simulations and validate response capability</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🎮</div>
+          <div class="coll-header-text"><div class="coll-header-title">External Simulators & Scenario Engine</div><div class="coll-header-sub">EOC/ICS simulators and built-in scenario progression</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Simulator</th><th>Focus Area</th><th>When to Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>EOC Simulator</strong></td><td>Command center operations</td><td>Leadership and management training</td></tr>
+              <tr><td><strong>ICS Simulator</strong></td><td>Standard incident procedures</td><td>Basic responder education</td></tr>
+              <tr><td><strong>ICS Simulator 3.0</strong></td><td>Advanced command features</td><td>Senior staff development</td></tr>
+            </tbody>
+          </table>
+          <div class="prose" style="margin-top:14px;"><h3>Completing a Built-In Scenario</h3><ol>
+            <li>Select a scenario card (see difficulty badge: <span class="status-badge badge-green" style="font-size:9px;padding:2px 6px;">Entry</span> <span class="status-badge badge-orange" style="font-size:9px;padding:2px 6px;">Intermediate</span> <span class="status-badge badge-red" style="font-size:9px;padding:2px 6px;">Expert</span>)</li>
+            <li>Click <strong>"Launch 3D Simulation"</strong></li>
+            <li>Advance through steps sequentially — example flow: Initial Assessment → Activate EOC → Coordinate Agencies → Monitor Casualties → Post-event Damage Assessment</li>
+            <li>On the final step, click <strong>"Complete Simulation"</strong></li>
+            <li>Participation is automatically recorded in statistics</li>
+          </ol></div>
+          <div class="metric-row" style="margin-top:10px;">
+            <div class="metric-card"><div class="mc-icon">👥</div><div class="mc-label">Participants</div><div class="mc-value">Total per scenario</div></div>
+            <div class="metric-card"><div class="mc-icon">✅</div><div class="mc-label">Completion</div><div class="mc-value">Percentage finished</div></div>
+            <div class="metric-card"><div class="mc-icon">⏱</div><div class="mc-label">Avg Duration</div><div class="mc-value">Time completed</div></div>
+            <div class="metric-card"><div class="mc-icon">🎯</div><div class="mc-label">Difficulty Mix</div><div class="mc-value">Entry/Mid/Expert</div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 9: PHASE 6 ENHANCEMENT ============================= -->
+    <section class="section" id="phase6">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div>
+          <div class="section-title">Phase 6: Enhancement Module</div>
+          <div class="section-subtitle">Generate comprehensive DRRM plans aligned with Philippine laws</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📋</div>
+          <div class="coll-header-text"><div class="coll-header-title">AI Plan Templates & Plan Generation</div><div class="coll-header-sub">Four template types and creation workflow</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Template</th><th>Standard Aligned</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td><strong>DRRM Plan</strong></td><td>RA 10121</td><td>Compliance with national Philippine law</td></tr>
+              <tr><td><strong>Business Continuity</strong></td><td>ISO 22301</td><td>Corporate resilience planning</td></tr>
+              <tr><td><strong>Recovery Plan</strong></td><td>DILG MC</td><td>LGU post-disaster recovery operations</td></tr>
+              <tr><td><strong>Public Service Continuity</strong></td><td>PSCP 2nd Ed</td><td>Government service maintenance</td></tr>
+            </tbody>
+          </table>
+          <div class="flow-steps" style="margin-top:14px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Click the desired template card</div><div class="flow-step-desc">Modal opens with form fields for plan customization.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill in organization details</div><div class="flow-step-desc">Organization name (required), geographic scope (optional), key objectives.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Confirm AI generation</div><div class="flow-step-desc">Wait for toast confirmation. New plan appears in the Active Plans list with a unique plan ID.</div></div></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📊</div>
+          <div class="coll-header-text"><div class="coll-header-title">Compliance Dashboard & Resource Tracking</div><div class="coll-header-sub">Regulatory adherence and critical asset monitoring</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><p>Visual bar charts showing adherence across all major regulatory frameworks. Color guidelines: <strong style="color:#4ADE80;">Green bar (≥90%)</strong> = Strong compliance · <strong style="color:#FBBF24;">Amber bar (80–89%)</strong> = Acceptable with minor gaps · <strong style="color:#FB923C;">Orange bar (&lt;80%)</strong> = Requires improvement. Click <strong>"Generate Regulatory Report"</strong> to produce a formal compliance summary.</p></div>
+          <table class="data-table" style="margin-top:12px;">
+            <thead><tr><th>Resource</th><th>Sample Data</th><th>Status Indicator</th></tr></thead>
+            <tbody>
+              <tr><td>Emergency Funds</td><td>₱842M available</td><td>% utilized shown</td></tr>
+              <tr><td>Relief Goods</td><td>Family pack count</td><td>Stock levels</td></tr>
+              <tr><td>Evacuation Centers</td><td>Facility count</td><td>% capacity used</td></tr>
+              <tr><td>Medical Teams</td><td>Units registered</td><td>Active deployments</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 10: PHASE 7 MONITORING ============================= -->
+    <section class="section" id="phase7">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <div>
+          <div class="section-title">Phase 7: Monitoring Module</div>
+          <div class="section-subtitle">Coordinate communication and broadcast emergency alerts</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">💬</div>
+          <div class="coll-header-text"><div class="coll-header-title">Team Communication Hub & Messaging</div><div class="coll-header-sub">Real-time broadcast and priority levels</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="metric-row" style="margin-top:8px;">
+            <div class="metric-card"><div class="mc-icon">👥</div><div class="mc-label">Active Members</div><div class="mc-value">Online personnel</div></div>
+            <div class="metric-card"><div class="mc-icon">📨</div><div class="mc-label">Messages Logged</div><div class="mc-value">Total broadcasts</div></div>
+            <div class="metric-card"><div class="mc-icon">🚨</div><div class="mc-label">Critical Broadcasts</div><div class="mc-value">Emergency alerts</div></div>
+            <div class="metric-card"><div class="mc-icon">📊</div><div class="mc-label">Reports Generated</div><div class="mc-value">Formal summaries</div></div>
+          </div>
+          <div class="prose" style="margin-top:14px;"><h3>Sending Messages</h3><ol>
+            <li>Select <strong>priority level</strong> from the dropdown (Medium / High / Critical)</li>
+            <li>Type your message content in the text field</li>
+            <li>Press <strong>Enter</strong> or click the <strong>Send</strong> button</li>
+            <li>Message appears immediately for all active viewers</li>
+            <li>Toast confirms database save to Supabase</li>
+          </ol></div>
+          <table class="data-table" style="margin-top:10px;">
+            <thead><tr><th>Priority</th><th>Border Color</th><th>When to Use</th></tr></thead>
+            <tbody>
+              <tr><td><span class="status-badge badge-teal" style="font-size:10px;padding:2px 8px;">Medium</span></td><td>Blue</td><td>Routine coordination updates</td></tr>
+              <tr><td><span class="status-badge badge-yellow" style="font-size:10px;padding:2px 8px;">High</span></td><td>Amber</td><td>Escalating situation awareness</td></tr>
+              <tr><td><span class="status-badge badge-red" style="font-size:10px;padding:2px 8px;">Critical</span></td><td>Red</td><td>Immediate life-saving action needed</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🚨</div>
+          <div class="coll-header-text"><div class="coll-header-title">Emergency Cascade Protocol & Reports</div><div class="coll-header-sub">Mass notifications and instant report generation</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="callout callout-danger" style="margin-top:8px;">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-body">
+              <div class="callout-title">Emergency Cascade Protocol</div>
+              <div class="callout-text">Located in the bottom-right panel (red gradient background). Verify emergency requires universal notification → click <strong>"INITIATE CASCADE"</strong> → emergency broadcast sends immediately to ALL personnel simultaneously. <strong>Use only for genuine emergencies requiring immediate mobilization.</strong></div>
+            </div>
+          </div>
+          <table class="data-table" style="margin-top:12px;">
+            <thead><tr><th>Report Type</th><th>When to Generate</th><th>Format</th></tr></thead>
+            <tbody>
+              <tr><td>Situational Awareness</td><td>Daily briefing</td><td>PDF</td></tr>
+              <tr><td>Incident Summary (24h)</td><td>End-of-day review</td><td>CSV</td></tr>
+              <tr><td>Resource Status</td><td>Before major deployments</td><td>PDF</td></tr>
+              <tr><td>Compliance Snapshot</td><td>Audit preparation</td><td>PDF</td></tr>
+              <tr><td>Community Engagement</td><td>Outreach evaluation</td><td>PDF</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 11: DOCUMENTS ============================= -->
+    <section class="section" id="documents">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <div>
+          <div class="section-title">Documents Module</div>
+          <div class="section-subtitle">Centralized digital library for policies, standards, and protocols</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📁</div>
+          <div class="coll-header-text"><div class="coll-header-title">Document Categories, Search & Upload</div><div class="coll-header-sub">Classification types and content management</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Category</th><th>Examples</th><th>Who Uses Most</th></tr></thead>
+            <tbody>
+              <tr><td>Policy</td><td>Governance directives, executive orders</td><td>Management</td></tr>
+              <tr><td>Standard</td><td>Operational procedures, SOPs</td><td>Implementation teams</td></tr>
+              <tr><td>Template</td><td>Plan forms, blank worksheets</td><td>Planning units</td></tr>
+              <tr><td>Protocol</td><td>Agency-specific guidelines</td><td>Response teams</td></tr>
+            </tbody>
+          </table>
+          <div class="flow-steps" style="margin-top:14px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Search or filter by category</div><div class="flow-step-desc">Use the search box (instant character-by-character filtering) or click category pills to narrow results. Case-insensitive matching works automatically.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Click "Upload Document" to add new materials</div><div class="flow-step-desc">Enter file name, select category, drag-and-drop or select file, click <strong>"Save to Supabase"</strong>. Document ID assigned automatically (D-001 pattern).</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Access documents via download or external link</div><div class="flow-step-desc">Internal files: download directly. External links: open new browser tab to resource.</div></div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 12: SYSTEM TOOLS ============================= -->
+    <section class="section" id="system-tools">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <div>
+          <div class="section-title">System Tools</div>
+          <div class="section-subtitle">Sidebar navigation · top bar interface · search · theme toggle</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📱</div>
+          <div class="coll-header-text"><div class="coll-header-title">Sidebar Navigation</div><div class="coll-header-sub">Primary navigation, module access, and mobile behavior</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><p>The left sidebar provides access to all modules. Active module is highlighted with a gradient background and orange phase circle. On mobile, tap the hamburger (☰) menu to expand — the menu auto-closes after selecting a module.</p></div>
+          <div class="example-box">
+            <strong>System Status Footer:</strong> Persistent indicator at the bottom of the sidebar showing Connection state (Operational/Disconnected), live feed pulse animation (green dot), and database connectivity confirmation.
+          </div>
+          <div class="grid-3" style="gap:10px; margin-top:12px;">
+            <div style="padding:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius-md);"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Desktop</div><div style="font-size:12px;color:var(--text-secondary);">Hover → Click to navigate</div></div>
+            <div style="padding:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius-md);"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Tablet/Mobile</div><div style="font-size:12px;color:var(--text-secondary);">Tap hamburger → Slide-out → Tap module</div></div>
+            <div style="padding:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius-md);"><div style="font-family:var(--font-data);font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Keyboard</div><div style="font-size:12px;color:var(--text-secondary);">Tab through items via arrows</div></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🔝</div>
+          <div class="coll-header-text"><div class="coll-header-title">Top Bar Interface Components</div><div class="coll-header-sub">Search, theme toggle, notifications, and profile menu</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="qr-grid" style="margin-top:8px;">
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--orange-500);">Menu Toggle ☰</div><div class="qr-value">Opens/closes sidebar on mobile</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--teal-400);">Search Box</div><div class="qr-value">Find risks, incidents, plans (2+ char minimum)</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--indigo-500);">Theme Toggle</div><div class="qr-value">Light (sun) / Dark (moon) — persists across sessions</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--red-400);">Notifications Bell</div><div class="qr-value">Recent alerts — critical (red), warnings (amber), info (blue)</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--blue-400);">User Avatar</div><div class="qr-value">Profile, Activity History, Credentials, Sign Out</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--green-400);">Page Title</div><div class="qr-value">Shows current module context and subtitle</div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 13: AI ASSISTANT ============================= -->
+    <section class="section" id="ai-assistant">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <div>
+          <div class="section-title">DDRiVER AI Assistant</div>
+          <div class="section-subtitle">Intelligent expert guidance on Philippine DRRM laws and protocols</div>
+        </div>
+      </div>
+
+      <div class="callout callout-ai">
+        <div class="callout-icon">◈</div>
+        <div class="callout-body">
+          <div class="callout-title">What Is DDRiVER AI?</div>
+          <div class="callout-text">DDRiVER is an intelligent conversational assistant providing expert guidance on Philippine disaster risk reduction laws, international standards (ISO 31000, ISO 22301, UNDRR), and emergency protocols. Think of it as a subject matter expert available 24/7 for quick fact-checking and procedural references.</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">💬</div>
+          <div class="coll-header-text"><div class="coll-header-title">Access Methods, Knowledge Base & Capabilities</div><div class="coll-header-sub">How to reach DDRiVER and what it knows</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-3" style="gap:10px; margin-top:8px;">
+            <div style="padding:12px; background:rgba(20,184,166,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">⬤</div><div style="font-size:12px;font-weight:600;margin-bottom:3px;">Floating Button</div><div style="font-size:11px;color:var(--text-tertiary);">Purple/pink circular button — always visible bottom-right</div></div>
+            <div style="padding:12px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">🏠</div><div style="font-size:12px;font-weight:600;margin-bottom:3px;">Dashboard Button</div><div style="font-size:11px;color:var(--text-tertiary);">"Ask DDRiVER AI" prominent call-to-action on home screen</div></div>
+            <div style="padding:12px; background:rgba(99,102,241,0.07); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); text-align:center;"><div style="font-size:20px;margin-bottom:5px;">📋</div><div style="font-size:12px;font-weight:600;margin-bottom:3px;">Sidebar Link</div><div style="font-size:11px;color:var(--text-tertiary);">"DDRiVER AI" menu item in sidebar navigation</div></div>
+          </div>
+          <table class="data-table" style="margin-top:14px;">
+            <thead><tr><th>Keyword</th><th>Returns Information About</th></tr></thead>
+            <tbody>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">ra 10121</code></td><td>Philippine DRRM Law core provisions and compliance requirements</td></tr>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">iso 31000</code></td><td>Risk management principles and framework overview</td></tr>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">iso 22301</code></td><td>Business continuity management standard requirements</td></tr>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">undrr</code></td><td>City resilience essentials framework and scoring guide</td></tr>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">typhoon</code></td><td>Response plan recommendations and protocols</td></tr>
+              <tr><td><code style="background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;font-size:11px;">metro manila</code></td><td>Local registered risk summary and regional data</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body"><div class="callout-title">Limitations</div><div class="callout-text">DDRiVER does not access classified or restricted databases. It provides guidance only — not official authorization. Always cross-reference critical decisions with a human supervisor before implementation.</div></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 14: SETTINGS ============================= -->
+    <section class="section" id="settings">
+      <div class="section-header">
+        <div class="section-num">14</div>
+        <div>
+          <div class="section-title">Account Settings</div>
+          <div class="section-subtitle">Profile, general, security, notifications, and AI preferences</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">⚙️</div>
+          <div class="coll-header-text"><div class="coll-header-title">Five Settings Sections Overview</div><div class="coll-header-sub">Profile · General · Security · Notifications · AI Assistant</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="grid-2" style="gap:12px; margin-top:8px;">
+            <div class="glass-card" style="margin-bottom:0;">
+              <div class="card-h3"><div class="ch-icon" style="background:rgba(249,115,22,0.1);">👤</div>Profile Settings</div>
+              <div class="prose"><ul>
+                <li><strong>Full Name:</strong> Min 2 characters</li>
+                <li><strong>Role:</strong> Super Admin, Field Operator, Analyst, etc.</li>
+                <li><strong>Organization:</strong> Max 100 characters</li>
+                <li><strong>Email:</strong> Valid format required</li>
+                <li><strong>Photo Upload:</strong> JPG/PNG under 5MB</li>
+              </ul></div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0;">
+              <div class="card-h3"><div class="ch-icon" style="background:rgba(20,184,166,0.1);">🌐</div>General Settings</div>
+              <div class="prose"><ul>
+                <li><strong>Theme:</strong> Light / Dark (auto-detect default)</li>
+                <li><strong>Language:</strong> English PH, Filipino, Cebuano</li>
+                <li><strong>Timezone:</strong> PST (UTC+8) default</li>
+                <li><strong>Offline Mode:</strong> Enable/disable checkbox</li>
+              </ul></div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0;">
+              <div class="card-h3"><div class="ch-icon" style="background:rgba(239,68,68,0.1);">🔒</div>Security Settings</div>
+              <div class="prose"><ul>
+                <li>Password minimum 8 characters with uppercase/lowercase/numbers</li>
+                <li>Cannot reuse last 3 passwords</li>
+                <li>Two-Factor Authentication (2FA) enable/disable</li>
+                <li>Active sessions list — terminate suspicious remote access</li>
+              </ul></div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0;">
+              <div class="card-h3"><div class="ch-icon" style="background:rgba(245,158,11,0.1);">🔔</div>Notification Settings</div>
+              <div class="prose"><ul>
+                <li><strong>Email:</strong> On by default, unlimited daily</li>
+                <li><strong>SMS:</strong> Off by default, max 5/day</li>
+                <li><strong>Push:</strong> On, max 50/day</li>
+                <li>Priority filter: All / High+Critical / Critical only</li>
+                <li>Quiet Hours: suppress non-critical during set window</li>
+              </ul></div>
+            </div>
+          </div>
+          <div class="glass-card accent-top" style="--card-accent:linear-gradient(90deg,var(--teal-500),var(--indigo-500)); margin-top:12px; margin-bottom:0;">
+            <div class="card-h3"><div class="ch-icon" style="background:rgba(20,184,166,0.1);">◈</div>AI Assistant Settings</div>
+            <table class="data-table" style="margin-top:4px;">
+              <thead><tr><th>Preference</th><th>Options</th><th>Default</th></tr></thead>
+              <tbody>
+                <tr><td>Response Style</td><td>Concise / Detailed</td><td>Detailed</td></tr>
+                <tr><td>Dashboard Suggestions</td><td>Enable / Disable</td><td>ON</td></tr>
+                <tr><td>Cite Regulatory Sources</td><td>Enable / Disable</td><td>ON</td></tr>
+                <tr><td>Proactive Risk Insights</td><td>Enable / Disable</td><td>ON</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 15: HELP & SUPPORT ============================= -->
+    <section class="section" id="support">
+      <div class="section-header">
+        <div class="section-num">15</div>
+        <div>
+          <div class="section-title">Help & Support</div>
+          <div class="section-subtitle">Troubleshooting · error messages · contact channels</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🔧</div>
+          <div class="coll-header-text"><div class="coll-header-title">Troubleshooting Common Issues</div><div class="coll-header-sub">Causes and solutions for frequent problems</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Issue</th><th>Likely Cause</th><th>Solution</th></tr></thead>
+            <tbody>
+              <tr><td>Data not refreshing</td><td>Connection lost</td><td>Refresh browser; check internet</td></tr>
+              <tr><td>Form submission fails</td><td>Missing required field</td><td>Verify all mandatory inputs completed</td></tr>
+              <tr><td>Alert notifications missing</td><td>Browser permissions denied</td><td>Allow pop-ups for notifications</td></tr>
+              <tr><td>Map not displaying</td><td>API key issue</td><td>Report to Technical Team immediately</td></tr>
+              <tr><td>Supabase disconnected</td><td>Database outage</td><td>Check SUPABASE status badge in sidebar</td></tr>
+              <tr><td>Slow loading speeds</td><td>Large dataset retrieval</td><td>Filter queries to reduce data load</td></tr>
+              <tr><td>Session timeouts frequent</td><td>Extended idle periods</td><td>Save work frequently; review timeout settings</td></tr>
+              <tr><td>Chatbot responds incorrectly</td><td>Knowledge base outdated</td><td>Refresh page to reload DDRiVER knowledge base</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-info" style="margin-top:12px;">
+            <div class="callout-icon">✅</div>
+            <div class="callout-body"><div class="callout-title">Toast Notification Reference</div><div class="callout-text"><strong>✅ Success: "Saved to Supabase"</strong> — Continue workflow normally. <strong>❌ Error: [specific description]</strong> — Retry or contact support. <strong>ℹ️ Info: [processing status]</strong> — Wait for completion. Most toasts auto-dismiss after 5 seconds.</div></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📞</div>
+          <div class="coll-header-text"><div class="coll-header-title">Contact Support & Submitting Feedback</div><div class="coll-header-sub">Channels, escalation paths, and improvement requests</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="qr-grid" style="margin-top:8px;">
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--teal-500);">Email Support</div><div class="qr-value">support@asilvainnovations.com</div><div class="qr-sub">Primary channel for all issues</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--orange-500);">Phone</div><div class="qr-value">+63 XXX XXX XXXX</div><div class="qr-sub">Urgent operational issues only</div></div>
+            <div class="qr-card"><div class="qr-label" style="--card-color:var(--indigo-500);">In-App Chat</div><div class="qr-value">Coming Q3 2026</div><div class="qr-sub">Direct chat with support team</div></div>
+          </div>
+          <div class="prose" style="margin-top:14px;"><h4>When to Reach Out</h4><ul>
+            <li>Persistent database errors across multiple pages</li>
+            <li>Security concerns requiring immediate investigation</li>
+            <li>Custom configuration requests beyond user permissions</li>
+            <li>Feature enhancement proposals and feedback</li>
+            <li>Data export/import troubleshooting</li>
+          </ul></div>
+          <div class="example-box" style="margin-top:10px;">
+            <strong>Submitting Feedback:</strong> Navigate to Settings → General → scroll to feedback section → describe suggestion or problem → attach screenshots if applicable → submit for review. All feedback reviewed monthly by the development team.
+          </div>
+        </div></div>
+      </div>
+
+      <!-- Quick Reference Card -->
+      <div class="glass-card accent-top" style="--card-accent:linear-gradient(90deg,var(--orange-500),var(--teal-500))">
+        <div class="card-h3"><div class="ch-icon" style="background:rgba(249,115,22,0.12);">⚡</div>Quick Reference Card</div>
+        <div class="qr-grid">
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--orange-500);">Module Map</div><div class="qr-value">Ph1: Detection → Ph2: Diagnosis → Ph3: Response → Ph4: Integration → Ph5: Validation → Ph6: Enhancement → Ph7: Monitoring</div></div>
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--teal-400);">Risk Score Colors</div><div class="qr-value">🟢 1–5 Low<br>🟡 6–11 Medium<br>🟠 12–19 High<br>🔴 20–25 Critical</div></div>
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--red-400);">Key Agencies</div><div class="qr-value">PAGASA · PHIVOLCS<br>NOAH · NDRRMC</div></div>
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--indigo-500);">DDRiVER AI</div><div class="qr-value">Floating button (bottom-right)<br>Dashboard "Ask DDRiVER"<br>Sidebar link</div></div>
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--amber-400);">Plan Templates</div><div class="qr-value">DRRM (RA 10121)<br>BCP (ISO 22301)<br>Recovery (DILG)<br>PSCP (2nd Ed)</div></div>
+          <div class="qr-card"><div class="qr-label" style="--card-color:var(--green-400);">Support</div><div class="qr-value">support@asilvainnovations.com<br>+63 XXX XXX XXXX<br>In-app (Q3 2026)</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= SECTION 16: GLOSSARY ============================= -->
+    <section class="section" id="glossary">
+      <div class="section-header">
+        <div class="section-num">16</div>
+        <div>
+          <div class="section-title">Glossary</div>
+          <div class="section-subtitle">Key terms and acronyms used throughout the platform</div>
+        </div>
+      </div>
+
+      <div class="coll-card open">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📖</div>
+          <div class="coll-header-text"><div class="coll-header-title">Terms & Definitions</div><div class="coll-header-sub">Full glossary of DDRiVE-M platform terminology</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+            <tbody>
+              <tr><td>DDRiVE-M</td><td>Disaster Risk Reduction & Management Intelligence Value Engine - Metro</td></tr>
+              <tr><td>DDRiVER AI</td><td>Context-aware expert assistant for Philippine DRRM guidance</td></tr>
+              <tr><td>DROCK</td><td>Disaster Risk Operations Knowledge Container</td></tr>
+              <tr><td>EOC</td><td>Emergency Operations Center — command hub for coordinating disaster response</td></tr>
+              <tr><td>ICS</td><td>Incident Command System — standardized on-scene emergency management</td></tr>
+              <tr><td>ISO 22301</td><td>International business continuity management standard</td></tr>
+              <tr><td>ISO 31000</td><td>International risk management principles framework</td></tr>
+              <tr><td>LDRRMF</td><td>Local Disaster Risk Reduction and Management Fund (5% LGU budget allocation)</td></tr>
+              <tr><td>LGU</td><td>Local Government Unit — barangay, city, municipality, or province level</td></tr>
+              <tr><td>NDRRMC</td><td>National Disaster Risk Reduction and Management Council</td></tr>
+              <tr><td>NOAH</td><td>Nationwide Operational Assessment of Hazards — flood monitoring</td></tr>
+              <tr><td>PAGASA</td><td>Philippine Atmospheric, Geophysical and Astronomical Services Administration</td></tr>
+              <tr><td>PHIVOLCS</td><td>Philippine Institute of Volcanology and Seismology</td></tr>
+              <tr><td>RA 10121</td><td>Republic Act 10121 — Philippine Disaster Risk Reduction Act of 2010</td></tr>
+              <tr><td>SOP</td><td>Standard Operating Procedure — documented step-by-step process</td></tr>
+              <tr><td>SPARC</td><td>Organizational resilience self-assessment framework</td></tr>
+              <tr><td>Supabase</td><td>Cloud-based database service storing all DDRiVE-M application data</td></tr>
+              <tr><td>UNDRR</td><td>United Nations Office for Disaster Risk Reduction</td></tr>
+              <tr><td>YoY</td><td>Year-over-year comparison metric for performance tracking</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+
+      <!-- Module Quick Reference -->
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">📊</div>
+          <div class="coll-header-text"><div class="coll-header-title">Module Quick Reference</div><div class="coll-header-sub">Primary metric, key action, and expected result per module</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th>Module</th><th>Primary Metric</th><th>Key Action</th><th>Expected Result</th></tr></thead>
+            <tbody>
+              <tr><td>Detection</td><td>Active Hazards</td><td>Report Hazard</td><td>New hazard logged to feeds</td></tr>
+              <tr><td>Diagnosis</td><td>Risk Score</td><td>Add Risk + Upload Data</td><td>Updated risk registry</td></tr>
+              <tr><td>Response</td><td>Incident Progress %</td><td>Advance +10%</td><td>Incident moves forward</td></tr>
+              <tr><td>Integration</td><td>Resilience Score</td><td>Complete Assessment</td><td>Score improves over time</td></tr>
+              <tr><td>Validation</td><td>Scenario Completion</td><td>Launch Simulation</td><td>Training logged to stats</td></tr>
+              <tr><td>Enhancement</td><td>Plan Generation</td><td>Generate with AI</td><td>Compliance plan saved</td></tr>
+              <tr><td>Monitoring</td><td>Messages Sent</td><td>Send Broadcast</td><td>Team receives notification</td></tr>
+              <tr><td>Documents</td><td>Document Count</td><td>Upload Document</td><td>New entry added to library</td></tr>
+              <tr><td>DDRiVER AI</td><td>Query Response</td><td>Ask a DRRM question</td><td>Guidance with legal citations</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-col-title">Support</div>
+      <a href="mailto:support@asilvainnovations.com">support@asilvainnovations.com</a>
+      <p>Phone: +63 XXX XXX XXXX</p>
+      <p>In-App Chat: Coming Q3 2026</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Resources</div>
+      <a href="#">Open DDRiVE-M Platform</a>
+      <a href="#">Feature Requests (In-App Feedback)</a>
+      <a href="#">Release Notes</a>
+      <a href="#">API Documentation</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Document</div>
+      <p>Manual Version: 1.0.0</p>
+      <p>Last Updated: May 8, 2026</p>
+      <p>App Version: 1.0.0</p>
+      <p>Platform: Web · PWA · Mobile</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-brand">DDRiVE-M</div>
+    <div class="footer-copy">© 2026 ASilva Innovations, Inc. · Disaster Risk Reduction & Management Intelligence Value Engine - Metro · Distribution: Authorized Personnel Only</div>
+  </div>
+</footer>
+
+<script>
+// ── Collapsible cards ──────────────────────────────────────────────
+function toggleColl(card) { card.classList.toggle('open'); }
+// ── FAQ accordion ──────────────────────────────────────────────────
+function toggleFaq(el) { el.classList.toggle('open'); }
+// ── TOC active link ────────────────────────────────────────────────
+function setActive(link) {
+  document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+  link.classList.add('active');
+}
+// ── Scroll-driven behaviors ────────────────────────────────────────
+const scrollProgress  = document.getElementById('scrollProgress');
+const sidebarProgress = document.getElementById('sidebarProgress');
+const progressPct     = document.getElementById('progressPct');
+const backTop         = document.getElementById('backTop');
+const sections        = document.querySelectorAll('.section');
+const tocLinks        = document.querySelectorAll('.toc-link');
+
+function onScroll() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = Math.min(100, Math.round((scrollTop / docHeight) * 100));
+  scrollProgress.style.transform = `scaleX(${pct / 100})`;
+  sidebarProgress.style.width = pct + '%';
+  progressPct.textContent = pct + '%';
+  backTop.classList.toggle('visible', scrollTop > 400);
+  let currentId = '';
+  sections.forEach(sec => { if (window.scrollY >= sec.offsetTop - 100) currentId = sec.id; });
+  tocLinks.forEach(link => { link.classList.toggle('active', link.getAttribute('href') === '#' + currentId); });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// ── Smooth anchor scroll ───────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+    document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+    if (a.classList.contains('toc-link')) a.classList.add('active');
+  });
+});
+
+// ── Section entrance observer ──────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.style.animationPlayState = 'running'; });
+}, { threshold: 0.06 });
+sections.forEach(sec => { sec.style.animationPlayState = 'paused'; observer.observe(sec); });
+
+// ── Staggered card entrance ────────────────────────────────────────
+const cardObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const cards = entry.target.querySelectorAll('.coll-card');
+      cards.forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(12px)';
+        card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
+        setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 50 + i * 80);
+      });
+    }
+  });
+}, { threshold: 0.05 });
+sections.forEach(sec => cardObserver.observe(sec));
+</script>
+</body>
+</html>
