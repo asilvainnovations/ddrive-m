@@ -1,0 +1,2007 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Incident Command System in the Philippines: A Comprehensive Framework for Effective Disaster Response</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'condensed': ['"Roboto Condensed"', 'sans-serif'],
+                        'sans': ['Poppins', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'deep-blue': '#071428',
+                        'navy': '#0d2045',
+                        'blue-mid': '#1a3a6b',
+                        'blue-bright': '#1d6bbf',
+                        'light-blue': '#60a5fa',
+                        'neon-blue': '#00d4ff',
+                        'surface': '#ffffff',
+                        'border': '#c3d9f0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --deep-blue: #071428;
+            --navy: #0d2045;
+            --blue-mid: #1a3a6b;
+            --blue-bright: #1d6bbf;
+            --light-blue: #60a5fa;
+            --neon-blue: #00d4ff;
+            --text-dark: #0a1628;
+            --text-mid: #1e3a5f;
+            --text-muted: #4a6a8a;
+            --surface: #ffffff;
+            --bg-page: #f0f6ff;
+            --border: #c3d9f0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* ─── PROSE ─────────────────────────────────────────── */
+        .prose-custom {
+            line-height: 1.75;
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .prose-custom h1 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 2.25rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            color: var(--deep-blue);
+            letter-spacing: -0.01em;
+        }
+
+        .prose-custom h2 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 1.875rem;
+            line-height: 1.2;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--deep-blue);
+            letter-spacing: -0.01em;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 0.75rem;
+        }
+
+        .prose-custom h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            line-height: 1.4;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--blue-mid);
+        }
+
+        .prose-custom h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--blue-mid);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prose-custom p {
+            margin-bottom: 1.25rem;
+            color: var(--text-dark);
+        }
+
+        .prose-custom blockquote {
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 1.25rem;
+            margin-left: 0;
+            font-style: italic;
+            color: var(--text-mid);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, rgba(0,212,255,0.07) 0%, transparent 100%);
+            padding: 1rem 1rem 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .citation-link {
+            color: var(--blue-bright);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--light-blue);
+        }
+
+        .citation-link:hover {
+            color: var(--neon-blue);
+            border-bottom: 1px solid var(--neon-blue);
+            background-color: rgba(0,212,255,0.06);
+            border-radius: 2px;
+        }
+
+        /* ─── TOC ────────────────────────────────────────────── */
+        .toc-fixed {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            width: 280px;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            z-index: 50;
+            background: rgba(7,20,40,0.97);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px -5px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.1);
+        }
+
+        .toc-fixed h3 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-fixed a {
+            display: block;
+            padding: 0.35rem 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(147,197,253,0.75);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            padding-left: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .toc-fixed a:hover {
+            color: var(--neon-blue);
+            border-left-color: var(--neon-blue);
+            background-color: rgba(0,212,255,0.08);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .toc-fixed a.active {
+            color: #ffffff;
+            border-left-color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        /* ─── LAYOUT ─────────────────────────────────────────── */
+        .content-main {
+            margin-left: 320px;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        /* ─── HERO ───────────────────────────────────────────── */
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--navy) 50%, var(--blue-mid) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.18) 0%, transparent 60%),
+                        radial-gradient(ellipse at 20% 80%, rgba(29,107,191,0.25) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Neon glow line accent */
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--neon-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── BENTO CARDS ────────────────────────────────────── */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .bento-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+        }
+
+        .bento-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--neon-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px -4px rgba(13,32,69,0.12);
+            transition: all 0.3s ease;
+        }
+
+        .bento-card:hover {
+            box-shadow: 0 8px 24px -4px rgba(0,212,255,0.18), 0 0 0 1px rgba(0,212,255,0.15);
+            transform: translateY(-3px);
+        }
+
+        .bento-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-blue) !important;
+            margin-top: 0;
+        }
+
+        .bento-card p {
+            color: var(--text-mid) !important;
+        }
+
+        /* ─── DATA VIZ CARDS ─────────────────────────────────── */
+        .data-viz {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 16px -4px rgba(13,32,69,0.1);
+        }
+
+        .data-viz h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* ─── TABLE STYLES ───────────────────────────────────── */
+        .data-viz table thead {
+            background: var(--navy) !important;
+        }
+
+        .data-viz table thead th {
+            color: #ffffff !important;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .data-viz table tbody td {
+            color: var(--text-dark);
+        }
+
+        /* ─── INNER CARDS (colored) ──────────────────────────── */
+        /* Deep blue card variants */
+        .card-deep {
+            background: var(--navy);
+            border-color: rgba(0,212,255,0.2);
+            color: #ffffff;
+        }
+
+        .card-deep * { color: #ffffff !important; }
+
+        /* Light blue variants for white-bg cards */
+        .bg-blue-50 { background-color: #eff6ff !important; }
+        .bg-blue-50 * { color: var(--text-dark) !important; }
+
+        .bg-red-50  { background-color: #eff6ff !important; border-color: #bae0fd !important; }
+        .bg-red-50  h5, .bg-red-50 p, .bg-red-50 li { color: var(--text-dark) !important; }
+        .bg-red-50  h5 { color: var(--navy) !important; }
+
+        .bg-green-50 { background-color: #e8f5ff !important; border-color: #93c5fd !important; }
+        .bg-green-50 h5, .bg-green-50 p, .bg-green-50 li { color: var(--text-dark) !important; }
+        .bg-green-50 h5 { color: var(--navy) !important; }
+
+        .bg-purple-50 { background-color: #eef2ff !important; border-color: #a5b4fc !important; }
+        .bg-purple-50 h5, .bg-purple-50 p, .bg-purple-50 li { color: var(--text-dark) !important; }
+        .bg-purple-50 h5 { color: var(--navy) !important; }
+
+        .bg-orange-50 { background-color: #eff6ff !important; border-color: #93c5fd !important; }
+        .bg-orange-50 h5, .bg-orange-50 p, .bg-orange-50 li { color: var(--text-dark) !important; }
+        .bg-orange-50 h5 { color: var(--navy) !important; }
+
+        .bg-indigo-50 { background-color: #eef2ff !important; border-color: #a5b4fc !important; }
+        .bg-indigo-50 h5, .bg-indigo-50 p, .bg-indigo-50 li { color: var(--text-dark) !important; }
+        .bg-indigo-50 h5 { color: var(--navy) !important; }
+
+        .bg-teal-50 { background-color: #e8f5ff !important; border-color: #7dd3fc !important; }
+        .bg-teal-50 h5, .bg-teal-50 p, .bg-teal-50 li { color: var(--text-dark) !important; }
+        .bg-teal-50 h5 { color: var(--navy) !important; }
+
+        .bg-yellow-50 { background-color: #eff8ff !important; border-color: #93c5fd !important; }
+        .bg-yellow-50 h5, .bg-yellow-50 p, .bg-yellow-50 li, .bg-yellow-50 ol li { color: var(--text-dark) !important; }
+        .bg-yellow-50 h5 { color: var(--navy) !important; }
+
+        .bg-gray-50 { background-color: #f0f6ff !important; }
+        .bg-gray-50 * { color: var(--text-dark) !important; }
+        .bg-gray-100 { background-color: #e8f0fa !important; }
+        .bg-gray-100 * { color: var(--text-dark) !important; }
+
+        /* Override border colors to blue palette */
+        .border-red-200   { border-color: #bae6fd !important; }
+        .border-blue-200  { border-color: #93c5fd !important; }
+        .border-green-200 { border-color: #7dd3fc !important; }
+        .border-purple-200 { border-color: #a5b4fc !important; }
+        .border-orange-200 { border-color: #93c5fd !important; }
+        .border-teal-200  { border-color: #67e8f9 !important; }
+        .border-yellow-200 { border-color: #7dd3fc !important; }
+        .border-indigo-200 { border-color: #a5b4fc !important; }
+        .border-gray-200  { border-color: #c3d9f0 !important; }
+
+        /* Table row accent colors → blue tones */
+        .bg-green-50.divide-y  td { color: var(--text-dark) !important; }
+
+        tr.bg-green-50  td { background-color: #e8f5ff !important; color: var(--text-dark) !important; }
+        tr.bg-blue-50   td { background-color: #eff6ff !important; color: var(--text-dark) !important; }
+        tr.bg-orange-50 td { background-color: #e8f0ff !important; color: var(--text-dark) !important; }
+        tr.bg-purple-50 td { background-color: #eef2ff !important; color: var(--text-dark) !important; }
+        tr.bg-red-50    td { background-color: #eff8ff !important; color: var(--text-dark) !important; }
+
+        /* Colored highlight boxes */
+        .bg-blue-50.border.border-blue-200.rounded-lg {
+            background: #eff6ff !important;
+        }
+        .bg-blue-50.border.border-blue-200.rounded-lg * { color: var(--text-dark) !important; }
+        .bg-blue-50.border.border-blue-200.rounded-lg h5 { color: var(--navy) !important; }
+
+        .bg-green-50.border.border-green-200.rounded-lg * { color: var(--text-dark) !important; }
+        .bg-green-50.border.border-green-200.rounded-lg h5 { color: var(--navy) !important; }
+
+        /* conclusion card */
+        .bg-blue-50.border.border-blue-200.rounded-lg.p-6 h3 {
+            font-family: 'Roboto Condensed', sans-serif !important;
+            color: var(--navy) !important;
+        }
+
+        /* Alert badge rows */
+        .bg-red-100 { background-color: #e8f5ff !important; border-color: #7dd3fc !important; }
+        .bg-red-100 * { color: var(--text-dark) !important; }
+        .border-red-300 { border-color: #60a5fa !important; }
+
+        .bg-yellow-100 { background-color: #eff6ff !important; border-color: #93c5fd !important; }
+        .bg-yellow-100 * { color: var(--text-dark) !important; }
+        .border-yellow-300 { border-color: #60a5fa !important; }
+
+        .bg-blue-100 { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
+        .bg-blue-100 * { color: var(--text-dark) !important; }
+        .border-blue-300 { border-color: #3b82f6 !important; }
+
+        /* Icon accent colors */
+        .text-accent { color: var(--neon-blue) !important; }
+        .text-red-600 { color: var(--blue-bright) !important; }
+        .text-blue-600 { color: var(--blue-bright) !important; }
+        .text-green-600 { color: #0891b2 !important; }
+        .text-orange-600 { color: #1d6bbf !important; }
+        .text-purple-600 { color: #4f46e5 !important; }
+        .text-indigo-600 { color: #3730a3 !important; }
+        .text-teal-600 { color: #0891b2 !important; }
+        .text-yellow-600 { color: #1d6bbf !important; }
+
+        /* Guidance system step circles */
+        .bg-blue-600 { background-color: var(--blue-bright) !important; }
+        .bg-green-600 { background-color: #0891b2 !important; }
+        .bg-yellow-600 { background-color: var(--blue-mid) !important; }
+        .bg-purple-600 { background-color: #4f46e5 !important; }
+
+        /* Muted text in cards */
+        .text-muted { color: var(--text-muted) !important; }
+        .text-red-700, .text-blue-700, .text-green-700,
+        .text-orange-700, .text-purple-700, .text-teal-700,
+        .text-yellow-700, .text-gray-700 {
+            color: var(--text-mid) !important;
+        }
+        .text-red-800, .text-blue-800, .text-green-800,
+        .text-orange-800, .text-purple-800, .text-teal-800,
+        .text-yellow-800, .text-gray-800 {
+            color: var(--navy) !important;
+        }
+        .text-red-600, .text-blue-600, .text-green-600,
+        .text-orange-600, .text-teal-600, .text-yellow-600 {
+            color: var(--text-muted) !important;
+        }
+        /* Keep icon colors intact */
+        i.text-red-600, i.text-blue-600, i.text-green-600,
+        i.text-orange-600, i.text-teal-600, i.text-yellow-600 {
+            color: var(--blue-bright) !important;
+        }
+        i.text-purple-600 { color: #4f46e5 !important; }
+        i.text-indigo-600 { color: #3730a3 !important; }
+
+        .text-red-500, .text-blue-500, .text-green-500,
+        .text-orange-500, .text-purple-500, .text-teal-500 {
+            color: var(--text-muted) !important;
+        }
+
+        /* ─── HEADLINE COLOR — scoped to light containers only ── */
+        .data-viz h5,
+        .bento-card h5,
+        .prose-custom h5 { color: var(--navy) !important; }
+
+        .data-viz h6,
+        .bento-card h6,
+        .prose-custom h6 { color: var(--blue-mid) !important; }
+
+        /* ─── DARK SECTION SYSTEM ────────────────────────────── */
+        /* Apply class="dark-section" to any container with a dark background */
+        .dark-section {
+            color: #ffffff !important;
+        }
+        .dark-section h1, .dark-section h2, .dark-section h3,
+        .dark-section h4, .dark-section h5, .dark-section h6 {
+            color: #ffffff !important;
+        }
+        .dark-section p, .dark-section li, .dark-section td,
+        .dark-section th, .dark-section span, .dark-section cite,
+        .dark-section strong, .dark-section em, .dark-section label {
+            color: #ffffff !important;
+        }
+        /* Links inside dark sections use neon blue */
+        .dark-section a { color: var(--neon-blue) !important; }
+        /* Sub-headings in dark sections stay bright */
+        .dark-section .section-label { color: var(--neon-blue) !important; }
+
+        /* ─── HERO — force all children white ────────────────── */
+        .hero-gradient *:not(.text-gradient) {
+            color: #ffffff !important;
+        }
+        .hero-gradient .text-gradient {
+            -webkit-text-fill-color: transparent !important;
+            color: transparent !important;
+        }
+
+        /* ─── MERMAID ─────────────────────────────────────────── */
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: var(--navy);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 14px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(0,212,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        /* ── Force all SVG text/tspan inside mermaid to white ── */
+        .mermaid-container svg text,
+        .mermaid-container svg tspan,
+        .mermaid-container svg .label,
+        .mermaid-container svg .nodeLabel,
+        .mermaid-container svg .edgeLabel {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+        }
+        /* Edge label backgrounds need contrast too */
+        .mermaid-container svg .edgeLabel rect,
+        .mermaid-container svg .labelBkg {
+            fill: #0d2045 !important;
+            stroke: #60a5fa !important;
+        }
+        /* Marker arrows */
+        .mermaid-container svg marker path {
+            fill: #60a5fa !important;
+        }
+        /* Timeline section labels */
+        .mermaid-container svg .taskText,
+        .mermaid-container svg .taskTextOutsideRight,
+        .mermaid-container svg .taskTextOutsideLeft {
+            fill: #ffffff !important;
+        }
+        .mermaid-container svg .sectionTitle {
+            fill: var(--neon-blue) !important;
+            font-weight: 700;
+        }
+
+        .mermaid-container .mermaid:active { cursor: grabbing; }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+            background: rgba(7,20,40,0.9);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,212,255,0.2);
+        }
+
+        .mermaid-control-btn {
+            background: rgba(13,32,69,0.9);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--light-blue);
+            font-size: 13px;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: rgba(0,212,255,0.15);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        /* ─── TYPOGRAPHY OVERRIDES ───────────────────────────── */
+        .font-semibold { font-family: 'Poppins', sans-serif; }
+        .font-serif { font-family: 'Roboto Condensed', sans-serif !important; }
+        .font-medium { font-family: 'Inter', sans-serif; }
+
+        /* Hero title */
+        header h1 {
+            font-family: 'Roboto Condensed', sans-serif !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em;
+        }
+
+        header p, header span { color: rgba(255,255,255,0.9) !important; }
+
+        /* Nav items */
+        .bento-card .flex .font-semibold {
+            font-family: 'Poppins', sans-serif;
+            color: var(--deep-blue) !important;
+        }
+
+        /* Conclusion box */
+        .bg-blue-50.border.border-blue-200.rounded-lg.p-6 {
+            background: linear-gradient(135deg, #e8f4ff 0%, #dbeafe 100%) !important;
+        }
+
+        /* Score totals box is handled via .dark-section class directly */
+
+        /* ─── RESPONSIVE ─────────────────────────────────────── */
+        @media (max-width: 1280px) {
+            .toc-fixed { display: none; }
+            .content-main { margin-left: 0; max-width: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            .content-main { padding: 1rem; }
+            .prose-custom h1 { font-size: 1.75rem; }
+            .prose-custom h2 { font-size: 1.5rem; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .mermaid-container { padding: 15px; }
+            .data-viz, .bento-card { padding: 1rem; }
+        }
+    </style>
+    <base target="_blank">
+</head>
+
+<body>
+    <!-- Fixed Table of Contents -->
+    <nav class="toc-fixed">
+      <h3>Contents</h3>
+      <a href="#introduction">Introduction</a>
+      <a href="#structure">ICS Structure &amp; Functions</a>
+      <a href="#national-structure" class="ml-3">National-Level ICS</a>
+      <a href="#local-structure" class="ml-3">Local-Level ICS</a>
+      <a href="#coordination" class="ml-3">Coordination Mechanisms</a>
+      <a href="#legal-framework">Legal &amp; Policy Framework</a>
+      <a href="#ra10121" class="ml-3">RA 10121 Mandate</a>
+      <a href="#ndrrmc-guidelines" class="ml-3">NDRRMC Guidelines</a>
+      <a href="#ra12287" class="ml-3">RA 12287 Anticipatory Action</a>
+      <a href="#pscp" class="ml-3">Public Service Continuity</a>
+      <a href="#simulation-design">Game-Based Simulation</a>
+      <a href="#design-principles" class="ml-3">Core Design Principles</a>
+      <a href="#role-system" class="ml-3">Role-Based Player System</a>
+      <a href="#scenario-framework" class="ml-3">Scenario Framework</a>
+      <a href="#interactive-features" class="ml-3">Interactive Features</a>
+      <a href="#scoring-rubrics" class="ml-3">Scoring &amp; Assessment</a>
+      <a href="#game-modes" class="ml-3">Single &amp; Multiplayer Modes</a>
+      <a href="#apple-compliance" class="ml-3">Apple HIG Compliance</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-main">
+      <!-- Hero Section -->
+      <header class="hero-gradient rounded-2xl p-8 mb-8 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <img src="" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer"/>
+        </div>
+        <div class="relative z-10">
+          <div class="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase" style="background:rgba(0,212,255,0.15);color:var(--neon-blue);border:1px solid rgba(0,212,255,0.3);font-family:'Poppins',sans-serif;">
+            Disaster Risk Reduction
+          </div>
+          <h1 class="font-condensed italic text-4xl md:text-5xl leading-tight mb-4">
+            The <span class="text-gradient">Incident Command System</span> in the Philippines
+          </h1>
+          <p class="text-xl opacity-90 mb-6 max-w-3xl" style="font-family:'Inter',sans-serif;color:rgba(255,255,255,0.85);">
+            A comprehensive analysis of structure, legal framework, and game-based simulation design for capacity building
+          </p>
+          <div class="flex flex-wrap gap-4 text-sm" style="color:rgba(147,197,253,0.85);font-family:'Inter',sans-serif;">
+            <span class="flex items-center gap-2"><i class="fas fa-shield-alt"></i>Disaster Risk Reduction</span>
+            <span class="flex items-center gap-2"><i class="fas fa-network-wired"></i>Multi-Agency Coordination</span>
+            <span class="flex items-center gap-2"><i class="fas fa-gamepad"></i>Simulation Training</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Key Highlights -->
+      <div class="bento-grid mb-12">
+        <div class="bento-card">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-building text-xl mr-3" style="color:var(--neon-blue);"></i>
+            <h3 class="font-semibold text-lg">National Structure</h3>
+          </div>
+          <p class="text-sm" style="color:var(--text-muted);">NDRRMC leads policy, OCD serves as operational arm, and NIMT provides deployable expertise nationwide</p>
+        </div>
+        <div class="bento-card">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-gavel text-xl mr-3" style="color:var(--neon-blue);"></i>
+            <h3 class="font-semibold text-lg">Legal Framework</h3>
+          </div>
+          <p class="text-sm" style="color:var(--text-muted);">RA 10121 and RA 12287 provide comprehensive legal foundation with anticipatory action provisions</p>
+        </div>
+        <div class="bento-card">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-gamepad text-xl mr-3" style="color:var(--neon-blue);"></i>
+            <h3 class="font-semibold text-lg">Simulation Design</h3>
+          </div>
+          <p class="text-sm" style="color:var(--text-muted);">iOS/macOS native development with role-based multiplayer scenarios and competency scoring</p>
+        </div>
+      </div>
+
+      <!-- Introduction -->
+      <section id="introduction" class="prose-custom">
+        <p class="text-lg leading-relaxed mb-6">
+          The Philippine Incident Command System (ICS) represents one of the most comprehensive and legally mandated disaster management frameworks in the world. Established through <a href="https://lawphil.net/statutes/repacts/ra2010/ra_10121_2010.html" class="citation-link">Republic Act 10121</a> and further enhanced by the pioneering <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">Republic Act 12287</a> (State of Imminent Disaster Act), the ICS provides a scalable organizational structure for managing all-hazard incidents across the Philippine archipelago.
+        </p>
+
+        <blockquote>
+          &#34;The ICS shall be used as the on-scene incident management mechanism for all disaster response operations in the Philippines, institutionalizing a standardized approach that enables seamless multi-agency coordination.&#34;
+          <cite>— Rule 7(h), RA 10121 Implementing Rules and Regulations</cite>
+        </blockquote>
+
+        <p>
+          This comprehensive framework features an Incident Commander, four General Staff sections (Operations, Planning, Logistics, Finance/Administration), and three Command Staff positions (Public Information Officer, Safety Officer, Liaison Officer), implemented at both national and local government levels. The system&#39;s effectiveness depends on rigorous capacity building, which can be enhanced through innovative game-based simulation approaches.
+        </p>
+      </section>
+
+      <!-- ICS Structure & Functions -->
+      <section id="structure" class="prose-custom">
+        <h2>Structure and Functions of ICS at National and Local Government Levels</h2>
+
+        <div id="national-structure">
+          <h3>National-Level ICS Structure and Functions</h3>
+
+          <h4>Lead Agency and Coordination Mechanism</h4>
+          <p>
+            The <strong>National Disaster Risk Reduction and Management Council (NDRRMC)</strong> serves as the apex policy-making and coordinating body for disaster risk reduction and management in the Philippines. Established under Republic Act 10121, the NDRRMC brings together heads of executive departments, local government associations, civil society organizations, and private sector representatives to ensure comprehensive, multi-stakeholder coordination for disaster response <a href="https://www.ifrc.org/docs/IDRL/-%20To%20add/MEMO%20re%20Implementing%20Guidelines%20on%20the%20use%20of%20ICS%20-%20edited.pdf" class="citation-link">[11]</a>.
+          </p>
+
+          <div class="mermaid-container">
+            <div class="mermaid-controls">
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
+            </div>
+            <div class="mermaid">
+              graph TD
+              A["NDRRMC<br/>Policy Level<br/>Secretary of National Defense, Chair"] --> B["OCD<br/>Operational Arm<br/>Administrator, Executive"]
+              A --> C["NIMT<br/>Deployable Asset<br/>32 Certified Instructors"]
+              B --> D["RDRRMCs<br/>Regional Coordination<br/>All Administrative Regions"]
+              D --> E["LDRRMCs<br/>Local Implementation<br/>Provinces/Cities/Municipalities"]
+              E --> F["BDRRMCs<br/>Barangay Level<br/>Frontline Response"]
+
+              style A fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#ffffff
+              style B fill:#1a3a6b,stroke:#00d4ff,stroke-width:3px,color:#ffffff
+              style C fill:#0d2045,stroke:#60a5fa,stroke-width:3px,color:#ffffff
+              style D fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style E fill:#2563eb,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style F fill:#0891b2,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+            </div>
+          </div>
+
+          <div class="data-viz">
+            <h4>National ICS Leadership Elements</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">NDRRMC</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Policy formulation and strategic direction</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Council meetings, policy issuance, resource allocation, declaration recommendations</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">OCD</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Operational implementation and secretariat</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Training administration, NIMT deployment, 24/7 monitoring, regional supervision</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">NIMT</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Deployable on-scene management expertise</strong></p>
+                <p class="text-xs" style="color:var(--text-muted);">Rapid deployment to complex incidents, unified command establishment</p>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            The <strong>Office of Civil Defense (OCD)</strong> functions as the operational arm and permanent secretariat of the NDRRMC, translating policy decisions into actionable programs and maintaining day-to-day readiness for disaster response. The <strong>NDRRMC Incident Management Team (NIMT)</strong> represents the deployable national asset developed through a systematic capacity-building program initiated under the ASEAN-US Cooperation on Disaster Management <a href="https://www.ifrc.org/docs/IDRL/-%20To%20add/MEMO%20re%20Implementing%20Guidelines%20on%20the%20use%20of%20ICS%20-%20edited.pdf" class="citation-link">[11]</a>.
+          </p>
+
+          <h4>National ICS Core Components</h4>
+          <p>
+            The Philippine ICS implements a standardized five-functional organizational structure adapted from international best practices. At the apex is the <strong>Incident Commander (IC)</strong>, who holds unified command authority and overall accountability for all incident activities. This unified command concept allows multiple ICs from different jurisdictions to share authority when incidents cross organizational boundaries.
+          </p>
+
+          <div class="data-viz">
+            <h4>ICS General Staff Structure</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-tasks mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Operations</h5>
+                </div>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Operations Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">All tactical activities: search and rescue, evacuation, EMS, fire suppression</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-chart-line mr-2" style="color:#4f46e5;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Planning</h5>
+                </div>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Planning Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Situation assessment, IAP development, resource tracking, documentation</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-truck mr-2" style="color:var(--blue-mid);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Logistics</h5>
+                </div>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Logistics Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Resource procurement, facilities, transportation, communications, maintenance</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-calculator mr-2" style="color:#0891b2;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Finance/Admin</h5>
+                </div>
+                <p class="text-sm mb-2" style="color:var(--text-mid);">Finance/Admin Section Chief</p>
+                <p class="text-xs" style="color:var(--text-muted);">Cost tracking, procurement, time recording, compensation and claims</p>
+              </div>
+            </div>
+          </div>
+
+          <h4>National-Level Functions</h4>
+          <p>
+            At the national level, ICS-related functions extend beyond immediate incident management to encompass strategic policy formulation and systemic capacity development. The <strong>declaration of national emergencies and states of imminent disaster</strong> constitutes a high-stakes national function with direct ICS implications.
+          </p>
+
+          <p>
+            Under <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">Republic Act 12287</a>, the President may declare a State of Imminent Disaster upon NDRRMC recommendation, based on pre-disaster risk assessments from mandated agencies such as PAGASA and PHIVOLCS <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>. This declaration—valid for 30 days with possible extension—triggers anticipatory action authorities, enabling pre-positioning of ICS resources, early activation of command structures, and implementation of protective measures 3-5 days before disaster impact.
+          </p>
+        </div>
+
+        <div id="local-structure">
+          <h3>Local-Level ICS Structure and Functions</h3>
+
+          <h4>Local Government Unit Activation</h4>
+          <p>
+            The Local Government Code of 1991 and Republic Act 10121 establish Local Government Units (LGUs) as the <strong>frontline authorities for disaster response</strong>, with ICS activation authority distributed across administrative levels. This decentralized structure reflects the principle of subsidiarity—that response should be managed at the lowest effective level—with higher levels providing support rather than assuming command <a href="https://www.ifrc.org/docs/IDRL/-%20To%20add/MEMO%20re%20Implementing%20Guidelines%20on%20the%20use%20of%20ICS%20-%20edited.pdf" class="citation-link">[11]</a>.
+          </p>
+
+          <div class="data-viz">
+            <h4>ICS Activation by Government Level</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead style="background:var(--navy);">
+                  <tr>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Government Level</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Activating Body</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Default Incident Commander</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;">Activation Threshold</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Barangay</td><td class="px-4 py-2" style="color:var(--text-dark);">BDRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Barangay Captain</td><td class="px-4 py-2" style="color:var(--text-dark);">Single barangay affected</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Municipal/City</td><td class="px-4 py-2" style="color:var(--text-dark);">City/Municipal DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Mayor</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more barangays affected</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Provincial</td><td class="px-4 py-2" style="color:var(--text-dark);">Provincial DRRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Governor</td><td class="px-4 py-2" style="color:var(--text-dark);">Multiple cities/municipalities affected</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Regional</td><td class="px-4 py-2" style="color:var(--text-dark);">Regional DRRMC</td><td class="px-4 py-2" style="color:var(--text-dark);">Variable</td><td class="px-4 py-2" style="color:var(--text-dark);">Two or more provinces affected</td></tr>
+                  <tr style="background:#1a3a6b;"><td class="px-4 py-2 font-medium" style="color:#ffffff !important;">National</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">NDRRMC</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">NIMT IC</td><td class="px-4 py-2" style="color:rgba(200,225,255,0.95) !important;">Two or more regions affected</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p>
+            The <strong>Local Chief Executive</strong>—Governor, Mayor, or Barangay Captain—serves as the default Incident Commander when ICS is activated within their jurisdiction. This arrangement ensures clear accountability, leverages statutory authority over local resources, and maintains political legitimacy for command decisions.
+          </p>
+
+          <blockquote>
+            &#34;Local Government Units shall be the frontline agencies in charge of disaster preparedness, response, and rehabilitation in their respective jurisdictions, with the ICS serving as the standardized mechanism for coordination.&#34;
+            <cite>— Section 15, RA 10121</cite>
+          </blockquote>
+
+          <h4>Local ICS Organizational Elements</h4>
+          <p>
+            <strong>Local Emergency Operations Centers (EOCs)</strong> serve as the physical and organizational hubs for ICS operations at all local levels. <strong>NDRRMC Memorandum Circular No. 131, s. 2018</strong> provides standardized guidance on EOC establishment and operationalization, clarifying the relationship between EOC functions and Incident Management Team operations <a href="https://www.davaocity.gov.ph/wp-content/uploads/2024/06/Signed_RCD-2024-108164_ASD061324-11.QR-compressed-1.pdf" class="citation-link">[156]</a>.
+          </p>
+
+          <h4>Local-Level Functions</h4>
+          <p>
+            <strong>Immediate response and life safety operations</strong> constitute the paramount local-level ICS function, reflecting the geographic proximity of LGUs to affected populations and their statutory responsibility for public safety. The first hours of incident response are often determinative of outcomes, and local ICS structures are designed to activate within minutes with available personnel and resources.
+          </p>
+        </div>
+
+        <div id="coordination">
+          <h3>Vertical and Horizontal Coordination Mechanisms</h3>
+
+          <h4>National-Local Interface</h4>
+          <p>
+            The <strong>request and provision of national assistance</strong> follows established protocols that balance respect for local autonomy with timely access to national resources. Local Chief Executives or designated ICs initiate requests through OCD regional offices, with requests specifying needed resources, operational context, constraints, and estimated duration.
+          </p>
+
+          <div class="mermaid-container">
+            <div class="mermaid-controls">
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
+            </div>
+            <div class="mermaid">
+              flowchart TD
+              A["Local Incident<br/>Commander"] -->|"Request for Assistance"| B["OCD Regional Office"]
+              B --> C{"Request Evaluation"}
+              C -->|"Within Local Capacity"| D["Local Resources Only"]
+              C -->|"Exceeds Local Capacity"| E["Forward to NDRRMC"]
+              E --> F{"National Resource Assessment"}
+              F -->|"Available"| G["Deploy NIMT"]
+              F -->|"Unavailable"| H["Coordinate with Other Regions"]
+              G --> I["Unified Command Establishment"]
+              H --> I
+              D --> J["Local ICS Operations"]
+              I --> K["Integrated Response Operations"]
+
+              style A fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style B fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style C fill:#1a3a6b,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style D fill:#0d2045,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style E fill:#1d6bbf,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style F fill:#1a3a6b,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style G fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style H fill:#2563eb,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style I fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style J fill:#0d2045,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style K fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+            </div>
+          </div>
+
+          <h4>Inter-Agency Coordination</h4>
+          <p>
+            The Philippine ICS achieves effectiveness through integration with diverse response agencies, each contributing specialized capabilities. The interoperability guidelines in <strong>NDRRMC Memorandum Circular No. 43, s. 2016</strong> clarify that IMTs act as &#34;force employers&#34; supported by Response Clusters as &#34;force providers,&#34; establishing clear functional relationships for integrated operations.
+          </p>
+
+          <div class="data-viz">
+            <h4>Agency Contributions to ICS Operations</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-shield-alt mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">PNP</h5>
+                </div>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Law enforcement, security, traffic control, SAR</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Safety Officer, Operations Branch Director</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-fire mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">BFP</h5>
+                </div>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Fire suppression, technical rescue, hazmat response</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Operations Section Chief, Hazmat Branch</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-helicopter mr-2" style="color:#0891b2;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">AFP</h5>
+                </div>
+                <p class="text-xs mb-1" style="color:var(--text-mid);">Strategic lift, engineering, field hospitals</p>
+                <p class="text-xs" style="color:var(--text-muted);">Typical Roles: Logistics Section Chief, Operations Branch</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Legal and Policy Framework -->
+      <section id="legal-framework" class="prose-custom">
+        <h2>Legal and Policy Frameworks Governing ICS</h2>
+
+        <div id="ra10121">
+          <h3>Republic Act 10121: The Philippine Disaster Risk Reduction and Management Act of 2010</h3>
+
+          <p>
+            <strong>Republic Act 10121</strong>, enacted on <strong>May 27, 2010</strong>, provides the foundational legal framework for the Incident Command System in the Philippines. The law fundamentally reformed disaster management by shifting from reactive relief orientation to comprehensive risk reduction and proactive preparedness, with ICS explicitly mandated as the standardized on-scene incident management mechanism <a href="https://www.ifrc.org/docs/IDRL/-%20To%20add/MEMO%20re%20Implementing%20Guidelines%20on%20the%20use%20of%20ICS%20-%20edited.pdf" class="citation-link">[11]</a>.
+          </p>
+
+          <blockquote>
+            &#34;Rule 7(h) of the Implementing Rules and Regulations expressly requires that &#39;the ICS shall be used as the on-scene incident management mechanism&#39; for all disaster response operations.&#34;
+            <cite>— RA 10121 IRR</cite>
+          </blockquote>
+
+          <div class="data-viz">
+            <h4>Institutional Arrangements under RA 10121</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">NDRRMC</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Policy-making body</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Develop ICS policies and guidelines</li>
+                  <li>• Approve training standards</li>
+                  <li>• Monitor implementation</li>
+                  <li>• Coordinate international obligations</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">OCD</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Implementing arm</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Administer ICS training programs</li>
+                  <li>• Certify instructors</li>
+                  <li>• Maintain NIMT</li>
+                  <li>• Provide technical assistance</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Local DRRM Councils</h5>
+                <p class="text-sm mb-2" style="color:var(--text-mid);"><strong>Activating authorities</strong></p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Establish local ICS capability</li>
+                  <li>• Activate for incidents</li>
+                  <li>• Request national assistance</li>
+                  <li>• Ensure personnel training</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ndrrmc-guidelines">
+          <h3>NDRRMC Guidelines and Implementing Memoranda</h3>
+
+          <p>
+            The <strong>NDRRMC Memorandum Circular No. 4, s. 2012</strong> (March 28, 2012) provides comprehensive implementing guidelines on ICS use under the Philippine DRRM System. This circular establishes the scope, priority objectives, training requirements, and IMT organization standards for ICS implementation nationwide <a href="https://dromic.dswd.gov.ph/wp-content/uploads/2017/03/Consequence-Management-for-Terrorism-related-Incidents.pdf" class="citation-link">[212]</a>.
+          </p>
+
+          <div class="data-viz">
+            <h4>ICS Training Progression</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead style="background:var(--navy);">
+                  <tr>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Course Level</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Duration</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Target Audience</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Core Content</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">ICS Basic/Intermediate</td><td class="px-4 py-2" style="color:var(--text-dark);">5 days</td><td class="px-4 py-2" style="color:var(--text-dark);">All DRRM personnel, first responders</td><td class="px-4 py-2" style="color:var(--text-dark);">ICS fundamentals, organization, basic command</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Integrated Planning</td><td class="px-4 py-2" style="color:var(--text-dark);">10-11 days</td><td class="px-4 py-2" style="color:var(--text-dark);">Planning Section personnel, aspiring ICs</td><td class="px-4 py-2" style="color:var(--text-dark);">IAP development, resource tracking, situation assessment</td></tr>
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Position-Specific (Section Chief)</td><td class="px-4 py-2" style="color:var(--text-dark);">2-4 days each</td><td class="px-4 py-2" style="color:var(--text-dark);">Designated Section Chiefs</td><td class="px-4 py-2" style="color:var(--text-dark);">Advanced functional management by section</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander</td><td class="px-4 py-2" style="color:var(--text-dark);">4 days</td><td class="px-4 py-2" style="color:var(--text-dark);">Designated ICs, senior officials</td><td class="px-4 py-2" style="color:var(--text-dark);">Complex incident management, unified command</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p>
+            The <strong>NDRRMP 2020-2030</strong> establishes <strong>Output 13.1: &#34;Activated functional ICS on-site&#34;</strong> as a key performance target for disaster response capability. This output is supported by ICS training conduct, NIMT deployment, and exercises for capability validation, with integration for forecast-based early actions <a href="https://rbmes-api.ndrrmc.gov.ph/download/RBMES_NDRRMP_2020-2030.pdf" class="citation-link">[158]</a>.
+          </p>
+        </div>
+
+        <div id="ra12287">
+          <h3>Republic Act 12287: The State of Imminent Disaster Act</h3>
+
+          <p>
+            <strong>Republic Act 12287</strong>, enacted on <strong>September 12, 2025</strong>, establishes the <strong>world&#39;s first national legislation institutionalizing anticipatory action</strong> in disaster risk reduction and management <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>. The law creates the &#34;State of Imminent Disaster&#34; declaration mechanism, enabling proactive measures before disaster impact based on scientific forecasts.
+          </p>
+
+          <div class="data-viz">
+            <h4>State of Imminent Disaster Declaration Framework</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-3 flex items-center" style="color:var(--navy);font-family:'Poppins',sans-serif;">
+                  <i class="fas fa-flag mr-2" style="color:var(--blue-bright);"></i>National Level
+                </h5>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Declaring Authority:</span><span class="font-medium" style="color:var(--text-dark);">President of the Philippines</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Recommending Body:</span><span class="font-medium" style="color:var(--text-dark);">NDRRMC</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Assessment Basis:</span><span class="font-medium" style="color:var(--text-dark);">PAGASA, PHIVOLCS, etc.</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Lead Time:</span><span class="font-medium" style="color:var(--text-dark);">3 days (extendable to 5)</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Duration:</span><span class="font-medium" style="color:var(--text-dark);">30 days (extendable)</span></div>
+                </div>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <h5 class="font-semibold mb-3 flex items-center" style="color:var(--navy);font-family:'Poppins',sans-serif;">
+                  <i class="fas fa-building mr-2" style="color:var(--blue-bright);"></i>Local Level
+                </h5>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Declaring Authority:</span><span class="font-medium" style="color:var(--text-dark);">Local Chief Executive</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Recommending Body:</span><span class="font-medium" style="color:var(--text-dark);">Regional DRRM Council</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Assessment Basis:</span><span class="font-medium" style="color:var(--text-dark);">Regional assessment with national support</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Lead Time:</span><span class="font-medium" style="color:var(--text-dark);">Aligned with national or independent</span></div>
+                  <div class="flex justify-between"><span style="color:var(--text-mid);">Duration:</span><span class="font-medium" style="color:var(--text-dark);">30 days (extendable)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4>ICS Implications for Anticipatory Action</h4>
+          <p>
+            RA 12287 fundamentally transforms ICS operations by enabling <strong>early activation of command structures before disaster impact</strong>. Rather than awaiting disaster occurrence to establish command and control, ICS can be activated during the warning phase to coordinate pre-disaster protective actions.
+          </p>
+
+          <p>
+            The <strong>eight specified anticipatory measures</strong> all require ICS-coordinated implementation <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>:
+          </p>
+
+          <div class="rounded-lg p-4 my-6 border" style="background:linear-gradient(135deg,#e8f4ff,#dbeafe);border-color:#93c5fd;">
+            <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">RA 12287 Anticipatory Measures</h5>
+            <ol class="text-sm space-y-1" style="color:var(--text-dark);">
+              <li>1. Public information advisories and warnings</li>
+              <li>2. Mobilization and strategic pre-positioning of inter-agency response teams</li>
+              <li>3. Pre-emptive or forced evacuation of affected populations</li>
+              <li>4. Mobilization of trained volunteers</li>
+              <li>5. Procurement and pre-positioning of food and non-food items</li>
+              <li>6. Social amelioration programs for vulnerable groups</li>
+              <li>7. Contingency plan implementation for agricultural and food supply protection</li>
+              <li>8. Public health threat management and disease surveillance enhancement</li>
+            </ol>
+          </div>
+
+          <h4>Funding and Resource Mechanisms</h4>
+          <p>
+            RA 12287 establishes critical financial mechanisms that enable anticipatory ICS operations, including Quick Response Fund (QRF) access upon State of Imminent Disaster declaration, with unexpended LGU funds accruing to Special Trust Funds <a href="https://lawphil.net/statutes/repacts/ra2025/ra_12287_2025.html" class="citation-link">[24]</a>.
+          </p>
+        </div>
+
+        <div id="pscp">
+          <h3>Public Services Continuity Guidelines</h3>
+
+          <p>
+            <strong>Public Service Continuity Planning (PSCP)</strong> ensures that essential government services continue during and after disasters, complementing ICS operations by addressing the administrative and service delivery dimensions of crisis response <a href="https://www.pinamalayan.gov.ph/wp-content/uploads/2023/06/PSCP_2024.pdf" class="citation-link">[19]</a>.
+          </p>
+
+          <div class="data-viz">
+            <h4>Municipality of Pinamalayan PSCP Implementation</h4>
+            <div class="rounded-lg p-4" style="background:#f0f6ff;">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Activating Authority</h5>
+                  <p class="text-sm" style="color:var(--text-dark);">Municipal Mayor as head of Local DRRM Council</p>
+                  <h5 class="font-semibold mb-2 mt-4" style="color:var(--navy);font-family:'Poppins',sans-serif;">Incident Management Structure</h5>
+                  <ul class="text-sm space-y-1" style="color:var(--text-dark);">
+                    <li>• IMT with Deputy IC, PIO, Safety Officer, Liaison Officer</li>
+                    <li>• Section Chiefs for Operations, Planning, Logistics, Finance</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Response Teams</h5>
+                  <ul class="text-sm space-y-1" style="color:var(--text-dark);">
+                    <li>• Search and Rescue</li>
+                    <li>• Evacuation and Relief Operation</li>
+                    <li>• Emergency Medical Services</li>
+                    <li>• Fire Suppression/Prevention</li>
+                    <li>• Security and Safety</li>
+                  </ul>
+                  <h5 class="font-semibold mb-2 mt-4" style="color:var(--navy);font-family:'Poppins',sans-serif;">Exercise Requirements</h5>
+                  <p class="text-sm" style="color:var(--text-dark);">Table Top Exercises twice monthly; quarterly drills; annual full-scale exercise</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            <strong>NDRRMC Memorandum No. 2, s. 2023</strong> adopted the <strong>PSCP Guidebook 2nd Edition</strong>, establishing the Continuity Plan Core Team as the organizational link to ICS operations. The Philippine Disaster Resilience Foundation (PDRF), in partnership with OCD and DILG, has led technical assistance through a mentorship program combining self-paced online modules with webinar workshops.
+          </p>
+        </div>
+      </section>
+
+      <!-- Game-Based Simulation Design -->
+      <section id="simulation-design" class="prose-custom">
+        <h2>Game-Based ICS Simulation Design for Capacity Building</h2>
+
+        <p class="text-lg leading-relaxed mb-6">
+          The design of game-based ICS simulations for Philippine capacity building must leverage iOS/macOS native development, role-based multiplayer scenarios featuring Philippine-specific hazards, competency-based scoring across six domains, and full compliance with Apple Human Interface Guidelines to create immersive, effective training experiences.
+        </p>
+
+        <div id="design-principles">
+          <h3>Core Design Principles</h3>
+
+          <h4>Pedagogical Foundation</h4>
+          <p>
+            The design must rest on established principles of experiential learning, where knowledge construction occurs through active engagement with realistic challenges rather than passive information reception. <strong>Kolb&#39;s experiential learning cycle</strong>—concrete experience, reflective observation, abstract conceptualization, and active experimentation—provides a framework for structuring simulation-based training.
+          </p>
+
+          <blockquote>
+            &#34;Interactive, hands-on simulation including individual feedback and team debriefing is ideal, with trainers as facilitators rather than teachers who stimulate learning through experience.&#34;
+            <cite>— Research on emergency management training</cite>
+          </blockquote>
+
+          <div class="data-viz">
+            <h4>Competency-Based Progression Framework</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Basic Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Single hazard, single jurisdiction</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Clear objectives, adequate resources</li>
+                  <li>• Limited time pressure</li>
+                  <li>• ICS fundamentals focus</li>
+                  <li>• Organizational structure basics</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Intermediate Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Multi-agency coordination required</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Resource constraints, prioritization</li>
+                  <li>• Multiple operational periods</li>
+                  <li>• Resource prioritization skills</li>
+                  <li>• Inter-agency negotiation practice</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Advanced Level</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Multi-jurisdiction, unified command</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Political sensitivities, media scrutiny</li>
+                  <li>• Prolonged duration challenges</li>
+                  <li>• Complex command arrangements</li>
+                  <li>• Strategic stakeholder management</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Position-Specific</h5>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Deep specialization in single role</p>
+                <ul class="text-xs space-y-1" style="color:var(--text-muted);">
+                  <li>• Realistic interdependencies</li>
+                  <li>• Expert-level performance focus</li>
+                  <li>• Mentorship capability development</li>
+                  <li>• Advanced functional expertise</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h4>Platform and Technical Architecture</h4>
+          <p>
+            <strong>Native iOS/macOS development for Apple ecosystem compliance</strong> ensures optimal performance, security, and user experience on devices widely used in Philippine government and education. <strong>Swift and SwiftUI</strong> provide modern frameworks for creating responsive, accessible interfaces that adapt seamlessly across iPhone, iPad, and Mac.
+          </p>
+
+          <div class="rounded-lg p-4 my-6 border dark-section" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue) !important;font-family:'Poppins',sans-serif;">Technical Architecture Components</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Cross-platform Multiplayer</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">Game Center for matchmaking + custom backend for complex state synchronization</p>
+                <h6 class="font-medium mb-2 mt-3" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Cloud-based Scenario Repository</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">iCloud with intelligent local caching; version control for content updates</p>
+              </div>
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Progress Synchronization</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">iCloud Core Data with conflict resolution for seamless cross-device experience</p>
+                <h6 class="font-medium mb-2 mt-3" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Real-time Multiplayer State</h6>
+                <p class="text-xs" style="color:rgba(147,197,253,0.8);">Authoritative server with client-side prediction for consistency and responsiveness</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="role-system">
+          <h3>Role-Based Player System</h3>
+
+          <h4>Command Roles</h4>
+          <p>
+            The <strong>Incident Commander</strong> role represents the apex of simulation responsibility, with players experiencing strategic decision-making under uncertainty, overall accountability, and management of organizational complexity. Players must establish incident objectives, approve strategies, authorize resource orders, and coordinate with elected officials and media.
+          </p>
+
+          <div class="data-viz">
+            <h4>Command Role Performance Framework</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead style="background:var(--navy);">
+                  <tr>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Command Role</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Primary Simulation Activities</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Key Performance Indicators</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Common Failure Modes</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Objective setting, strategy approval, resource authorization</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Incident outcome quality, safety record, resource efficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Micromanagement, failure to delegate, decision paralysis</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Operations Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Tactical assignment, branch coordination, safety monitoring</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Task completion rate, responder safety, tactical effectiveness</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Tactical fragmentation, inadequate span of control, safety oversight</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Planning Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Information collection, situation assessment, IAP development</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Situation awareness accuracy, planning timeliness, forecast quality</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Information overload, analysis paralysis, planning-production disconnect</td></tr>
+                  <tr style="background:#e8f4ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Logistics Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Resource procurement, facility management, personnel support</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Resource availability, support response time, cost efficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Reactive logistics, inadequate sustainability planning, procurement delays</td></tr>
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Finance/Admin Section Chief</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Cost tracking, procurement administration, time recording</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Financial documentation completeness, cost control, audit readiness</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Postponed documentation, inadequate cost projection, non-compliance</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h4>Command Staff Roles</h4>
+          <p>
+            The <strong>Public Information Officer</strong> manages media relations and public communications, with simulation challenges including information verification under pressure, message consistency, and coordination with operational realities. The <strong>Safety Officer</strong> exercises continuous risk assessment and safety protocol enforcement, with emergency authority to stop unsafe operations.
+          </p>
+
+          <h4>Agency Representative and Specialist Roles</h4>
+          <p>
+            <strong>Agency Representative roles</strong> enable multiplayer unified command scenarios where players from different organizations must coordinate under shared authority. Fire, police, health, and social welfare coordinators bring organization-specific capabilities, constraints, and perspectives that create authentic coordination challenges.
+          </p>
+
+          <div class="data-viz">
+            <h4>Agency Representative Coordination Dynamics</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-fire mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Fire/Rescue (BFP)</h5>
+                </div>
+                <p class="text-xs mb-2" style="color:var(--text-mid);"><strong>Capabilities:</strong> Fire suppression, technical rescue, hazmat response</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Friction Points:</strong> Resource competition for specialized equipment; safety authority conflicts with operational pressure</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-shield-alt mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Police (PNP)</h5>
+                </div>
+                <p class="text-xs mb-2" style="color:var(--text-mid);"><strong>Capabilities:</strong> Law enforcement, security, traffic control, criminal investigation</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Friction Points:</strong> Jurisdictional authority boundaries; information classification vs. operational need-to-know</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="scenario-framework">
+          <h3>Scenario-Based Simulation Framework</h3>
+
+          <h4>Philippine-Specific Hazard Scenarios</h4>
+          <p>
+            The simulation scenario library must reflect actual Philippine hazard experience to ensure transferability of training to operational contexts. Scenarios incorporate RA 12287 anticipatory action elements as core gameplay mechanics, requiring players to interpret forecast information with uncertainty bounds and make risk-based decisions about State of Imminent Disaster declaration timing.
+          </p>
+
+          <div class="data-viz">
+            <h4>Philippine-Specific Hazard Scenarios</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-hurricane mr-2" style="color:var(--blue-bright);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Typhoon &#34;Bayani&#34;</h5>
+                </div>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Category 4 landfall with storm surge</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> Multi-jurisdiction, extended duration, resource competition</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> RA 12287 anticipatory action, PAGASA warning system, informal settlement vulnerability</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#93c5fd;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-mountain mr-2" style="color:var(--blue-mid);"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">&#34;Big One&#34; Earthquake</h5>
+                </div>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">M7.2 Metro Manila earthquake scenario</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> No-notice onset, USAR integration, mass casualty</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> MM building typologies, PHIVOLCS coordination, private hospital surge</p>
+              </div>
+              <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#60a5fa;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-volcano mr-2" style="color:#2563eb;"></i>
+                  <h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Taal Volcano Escalation</h5>
+                </div>
+                <p class="text-xs mb-2 font-semibold" style="color:var(--text-mid);">Alert Level 3-4 progression</p>
+                <p class="text-xs mb-2" style="color:var(--text-muted);"><strong>Complexity:</strong> Scientific uncertainty, extended duration, evacuation fatigue</p>
+                <p class="text-xs" style="color:var(--text-muted);"><strong>Philippine Elements:</strong> PHIVOLCS alert interpretation, tourism disruption, livestock evacuation</p>
+              </div>
+            </div>
+          </div>
+
+          <h4>Scenario Complexity Progression</h4>
+          <p>
+            The progression framework ensures that learners develop competence incrementally, with demonstrated performance unlocking subsequent levels. Scenario parameters adjust dynamically based on player history: struggling players receive more guidance and forgiving conditions; proficient players face escalated challenges.
+          </p>
+
+          <h4>Temporal and Operational Phases</h4>
+          <p>
+            The temporal phase structure creates distinct learning opportunities at each stage: pre-incident phases develop forecast interpretation and anticipatory decision-making capabilities; sustained operations phases build endurance and organizational maintenance skills; demobilization phases address the often-neglected conclusion of incident management.
+          </p>
+
+          <div class="mermaid-container">
+            <div class="mermaid-controls">
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
+            </div>
+            <div class="mermaid">
+              timeline
+              title Incident Management Timeline
+
+              section "Pre-Incident"
+              24-72 hours : "Forecast monitoring"
+              : "Risk assessment"
+              : "Declaration decision"
+              : "Anticipatory measures"
+              : "Resource pre-positioning"
+              : "Public warning"
+              : "Evacuation initiation"
+
+              section "Initial Response"
+              0-24 hours : "Rapid situation assessment"
+              : "Life safety operations"
+              : "Resource deployment"
+              : "ICS organization"
+              : "Immediate needs ID"
+
+              section "Sustained Operations"
+              24 hours - days/weeks : "Multiple operational periods"
+              : "Formal IAP development"
+              : "Resource rotation"
+              : "Fatigue management"
+              : "Adaptive strategy"
+
+              section "Demobilization"
+              Final 24-48 hours : "Resource release"
+              : "Documentation completion"
+              : "Cost capture"
+              : "Recovery handover"
+              : "After-action initiation"
+            </div>
+          </div>
+        </div>
+
+        <div id="interactive-features">
+          <h3>Interactive Features and User Experience</h3>
+
+          <h4>Compelling Interactions</h4>
+          <p>
+            <strong>Touch-optimized command interface for iPad/iPhone</strong> follows Apple HIG specifications with 44×44 point minimum touch targets, ensuring reliable activation under time pressure. The interface employs hierarchical information architecture with drill-down capability to unit details, resource status, and communication logs.
+          </p>
+
+          <div class="rounded-lg p-4 my-6 border" style="background:linear-gradient(135deg,#e0f2fe,#dbeafe);border-color:#7dd3fc;">
+            <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Drag-and-Drop Resource Allocation Features</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Visual Feedback</h6>
+                <ul class="text-xs space-y-1" style="color:var(--text-dark);">
+                  <li>• Resource icon follows touch with transparency indicating validity</li>
+                  <li>• Drop zone indication: green (appropriate), yellow (suboptimal), red (incompatible)</li>
+                  <li>• Assignment confirmation with haptic feedback and animation</li>
+                </ul>
+              </div>
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Advanced Operations</h6>
+                <ul class="text-xs space-y-1" style="color:var(--text-dark);">
+                  <li>• Batch operations with multi-select for large-scale resource movement</li>
+                  <li>• Undo functionality for error recovery and experimentation</li>
+                  <li>• Gesture-based map navigation and situation board manipulation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h4>Animation and Visual Feedback</h4>
+          <p>
+            <strong>Real-time incident progression with dynamic hazard visualization</strong> creates immersive situational awareness. Environmental effects enhance atmospheric realism and operational relevance, with time-of-day lighting transitions affecting visibility and operations.
+          </p>
+
+          <h4>Tooltip and Guidance Systems</h4>
+          <p>
+            <strong>Context-sensitive help for ICS terminology and procedures</strong> supports just-in-time learning with multiple depth levels. Role-specific procedure reminders and checklists scaffold position performance without substituting for learning.
+          </p>
+
+          <div class="data-viz">
+            <h4>Guidance System Hierarchy</h4>
+            <div class="space-y-3">
+              <div class="flex items-start p-3 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:var(--blue-bright);color:#ffffff;font-family:'Poppins',sans-serif;">1</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Quick Definition</h5><p class="text-xs" style="color:var(--text-dark);">Brief hover/long-press on term → 1-2 sentence explanation with related terms</p></div>
+              </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:#0891b2;color:#ffffff;font-family:'Poppins',sans-serif;">2</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Detailed Explanation</h5><p class="text-xs" style="color:var(--text-dark);">Tap "More" → Full concept description with procedural context</p></div>
+              </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:var(--blue-mid);color:#ffffff;font-family:'Poppins',sans-serif;">3</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Procedural Guide</h5><p class="text-xs" style="color:var(--text-dark);">Role-specific help → Step-by-step checklist for common tasks</p></div>
+              </div>
+              <div class="flex items-start p-3 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                <div class="rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0" style="background:#4f46e5;color:#ffffff;font-family:'Poppins',sans-serif;">4</div>
+                <div><h5 class="font-semibold" style="color:var(--navy);font-family:'Poppins',sans-serif;">Regulatory Reference</h5><p class="text-xs" style="color:var(--text-dark);">"Legal basis" link → Citation to RA 10121, RA 12287, NDRRMC guidelines with relevant text</p></div>
+              </div>
+            </div>
+          </div>
+
+          <h4>Alert and Notification Systems</h4>
+          <p>
+            <strong>Priority-based alert hierarchy</strong> ensures appropriate attention allocation, with multi-modal notifications ensuring perception across attention states. Escalation protocols for missed critical communications simulate real-world follow-through requirements.
+          </p>
+
+          <div class="data-viz">
+            <h4>Alert Priority Hierarchy</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#071428;border-color:#00d4ff;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-exclamation-triangle mr-2" style="color:var(--neon-blue);"></i>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Emergency</h5>
+                </div>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Full-screen overlay, persistent until acknowledged</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">Distinctive alarm tone, strong continuous haptic, blocks interaction</p>
+                <p class="text-xs mt-2" style="color:var(--neon-blue) !important;"><strong>Example:</strong> Imminent responder safety threat</p>
+              </div>
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#0d2045;border-color:#60a5fa;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-exclamation-circle mr-2" style="color:var(--light-blue);"></i>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Urgent</h5>
+                </div>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Banner alert, prominent but non-blocking</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">Single alert tone, moderate single haptic, auto-dismisses after timeout</p>
+                <p class="text-xs mt-2" style="color:var(--light-blue) !important;"><strong>Example:</strong> Resource request denial, status change</p>
+              </div>
+              <div class="p-4 rounded-lg border-2 dark-section" style="background:#1a3a6b;border-color:#93c5fd;">
+                <div class="flex items-center mb-2">
+                  <i class="fas fa-info-circle mr-2" style="color:#93c5fd;"></i>
+                  <h5 class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Routine</h5>
+                </div>
+                <p class="text-xs mb-2" style="color:rgba(147,197,253,0.95) !important;">Status bar indicator, subtle badge</p>
+                <p class="text-xs" style="color:rgba(147,197,253,0.85) !important;">No audio, no haptic, background awareness</p>
+                <p class="text-xs mt-2" style="color:#93c5fd !important;"><strong>Example:</strong> Situation report available, scheduled reminder</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="scoring-rubrics">
+          <h3>Scoring and Assessment Rubrics</h3>
+
+          <h4>Competency Domain Scoring</h4>
+          <p>
+            The assessment framework employs <strong>six competency domains</strong> validated against Philippine ICS training objectives and international best practices. The point distribution reflects the operational centrality of response activities and the foundational importance of situation evaluation and command decision-making.
+          </p>
+
+          <div class="data-viz">
+            <h4>Six-Domain Competency Assessment Framework</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <div class="p-4 rounded-lg border" style="background:#dbeafe;border-color:#93c5fd;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Situation Evaluation (28 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to gather, analyze, and interpret incident information</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Information completeness, hazard identification accuracy, critical factor recognition</p>
+                </div>
+                <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#38bdf8;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Command Decision-Making (28 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to establish appropriate objectives and select effective strategies</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Objective clarity, strategy alignment, safety consideration, adaptation to change</p>
+                </div>
+                <div class="p-4 rounded-lg border" style="background:#eff6ff;border-color:#60a5fa;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Response Activities (43 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to order, deploy, and manage resources to achieve tactical objectives</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Resource request timeliness, tactical positioning, task clarity, resource utilization</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="p-4 rounded-lg border" style="background:#eef2ff;border-color:#a5b4fc;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Progress Management (35 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to plan, execute, and adapt operations across multiple periods</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> IAP quality, objective achievement, organizational modification, sustained effectiveness</p>
+                </div>
+                <div class="p-4 rounded-lg border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Communication (26 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to exchange information clearly, completely, and appropriately</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Radio protocol adherence, briefing clarity, proactive distribution, responsiveness</p>
+                </div>
+                <div class="p-4 rounded-lg border" style="background:#e0f2fe;border-color:#0891b2;">
+                  <h5 class="font-semibold mb-2" style="color:var(--navy);font-family:'Poppins',sans-serif;">Crisis Leadership (40 pts)</h5>
+                  <p class="text-xs mb-2" style="color:var(--text-mid);">Capacity to maintain effective performance under pressure and coordinate team functioning</p>
+                  <p class="text-xs" style="color:var(--text-muted);"><strong>Indicators:</strong> Composure maintenance, effective delegation, ethical reasoning, conflict management</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 rounded-lg mt-4 dark-section" style="background:var(--navy);">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Total Possible Score:</span>
+                <span class="text-xl font-bold" style="color:var(--neon-blue) !important;">200 points</span>
+              </div>
+              <div class="flex justify-between items-center mt-2">
+                <span class="font-semibold" style="color:#ffffff !important;font-family:'Poppins',sans-serif;">Passing Threshold:</span>
+                <span class="text-lg font-bold" style="color:var(--light-blue) !important;">160 points (80%)</span>
+              </div>
+            </div>
+          </div>
+
+          <h4>Scoring Methodology</h4>
+          <p>
+            <strong>Points-based system with maximum scores per competency domain</strong> enables granular performance feedback. Threshold-based pass/fail with minimum standards per critical indicator ensures no compensation for critical deficiencies.
+          </p>
+
+          <h4>Feedback and Debriefing</h4>
+          <p>
+            <strong>Immediate post-scenario performance summary</strong> provides rapid orientation, while detailed rubric-based breakdown with behavioral indicators enables targeted improvement planning. Replay functionality with annotated decision points supports deep reflective learning.
+          </p>
+
+          <div class="mermaid-container">
+            <div class="mermaid-controls">
+              <button class="mermaid-control-btn zoom-in" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+              <button class="mermaid-control-btn zoom-out" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+              <button class="mermaid-control-btn reset-zoom" title="Reset"><i class="fas fa-expand-arrows-alt"></i></button>
+              <button class="mermaid-control-btn fullscreen" title="Fullscreen"><i class="fas fa-expand"></i></button>
+            </div>
+            <div class="mermaid">
+              graph LR
+              A["Scenario Completion"] --> B["Immediate Performance Summary"]
+              B --> C["Overall Result: Pass/Conditional/Failure"]
+              B --> D["Key Event Highlights"]
+              B --> E["Comparative Context"]
+
+              A --> F["Detailed Debriefing"]
+              F --> G["Domain Score Breakdown"]
+              F --> H["Critical Moment Analysis"]
+              F --> I["Expert Comparison"]
+              F --> J["Improvement Recommendations"]
+
+              A --> K["Replay Functionality"]
+              K --> L["Full Scenario Replay"]
+              K --> M["Decision Point Analysis"]
+              K --> N["Alternative Exploration"]
+              K --> O["Collaborative Debriefing"]
+
+              J --> P["Targeted Development Plan"]
+              P --> Q["Automated Suggestions"]
+              P --> R["Instructor Override"]
+              P --> S["Resource Linking"]
+              P --> T["Goal Setting"]
+
+              style A fill:#1d6bbf,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style B fill:#1a3a6b,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style C fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style D fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style E fill:#0d2045,stroke:#93c5fd,stroke-width:2px,color:#ffffff
+              style F fill:#1a3a6b,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style G fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style H fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style I fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style J fill:#0891b2,stroke:#00d4ff,stroke-width:2px,color:#ffffff
+              style K fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style L fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style M fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style N fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style O fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#ffffff
+              style P fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style Q fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style R fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style S fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+              style T fill:#071428,stroke:#00d4ff,stroke-width:3px,color:#00d4ff
+            </div>
+          </div>
+        </div>
+
+        <div id="game-modes">
+          <h3>Single-Player and Multiplayer Modes</h3>
+
+          <h4>Single-Player Experience</h4>
+          <p>
+            <strong>Progressive career mode with role unlocks and certification simulation</strong> structures long-term engagement. Players advance from Responder to Certified Incident Commander through demonstrated proficiency and comprehensive assessment.
+          </p>
+
+          <div class="data-viz">
+            <h4>Career Progression Path</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead style="background:var(--navy);">
+                  <tr>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Career Stage</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Unlock Requirements</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Available Content</th>
+                    <th class="px-4 py-3 text-left" style="color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Certification Path</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y" style="border-color:var(--border);">
+                  <tr style="background:#e0f2fe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Responder</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Initial account creation</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Basic ICS tutorial; observer role; terminology quizzes</td><td class="px-4 py-2 text-xs" style="color:var(--text-muted);">—</td></tr>
+                  <tr style="background:#dbeafe;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Operations Specialist</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Complete Basic ICS tutorial</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Operations Section member roles; single-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-100 equivalent</td></tr>
+                  <tr style="background:#eef2ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Section Chief Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Demonstrate specialist proficiency</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Section Chief roles; multi-period incidents</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-200 equivalent</td></tr>
+                  <tr style="background:#eff6ff;"><td class="px-4 py-2 font-medium" style="color:var(--navy);">Incident Commander Candidate</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">Proficiency in 2 Section Chief roles</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">IC role; unified command as deputy; complex scenarios</td><td class="px-4 py-2 text-xs" style="color:var(--text-dark);">ICS-300 equivalent</td></tr>
+                  <tr style="background:var(--navy);"><td class="px-4 py-2 font-medium" style="color:#ffffff !important;">Certified IC</td><td class="px-4 py-2 text-xs" style="color:rgba(200,225,255,0.95) !important;">Pass comprehensive IC assessment</td><td class="px-4 py-2 text-xs" style="color:rgba(200,225,255,0.95) !important;">All roles and scenarios; expert complexity; mentorship</td><td class="px-4 py-2 text-xs" style="color:var(--neon-blue) !important;">ICS-400 equivalent; National Cadre</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h4>Multiplayer Collaboration</h4>
+          <p>
+            <strong>Synchronized team-based incident command</strong> enables authentic coordination practice. Role specialization with interdependent responsibilities creates genuine teamwork requirements, while voice and text communication integration supports realistic coordination.
+          </p>
+        </div>
+
+        <div id="apple-compliance">
+          <h3>Apple Human Interface Guidelines Compliance</h3>
+
+          <h4>Visual Design and Hierarchy</h4>
+          <p>
+            <strong>Clear information architecture with logical content grouping</strong> follows Apple HIG principles of Hierarchy, Harmony, and Consistency. Consistent use of system fonts, colors, and iconography ensures familiarity and accessibility.
+          </p>
+
+          <div class="data-viz">
+            <h4>Apple HIG Compliance Matrix</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Visual Design</h5>
+                <div class="space-y-2">
+                  <div class="p-3 rounded border" style="background:#dbeafe;border-color:#93c5fd;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Hierarchy</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Primary incident status prominent; secondary information accessible through progressive disclosure</p>
+                  </div>
+                  <div class="p-3 rounded border" style="background:#e0f2fe;border-color:#38bdf8;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Harmony</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Visual design aligned with iOS/macOS system aesthetics; subtle color for status indication</p>
+                  </div>
+                  <div class="p-3 rounded border" style="background:#eef2ff;border-color:#a5b4fc;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Consistency</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Standard iOS navigation patterns; platform-typical iconography; predictable interaction behaviors</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h5 class="font-semibold mb-3" style="color:var(--navy);font-family:'Poppins',sans-serif;">Accessibility</h5>
+                <div class="space-y-2">
+                  <div class="p-3 rounded border" style="background:#eff6ff;border-color:#60a5fa;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">VoiceOver Support</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Non-visual operation with descriptive labeling, logical navigation, audio/haptic feedback</p>
+                  </div>
+                  <div class="p-3 rounded border" style="background:#e8f4ff;border-color:#7dd3fc;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Dynamic Type</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Responsive layout with full Dynamic Type range support; minimum truncation</p>
+                  </div>
+                  <div class="p-3 rounded border" style="background:#dbeafe;border-color:#93c5fd;">
+                    <h6 class="font-medium text-sm mb-1" style="color:var(--navy);font-family:'Poppins',sans-serif;">Reduce Motion</h6>
+                    <p class="text-xs" style="color:var(--text-dark);">Options for animation sensitivity with static representations and subtle transitions</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4>Interaction Design</h4>
+          <p>
+            <strong>Intuitive touch controls with appropriate target sizes</strong> meet Apple HIG minimum specifications. Standard iOS gestures for navigation and manipulation leverage user familiarity, while contextual menus and action sheets present appropriate choices without clutter.
+          </p>
+
+          <h4>System Integration</h4>
+          <p>
+            <strong>Game Center achievements and multiplayer matchmaking</strong> leverage Apple&#39;s social gaming infrastructure. iCloud save and cross-device progress sync enable seamless experience continuity, while SharePlay support facilitates collaborative remote training sessions.
+          </p>
+
+          <div class="rounded-lg p-4 my-6 border dark-section" style="background:var(--navy);border-color:rgba(0,212,255,0.25);">
+            <h5 class="font-semibold mb-3" style="color:var(--neon-blue) !important;font-family:'Poppins',sans-serif;">System Integration Features</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">Game Center Integration</h6>
+                <ul class="text-xs space-y-1" style="color:rgba(147,197,253,0.85);">
+                  <li>• Training milestones and scenario-specific achievements</li>
+                  <li>• Time-based leaderboards for challenge scenarios</li>
+                  <li>• Quick join matchmaking and friend invitations</li>
+                  <li>• Activity dashboard with personal statistics and comparisons</li>
+                </ul>
+              </div>
+              <div>
+                <h6 class="font-medium mb-2" style="color:var(--light-blue);font-family:'Poppins',sans-serif;">iCloud &amp; SharePlay</h6>
+                <ul class="text-xs space-y-1" style="color:rgba(147,197,253,0.85);">
+                  <li>• Seamless scenario progress and performance history sync</li>
+                  <li>• Push notifications for training reminders and updates</li>
+                  <li>• SharePlay for collaborative remote training sessions</li>
+                  <li>• FaceTime integration with synchronized scenario state</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conclusion -->
+      <section class="prose-custom">
+        <h2>Conclusion: Transforming ICS Capacity Building Through Technology</h2>
+
+        <p class="text-lg leading-relaxed mb-6">
+          The Philippine Incident Command System represents a comprehensive, legally mandated framework that fundamentally transforms disaster response coordination. Through the integration of Republic Act 10121&#39;s foundational mandate and Republic Act 12287&#39;s pioneering anticipatory action provisions, the ICS provides a scalable, interoperable structure capable of managing the complex multi-hazard environment of the Philippine archipelago.
+        </p>
+
+        <blockquote>
+          &#34;The future of disaster preparedness lies not just in having robust frameworks, but in ensuring that every responder, from barangay captain to national agency director, can execute these frameworks with precision and confidence through immersive, technology-enabled training.&#34;
+          <cite>— Strategic Vision for Philippine Disaster Resilience</cite>
+        </blockquote>
+
+        <p>
+          The game-based simulation approach outlined in this framework addresses critical capacity building needs by providing experiential learning opportunities that traditional classroom training cannot replicate. By leveraging iOS/macOS native development, role-based multiplayer scenarios, and competency-based assessment aligned with Philippine-specific hazards and legal requirements, this simulation design creates a pathway for sustainable, scalable ICS capacity development.
+        </p>
+
+        <p>
+          The integration with Apple&#39;s Human Interface Guidelines ensures that the resulting application will be accessible, inclusive, and engaging for users across the Philippine government and civil society sectors. The emphasis on anticipatory action capabilities, multi-agency coordination, and unified command scenarios reflects the evolving nature of disaster risk reduction in the Philippines and positions the country as a global leader in comprehensive disaster management training innovation.
+        </p>
+
+        <div class="rounded-lg p-6 mt-8 border" style="background:linear-gradient(135deg,#e8f4ff,#dbeafe);border-color:#93c5fd;">
+          <h3 style="font-family:'Roboto Condensed',sans-serif;font-weight:700;font-size:1.25rem;color:var(--navy);margin-bottom:1rem;">Key Implementation Success Factors</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Technical Excellence</h4>
+              <ul class="text-sm space-y-1" style="color:var(--text-dark);">
+                <li>• Native iOS/macOS development for optimal performance</li>
+                <li>• Apple HIG compliance for accessibility and usability</li>
+                <li>• Cloud-based content delivery for scalability</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-medium mb-2" style="color:var(--blue-mid);font-family:'Poppins',sans-serif;">Educational Impact</h4>
+              <ul class="text-sm space-y-1" style="color:var(--text-dark);">
+                <li>• Competency-based progression aligned with ICS standards</li>
+                <li>• Scenario-based learning with Philippine-specific hazards</li>
+                <li>• Multiplayer coordination for authentic team training</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          As the Philippines continues to strengthen its disaster resilience capabilities, the combination of robust legal frameworks, institutional coordination mechanisms, and innovative training technologies positions the country to effectively manage the increasing complexity and frequency of disaster events while maintaining its commitment to protecting lives, property, and community well-being.
+        </p>
+      </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ 
+                startOnLoad: true,
+                theme: 'base',
+                themeVariables: {
+                    primaryColor: '#1a3a6b',
+                    primaryTextColor: '#ffffff',
+                    primaryBorderColor: '#00d4ff',
+                    lineColor: '#60a5fa',
+                    secondaryColor: '#0d2045',
+                    secondaryTextColor: '#ffffff',
+                    secondaryBorderColor: '#60a5fa',
+                    tertiaryColor: '#071428',
+                    tertiaryTextColor: '#ffffff',
+                    tertiaryBorderColor: '#93c5fd',
+                    background: '#0d2045',
+                    mainBkg: '#1a3a6b',
+                    secondBkg: '#0d2045',
+                    tertiaryBkg: '#071428',
+                    cScale0: '#071428',
+                    cScale1: '#1a3a6b',
+                    cScale2: '#0d2045',
+                    cScale3: '#1d6bbf',
+                    cScale4: '#2563eb',
+                    cScale5: '#0891b2',
+                    nodeBorder: '#00d4ff',
+                    clusterBkg: '#0d2045',
+                    clusterBorder: '#60a5fa',
+                    defaultLinkColor: '#60a5fa',
+                    titleColor: '#00d4ff',
+                    edgeLabelBackground: '#0d2045',
+                    nodeTextColor: '#ffffff',
+                    textColor: '#ffffff',
+                    labelTextColor: '#ffffff',
+                    darkTextColor: '#ffffff',
+                    lightTextColor: '#ffffff',
+                    activeTaskBkgColor: '#1d6bbf',
+                    activeTaskBorderColor: '#00d4ff',
+                    gridColor: '#1a3a6b',
+                    section0: '#071428',
+                    section1: '#0d2045',
+                    section2: '#1a3a6b',
+                    section3: '#1d6bbf'
+                },
+                flowchart: {
+                    useMaxWidth: false,
+                    htmlLabels: true,
+                    curve: 'basis',
+                    padding: 20
+                },
+                timeline: { useMaxWidth: false, padding: 20 },
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 14,
+                securityLevel: 'loose'
+            });
+
+            initializeMermaidControls();
+
+            // ── Run contrast enforcer after mermaid renders ──────
+            // Mermaid renders async; poll until all SVGs are present
+            let attempts = 0;
+            const svgPoller = setInterval(() => {
+                const svgs = document.querySelectorAll('.mermaid-container svg');
+                if (svgs.length > 0 || attempts > 40) {
+                    clearInterval(svgPoller);
+                    fixSVGContrast();
+                }
+                attempts++;
+            }, 150);
+
+            // Also run general dark-bg contrast check once
+            setTimeout(fixDarkContainerContrast, 800);
+        });
+
+        /* ── Force all SVG text inside mermaid containers to white ── */
+        function fixSVGContrast() {
+            document.querySelectorAll('.mermaid-container svg').forEach(svg => {
+                // All text and tspan
+                svg.querySelectorAll('text, tspan').forEach(el => {
+                    el.setAttribute('fill', '#ffffff');
+                    el.style.fill = '#ffffff';
+                    el.style.color = '#ffffff';
+                });
+                // All foreignObject content (HTML labels in flowcharts)
+                svg.querySelectorAll('foreignObject *').forEach(el => {
+                    el.style.color = '#ffffff';
+                });
+                // Edge label text backgrounds
+                svg.querySelectorAll('.edgeLabel rect, .labelBkg').forEach(el => {
+                    el.setAttribute('fill', '#0d2045');
+                    el.style.fill = '#0d2045';
+                });
+                // Connector arrows
+                svg.querySelectorAll('marker path, marker polygon').forEach(el => {
+                    el.setAttribute('fill', '#60a5fa');
+                    el.style.fill = '#60a5fa';
+                });
+            });
+        }
+
+        /* ── Check any remaining dark containers and enforce white text ── */
+        function fixDarkContainerContrast() {
+            // Covers elements with inline dark background styles
+            document.querySelectorAll('[style]').forEach(el => {
+                const s = el.getAttribute('style') || '';
+                const isDark = s.includes('var(--navy)') || s.includes('var(--deep-blue)') ||
+                               s.includes('#0d2045') || s.includes('#071428') ||
+                               s.includes('#1a3a6b') || s.includes('#1d3a6b');
+                if (!isDark) return;
+
+                // Walk all child text elements that don't have their own bg
+                el.querySelectorAll('p, span, li, td, th, h1, h2, h3, h4, h5, h6, cite, strong, em, a').forEach(child => {
+                    const cs = window.getComputedStyle(child);
+                    const bg = cs.backgroundColor;
+                    const isTransparent = !bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent';
+                    if (isTransparent && !child.style.color) {
+                        child.style.color = '#ffffff';
+                    }
+                });
+            });
+        }
+
+        function initializeMermaidControls() {
+            const containers = document.querySelectorAll('.mermaid-container');
+            containers.forEach(container => {
+                const mermaidElement = container.querySelector('.mermaid');
+                let scale = 1, isDragging = false;
+                let startX, startY, translateX = 0, translateY = 0;
+                let isTouch = false, initialDistance = 0, initialScale = 1, isPinching = false;
+
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                const resetBtn = container.querySelector('.reset-zoom');
+                const fullscreenBtn = container.querySelector('.fullscreen');
+
+                function updateTransform() {
+                    mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                    container.classList.toggle('zoomed', scale > 1);
+                    mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+                }
+
+                if (zoomInBtn) zoomInBtn.addEventListener('click', () => { scale = Math.min(scale * 1.25, 4); updateTransform(); });
+                if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { scale = Math.max(scale / 1.25, 0.3); if (scale <= 1) { translateX = 0; translateY = 0; } updateTransform(); });
+                if (resetBtn) resetBtn.addEventListener('click', () => { scale = 1; translateX = 0; translateY = 0; updateTransform(); });
+                if (fullscreenBtn) fullscreenBtn.addEventListener('click', () => { (container.requestFullscreen || container.webkitRequestFullscreen || (() => {})).call(container); });
+
+                mermaidElement.addEventListener('mousedown', (e) => { if (isTouch) return; isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY; updateTransform(); e.preventDefault(); });
+                document.addEventListener('mousemove', (e) => { if (isDragging && !isTouch) { translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(); } });
+                document.addEventListener('mouseup', () => { if (isDragging && !isTouch) { isDragging = false; updateTransform(); } });
+
+                function getTouchDistance(t1, t2) { return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); }
+
+                mermaidElement.addEventListener('touchstart', (e) => {
+                    isTouch = true;
+                    if (e.touches.length === 1) { isPinching = false; isDragging = true; startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY; }
+                    else if (e.touches.length === 2) { isPinching = true; isDragging = false; initialDistance = getTouchDistance(e.touches[0], e.touches[1]); initialScale = scale; }
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1 && isDragging && !isPinching) { translateX = e.touches[0].clientX - startX; translateY = e.touches[0].clientY - startY; updateTransform(); }
+                    else if (e.touches.length === 2 && isPinching) { const d = getTouchDistance(e.touches[0], e.touches[1]); if (initialDistance > 0) { scale = Math.min(Math.max(initialScale * (d / initialDistance), 0.3), 4); updateTransform(); } }
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchend', (e) => { if (e.touches.length === 0) { isDragging = false; isPinching = false; initialDistance = 0; setTimeout(() => { isTouch = false; }, 100); } else if (e.touches.length === 1 && isPinching) { isPinching = false; isDragging = true; startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY; } updateTransform(); });
+
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+                    if (newScale !== scale) { const r = newScale / scale; translateX *= r; translateY *= r; scale = newScale; if (scale <= 1) { translateX = 0; translateY = 0; } updateTransform(); }
+                });
+
+                updateTransform();
+            });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        function updateActiveTOC() {
+            const sections = document.querySelectorAll('section[id], div[id]');
+            const tocLinks = document.querySelectorAll('.toc-fixed a');
+            let current = '';
+            sections.forEach(section => { if (pageYOffset >= section.offsetTop - 200) current = section.getAttribute('id'); });
+            tocLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === '#' + current) link.classList.add('active'); });
+        }
+
+        window.addEventListener('scroll', updateActiveTOC);
+        updateActiveTOC();
+    </script>
+</body></html>

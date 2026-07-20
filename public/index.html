@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DDRiVE-M: Philippines' first AI-powered disaster resilience platform. Compliant with RA 10121, ISO 31000, and UNDRR frameworks. Enhance your organization's disaster preparedness today.">
+    <meta name="keywords" content="disaster resilience, Philippines, LGU, DRRM, RA 10121, ISO 31000, UNDRR, hazard monitoring, risk assessment">
+    <meta name="author" content="ASilva Innovations">
+    <meta property="og:title" content="DDRiVE-M: AI-Powered Disaster Resilience for Organizations and Institutions">
+    <meta property="og:description" content="Comprehensive disaster intelligence platform compliant with Philippine laws and international standards.">
+    <meta property="og:image" content="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png">
+    <meta property="og:url" content="https://asilvainnovations.com/ddrive-m">
+    <title>DDRiVE-M | AI-Powered Integrated Disaster Resilience Platform</title>
+    <link rel="preconnect" href="https://asilvainnovations.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1d3693;
+            --secondary: #f59e0b;
+            --accent: #0f766e;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.7);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.15);
+            border-color: white;
+        }
+        
+        .btn-dashboard {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.85rem 1.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-dashboard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(30, 64, 175, 0.4);
+        }
+        
+        .section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .section-title p {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* =====================
+           Header & Navigation
+        ===================== */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            position: relative;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        /* ── Circular logo icon ── */
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;           /* circular */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            flex-shrink: 0;
+            background: white;
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .logo-subtext {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: -0.25rem;
+        }
+
+        /* Desktop nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.4rem;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .nav-links a.nav-btn-dashboard {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links a.nav-btn-dashboard:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #162c7a);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        /* Hamburger button */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 42px;
+            height: 42px;
+            background: none;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            padding: 8px;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-btn:hover {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .hamburger-bar {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background-color: var(--dark);
+            border-radius: 2px;
+            transition: var(--transition);
+            transform-origin: center;
+        }
+
+        .mobile-menu-btn.is-open .hamburger-bar:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+        .mobile-menu-btn.is-open .hamburger-bar:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .mobile-menu-btn.is-open .hamburger-bar:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Mobile drawer */
+        .mobile-nav {
+            display: none;
+            flex-direction: column;
+            gap: 0.25rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 1rem 1.5rem 1.25rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            animation: slideDown 0.22s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-nav.is-open {
+            display: flex;
+        }
+
+        .mobile-nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.7rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav a:hover {
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .mobile-nav a.nav-btn-dashboard {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 0.5rem;
+            border-bottom: none;
+        }
+
+        .mobile-nav a.nav-btn-dashboard:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #162c7a);
+            color: white;
+        }
+
+        /* =====================
+           Hero Section  — full-width stacked layout
+        ===================== */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0c4a6e 100%);
+            color: white;
+            padding: 4.5rem 0 0;          /* no bottom padding — image bleeds to edge */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+
+        /* Text block — centred, max-width for readability */
+        .hero-text-block {
+            position: relative;
+            text-align: center;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+        
+        .hero-text-block h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.15;
+        }
+        
+        .hero-text-block p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .compliance-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Full-width hero image strip */
+        .hero-image-full {
+            position: relative;
+            width: 100%;
+            line-height: 0;            /* kill inline gap */
+            /* subtle top fade so image blends into the gradient */
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%);
+        }
+
+        .hero-image-full img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        
+        /* Features Section */
+        .features {
+            background-color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+        }
+        
+        /* Video Section */
+        .video-section {
+            background: linear-gradient(to bottom, #f1f5f9, white);
+            padding: 5rem 0;
+        }
+        
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Compliance Section */
+        .compliance {
+            background-color: white;
+        }
+        
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .compliance-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-radius: 1.25rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+        
+        .compliance-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .compliance-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.75rem;
+        }
+        
+        .compliance-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-align: center;
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .cta p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* =====================
+           Floating Action Button
+           with circular icon
+        ===================== */
+        .floating-dashboard {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--secondary), #eab308);
+            color: white;
+            padding: 0.65rem 1.4rem 0.65rem 0.65rem; /* tighter left to hug the circle */
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .floating-dashboard:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.5);
+        }
+
+        /* ── Circular icon inside the floating button ── */
+        .floating-logo-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.7);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-col h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* =====================
+           Responsive Design
+        ===================== */
+        @media (max-width: 992px) {
+            .floating-dashboard {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text-block h1 {
+                font-size: 2.25rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .btn-dashboard {
+                padding: 0.7rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .floating-dashboard {
+                font-size: 0.8rem;
+                padding: 0.55rem 1.1rem 0.55rem 0.55rem;
+                gap: 0.5rem;
+            }
+
+            .floating-logo-circle {
+                width: 28px;
+                height: 28px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero {
+                padding-top: 3rem;
+            }
+            
+            .hero-text-block h1 {
+                font-size: 1.85rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Floating Dashboard Button (with circular icon) ── -->
+    <a href="https://intelligence-risk-response.deploypad.app/" class="floating-dashboard">
+        <div class="floating-logo-circle">
+            <img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1767510419" alt="DDRiVE-M Logo">
+        </div>
+        LAUNCH DASHBOARD NOW
+    </a>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <!-- Logo with circular icon -->
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <img src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" alt="DDRiVE-M Logo">
+                    </div>
+                    <div>
+                        <div class="logo-text">DDRiVE-M</div>
+                        <div class="logo-subtext"></div>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <ul class="nav-links" id="desktopNav">
+                    <li><a href="https://intelligence-risk-response.deploypad.app/" class="nav-btn-dashboard">Dashboard</a></li>
+                    <li><a href="https://asilvainnovations.github.io/ddrive-m/about.html">About</a></li>
+                    <li><a href="https://asilvainnovations.github.io/ddrive-m/faq.html">FAQ</a></li>
+                    <li><a href="https://asilvainnovations.github.io/website/policies.html">Policies</a></li>
+                    <li><a href="https://asilvainnovations.github.io/ddrive-m/pricing.html">Pricing</a></li>
+                    <li><a href="https://asilvainnovations.github.io/website/contact.html">Contact</a></li>
+                </ul>
+
+                <!-- Hamburger Button (mobile) -->
+                <button class="mobile-menu-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileNav">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </button>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+                <a href="https://intelligence-risk-response.deploypad.app/" class="nav-btn-dashboard">Dashboard</a>
+                <a href="https://asilvainnovations.github.io/ddrive-m/about.html">About</a>
+                <a href="https://asilvainnovations.github.io/ddrive-m/faq.html">FAQ</a>
+                <a href="https://asilvainnovations.github.io/website/policies.html">Policies</a>
+                <a href="https://asilvainnovations.github.io/ddrive-m/pricing.html">Pricing</a>
+                <a href="https://asilvainnovations.github.io/website/contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ── Hero Section — stacked: text block → full-width image ── -->
+    <section class="hero">
+        <!-- Text content centred above the image -->
+        <div class="hero-text-block">
+            <h1>AI-Powered Disaster Resilience Platform for LGUs, SMEs, and Development Institutions</h1>
+            <p>Integrated intelligence platform compliant with RA 10121, ISO 31000, and UNDRR frameworks. Enhance your disaster preparedness from detection to recovery.</p>
+            <div class="hero-cta">
+                <a href="https://intelligence-risk-response.deploypad.app/" class="btn btn-dashboard">OPEN DASHBOARD</a>
+                <a href="#video" class="btn btn-secondary">Watch Video</a>
+            </div>
+            <div class="compliance-badges">
+                <span class="badge">RA 10121 Compliant</span>
+                <span class="badge">ISO 31000</span>
+                <span class="badge">UNDRR MCR2030</span>
+                <span class="badge">DILG MC 2020-161</span>
+            </div>
+        </div>
+
+        <!-- Full-width image below the headline, flush to the section edges -->
+        <div class="hero-image-full">
+            <img src="https://appimize.app/assets/apps/user_1097/images/493f05493f25_122_1097.png" alt="DDRiVE-M Intelligence Resilience Framework">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>The 7 Risk and Resilience Intelligence Modules</h2>
+                <p>End-to-end disaster resilience management system tailored for Philippine local government units</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">1</div>
+                    <h3>Detection</h3>
+                    <p>Empower disaster preparedness with multi-agency hazard monitoring integrated from PAGASA, PHIVOLCS, NOAH, and NDRRMC. Using Google Maps API and Zoom Earth Map Visualization, this module delivers dynamic 3D geospatial threat mapping with precise geolocation tagging. Enhanced by Faultfinder API and Flood Detection API, users can interact with real-time maps to uncover spatial risk concentrations and severity levels—transforming raw data into actionable intelligence.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">2</div>
+                    <h3>Diagnosis</h3>
+                    <p>Build resilience with a comprehensive ISO 31000-aligned risk registry. This module leverages machine learning and AI-driven analytics to assess strategic, operational, financial, compliance, and environmental risks. Users can upload diverse data—drone footage, images, text—for automated vulnerability detection. Risks are classified by type and severity, continuously improving through historical data training, ensuring adaptability to emerging threats.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">3</div>
+                    <h3>Response</h3>
+                    <p>Accelerate emergency response with an AI-augmented treatment canvas that integrates DTI, DILG, and LGU protocols. This module enables structured risk treatment and mitigation strategies, supported by a robust incident management system. Track incidents, assign tasks, and manage resources seamlessly to ensure coordinated, efficient disaster response across agencies and communities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">4</div>
+                    <h3>Integration</h3>
+                    <p>Measure and improve organizational and community resilience with the UNDRR 10 Essentials scorecard and SPARC Tool. This module provides progress tracking, resilience scoring, and year-over-year improvement monitoring, empowering organizations to benchmark disaster preparedness and continuously strengthen their risk management frameworks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">5</div>
+                    <h3>Validation</h3>
+                    <p>Enhance preparedness through scenario-based simulations for typhoons, earthquakes, and floods. Featuring a 3D interactive simulation game, users can practice Emergency Operations Center (EOC) procedures and continuity planning. With stakeholder feedback and community engagement tracking, this module transforms training into real-world readiness.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">6</div>
+                    <h3>Enhancement</h3>
+                    <p>Generate AI-powered DRRM, Continuity, and Recovery plans aligned with RA 10121, ISO 22301, and DILG standards. This module includes compliance dashboards, resource allocation tools, and recovery tracking features. With templates based on the PSCP second edition, organizations can streamline business continuity planning, disaster recovery, and resource management—ensuring resilience beyond the crisis.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">7</div>
+                    <h3>Monitoring</h3>
+                    <p>Stay ahead of risks with a real-time monitoring and communication hub. This module integrates team alerts, emergency protocols, and cross-functional coordination tools for seamless collaboration. Users can generate instant reports, share critical updates, and make joint decisions—ensuring timely, coordinated responses during risk assessments and disaster events.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section" id="video">
+        <div class="container">
+            <div class="section-title">
+                <h2>Watch the DDRiVE-M video</h2>
+                <p>Experience the intelligence platform through this video</p>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/P6U9L8xxq4E" allowfullscreen="true" allow="fullscreen"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compliance Section -->
+    <section class="section compliance" id="compliance">
+        <div class="container">
+            <div class="section-title">
+                <h2>Philippine & International Compliance</h2>
+                <p>Built to meet the strictest standards for disaster resilience and risk management</p>
+            </div>
+            <div class="compliance-grid">
+                <div class="compliance-card">
+                    <div class="compliance-icon">🇵🇭</div>
+                    <h3>RA 10121</h3>
+                    <p>Philippine Disaster Risk Reduction and Management Act of 2010</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🛡️</div>
+                    <h3>ISO 31000</h3>
+                    <p>International risk management guidelines and principles</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🌏</div>
+                    <h3>UNDRR MCR2030</h3>
+                    <p>Making Cities Resilient 2030 framework and 10 Essentials</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-icon">🏛️</div>
+                    <h3>DILG MC 2020-161</h3>
+                    <p>Department of Interior and Local Government standards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>Ready to Transform Risk into Resilience?</h2>
+            <p>Join hundreds of organizations already using DDRiVE-M to protect their communities and comply with national standards.</p>
+            <a href="https://intelligence-risk-response.deploypad.app/" class="btn btn-dashboard">GET STARTED NOW</a>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">120+</div>
+                    <div>Philippine LGUs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div>Compliance Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div>Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // ── Mobile hamburger toggle ──────────────────────────────────
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileNav    = document.getElementById('mobileNav');
+
+        hamburgerBtn.addEventListener('click', function () {
+            const isOpen = mobileNav.classList.toggle('is-open');
+            hamburgerBtn.classList.toggle('is-open', isOpen);
+            hamburgerBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        mobileNav.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                mobileNav.classList.remove('is-open');
+                hamburgerBtn.classList.remove('is-open');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                mobileNav.classList.remove('is-open');
+                hamburgerBtn.classList.remove('is-open');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // ── Smooth scrolling for anchor links ───────────────────────
+        document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

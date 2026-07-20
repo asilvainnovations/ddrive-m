@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Risk Assessment | Stronghold A3 Security Agency</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: '#0A1628',
+                        'navy-light': '#001b3d',
+                        'brand-blue': '#3B82F6',
+                        'brand-gold': '#FFD700',
+                    }
+                },
+            },
+        }
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js & jsPDF -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --gold: #FFD700;
+            --navy: #0A1628;
+            --blue: #3B82F6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at 20% 0%, #002b5c 0%, #001b3d 45%, #000c1f 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Watermark Logo Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(80vw, 80vh);
+            height: min(80vw, 80vh);
+            background-image: url('https://fhwhqoiucfxmfsclianh.databasepad.com/storage/v1/object/public/sop-files/public/Stronghold%20Logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        main, header, footer, nav, .container { position: relative; z-index: 1; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; letter-spacing: 0.02em; }
+
+        /* ===== LIQUID GLASS EFFECTS ===== */
+        .glass {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .glass-strong {
+            background: linear-gradient(135deg, rgba(10,22,40,0.85), rgba(0,12,31,0.92));
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(59,130,246,0.2);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .glass-gold {
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,215,0,0.4);
+        }
+
+        /* ===== HERO BANNER STYLES ===== */
+        .hero-banner-wrap {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        }
+        .hero-banner-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            filter: brightness(0.55); /* Darkens image slightly for text contrast */
+        }
+        .hero-banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(10,22,40,0.95) 0%, rgba(10,22,40,0.4) 50%, rgba(10,22,40,0.1) 100%);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes pulseG { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)} 50%{box-shadow:0 0 0 12px rgba(34,197,94,0)} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        .pulse-green { animation: pulseG 2.5s infinite; }
+        .animate-fade-in { animation: fadeInUp 0.5s ease forwards; }
+
+        /* ===== FORM ELEMENTS ===== */
+        input, select, textarea { 
+            color: #fff !important; 
+            background: rgba(255,255,255,0.05) !important; 
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s;
+        }
+        input::placeholder, textarea::placeholder { color: #94A3B8 !important; }
+        input:focus, select:focus, textarea:focus { 
+            outline: none; 
+            border-color: var(--blue); 
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            background: rgba(255,255,255,0.08) !important;
+        }
+        select option { background: var(--navy); color: #fff; }
+
+        /* ===== ASSESSMENT SPECIFIC ===== */
+        .option-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .option-card:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.5);
+            transform: translateX(5px);
+        }
+        .option-card.selected {
+            background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(59,130,246,0.1));
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(59,130,246,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .option-card.selected .option-radio {
+            background: var(--blue);
+            border-color: var(--blue);
+            box-shadow: 0 0 10px rgba(59,130,246,0.8);
+        }
+        .option-card.selected .option-radio::after {
+            transform: scale(1);
+        }
+        .option-radio {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .option-radio::after {
+            content: '';
+            width: 8px; height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+            border-radius: 99px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(59,130,246,0.5);
+        }
+
+        .hidden { display: none !important; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 shadow-lg bg-[#0A1628]/90 backdrop-blur-md border-b border-blue-900/50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="https://fhwhqoiucfxmfsclianh.databasepad.com/storage/v1/object/public/sop-files/public/Stronghold%20Logo.png" alt="Logo" class="h-12 w-12 rounded-full object-cover border border-blue-500/50">
+                <div class="hidden sm:block">
+                    <h1 class="text-lg font-montserrat font-bold tracking-wide text-white">STRONGHOLD A3</h1>
+                    <p class="text-xs text-brand-blue">Zero-Liability Security Partner</p>
+                </div>
+            </div>
+            <div class="glass-gold px-3 py-1.5 rounded-full flex items-center gap-2">
+                <i class="fas fa-shield-alt text-[#0A1628] text-xs"></i>
+                <span class="text-[#0A1628] font-montserrat font-bold text-xs">DOLE DO-174 COMPLIANT</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HERO BANNER ==================== -->
+    <section class="hero-banner-wrap">
+        <img src="https://fhwhqoiucfxmfsclianh.databasepad.com/storage/v1/object/public/sop-files/public/Security-Risk%20Self-Assessment-Banner.png" alt="Security Risk Self-Assessment">
+        <div class="hero-banner-overlay">
+            <div class="glass-gold px-4 py-2 rounded-full mb-4 animate-fade-in">
+                <span class="text-[#0A1628] font-montserrat font-bold text-sm"><i class="fas fa-clipboard-check mr-2"></i>FREE SECURITY RISK ASSESSMENT</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold font-montserrat text-white mb-4 animate-fade-in">
+                Discover Your Facility's <span class="text-brand-gold">Vulnerabilities</span>
+            </h2>
+            <p class="text-gray-200 text-lg max-w-2xl mx-auto animate-fade-in">
+                Get instant, personalized recommendations to protect your people, assets, and reputation in just 5 minutes.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- ==================== INTRO SECTION (Overlaps Banner) ==================== -->
+        <section id="introSection" class="animate-fade-in -mt-20 relative z-10">
+            <div class="glass-strong rounded-3xl p-8 md:p-12 text-center mb-8 shadow-2xl">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                    <div class="glass p-4 rounded-xl"><i class="fas fa-clock text-brand-blue text-xl mb-2"></i><p class="text-xs text-gray-300">3-Minute Assessment</p></div>
+                    <div class="glass p-4 rounded-xl"><i class="fas fa-chart-radar text-brand-blue text-xl mb-2"></i><p class="text-xs text-gray-300">Instant Risk Score</p></div>
+                    <div class="glass p-4 rounded-xl"><i class="fas fa-bullseye text-brand-blue text-xl mb-2"></i><p class="text-xs text-gray-300">Tailored Plan</p></div>
+                    <div class="glass p-4 rounded-xl"><i class="fas fa-lock text-brand-blue text-xl mb-2"></i><p class="text-xs text-gray-300">100% Confidential</p></div>
+                </div>
+
+                <button onclick="startAssessment()" class="btn-primary bg-brand-blue text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-600 transition shadow-lg shadow-blue-500/30 pulse-green">
+                    <i class="fas fa-shield-alt mr-2"></i>Start Assessment Now
+                </button>
+                <p class="text-gray-400 text-sm mt-6">No obligation • Free consultation included • Trusted by 80+ clients</p>
+            </div>
+        </section>
+
+        <!-- ==================== ASSESSMENT FORM ==================== -->
+        <section id="assessmentSection" class="hidden animate-fade-in">
+            <div class="glass-strong rounded-3xl p-6 md:p-10">
+                <!-- Progress -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm text-gray-400 mb-2 font-montserrat">
+                        <span>Question <span id="currentQuestion" class="text-white font-bold">1</span> of <span id="totalQuestions">22</span></span>
+                        <span id="progressPercent" class="text-brand-blue font-bold">0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Area -->
+                <div id="questionArea" class="mb-8 min-h-[300px]">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center pt-6 border-t border-white/10">
+                    <button id="prevBtn" onclick="previousQuestion()" class="glass text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition hidden">
+                        <i class="fas fa-arrow-left mr-2"></i> Previous
+                    </button>
+                    <div class="flex-1"></div>
+                    <button id="nextBtn" onclick="nextQuestion()" class="bg-brand-blue text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-600 transition shadow-lg shadow-blue-500/20">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== LEAD CAPTURE ==================== -->
+        <section id="leadCaptureSection" class="hidden animate-fade-in">
+            <div class="glass-strong rounded-3xl p-8 md:p-12 max-w-2xl mx-auto">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-brand-blue/20 border border-brand-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-file-pdf text-brand-blue text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold font-montserrat text-white mb-2">Get Your Detailed Report</h2>
+                    <p class="text-gray-400">Enter your details to generate your personalized PDF risk assessment.</p>
+                </div>
+                <form id="leadForm" onsubmit="submitLead(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Full Name *</label>
+                        <input type="text" id="fullName" required class="w-full rounded-lg px-4 py-3" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Email Address *</label>
+                        <input type="email" id="email" required class="w-full rounded-lg px-4 py-3" placeholder="john@company.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Company / Organization *</label>
+                        <input type="text" id="company" required class="w-full rounded-lg px-4 py-3" placeholder="Company Name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Facility Type *</label>
+                        <select id="facilityType" required class="w-full rounded-lg px-4 py-3">
+                            <option value="">Select Facility Type...</option>
+                            <option value="Corporate/BPO">Corporate Office / BPO</option>
+                            <option value="Warehouse/Logistics">Warehouse / Logistics</option>
+                            <option value="Retail/Commercial">Retail / Commercial</option>
+                            <option value="Healthcare">Hospital / Healthcare</option>
+                            <option value="Education">Educational Institution</option>
+                            <option value="Government/LGU">Government / LGU</option>
+                            <option value="NGO/Development">NGO / Development</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-gold text-[#0A1628] px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20 mt-6">
+                        <i class="fas fa-download mr-2"></i>Generate My PDF Report
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ==================== RESULTS DASHBOARD ==================== -->
+        <section id="resultsSection" class="hidden animate-fade-in space-y-8">
+            
+            <!-- Score Overview -->
+            <div class="glass-strong rounded-3xl p-8 text-center">
+                <h2 class="text-xl font-montserrat text-gray-400 mb-4">Overall Security Risk Index (OSRI)</h2>
+                <div class="relative w-48 h-48 mx-auto mb-6 flex items-center justify-center">
+                    <div class="absolute inset-0 rounded-full border-8 border-white/5"></div>
+                    <div id="scoreRing" class="absolute inset-0 rounded-full border-8 border-brand-blue transition-all duration-1000" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);"></div>
+                    <div class="text-center z-10">
+                        <div id="overallScore" class="text-5xl font-bold font-montserrat text-white">0</div>
+                        <div id="riskLevel" class="text-sm font-bold text-brand-blue uppercase tracking-wider">Calculating</div>
+                    </div>
+                </div>
+                <p id="riskSummary" class="text-gray-300 max-w-lg mx-auto"></p>
+            </div>
+
+            <!-- Radar Chart -->
+            <div class="glass-strong rounded-3xl p-8">
+                <h3 class="text-xl font-bold font-montserrat text-white mb-6 text-center">Risk Category Breakdown</h3>
+                <div class="max-w-md mx-auto">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="glass-strong rounded-3xl p-8">
+                <h3 class="text-2xl font-bold font-montserrat text-white mb-2 text-center">Priority Action Plan</h3>
+                <p class="text-gray-400 text-center mb-8">Address these critical areas to achieve "Zero-Liability" status.</p>
+                <div id="recommendationsContainer" class="space-y-6">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="glass-gold rounded-3xl p-8 text-center">
+                <h3 class="text-2xl font-bold font-montserrat text-[#0A1628] mb-3">Ready to Eliminate Your Risk?</h3>
+                <p class="text-[#0A1628]/80 mb-6 max-w-lg mx-auto">Schedule a free 30-minute consultation with our security experts to review your results.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="downloadPDF()" class="bg-[#0A1628] text-white px-8 py-4 rounded-xl font-bold hover:bg-navy-light transition shadow-lg">
+                        <i class="fas fa-file-pdf mr-2"></i>Download Full PDF Report
+                    </button>
+                    <a href="tel:09171370112" class="bg-brand-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-600 transition shadow-lg shadow-blue-500/30">
+                        <i class="fas fa-phone-alt mr-2"></i>Call 09171370112
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-gray-500 text-sm border-t border-white/5 mt-12">
+        <p>© 2026 Stronghold A3 Security Agency. Eastern Visayas' Premier Zero-Liability Security Partner.</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // DATA & STATE
+        // ==========================================
+        let currentQuestion = 0;
+        let answers = [];
+        let categoryScores = {};
+        let leadData = {};
+        let radarChartInstance = null;
+
+        // ==========================================
+        // 1. INITIALIZE SUPABASE CLIENT
+        // ==========================================
+        const { createClient } = supabase;
+        const supabaseUrl = 'https://zpahlcmuowwwiauffrby.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwYWhsY211b3d3d2lhdWZmcmJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMjc5MjAsImV4cCI6MjA5NjYwMzkyMH0.nqX53srwL36lEzVPbEPC0x7TJmL6YZ2lhmQrDNtVKJw';
+        const sb = createClient(supabaseUrl, supabaseAnonKey);
+
+        const categoryWeights = {
+            "Physical Security": 0.25,
+            "Operational Continuity": 0.25,
+            "Compliance & Liability": 0.20,
+            "Technology & Monitoring": 0.20,
+            "Human Capital": 0.10
+        };
+
+        const questions = [
+            { category: "Physical Security", weight: 4, question: "How would you rate your facility's perimeter security (fencing, gates, lighting)?", options: [{ text: "Excellent - Comprehensive coverage", score: 0 }, { text: "Good - Minor gaps", score: 3 }, { text: "Fair - Several vulnerabilities", score: 6 }, { text: "Poor - Inadequate or non-existent", score: 9 }] },
+            { category: "Physical Security", weight: 5, question: "Do you have a formal visitor management and access control system?", options: [{ text: "Fully digital & strictly enforced", score: 0 }, { text: "Manual but consistently enforced", score: 3 }, { text: "Inconsistent implementation", score: 6 }, { text: "None or minimal controls", score: 9 }] },
+            { category: "Physical Security", weight: 4, question: "How many security incidents (theft, unauthorized entry) in the past 12 months?", options: [{ text: "None", score: 0 }, { text: "1-2 incidents", score: 3 }, { text: "3-5 incidents", score: 6 }, { text: "6 or more incidents", score: 9 }] },
+            { category: "Physical Security", weight: 3, question: "What is the total value of assets requiring protection?", options: [{ text: "Below ₱500,000", score: 0, exposure: 1.0 }, { text: "₱500,000 - ₱5 Million", score: 0, exposure: 1.5 }, { text: "₱5 Million - ₱50 Million", score: 0, exposure: 2.0 }, { text: "Above ₱50 Million", score: 0, exposure: 2.5 }] },
+            { category: "Physical Security", weight: 5, question: "Do you have 24/7 professional security guards?", options: [{ text: "Yes, fully trained & licensed", score: 0 }, { text: "Yes, but minimal training", score: 6 }, { text: "Part-time coverage only", score: 7 }, { text: "No security guards", score: 9 }] },
+            { category: "Operational Continuity", weight: 5, question: "Do you have a documented Business Continuity Plan (BCP)?", options: [{ text: "Yes, tested & updated annually", score: 0 }, { text: "Documented but not regularly tested", score: 4 }, { text: "Informal/unwritten plan", score: 7 }, { text: "No BCP", score: 9 }] },
+            { category: "Operational Continuity", weight: 5, question: "How prepared is your facility for typhoon Signal No. 2 or higher?", options: [{ text: "Full protocol & emergency supplies ready", score: 0 }, { text: "Basic protocol in place", score: 4 }, { text: "Ad-hoc response only", score: 7 }, { text: "No preparation", score: 9 }] },
+            { category: "Operational Continuity", weight: 4, question: "Do you have backup power for security systems?", options: [{ text: "Generator + UPS backup", score: 0 }, { text: "Generator only", score: 3 }, { text: "UPS only", score: 5 }, { text: "No backup power", score: 9 }] },
+            { category: "Operational Continuity", weight: 4, question: "What alternative communication do you have if cellular networks fail?", options: [{ text: "Two-way radio + satellite", score: 0 }, { text: "Two-way radio only", score: 4 }, { text: "Multiple SIM cards", score: 6 }, { text: "None", score: 9 }] },
+            { category: "Operational Continuity", weight: 3, question: "Do you have alternative suppliers for critical security equipment?", options: [{ text: "2 or more verified suppliers", score: 0 }, { text: "1 backup supplier", score: 4 }, { text: "Single supplier only", score: 7 }, { text: "No established suppliers", score: 9 }] },
+            { category: "Compliance & Liability", weight: 5, question: "Is your current security agency DOLE DO-174 compliant?", options: [{ text: "Yes, verified with documentation", score: 0 }, { text: "Claims compliance but unverified", score: 4 }, { text: "Uncertain about compliance", score: 7 }, { text: "Known to be non-compliant", score: 9 }] },
+            { category: "Compliance & Liability", weight: 5, question: "What percentage of your guards have valid PNP-SOSIA licenses?", options: [{ text: "100%", score: 0 }, { text: "75-99%", score: 3 }, { text: "50-74%", score: 6 }, { text: "Less than 50%", score: 9 }] },
+            { category: "Compliance & Liability", weight: 4, question: "Are visitor logs and CCTV footage stored per Data Privacy Act (RA 10173)?", options: [{ text: "Fully compliant with encryption", score: 0 }, { text: "Partial compliance", score: 5 }, { text: "Minimal measures", score: 7 }, { text: "No compliance measures", score: 9 }] },
+            { category: "Compliance & Liability", weight: 3, question: "Do you have liability insurance for security incidents?", options: [{ text: "Comprehensive coverage", score: 0 }, { text: "Basic coverage", score: 4 }, { text: "Limited coverage", score: 6 }, { text: "No insurance", score: 9 }] },
+            { category: "Technology & Monitoring", weight: 4, question: "What percentage of critical areas have CCTV coverage?", options: [{ text: "More than 90%", score: 0 }, { text: "60-90%", score: 3 }, { text: "30-59%", score: 6 }, { text: "Less than 30%", score: 9 }] },
+            { category: "Technology & Monitoring", weight: 5, question: "Do guards use digital tour systems or paper logbooks?", options: [{ text: "Real-time digital system", score: 0 }, { text: "Digital but delayed reporting", score: 4 }, { text: "Hybrid (digital + paper)", score: 6 }, { text: "Paper logbooks only", score: 9 }] },
+            { category: "Technology & Monitoring", weight: 4, question: "What is the average time to report security incidents to management?", options: [{ text: "Less than 15 minutes", score: 0 }, { text: "15-60 minutes", score: 3 }, { text: "1-4 hours", score: 6 }, { text: "More than 4 hours", score: 9 }] },
+            { category: "Technology & Monitoring", weight: 4, question: "Are your security systems (CCTV, access control) integrated?", options: [{ text: "Fully integrated platform", score: 0 }, { text: "Partially integrated", score: 4 }, { text: "Standalone systems", score: 7 }, { text: "No electronic systems", score: 9 }] },
+            { category: "Technology & Monitoring", weight: 3, question: "Do you analyze security data for trends and prevention?", options: [{ text: "Advanced analytics & reporting", score: 0 }, { text: "Basic reporting only", score: 4 }, { text: "Reactive only (no analysis)", score: 7 }, { text: "No data collection", score: 9 }] },
+            { category: "Human Capital", weight: 4, question: "How many hours of security training do guards receive annually?", options: [{ text: "More than 40 hours", score: 0 }, { text: "20-40 hours", score: 3 }, { text: "8-19 hours", score: 6 }, { text: "Less than 8 hours", score: 9 }] },
+            { category: "Human Capital", weight: 3, question: "What is your annual guard turnover rate?", options: [{ text: "Less than 5%", score: 0 }, { text: "5-15%", score: 3 }, { text: "16-30%", score: 6 }, { text: "More than 30%", score: 9 }] },
+            { category: "Human Capital", weight: 3, question: "Do guards receive benefits beyond legal minimum?", options: [{ text: "Comprehensive benefits package", score: 0 }, { text: "Some additional benefits", score: 4 }, { text: "Legal minimum only", score: 7 }, { text: "Below legal minimum", score: 9 }] }
+        ];
+
+        // ==========================================
+        // UI FUNCTIONS
+        // ==========================================
+        function startAssessment() {
+            document.getElementById('introSection').classList.add('hidden');
+            document.getElementById('assessmentSection').classList.remove('hidden');
+            document.getElementById('totalQuestions').textContent = questions.length;
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const area = document.getElementById('questionArea');
+            
+            let optionsHTML = q.options.map((opt, idx) => `
+                <div class="option-card p-4 rounded-xl flex items-center gap-4 ${answers[currentQuestion] === idx ? 'selected' : ''}" onclick="selectOption(${idx})">
+                    <div class="option-radio"></div>
+                    <span class="text-white font-medium">${opt.text}</span>
+                </div>
+            `).join('');
+
+            area.innerHTML = `
+                <div class="mb-6">
+                    <span class="inline-block glass px-3 py-1 rounded-full text-xs font-bold text-brand-blue uppercase tracking-wider mb-3">${q.category}</span>
+                    <h3 class="text-xl md:text-2xl font-bold font-montserrat text-white leading-relaxed">${q.question}</h3>
+                </div>
+                <div class="space-y-3">
+                    ${optionsHTML}
+                </div>
+            `;
+
+            // Update Progress
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+
+            // Update Buttons
+            document.getElementById('prevBtn').classList.toggle('hidden', currentQuestion === 0);
+            document.getElementById('nextBtn').innerHTML = currentQuestion === questions.length - 1 
+                ? 'Finish <i class="fas fa-check ml-2"></i>' 
+                : 'Next <i class="fas fa-arrow-right ml-2"></i>';
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            document.querySelectorAll('.option-card').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestion] === undefined) {
+                alert('Please select an answer to continue.');
+                return;
+            }
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                document.getElementById('assessmentSection').classList.add('hidden');
+                document.getElementById('leadCaptureSection').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        // ==========================================
+        // 2. UPDATED LEAD SUBMISSION (ROUTED TO SUPABASE)
+        // ==========================================
+        async function submitLead(event) {
+            event.preventDefault();
+            
+            // 1. Gather Data
+            leadData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                facilityType: document.getElementById('facilityType').value,
+                timestamp: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })
+            };
+
+            // 2. Calculate Results (Updates the UI with OSRI Score)
+            calculateResults(); 
+            
+            // 3. Show Results UI immediately for good UX
+            document.getElementById('leadCaptureSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // 4. 🚀 ROUTE LEAD TO STRONGHOLD A3 SUPABASE DATABASE
+            // We use a slight timeout to ensure the DOM has updated with the OSRI score
+            setTimeout(async () => {
+                const osriScore = parseInt(document.getElementById('overallScore').textContent) || 0;
+                const riskLevel = document.getElementById('riskLevel').textContent || 'Unknown';
+
+                const { data, error } = await sb
+                    .from('security_assessment_leads')
+                    .insert([{
+                        full_name: leadData.fullName,
+                        email: leadData.email,
+                        company: leadData.company,
+                        facility_type: leadData.facilityType,
+                        osri_score: osriScore,
+                        risk_level: riskLevel,
+                        status: 'New'
+                    }]);
+
+                if (error) {
+                    console.error('⚠️ Lead routing failed:', error);
+                } else {
+                    console.log('✅ LEAD SUCCESSFULLY ROUTED TO STRONGHOLD A3 OPS DASHBOARD!', data);
+                }
+            }, 500); 
+        }
+
+        // ==========================================
+        // CALCULATION ENGINE
+        // ==========================================
+        function calculateResults() {
+            Object.keys(categoryWeights).forEach(cat => { categoryScores[cat] = { totalScore: 0, maxScore: 0 }; });
+            
+            questions.forEach((q, idx) => {
+                const selectedOption = q.options[answers[idx]];
+                const exposure = selectedOption.exposure || 1.5;
+                categoryScores[q.category].totalScore += q.weight * selectedOption.score * exposure;
+                categoryScores[q.category].maxScore += q.weight * 9 * (selectedOption.exposure || 2.0);
+            });
+
+            const normalizedScores = {};
+            Object.keys(categoryScores).forEach(cat => {
+                normalizedScores[cat] = Math.round((categoryScores[cat].totalScore / categoryScores[cat].maxScore) * 100);
+            });
+
+            let osri = 0;
+            Object.keys(normalizedScores).forEach(cat => { osri += normalizedScores[cat] * categoryWeights[cat]; });
+            
+            displayResults(Math.round(osri), normalizedScores);
+        }
+
+        function displayResults(osri, scores) {
+            document.getElementById('overallScore').textContent = osri;
+            
+            let riskLevel, riskColor, summary;
+            if (osri <= 25) { riskLevel = 'LOW RISK'; riskColor = '#10B981'; summary = "Your facility demonstrates strong security fundamentals. Maintain your current protocols and consider advanced tech integrations."; } 
+            else if (osri <= 50) { riskLevel = 'MODERATE RISK'; riskColor = '#F59E0B'; summary = "Your security posture is adequate but has gaps. Address the recommended areas to prevent potential liabilities."; } 
+            else if (osri <= 75) { riskLevel = 'HIGH RISK'; riskColor = '#F97316'; summary = "Critical vulnerabilities detected. Immediate action is required to protect your assets and ensure regulatory compliance."; } 
+            else { riskLevel = 'CRITICAL RISK'; riskColor = '#EF4444'; summary = "Severe security and compliance failures. Your facility is highly exposed to legal, financial, and operational disasters."; }
+            
+            document.getElementById('riskLevel').textContent = riskLevel;
+            document.getElementById('riskLevel').style.color = riskColor;
+            document.getElementById('overallScore').style.color = riskColor;
+            document.getElementById('riskSummary').textContent = summary;
+
+            createRadarChart(scores);
+            generateRecommendations(scores);
+        }
+
+        function createRadarChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(scores),
+                    datasets: [{
+                        label: 'Risk Score',
+                        data: Object.values(scores),
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3B82F6',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#FFD700',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#3B82F6',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { font: { size: 11, weight: '600', family: 'Montserrat' }, color: '#FFD700' },
+                            ticks: { stepSize: 25, max: 100, color: '#fff', backdropColor: 'transparent', font: { size: 9 } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function generateRecommendations(scores) {
+            const container = document.getElementById('recommendationsContainer');
+            const sortedCategories = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            
+            const recs = {
+                "Physical Security": { icon: 'fa-user-shield', title: "Physical Security Enhancement", solution: "Professional Guarding & Access Control", features: ["24/7 licensed & trained security personnel", "Digital visitor management systems", "Regular perimeter inspections"] },
+                "Operational Continuity": { icon: 'fa-water', title: "Disaster Resilience & BCP", solution: "DRRM-Integrated Security Package", features: ["RA 10121-compliant emergency protocols", "Offline-first crisis communication", "Pre-positioned emergency supplies"] },
+                "Compliance & Liability": { icon: 'fa-gavel', title: "Regulatory Compliance Shield", solution: "Zero-Liability Security Partnership", features: ["100% DOLE DO-174 compliance guarantee", "PNP-SOSIA licensed personnel", "Data Privacy Act (RA 10173) compliance"] },
+                "Technology & Monitoring": { icon: 'fa-microchip', title: "Digital Security Transformation", solution: "Hybrid Security & Cloud SMS", features: ["Real-time digital guard tours", "Automated incident reporting", "Client portal transparency"] },
+                "Human Capital": { icon: 'fa-users', title: "Security Personnel Excellence", solution: "Guard Welfare & Retention Program", features: ["Above-industry standard wages", "Continuous MIST training", "<5% attrition rate guarantee"] }
+            };
+
+            container.innerHTML = sortedCategories.map(([cat, score], i) => {
+                const rec = recs[cat];
+                const priority = score >= 75 ? 'URGENT' : score >= 50 ? 'HIGH' : 'MEDIUM';
+                const pColor = score >= 75 ? 'bg-red-500/20 text-red-400 border-red-500/50' : score >= 50 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50' : 'bg-blue-500/20 text-blue-400 border-blue-500/50';
+                
+                return `
+                    <div class="glass p-6 rounded-xl border-l-4 ${score >= 75 ? 'border-red-500' : score >= 50 ? 'border-yellow-500' : 'border-brand-blue'}">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-brand-blue/20 flex items-center justify-center text-brand-blue">
+                                    <i class="fas ${rec.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold font-montserrat text-white text-lg">${rec.title}</h4>
+                                    <p class="text-sm text-gray-400">${rec.solution}</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${pColor}">${priority} (${score}/100)</span>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            ${rec.features.map(f => `<li><i class="fas fa-check-circle text-brand-blue mr-2"></i>${f}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // PDF GENERATION (BRANDED)
+        // ==========================================
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Brand Colors
+            const navy = [10, 22, 40];
+            const blue = [59, 130, 246];
+            const gold = [255, 215, 0];
+            const textDark = [31, 41, 55];
+            const textGray = [107, 114, 128];
+
+            // --- PAGE 1: COVER & OVERVIEW ---
+            // Header
+            doc.setFillColor(...navy);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            doc.setTextColor(...gold);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(24);
+            doc.text("STRONGHOLD A3", 14, 20);
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text("Eastern Visayas' Premier Zero-Liability Security Partner", 14, 28);
+            doc.text("DOLE DO-174 COMPLIANT", 14, 34);
+
+            // Client Info
+            doc.setTextColor(...textDark);
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "bold");
+            doc.text("SECURITY RISK ASSESSMENT REPORT", 14, 55);
+            
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Prepared For: ${leadData.fullName} (${leadData.company})`, 14, 65);
+            doc.text(`Facility Type: ${leadData.facilityType}`, 14, 72);
+            doc.text(`Date: ${leadData.timestamp}`, 14, 79);
+
+            // OSRI Score
+            const osriScore = document.getElementById('overallScore').textContent;
+            const riskLevel = document.getElementById('riskLevel').textContent;
+            
+            doc.setDrawColor(...blue);
+            doc.setLineWidth(0.5);
+            doc.line(14, 88, 196, 88);
+
+            doc.setFontSize(14);
+            doc.setTextColor(...blue);
+            doc.setFont("helvetica", "bold");
+            doc.text("Overall Security Risk Index (OSRI)", 14, 100);
+
+            doc.setFontSize(36);
+            doc.setTextColor(...navy);
+            doc.text(`${osriScore}/100`, 14, 118);
+            
+            doc.setFontSize(14);
+            doc.setTextColor(...gold);
+            doc.text(`Status: ${riskLevel}`, 75, 118);
+
+            // Radar Chart
+            if (radarChartInstance) {
+                const chartImg = radarChartInstance.toBase64Image();
+                // Add a light background for the chart so it's visible on white PDF
+                doc.setFillColor(245, 247, 250);
+                doc.rect(14, 130, 182, 100, 'F');
+                doc.addImage(chartImg, 'PNG', 35, 135, 140, 90);
+            }
+
+            // --- PAGE 2: RECOMMENDATIONS ---
+            doc.addPage();
+            doc.setFillColor(...navy);
+            doc.rect(0, 0, 210, 20, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("Priority Action Plan & Recommendations", 105, 13, { align: 'center' });
+
+            let yPos = 35;
+            const recCards = document.querySelectorAll('#recommendationsContainer > div');
+
+            recCards.forEach((card, index) => {
+                if (yPos > 240) { doc.addPage(); yPos = 20; }
+
+                const title = card.querySelector('h4').textContent;
+                const solution = card.querySelector('p').textContent;
+                const features = Array.from(card.querySelectorAll('ul li')).map(li => li.textContent.replace(/^[\s\u2713]+/, ''));
+                const scoreText = card.querySelector('span').textContent;
+
+                // Title
+                doc.setFontSize(12);
+                doc.setTextColor(...navy);
+                doc.setFont("helvetica", "bold");
+                doc.text(`${index + 1}. ${title}`, 14, yPos);
+                
+                doc.setFontSize(9);
+                doc.setTextColor(...textGray);
+                doc.setFont("helvetica", "normal");
+                doc.text(scoreText, 196, yPos, { align: 'right' });
+                yPos += 7;
+
+                // Solution
+                doc.setFontSize(10);
+                doc.setTextColor(...blue);
+                doc.text(`Recommended Solution: ${solution}`, 14, yPos);
+                yPos += 6;
+
+                // Features
+                doc.setTextColor(...textDark);
+                doc.setFont("helvetica", "bold");
+                doc.text("Key Features:", 14, yPos);
+                doc.setFont("helvetica", "normal");
+                yPos += 5;
+                
+                features.forEach(feature => {
+                    const splitFeature = doc.splitTextToSize(`• ${feature}`, 180);
+                    doc.text(splitFeature, 18, yPos);
+                    yPos += (splitFeature.length * 4) + 2;
+                });
+
+                yPos += 8;
+                if (index < recCards.length - 1) {
+                    doc.setDrawColor(229, 231, 235);
+                    doc.line(14, yPos - 4, 196, yPos - 4);
+                    yPos += 6;
+                }
+            });
+
+            // Footer CTA
+            yPos += 10;
+            if (yPos > 230) { doc.addPage(); yPos = 20; }
+
+            doc.setFillColor(...navy);
+            doc.rect(14, yPos, 182, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("Ready to Eliminate Your Risk?", 105, yPos + 12, { align: 'center' });
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text("Schedule a free consultation: Call 09171370112 | Email info@strongholda3.com", 105, yPos + 20, { align: 'center' });
+
+            doc.save(`StrongholdA3_Risk_Assessment_${leadData.company.replace(/\s+/g, '_')}.pdf`);
+        }
+    </script>
+</body>
+</html>

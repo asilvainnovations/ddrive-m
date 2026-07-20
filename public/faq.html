@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDRiVE-M FAQ</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        .container-main {
+            max-width: 850px;
+        }
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .question-button {
+            transition: color 0.15s ease-in-out;
+        }
+        .answer-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+        .answer-content.open {
+            max-height: 600px;
+            padding-bottom: 1.5rem;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+        .transition-transform {
+            transition: transform 0.3s ease-in-out;
+        }
+        .icon {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div id="app" class="container-main mx-auto shadow-xl rounded-2xl bg-white">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-teal-700 to-indigo-800 text-white p-6 md:p-8 rounded-t-2xl">
+            <h1 class="text-3xl font-bold tracking-tight">DDRiVE-M FAQ</h1>
+            <p class="text-indigo-200 mt-1 text-sm md:text-base">
+                Data-Driven Risk and Vulnerability Evaluation and Management platform aligned with RA 10121, ISO 22301, and anticipatory action
+            </p>
+        </header>
+
+        <!-- FAQ Content Sections -->
+        <main class="p-4 md:p-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Frequently Asked Questions</h2>
+
+            <!-- Phase 1: Detection & Early Warning -->
+            <h3 class="text-xl font-bold text-teal-700 border-b-2 border-teal-200 pb-2 mt-8 mb-4">
+                🛰️ I. Detection & Early Warning (Phase 1)
+            </h3>
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-teal-600 focus:outline-none" data-target="q1">
+                    1. How does DDRiVE-M detect hazards in real time?
+                    <svg class="transition-transform transform h-5 w-5 text-teal-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q1" class="answer-content">
+                    <p class="text-gray-600">
+                        DDRiVE-M integrates real-time feeds from:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li><strong>Natural hazards:</strong> <code>HazardHunterPH</code>, <code>PHIVOLCS</code>, and <code>GeoRiskPH</code> for earthquakes, floods, and typhoons.</li>
+                        <li><strong>Cyber threats:</strong> <code>SIEM</code> (e.g., Azure Sentinel) and <code>VAPT</code> tools for ransomware, phishing, and data breaches.</li>
+                    </ul>
+                    <p class="mt-2 text-gray-600">
+                        Alerts are automatically classified by severity (Low to Critical) and trigger Phase 2 analysis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Phase 2: Diagnosis -->
+            <h3 class="text-xl font-bold text-green-700 border-b-2 border-green-200 pb-2 mt-8 mb-4">
+                📊 II. Diagnosis & Risk Analysis (Phase 2)
+            </h3>
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-green-600 focus:outline-none" data-target="q2">
+                    2. How does DDRiVE-M assess both natural and cyber risks?
+                    <svg class="transition-transform transform h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q2" class="answer-content">
+                    <p class="text-gray-600">
+                        Using an <strong>ISO 31000-aligned framework</strong>, DDRiVE-M evaluates:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li><strong>Likelihood × Impact</strong> for all hazards (natural or cyber).</li>
+                        <li><strong>Legal compliance</strong> with <em>RA 10121</em> (DRRM) and <em>RA 10173</em> (Data Privacy Act).</li>
+                        <li><strong>Recovery Time Objectives (RTO)</strong> for essential public services.</li>
+                    </ul>
+                    <p class="mt-2 text-gray-600">
+                        Critical risks (score ≥20) are flagged for immediate treatment in Phase 3.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Phase 3–4: Response & Integration -->
+            <h3 class="text-xl font-bold text-amber-700 border-b-2 border-amber-200 pb-2 mt-8 mb-4">
+                🛠️ III. Response, Integration & PSCP Design
+            </h3>
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-amber-600 focus:outline-none" data-target="q3">
+                    3. What is a Public Service Continuity Plan (PSCP)?
+                    <svg class="transition-transform transform h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q3" class="answer-content">
+                    <p class="text-gray-600">
+                        A PSCP ensures your agency can **continue delivering essential services** during disasters—beyond life-saving response.
+                    </p>
+                    <p class="mt-2 text-gray-600">
+                        DDRiVE-M generates PSCPs that comply with:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li>Philippine: <strong>RA 10121</strong>, <strong>DILG MC 2020-161</strong></li>
+                        <li>International: <strong>ISO 22301</strong> (Business Continuity), <strong>UNDRR MCR2030</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-amber-600 focus:outline-none" data-target="q4">
+                    4. How does DDRiVE-M support anticipatory action?
+                    <svg class="transition-transform transform h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q4" class="answer-content">
+                    <p class="text-gray-600">
+                        DDRiVE-M enables <strong>anticipatory action</strong> by:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li>Triggering pre-defined responses when <code>HazardHunterPH</code> predicts a typhoon or flood.</li>
+                        <li>Pre-positioning resources based on climate forecasts.</li>
+                        <li>Automating staff mobilization before a cyberattack escalates.</li>
+                    </ul>
+                    <p class="mt-2 text-gray-600">
+                        This aligns with the <em>Sendai Framework’s Priority 4</em> on preparedness.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Governance & Activation -->
+            <h3 class="text-xl font-bold text-purple-700 border-b-2 border-purple-200 pb-2 mt-8 mb-4">
+                🧭 IV. Governance, Activation & Compliance
+            </h3>
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-purple-600 focus:outline-none" data-target="q5">
+                    5. Who activates the PSCP—and how?
+                    <svg class="transition-transform transform h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q5" class="answer-content">
+                    <p class="text-gray-600">
+                        The <strong>Continuity Management Team (CMT)</strong>—led by the Head of Agency—activates the PSCP based on real-time intelligence from DDRiVE-M.
+                    </p>
+                    <p class="mt-2 text-gray-600">
+                        Activation levels:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li><span class="text-green-500 font-bold">🟢 Level 0</span>: Normal operations</li>
+                        <li><span class="text-yellow-500 font-bold">🟡 Level 1</span>: Advisory (monitoring)</li>
+                        <li><span class="text-orange-500 font-bold">🟠 Level 2</span>: Partial activation</li>
+                        <li><span class="text-red-500 font-bold">🔴 Level 3</span>: Full PSCP activation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-purple-600 focus:outline-none" data-target="q6">
+                    6. How is data privacy handled under RA 10173?
+                    <svg class="transition-transform transform h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q6" class="answer-content">
+                    <p class="text-gray-600">
+                        All personal data in DDRiVE-M is:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 ml-4 text-gray-600 space-y-1">
+                        <li>Encrypted at rest and in transit.</li>
+                        <li>Access-controlled under the <strong>National Privacy Commission (NPC)</strong> guidelines.</li>
+                        <li>Only used for continuity planning—not commercial purposes.</li>
+                    </ul>
+                    <p class="mt-2 text-gray-600">
+                        Cyber-risk detection (e.g., SIEM) also complies with the <em>Cybercrime Prevention Act (RA 10175)</em>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Support & Learning -->
+            <h3 class="text-xl font-bold text-blue-700 border-b-2 border-blue-200 pb-2 mt-8 mb-4">
+                💡 V. Support & Next Steps
+            </h3>
+            <div class="faq-item">
+                <button class="question-button w-full flex justify-between items-center py-4 text-left font-semibold text-gray-700 hover:text-blue-600 focus:outline-none" data-target="q7">
+                    7. Where can I learn more about DDRiVE-M?
+                    <svg class="transition-transform transform h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="q7" class="answer-content">
+                    <p class="text-gray-600">
+                        DDRiVE-M was developed by <strong>Alvin M. Silva, MDM</strong>—a Systems Innovator specializing in disaster resilience, climate adaptation, and anticipatory action.
+                    </p>
+                    <p class="mt-2">
+                        <a href="https://alvin-silva.aiwaapp.live/about" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            Learn more about the framework and author
+                        </a>
+                    </p>
+                    <p class="mt-2 text-gray-600">
+                        You can also ask <strong>DDRiVER AI</strong> (the contextual assistant in the platform) for real-time guidance.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.question-button');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    const answer = document.getElementById(targetId);
+                    const arrow = button.querySelector('svg');
+
+                    // Close all other open answers
+                    document.querySelectorAll('.answer-content.open').forEach(openAnswer => {
+                        if (openAnswer.id !== targetId) {
+                            openAnswer.classList.remove('open');
+                            openAnswer.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle the clicked answer
+                    answer.classList.toggle('open');
+                    arrow.classList.toggle('rotate-180');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
