@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About DDRiVE-M: Data-Driven Risk & Vulnerience Evaluation and Management</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Slate 100 */
+        }
+        
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.2), 0 4px 6px -2px rgba(14, 165, 233, 0.1);
+        }
+        .step-card.active {
+            border-left-width: 4px;
+            border-color: #0ea5e9; /* Sky 500 */
+            background-color: #e0f2fe; /* Sky 100 */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+
+        .faq-question {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .faq-answer.open {
+            max-height: 500px; /* Arbitrary large value for smooth transition */
+            padding-top: 0.75rem;
+            padding-bottom: 1rem;
+        }
+        .chevron {
+            transition: transform 0.3s;
+        }
+        .chevron.rotated {
+            transform: rotate(180deg);
+        }
+
+        .scroll-snap-container {
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .scroll-snap-item {
+            scroll-snap-align: start;
+            flex: 0 0 100%;
+        }
+
+        .capability-badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .activity-item, .tool-item {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .activity-item::before, .tool-item::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: currentColor;
+            opacity: 0.7;
+        }
+        .activity-item {
+            color: #10b981;
+        }
+        .tool-item {
+            color: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- App Wrapper -->
+    <div id="app" class="flex-grow w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
+        
+        <!-- Main Application Card -->
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden min-h-[90vh] border border-slate-200">
+            
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-12 flex flex-col justify-center items-center text-center">
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 text-white">DDRiVE-M</h1>
+                <p class="text-blue-100 text-sm md:text-base font-semibold mb-2">
+                    Data-Driven Risk & Vulnerability Evaluation and Management
+                </p>
+                <p class="text-white text-lg md:text-xl font-extrabold">Empowering Resilience Through Intelligence</p>
+                <div class="mt-4 max-w-3xl text-blue-100 text-sm md:text-base">
+                    DDRiVE-M is an advanced risk intelligence platform that provides LGUs, CSOs, SMEs, and institutions with real-time monitoring, predictive analytics, and collaborative tools to strengthen resilience against multi-sectoral risks.
+                </div>
+            </header>
+
+            <!-- Introduction & Pillars -->
+            <section class="p-6 md:p-10 border-b border-slate-100">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">The DDRiVE-M Difference</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-sm text-center">
+                        <span class="text-4xl block mb-3">📊</span>
+                        <h3 class="font-semibold text-lg mb-2">Predictive Intelligence</h3>
+                        <p class="text-sm text-slate-600">Advanced analytics and machine learning models forecast risks before they materialize, enabling proactive decision-making.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-sm text-center">
+                        <span class="text-4xl block mb-3">🌐</span>
+                        <h3 class="font-semibold text-lg mb-2">Holistic Risk Mapping</h3>
+                        <p class="text-sm text-slate-600">Comprehensive vulnerability assessment across strategic, operational, financial, environmental, and reputational risk categories.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-sm text-center">
+                        <span class="text-4xl block mb-3">🤝</span>
+                        <h3 class="font-semibold text-lg mb-2">Collaborative Resilience</h3>
+                        <p class="text-sm text-slate-600">Shared situational awareness and coordinated response mechanisms across agencies, sectors, and communities.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Capabilities Banner -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 md:p-6 border-b border-slate-200">
+                <div class="max-w-5xl mx-auto">
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Core Capabilities</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="capability-badge">Real-time Risk Monitoring</span>
+                        <span class="capability-badge">Multi-sectoral Vulnerability Assessment</span>
+                        <span class="capability-badge">Predictive Analytics</span>
+                        <span class="capability-badge">Collaborative Response Hub</span>
+                        <span class="capability-badge">Resilience Scoring</span>
+                        <span class="capability-badge">GIS-based Risk Mapping</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Methodology Explorer -->
+            <section class="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-5 gap-8">
+                
+                <div class="lg:col-span-2">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">The DDRiVE-M Intelligence Cycle</h2>
+                    <p class="text-sm text-slate-600 mb-6">
+                        DDRiVE-M operationalizes a continuous intelligence cycle that transforms data into actionable insights for resilience management. Click on each step to explore how we turn information into preparedness.
+                    </p>
+                    
+                    <div id="methodology-list" class="space-y-2">
+                        <!-- Step Cards Injected by JS -->
+                    </div>
+                </div>
+
+                <div class="lg:col-span-3">
+                    <div id="methodology-detail" class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-sky-300/50 min-h-[400px]">
+                        <!-- Detail Content Injected by JS -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Platform Capabilities -->
+            <section class="p-6 md:p-10 border-t border-slate-100 bg-slate-50/50">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Integrated Platform Capabilities</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">📡</span> Real-time Monitoring
+                        </h3>
+                        <p class="text-sm text-slate-600">Continuous surveillance of multiple risk indicators with automated alerting for critical thresholds.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">🗺️</span> Geospatial Intelligence
+                        </h3>
+                        <p class="text-sm text-slate-600">GIS-based risk mapping with asset tracking, exposure analysis, and impact visualization.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">🧠</span> Predictive Analytics
+                        </h3>
+                        <p class="text-sm text-slate-600">AI-driven forecasting models that anticipate cascading impacts and secondary effects.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">🧩</span> Multi-sectoral Assessment
+                        </h3>
+                        <p class="text-sm text-slate-600">Comprehensive risk scoring across strategic, operational, financial, environmental, and reputational domains.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">🤝</span> Collaborative Hub
+                        </h3>
+                        <p class="text-sm text-slate-600">Secure platform for inter-agency coordination, resource sharing, and joint response planning.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center">
+                            <span class="text-2xl mr-2">📈</span> Resilience Benchmarking
+                        </h3>
+                        <p class="text-sm text-slate-600">ISO 31000-aligned scoring system to measure, track, and improve organizational resilience over time.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- FAQ Section -->
+            <section class="p-6 md:p-10 border-t border-slate-100">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">📘 DDRiVE-M Platform FAQ</h2>
+                <div id="faq-container" class="max-w-4xl mx-auto">
+                    <!-- FAQ content will be inserted here by JS -->
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="bg-slate-800 border-t border-slate-700 p-6 text-center text-sm text-slate-300">
+                <p class="mb-2">For detailed information on data handling, please refer to our <a href="https://ddrive-erm.appimize.app/privacy-policy" class="text-blue-300 hover:text-blue-100 underline font-medium">Privacy Policy</a>.</p>
+                <p>© 2025 DDRiVE-M Platform. Built for Resilience.</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const methodology = [
+            { 
+                key: 'D', 
+                name: 'Detection', 
+                color: '#f59e0b', 
+                objective: 'Continuously monitor and identify emerging risks through integrated data streams and intelligent sensors.', 
+                activities: [
+                    'Real-time hazard and threat monitoring',
+                    'Critical asset and infrastructure surveillance',
+                    'Community vulnerability and exposure mapping',
+                    'Early warning system integration'
+                ],
+                tools: [
+                    'Multi-source Data Fusion Engine',
+                    'Automated Alerting System',
+                    'Geospatial Risk Dashboard',
+                    'Community Reporting Mobile App'
+                ]
+            },
+            { 
+                key: 'D', 
+                name: 'Diagnosis', 
+                color: '#10b981', 
+                objective: 'Analyze and contextualize risks using advanced analytics to understand impacts, dependencies, and cascading effects.', 
+                activities: [
+                    'Multi-sectoral vulnerability assessment',
+                    'Impact and consequence modeling',
+                    'Dependency and interconnectivity analysis',
+                    'Risk prioritization and scoring'
+                ],
+                tools: [
+                    'Risk Intelligence Engine',
+                    'Cascading Impact Simulator',
+                    'Resilience Scoring Framework',
+                    'Dependency Mapping Toolkit'
+                ]
+            },
+            { 
+                key: 'R', 
+                name: 'Response', 
+                color: '#ef4444', 
+                objective: 'Coordinate immediate actions using real-time data and pre-established protocols to minimize disruption.', 
+                activities: [
+                    'Situational awareness enhancement',
+                    'Resource mobilization and deployment',
+                    'Inter-agency coordination activation',
+                    'Critical service continuity implementation'
+                ],
+                tools: [
+                    'Collaborative Response Hub',
+                    'Resource Tracking System',
+                    'Communication Protocol Generator',
+                    'Critical Function Continuity Tracker'
+                ]
+            },
+            { 
+                key: 'i', 
+                name: 'Integration', 
+                color: '#6366f1', 
+                objective: 'Embed risk intelligence into organizational decision-making and strategic planning processes.', 
+                activities: [
+                    'Risk-informed strategic planning',
+                    'Stakeholder collaboration and consultation',
+                    'Policy and regulatory alignment',
+                    'Cross-sectoral data sharing agreements'
+                ],
+                tools: [
+                    'Strategic Risk Integration Platform',
+                    'Stakeholder Collaboration Workspace',
+                    'Regulatory Compliance Checker',
+                    'Secure Data Exchange Framework'
+                ]
+            },
+            { 
+                key: 'V', 
+                name: 'Validation', 
+                color: '#0ea5e9', 
+                objective: 'Test and verify resilience capabilities through scenario-based exercises and performance measurement.', 
+                activities: [
+                    'Simulation-based scenario testing',
+                    'Performance metric tracking',
+                    'Gap analysis and remediation planning',
+                    'Capacity building and training'
+                ],
+                tools: [
+                    'Digital Twin Simulation Environment',
+                    'Performance Dashboard',
+                    'Gap Remediation Planner',
+                    'Competency-Based Training System'
+                ]
+            },
+            { 
+                key: 'E', 
+                name: 'Enhancement', 
+                color: '#f97316', 
+                objective: 'Strengthen resilience through adaptive learning, innovation, and continuous improvement.', 
+                activities: [
+                    'Lessons learned documentation',
+                    'Best practice sharing and adoption',
+                    'Innovation in risk adaptation',
+                    'Resilience investment planning'
+                ],
+                tools: [
+                    'Knowledge Management System',
+                    'Innovation Repository',
+                    'Adaptive Learning Platform',
+                    'Resilience Investment Calculator'
+                ]
+            },
+            { 
+                key: 'M', 
+                name: 'Monitoring', 
+                color: '#3b82f6', 
+                objective: 'Continuously track, evaluate, and update risk intelligence using feedback loops and adaptive analytics.', 
+                activities: [
+                    'Real-time performance monitoring',
+                    'Adaptive risk forecasting',
+                    'Resilience progress benchmarking',
+                    'Annual review and adaptation cycle'
+                ],
+                tools: [
+                    'Adaptive Analytics Engine',
+                    'Resilience Progress Tracker',
+                    'Benchmarking Dashboard',
+                    'Continuous Improvement Cycle Manager'
+                ]
+            }
+        ];
+
+        const faqData = [
+            { category: "General Overview", questions: [
+                { q: "What is DDRiVE-M?", a: "DDRiVE-M (Data-Driven Risk & Vulnerability Evaluation and Management) is an advanced risk intelligence platform that provides real-time monitoring, predictive analytics, and collaborative tools to strengthen resilience against multi-sectoral risks." },
+                { q: "Who uses DDRiVE-M?", a: "DDRiVE-M is designed for local government units (LGUs), civil society organizations (CSOs), small and medium enterprises (SMEs), and public institutions that need to manage complex risk environments." }
+            ]},
+            { category: "Platform Capabilities", questions: [
+                { q: "What types of risks does DDRiVE-M monitor?", a: "DDRiVE-M tracks vulnerabilities across five key categories: Strategic Risk (governance, policy), Operational Risk (processes, systems), Financial Risk (resources, funding), External & Environmental Risk (natural hazards, climate), and Reputation & Stakeholder Risk (public trust, partnerships)." },
+                { q: "How does DDRiVE-M calculate the Resilience Score?", a: "The Resilience Score (0-100) is generated using ISO 31000-aligned methodologies that assess an organization's risk exposure, adaptive capacity, and recovery preparedness across all risk categories." },
+                { q: "Does DDRiVE-M support GIS mapping?", a: "Yes, DDRiVE-M integrates advanced GIS capabilities for spatial risk visualization, asset tracking, exposure analysis, and impact modeling." },
+                { q: "Can DDRiVE-M generate risk reports?", a: "Yes, the platform automatically generates comprehensive risk intelligence reports, vulnerability assessments, and resilience progress updates." }
+            ]},
+            { category: "Alerts & Notifications", questions: [
+                { q: "What kind of alerts does DDRiVE-M provide?", a: "DDRiVE-M issues real-time alerts for seismic activity, flood risks, infrastructure failures, operational disruptions, and other critical thresholds based on your customized risk profile." },
+                { q: "How are alerts prioritized?", a: "Alerts are prioritized using a multi-dimensional scoring system that considers severity, urgency, impact scope, and organizational vulnerability." }
+            ]},
+            { category: "Collaboration & Integration", questions: [
+                { q: "How does DDRiVE-M support collaboration?", a: "DDRiVE-M features a secure Collaboration Hub where agencies, partners, and stakeholders can share situational awareness, coordinate responses, and manage joint operations." },
+                { q: "Can DDRiVE-M integrate with existing systems?", a: "Yes, DDRiVE-M offers API-based integration with existing emergency management systems, GIS platforms, and organizational databases." }
+            ]},
+            { category: "Technical & Security", questions: [
+                { q: "How does DDRiVE-M ensure data security?", a: "DDRiVE-M employs enterprise-grade security including end-to-end encryption, role-based access controls, regular security audits, and compliance with international data protection standards." },
+                { q: "Is DDRiVE-M compliant with international standards?", a: "Yes, DDRiVE-M aligns with ISO 31000 risk management guidelines and integrates with global resilience frameworks including the UNDRR Resilience Scorecard." }
+            ]}
+        ];
+
+        let activeStep = methodology[0].key + methodology[0].name;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMethodologyList();
+            renderMethodologyDetail(methodology[0]);
+            renderFAQ();
+        });
+
+        function renderMethodologyList() {
+            const container = document.getElementById('methodology-list');
+            container.innerHTML = methodology.map(step => `
+                <div 
+                    id="step-${step.key}${step.name}"
+                    class="step-card p-4 rounded-lg cursor-pointer flex items-center gap-4 border border-slate-200 shadow-sm ${activeStep === step.key + step.name ? 'active' : 'bg-white'}"
+                    onclick="switchMethodologyStep('${step.key}${step.name}')"
+                >
+                    <span class="text-3xl font-bold" style="color: ${step.color};">${step.key}</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">${step.name}</div>
+                        <div class="text-xs text-slate-500">${step.objective.substring(0, 60)}...</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchMethodologyStep(keyName) {
+            activeStep = keyName;
+            
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active');
+                card.classList.add('bg-white');
+            });
+
+            const currentStep = methodology.find(s => s.key + s.name === keyName);
+            const activeCard = document.getElementById(`step-${keyName}`);
+            if (activeCard) {
+                activeCard.classList.add('active');
+                activeCard.classList.remove('bg-white');
+            }
+
+            renderMethodologyDetail(currentStep);
+        }
+
+        function renderMethodologyDetail(step) {
+            const container = document.getElementById('methodology-detail');
+            container.classList.remove('fade-in'); 
+            void container.offsetWidth;
+            container.classList.add('fade-in'); 
+
+            container.innerHTML = `
+                <span class="text-5xl font-extrabold block mb-4" style="color: ${step.color};">${step.key}</span>
+                <h3 class="text-2xl font-bold text-slate-900 mb-3">${step.name} Phase</h3>
+                <p class="text-lg text-slate-700 mb-6 border-b pb-4">${step.objective}</p>
+                
+                <!-- KEY ACTIVITIES -->
+                <h4 class="font-semibold text-slate-800 mb-3 flex items-center gap-2">Key Activities</h4>
+                <ul class="space-y-3 mb-6">
+                    ${step.activities.map(activity => `
+                        <li class="activity-item text-sm text-slate-600">
+                            ${activity}
+                        </li>
+                    `).join('')}
+                </ul>
+
+                <!-- INTEGRATED TOOLS -->
+                <h4 class="font-semibold text-slate-800 mb-3 flex items-center gap-2 border-t pt-4">Integrated Tools</h4>
+                <ul class="space-y-3">
+                    ${step.tools.map(tool => `
+                        <li class="tool-item text-sm text-slate-600">
+                            ${tool}
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        function renderFAQ() {
+            const container = document.getElementById('faq-container');
+            let html = '';
+            
+            faqData.forEach(category => {
+                html += `<div class="mb-8">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b">${category.category}</h3>`;
+                
+                category.questions.forEach((q, index) => {
+                    html += `
+                    <div class="mb-3 rounded-lg border border-slate-200 overflow-hidden">
+                        <div class="faq-question bg-slate-50 p-4 flex justify-between items-center" onclick="toggleFAQ(this)">
+                            <span class="font-medium">${q.q}</span>
+                            <span class="chevron text-slate-500">▼</span>
+                        </div>
+                        <div class="faq-answer bg-white p-0">
+                            <div class="p-4 pt-0 text-slate-600">${q.a}</div>
+                        </div>
+                    </div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const chevron = element.querySelector('.chevron');
+            
+            if (answer.classList.contains('open')) {
+                answer.classList.remove('open');
+                chevron.classList.remove('rotated');
+            } else {
+                answer.classList.add('open');
+                chevron.classList.add('rotated');
+            }
+        }
+    </script>
+</body>
+</html>
