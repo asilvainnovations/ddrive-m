@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DDRiVE-M | Integrated Risk and Resilience Intelligence Platform</title>
+    
+    <!-- Meta Description -->
+    <meta name="description" content="An all-encompassing platform for managing the intelligence cycle specifically for the Philippines, with AI-enhanced risk assessments and real-time incident management." />
+    
+    <!-- Keywords & Author -->
+    <meta name="keywords" content="intelligence, strategic planning, risk assessment, incident management, Philippines, AI analytics" />
+    <meta name="author" content="DDRiVE-M" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Favicon - Circular Logo Implementation -->
+    <link rel="icon" type="image/svg+xml" href="/placeholder.svg" />
+    <link rel="apple-touch-icon" href="/assets/favicon-180.png" sizes="180x180" />
+    <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="DDRiVE-M | Integrated Risk and Resilience Intelligence Platform" />
+    <meta property="og:description" content="An all-encompassing platform for managing the intelligence cycle specifically for the Philippines, with AI-enhanced risk assessments and real-time incident management." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ddrive-m.asilvainnovations.com" />
+    <meta property="og:image" content="/og-image.svg" />
+    <meta property="og:image:alt" content="DDRiVE-M Circular Logo" />
+    <meta property="og:image:secure_url" content="https://ddrive-m.asilvainnovations.com/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="DDRiVE-M" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DDRiVE-M | Integrated Risk and Resilience Intelligence Platform" />
+    <meta name="twitter:description" content="AI-enhanced risk assessments and real-time incident management for intelligence operations in the Philippines." />
+    <meta name="twitter:image" content="/twitter-card.svg" />
+    <meta name="twitter:image:alt" content="DDRiVE-M Brand Identity" />
+    <meta name="twitter:creator" content="@DDriVE_M" />
+    <meta name="twitter:site" content="@DDriVE_M" />
+
+    <!-- Additional SEO Tags -->
+    <meta name="theme-color" content="#0A1628" />
+    <meta name="color-scheme" content="dark light" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ddrive-m.asilvainnovations.com" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Stylesheet Links -->
+    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href="/styles/logo.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
+
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="/assets/ddrive-m-logo.svg" as="image" type="image/svg+xml" />
+    <link rel="preload" href="/assets/favicon.svg" as="image" type="image/svg+xml" />
+    
+    <!-- Inline CSS for Critical Rendering Path -->
+    <style>
+      /* CSS Variables - Brand Colors */
+      :root {
+        --brand-bg: #0A1628;
+        --brand-accent: #3B82F6;
+        --brand-accent-light: #60A5FA;
+        --text-primary: #FFFFFF;
+        --text-secondary: #9CA3AF;
+        --surface-dark: #111E35;
+        --surface-light: #1F2E47;
+      }
+
+      /* Circular Logo Base Styles */
+      .circular-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, var(--brand-surface) 0%, var(--brand-bg) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--brand-accent);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .circular-logo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      }
+
+      /* Dark mode preference */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: var(--brand-bg);
+          color: var(--text-primary);
+        }
+      }
+
+      /* Initial render styling */
+      #root {
+        min-height: 100vh;
+        background: linear-gradient(135deg, var(--brand-bg) 0%, #0D1E3A 100%);
+      }
+    </style>
+
+    <!-- Structured Data for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DDRiVE-M",
+      "url": "https://ddrive-m.asilvainnovations.com",
+      "description": "Strategic intelligence platform for the Philippines",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "PHP"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "127"
+      }
+    }
+    </script>
+  </head>
+
+  <body>
+    <!-- Loading Screen with Circular Logo -->
+    <div class="loading-screen" id="loading-screen">
+      <div class="loading-container">
+        <!-- Circular Logo Animation -->
+        <div class="circular-logo-loader">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="120" 
+            height="120" 
+            viewBox="0 0 512 512"
+            fill="none"
+            aria-label="DDRiVE-M Logo"
+          >
+            <defs>
+              <radialGradient id="loaderBg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#1a2f4d" />
+                <stop offset="100%" style="stop-color:#0A1628" />
+              </radialGradient>
+              <linearGradient id="loaderAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#3B82F6" />
+                <stop offset="100%" style="stop-color:#60A5FA" />
+              </linearGradient>
+            </defs>
+            
+            <!-- Outer Ring -->
+            <circle cx="256" cy="256" r="245" stroke="url(#loaderAccent)" stroke-width="8"/>
+            
+            <!-- Background -->
+            <circle cx="256" cy="256" r="240" fill="url(#loaderBg)"/>
+            
+            <!-- Animated Accent Elements -->
+            <g class="logo-animation">
+              <circle cx="450" cy="2300" r="50" fill="#60A5FA"/>
+              <circle cx="600" cy="2450" r="35" fill="#60A5FA"/>
+              <circle cx="550" cy="2150" r="40" fill="#60A5FA"/>
+            </g>
+          </svg>
+        </div>
+        
+        <!-- Loading Text -->
+        <h2 class="loading-text">DDRiVE-M</h2>
+        <p class="loading-subtext">Initializing Strategic Intelligence Platform...</p>
+      </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="root"></div>
+
+    <!-- Application Script -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Post-load Script -->
+    <script>
+      // Handle loading screen removal after app is ready
+      window.addEventListener('load', () => {
+        const loader = document.getElementById('loading-screen');
+        if (loader) {
+          setTimeout(() => {
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => loader.remove(), 500);
+          }, 800);
+        }
+      });
+      
+      // Circular logo click handler (optional branding feature)
+      document.querySelectorAll('.circular-logo').forEach(el => {
+        el.addEventListener('click', () => {
+          window.location.href = '/';
+        });
+      });
+    </script>
+  </body>
+</html>
