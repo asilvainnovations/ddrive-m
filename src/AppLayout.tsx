@@ -1,0 +1,84 @@
+import React, { useState } from 'react';
+import Sidebar, { ModuleKey } from './ddrive/Sidebar';
+import TopBar from './ddrive/TopBar';
+import Dashboard from './ddrive/Dashboard';
+import DetectionModule from './ddrive/DetectionModule';
+import DiagnosisModule from './ddrive/DiagnosisModule';
+import ResponseModule from './ddrive/ResponseModule';
+import IntegrationModule from './ddrive/IntegrationModule';
+import ValidationModule from './ddrive/ValidationModule';
+import EnhancementModule from './ddrive/EnhancementModule';
+import MonitoringModule from './ddrive/MonitoringModule';
+import DocumentsModule from './ddrive/DocumentsModule';
+import SettingsModule from './ddrive/SettingsModule';
+import AIChatbot, { FloatingChatbot } from './ddrive/AIChatbot';
+
+const titles: Record<ModuleKey, { title: string; subtitle: string }> = {
+  dashboard: { title: 'Command Dashboard', subtitle: 'Centralized Intelligence · All 7 Phases' },
+  detection: { title: 'Detection Module', subtitle: 'Phase 1 · Multi-Agency Hazard Monitoring' },
+  diagnosis: { title: 'Diagnosis Module', subtitle: 'Phase 2 · ISO 31000 Risk Registry' },
+  response: { title: 'Response Module', subtitle: 'Phase 3 · Treatment & Incident Management' },
+  integration: { title: 'Integration Module', subtitle: 'Phase 4 · UNDRR 10 Essentials' },
+  validation: { title: 'Validation Module', subtitle: 'Phase 5 · Simulation Engine' },
+  enhancement: { title: 'Enhancement Module', subtitle: 'Phase 6 · AI Plan Generator' },
+  monitoring: { title: 'Monitoring Module', subtitle: 'Phase 7 · Collaboration Hub' },
+  documents: { title: 'Document Management', subtitle: 'Plans · Protocols · Procedures' },
+  assistant: { title: 'DDRiVER AI', subtitle: 'Context-aware DRRM Expert' },
+  settings: { title: 'Settings', subtitle: 'Account · Security · Preferences' },
+};
+
+const AppLayout: React.FC = () => {
+  const [active, setActive] = useState<ModuleKey>('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const renderModule = () => {
+    switch (active) {
+      case 'dashboard': return <Dashboard onNavigate={setActive} />;
+      case 'detection': return <DetectionModule />;
+      case 'diagnosis': return <DiagnosisModule />;
+      case 'response': return <ResponseModule />;
+      case 'integration': return <IntegrationModule />;
+      case 'validation': return <ValidationModule />;
+      case 'enhancement': return <EnhancementModule />;
+      case 'monitoring': return <MonitoringModule />;
+      case 'documents': return <DocumentsModule />;
+      case 'assistant': return <AIChatbot embedded />;
+      case 'settings': return <SettingsModule />;
+      default: return <Dashboard onNavigate={setActive} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen relative font-poppins text-slate-900 dark:text-white">
+      {/* Ambient background gradient */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-slate-100 via-blue-50 to-emerald-50 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900" />
+      <div className="fixed top-0 left-0 w-[800px] h-[800px] -z-10 bg-blue-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="fixed bottom-0 right-0 w-[600px] h-[600px] -z-10 bg-emerald-400/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+      <div className="fixed top-1/2 left-1/2 w-[400px] h-[400px] -z-10 bg-amber-300/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+
+      <div className="flex min-h-screen">
+        <Sidebar
+          active={active}
+          onSelect={setActive}
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+
+        <div className="flex-1 min-w-0 flex flex-col">
+          <TopBar
+            onMenuClick={() => setSidebarOpen(true)}
+            title={titles[active].title}
+            subtitle={titles[active].subtitle}
+          />
+          <main className="flex-1 p-4 lg:p-8 max-w-[1600px] w-full mx-auto">
+            {renderModule()}
+          </main>
+        </div>
+      </div>
+
+      <FloatingChatbot />
+    </div>
+  );
+};
+
+export default AppLayout;
