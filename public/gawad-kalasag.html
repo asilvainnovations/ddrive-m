@@ -498,8 +498,42 @@
         section:nth-child(2) { animation-delay: 0.2s; }
         section:nth-child(3) { animation-delay: 0.3s; }
         section:nth-child(4) { animation-delay: 0.4s; }
+        nav {
+      background-color: #333;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+    }
+    .simulate-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .simulate-btn:hover {
+      background-color: #005a9e;
+    }
     </style>
 </head>
+<!-- fetched via JS) -->
+    // gk.js
+fetch('public/gawad-kalasag.json')
+  .then(response => response.json())
+  .then(data => {
+    console.log("Simulation data loaded:", data);
+    // You can now use `data` to populate UI or run logic
+  })
+  .catch(error => console.error("Error loading JSON:", error));
+
+  <!-- Link to your JavaScript logic -->
+  <script src="public/gk.js"></script>
 <body>
     <header>
         <div class="container">
@@ -507,12 +541,20 @@
                 <div class="shield-icon"></div>
                 <div>
                     <h1>Gawad Kalasag</h1>
-                    <div class="subtitle">KAlamidad at Sakuna LAbanan, SAriling Galing ang Kaligtasan</div>
+                    <div class="subtitle">Kalamidad at Sakuna LAbanan, SAriling Galing ang Kaligtasan</div>
                 </div>
             </div>
             <p class="tagline">The Philippines' Premier Award for Excellence in Disaster Risk Reduction and Management (DRRM) and Humanitarian Assistance</p>
             <div class="divider"></div>
             <p>Aligned with the Priority of the National Disaster Risk Reduction and Management Council (NDRRMC)</p>
+            <!-- Navigation bar -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="public/gk-simulation.html">Simulate</a>
+
+  </nav>
         </div>
     </header>
     
@@ -682,6 +724,8 @@
                 </div>
             </div>
         </section>
+        <!-- Button wired to simulation page -->
+  <a href="public/gk-simulation.html" class="simulate-btn">SIMULATE NOW!</a>
     </main>
     
     <script>
