@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
 import { FileText, Download, Eye, Edit, Clock } from 'lucide-react';
 
 const PlanLibrary: React.FC = () => {
