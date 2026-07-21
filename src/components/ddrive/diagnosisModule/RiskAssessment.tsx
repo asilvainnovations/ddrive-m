@@ -10,14 +10,13 @@ import { useRisks } from '@/hooks/useRisks';
 import { Risk } from '@/types/risk';
 import { Loader2 } from 'lucide-react';
 
-const RiskAssessment: React.FC = () => {
-  const { risks, categories, loading, addRisk, updateRisk, deleteRisk, refetch } = useRisks();
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedRisk, setSelectedRisk] = useState<Risk | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFramework, setSelectedFramework] = useState('All');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [activeTab, setActiveTab] = useState<'matrix' | 'table'>('matrix');
+const RiskAssessment = () => {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Risk Assessment</h1>
+    </div>
+  );
+};
 
   const filteredRisks = useMemo(() => {
     return risks.filter(risk => {
