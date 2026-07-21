@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
 import COSOFramework from '@/components/compliance/COSOFramework';
 import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
