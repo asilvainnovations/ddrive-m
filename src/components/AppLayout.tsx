@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
-import Sidebar, { ModuleKey } from './ddrive/Sidebar';
-import TopBar from './ddrive/TopBar';
-import Dashboard from './ddrive/Dashboard';
-import DetectionModule from './ddrive/DetectionModule';
-import DiagnosisModule from './ddrive/DiagnosisModule';
-import ResponseModule from './ddrive/ResponseModule';
-import IntegrationModule from './ddrive/IntegrationModule';
-import ValidationModule from './ddrive/ValidationModule';
-import EnhancementModule from './ddrive/EnhancementModule';
-import MonitoringModule from './ddrive/MonitoringModule';
-import DocumentsModule from './ddrive/DocumentsModule';
-import SettingsModule from './ddrive/SettingsModule';
-import AIChatbot, { FloatingChatbot } from './ddrive/AIChatbot';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import Sidebar, { ModuleKey } from '@/components/ddrive/Sidebar';
+import TopBar from '@/components/ddrive/TopBar';
+import { FloatingChatbot } from '@/components/ddrive/AIChatbot';
 
 const titles: Record<ModuleKey, { title: string; subtitle: string }> = {
   dashboard: { title: 'Command Dashboard', subtitle: 'Centralized Intelligence · All 7 Phases' },
@@ -27,25 +18,53 @@ const titles: Record<ModuleKey, { title: string; subtitle: string }> = {
   settings: { title: 'Settings', subtitle: 'Account · Security · Preferences' },
 };
 
+// Maps URL paths to their parent ModuleKey for accurate highlighting
+const routeToModuleMap: Record<string, ModuleKey> = {
+  '/': 'dashboard',
+  '/dashboard': 'dashboard',
+  '/detection': 'detection',
+  '/diagnosis': 'diagnosis',
+  '/risk-assessment': 'diagnosis',
+  '/response': 'response',
+  '/integration': 'integration',
+  '/validation': 'validation',
+  '/enhancement': 'enhancement',
+  '/compliance': 'enhancement',
+  '/monitoring': 'monitoring',
+  '/collaboration': 'monitoring',
+  '/documents': 'documents',
+  '/plan-library': 'documents',
+  '/plan-generator': 'documents',
+  '/assistant': 'assistant',
+  '/settings': 'settings',
+};
+
+// Maps ModuleKey back to the primary route for navigation
+const moduleToRouteMap: Record<ModuleKey, string> = {
+  dashboard: '/',
+  detection: '/detection',
+  diagnosis: '/diagnosis',
+  response: '/response',
+  integration: '/integration',
+  validation: '/validation',
+  enhancement: '/enhancement',
+  monitoring: '/monitoring',
+  documents: '/documents',
+  assistant: '/assistant',
+  settings: '/settings',
+};
+
 const AppLayout: React.FC = () => {
-  const [active, setActive] = useState<ModuleKey>('dashboard');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const renderModule = () => {
-    switch (active) {
-      case 'dashboard': return <Dashboard onNavigate={setActive} />;
-      case 'detection': return <DetectionModule />;
-      case 'diagnosis': return <DiagnosisModule />;
-      case 'response': return <ResponseModule />;
-      case 'integration': return <IntegrationModule />;
-      case 'validation': return <ValidationModule />;
-      case 'enhancement': return <EnhancementModule />;
-      case 'monitoring': return <MonitoringModule />;
-      case 'documents': return <DocumentsModule />;
-      case 'assistant': return <AIChatbot embedded />;
-      case 'settings': return <SettingsModule />;
-      default: return <Dashboard onNavigate={setActive} />;
-    }
+  // Determine active module based on current URL path
+  const activeModule: ModuleKey = routeToModuleMap[location.pathname] || 'dashboard';
+
+  const handleNavigate = (module: ModuleKey) => {
+    navigate(moduleToRouteMap[module]);
+    setSidebarOpen(false); // Auto-close sidebar on mobile after selection
   };
 
   return (
@@ -58,8 +77,8 @@ const AppLayout: React.FC = () => {
 
       <div className="flex min-h-screen">
         <Sidebar
-          active={active}
-          onSelect={setActive}
+          active={activeModule}
+          onSelect={handleNavigate}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
@@ -67,11 +86,12 @@ const AppLayout: React.FC = () => {
         <div className="flex-1 min-w-0 flex flex-col">
           <TopBar
             onMenuClick={() => setSidebarOpen(true)}
-            title={titles[active].title}
-            subtitle={titles[active].subtitle}
+            title={titles[activeModule].title}
+            subtitle={titles[activeModule].subtitle}
           />
           <main className="flex-1 p-4 lg:p-8 max-w-[1600px] w-full mx-auto">
-            {renderModule()}
+            {/* Outlet dynamically renders the matched child route component (e.g., Dashboard, RiskAssessment) */}
+            <Outlet />
           </main>
         </div>
       </div>
