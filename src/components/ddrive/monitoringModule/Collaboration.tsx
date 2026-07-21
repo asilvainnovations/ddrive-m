@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
 import { Users, MessageSquare, Calendar, CheckSquare } from 'lucide-react';
 
 const Collaboration: React.FC = () => {
