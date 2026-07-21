@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "github": {
+      "enabled": true
+    },
+    "sentry": {
+      "enabled": true
+    },
+    "vs_code": {
+      "enabled": false
+    }
+  }
+}
