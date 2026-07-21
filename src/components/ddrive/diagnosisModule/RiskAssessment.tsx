@@ -1,6 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
 import RiskMatrix from '@/components/risk/RiskMatrix';
 import RiskToolbar from '@/components/risk/RiskToolbar';
 import RiskStats from '@/components/risk/RiskStats';
