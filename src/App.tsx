@@ -1,30 +1,41 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AppLayout from '@/components/AppLayout';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/theme-provider";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+// Page imports (Wrappers or direct module imports based on your preference)
+import Dashboard from '@/pages/Dashboard';
+import RiskAssessment from '@/pages/RiskAssessment';
+import PlanGenerator from '@/pages/PlanGenerator';
+import PlanLibrary from '@/pages/PlanLibrary';
+import Compliance from '@/pages/Compliance';
+import Collaboration from '@/pages/Collaboration';
+import NotFound from '@/pages/NotFound';
 
-const queryClient = new QueryClient();
+// Note: You can also import these directly from '@/components/ddrive/...' 
+// if you don't use a separate 'pages' directory for them.
 
-const App = () => (
-  <ThemeProvider defaultTheme="light">
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
-);
+const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* AppLayout wraps all child routes, providing Sidebar, TopBar, and Background */}
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          
+          <Route path="risk-assessment" element={<RiskAssessment />} />
+          <Route path="plan-generator" element={<PlanGenerator />} />
+          <Route path="plan-library" element={<PlanLibrary />} />
+          <Route path="compliance" element={<Compliance />} />
+          <Route path="collaboration" element={<Collaboration />} />
+          
+          {/* Add other module routes here as you build them out */}
+          
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
