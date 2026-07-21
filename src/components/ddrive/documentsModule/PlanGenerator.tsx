@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
 import { FileText, Download, Sparkles } from 'lucide-react';
 
 const PlanGenerator: React.FC = () => {
