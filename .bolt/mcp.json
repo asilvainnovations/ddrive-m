@@ -8,6 +8,9 @@
     },
     "vs_code": {
       "enabled": false
+    },
+    "notion": {
+      "enabled": true
     }
   }
 }
