@@ -1,5 +1,4 @@
 import React from 'react';
-import StatCard from './StatCard';
 import {
   AlertTriangle, Activity, ShieldCheck, Users, FileCheck2, Globe2,
   Radar, Stethoscope, Shield, Network, FlaskConical, Sparkles, Radio,
