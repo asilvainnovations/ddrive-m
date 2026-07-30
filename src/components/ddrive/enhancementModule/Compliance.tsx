@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import COSOFramework from '@/components/compliance/COSOFramework';
+import COSOFramework from '@/components/ddrive/enahncementModule/COSOFramework';
 import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
 
