@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import GlassCard from './components/ui/GlassCard';
-import { Bot, Send, Sparkles, X } from 'lucide-react';
+import { Bot, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Msg {
