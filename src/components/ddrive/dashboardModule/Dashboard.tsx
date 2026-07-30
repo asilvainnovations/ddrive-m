@@ -4,7 +4,6 @@ import {
   Radar, Stethoscope, Shield, Network, FlaskConical, Sparkles, Radio,
   ArrowRight, Zap, BookOpen
 } from 'lucide-react';
-import { resilienceTrend, alerts } from '@/data/sampleData';
 import type { ModuleKey } from './Sidebar';
 import { useHazards, useRisks, useIncidents, useUndrr } from '@/hooks/useDDriveData';
 
