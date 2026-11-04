@@ -1,13 +1,15 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "ddrive-m",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "lint": "eslint .",
+    "check": "npm run typecheck && npm run lint && npm run build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,9 @@
+DDRiVE-M Phase 0 (0.1.0) - delete these files from the repository before or after copying the new files in.
+They were replaced by routed modules or were broken/dead code.
+
+public/gk.js
+src/components/ddrive/diagnosisModule/RiskAssessment.tsx
+src/components/ddrive/documentsModule/PlanGenerator.tsx
+src/components/ddrive/documentsModule/PlanLibrary.tsx
+src/components/ddrive/enhancementModule/Compliance.tsx
+src/components/ddrive/monitoringModule/Collaboration.tsx
