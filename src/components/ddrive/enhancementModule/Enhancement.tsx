@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Sparkles, FileText, Wand2, CheckCircle2, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { usePlans, insertRow } from '@/hooks/useDDriveData';
+import { usePlans } from '@/hooks/useDDriveData';
+import { draftPlan } from '@/lib/actions';
+import { useAuth } from '@/contexts/AuthContext';
+import { needsRole } from '@/lib/roles';
 
 const templates = [
   { name: 'DRRM Plan', desc: 'RA 10121 compliant', standard: 'RA 10121', color: 'from-blue-500 to-cyan-500', type: 'DRRM' },
@@ -13,23 +16,19 @@ const templates = [
 
 const EnhancementModule: React.FC = () => {
   const { data: plans, refetch } = usePlans();
+  const { can } = useAuth();
   const [generating, setGenerating] = useState<typeof templates[0] | null>(null);
 
   const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!generating) return;
     const form = new FormData(e.currentTarget);
-    const nextId = `P-${String(plans.length + 1).padStart(3, '0')}`;
-    const { error } = await insertRow('ddrive_plans', {
-      id: nextId,
+    const { error } = await draftPlan({
       title: `${generating.name} - ${form.get('org')}`,
       type: generating.type,
       standard: generating.standard,
-      status: 'Draft',
-      compliance: null, // not assessed yet; never a made-up score
-      last_updated: new Date().toISOString().split('T')[0],
     });
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(error); return; }
     toast.success(`${generating.name} saved as a draft`);
     setGenerating(null);
     refetch();
@@ -51,7 +50,7 @@ const EnhancementModule: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {templates.map(t => (
-          <GlassCard key={t.name} className="p-5" onClick={() => setGenerating(t)}>
+          <GlassCard key={t.name} className="p-5" onClick={() => (can('analyst') ? setGenerating(t) : toast.info(needsRole('analyst')))}>
             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center shadow-lg mb-3`}>
               <Wand2 className="w-5 h-5 text-white" />
             </div>
