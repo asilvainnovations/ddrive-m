@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { FileText, Search, Upload, Download, Folder, ExternalLink } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useDocuments, insertRow } from '@/hooks/useDDriveData';
@@ -43,17 +43,16 @@ const DocumentsModule: React.FC = () => {
       updated_at: new Date().toISOString().split('T')[0],
     });
     if (error) { toast.error(error.message); return; }
-    toast.success('Document registered in Supabase');
+    toast.success('Document saved');
     setShowUpload(false);
     refetch();
   };
 
   const handleDownload = (doc: typeof pscpTemplate | typeof filtered[0]) => {
     if ('externalUrl' in doc && doc.externalUrl) {
-      window.open(doc.externalUrl, '_blank');
-      toast.success(`Opening ${doc.name} in new tab`);
+      window.open(doc.externalUrl, '_blank', 'noopener,noreferrer');
     } else {
-      toast.success(`Downloading ${(doc as any).name}`);
+      toast.info(`${doc.name} has no file attached yet.`);
     }
   };
 
