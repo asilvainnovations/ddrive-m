@@ -1,14 +1,14 @@
 import React from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Shield, Zap, CheckCircle2, Clock, Users } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useIncidents, updateRow } from '@/hooks/useDDriveData';
 
 const protocols = [
-  { agency: 'DTI', name: 'Trade & Industry Continuity', count: 8 },
-  { agency: 'DILG', name: 'LGU Emergency Protocol', count: 12 },
-  { agency: 'LGU', name: 'Local Controls Framework', count: 25 },
-  { agency: 'DOH', name: 'Health Emergency Response', count: 14 },
+  { agency: 'DTI', name: 'Trade & Industry Continuity' },
+  { agency: 'DILG', name: 'LGU Emergency Protocol' },
+  { agency: 'LGU', name: 'Local Controls Framework' },
+  { agency: 'DOH', name: 'Health Emergency Response' },
 ];
 
 const treatments = [
@@ -26,7 +26,7 @@ const ResponseModule: React.FC = () => {
     const newStatus = newProgress >= 100 ? 'Completed' : 'In Progress';
     const { error } = await updateRow('ddrive_incidents', id, { progress: newProgress, status: newStatus });
     if (error) { toast.error(error.message); return; }
-    toast.success('Progress updated in Supabase');
+    toast.success('Progress saved');
     refetch();
   };
 
@@ -59,7 +59,7 @@ const ResponseModule: React.FC = () => {
               </div>
             ))}
           </div>
-          <button onClick={() => toast.success('AI generated 12 mitigation strategies')} className="w-full mt-4 px-3 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Generate AI Mitigation Strategies</button>
+          <button onClick={() => toast.info('AI-suggested strategies is not available yet.')} className="w-full mt-4 px-3 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Generate AI Mitigation Strategies</button>
         </GlassCard>
 
         <GlassCard className="p-6">
@@ -71,7 +71,6 @@ const ResponseModule: React.FC = () => {
                   <span className="text-[10px] font-bold px-2 py-1 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/40">{p.agency}</span>
                   <span className="text-sm font-poppins font-medium">{p.name}</span>
                 </div>
-                <span className="text-xs font-bold">{p.count} SOPs</span>
               </div>
             ))}
           </div>
@@ -84,7 +83,7 @@ const ResponseModule: React.FC = () => {
             <h3 className="font-montserrat font-bold text-lg">Incident Management</h3>
             <p className="text-xs text-slate-500">{incidents.length} tracked in database</p>
           </div>
-          <button onClick={() => toast.success('Deployed to incident queue')} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">+ New Incident</button>
+          <button onClick={() => toast.info('Creating incidents from this screen is not available yet.')} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">+ New Incident</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {incidents.map(inc => (
