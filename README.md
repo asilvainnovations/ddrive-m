@@ -2,13 +2,13 @@
 
 **DDRiVE-M (Data-Driven Resilience Management)** is a resilience intelligence platform by **ASilva Innovations**. It helps local governments, agencies, enterprises and NGOs in the Philippines and Asia anticipate, adapt to and respond to disruption, through a seven-phase intelligence cycle.
 
-> **Status: 0.3.0, pre-production.** Phase 0, the database part of Phase 1, and the first part of Phase 2 are done: the app builds, no screen shows a figure that is not from your records, access rules are enforced in the database, and official PAGASA alerts flow in automatically. See [Roadmap](#roadmap). Do not use DDRiVE-M as a source of official warnings. Follow PAGASA, PHIVOLCS and your local DRRM office.
+> **Status: 0.2.0, pre-production.** Phase 0 and the database part of Phase 1 are done: the app builds, no screen shows a figure that is not from your records, and every record belongs to an organisation with role-based access rules enforced in the database. Agency feeds and the AI assistant come in Phase 2 (see [Roadmap](#roadmap)). Do not use DDRiVE-M as a source of official warnings. Follow PAGASA, PHIVOLCS and your local DRRM office.
 
 ## The intelligence cycle
 
 | Phase | Module | What it does today |
 | --- | --- | --- |
-| 1 Detection | `detectionModule/` | Official PAGASA alerts (wind signals, flood advisories) flagged for your watch areas; hazard records, which can be logged from an alert |
+| 1 Detection | `detectionModule/` | Hazard records entered by your team, with their source agency |
 | 2 Diagnosis | `diagnosisModule/` | Risk registry (likelihood × impact) |
 | 3 Response | `responseModule/` | Incident list and progress |
 | 4 Integration | `IntegrationModule.tsx` | UNDRR 10 Essentials scorecard entries and guidance |
@@ -24,11 +24,11 @@ Requirements: Node 20 or later, and a Supabase project.
 
 ```bash
 npm ci
-cp .env.example .env.local   # already points at DDRiVE-M's Supabase project
+cp .env.example .env.local   # then fill in VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
 npm run dev                  # http://localhost:8080
 ```
 
-Production builds read the same two public values from `.env.production`; your host's environment variables (for example on Vercel or Netlify) override them. Only the publishable key (`sb_publishable_...`) belongs in the app; secret keys stay in Supabase. Without a URL and key, the app runs and shows "Database not configured". See [DEPLOY.md](DEPLOY.md) for the database, the alert schedule and which key goes where.
+For production, set the same two variables in your host's environment settings (for example Vercel or Netlify), not in a committed file. Without them, the app runs and shows "Database not configured".
 
 Apply the database migrations in `supabase/migrations/` in filename order, in the Supabase SQL editor. Each file is safe to run twice. Upgrading an existing database: follow [DEPLOY.md](DEPLOY.md).
 
@@ -42,8 +42,7 @@ Apply the database migrations in `supabase/migrations/` in filename order, in th
 | `npm run build` | Production build to `dist/` |
 | `npm run check` | Type-check, lint and build; run before every pull request |
 | `npm run test:db` | Access-rule tests on a throwaway local Postgres, fresh and upgraded from the old schema |
-| `npm run test:e2e` | Browser tests: the production build against a local Postgres and PostgREST 12, including the alert ingest function under Deno |
-| `npm run test:functions` | Tests for the CAP parser and ingest logic, using real PAGASA documents (needs Deno 2) |
+| `npm run test:e2e` | Browser tests: the production build against a local Postgres and PostgREST 12 |
 
 ## Project structure
 
@@ -63,7 +62,6 @@ src/
     modules.ts               Module keys, routes and titles (single source of truth)
     supabase.ts              Database client, configured from environment variables
 supabase/migrations/         Versioned SQL, applied in order
-supabase/functions/          Edge Functions: ingest-pagasa (official alerts), with a shared CAP parser
 supabase/tests/              Access-rule tests (plain SQL) and a Supabase stand-in for local runs
 e2e/                         Browser tests and a local stand-in for the Supabase gateway
 docs/adr/                    Architecture decision records
@@ -90,7 +88,7 @@ Every record belongs to one organisation. People belong to one or more organisat
 | --- | --- |
 | 0 (done) | App builds and type-checks in strict mode; all modules routed; fabricated figures, fake identity and browser-side AI keys removed; privacy notice and consent on lead capture |
 | 1 (database done) | Organisations, roles and Row Level Security on every table; audit log; server-issued ids; one risk model with per-organisation criteria; PSGC location codes. Still to do in Phase 1: CI, CSP headers, MFA |
-| 2 (PAGASA alerts done) | Still to do: earthquakes and volcano bulletins, RA 12287 anticipatory action workflow, server-side DDRiVER AI with citations, offline field forms, Filipino translation |
+| 2 | Agency feed ingestion (PAGASA CAP, PHIVOLCS, NOAH), RA 12287 anticipatory action workflow, server-side DDRiVER AI with citations, offline field forms, Filipino translation |
 | 3 | OWASP ASVS Level 2 verification, WCAG 2.2 AA audit, penetration test, service levels |
 
 ## Licence

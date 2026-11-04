@@ -1,7 +1,7 @@
 {
   "name": "ddrive-m",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,8 +12,7 @@
     "check": "npm run typecheck && npm run lint && npm run build",
     "preview": "vite preview",
     "test:db": "bash scripts/test_db.sh && bash scripts/test_db.sh --legacy",
-    "test:e2e": "bash scripts/test_e2e.sh",
-    "test:functions": "deno test --allow-read --config supabase/functions/ingest-pagasa/deno.json supabase/functions/_shared/"
+    "test:e2e": "bash scripts/test_e2e.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
