@@ -2,7 +2,10 @@ import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Shield, Zap, CheckCircle2, Clock, Users } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useIncidents, updateRow } from '@/hooks/useDDriveData';
+import { useIncidents } from '@/hooks/useDDriveData';
+import { setIncidentProgress } from '@/lib/actions';
+import { useAuth } from '@/contexts/AuthContext';
+import { needsRole } from '@/lib/roles';
 
 const protocols = [
   { agency: 'DTI', name: 'Trade & Industry Continuity' },
@@ -20,12 +23,11 @@ const treatments = [
 
 const ResponseModule: React.FC = () => {
   const { data: incidents, refetch } = useIncidents();
+  const { can } = useAuth();
 
   const advance = async (id: string, current: number) => {
-    const newProgress = Math.min(100, current + 10);
-    const newStatus = newProgress >= 100 ? 'Completed' : 'In Progress';
-    const { error } = await updateRow('ddrive_incidents', id, { progress: newProgress, status: newStatus });
-    if (error) { toast.error(error.message); return; }
+    const { error } = await setIncidentProgress(id, current + 10);
+    if (error) { toast.error(error); return; }
     toast.success('Progress saved');
     refetch();
   };
@@ -90,7 +92,7 @@ const ResponseModule: React.FC = () => {
             <div key={inc.id} className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <p className="font-mono text-[10px] text-slate-500">{inc.id}</p>
+                  <p className="font-mono text-[10px] text-slate-500">{inc.ref}</p>
                   <p className="font-montserrat font-bold text-sm">{inc.title}</p>
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -112,7 +114,7 @@ const ResponseModule: React.FC = () => {
                   {inc.status} · {inc.progress}%
                 </span>
                 {inc.status !== 'Completed' && (
-                  <button onClick={() => advance(inc.id, inc.progress)} className="text-xs text-blue-700 font-semibold hover:underline">Advance +10%</button>
+                  <button type="button" onClick={() => advance(inc.id, inc.progress)} disabled={!can('responder')} title={can('responder') ? undefined : needsRole('responder')} className="text-xs text-blue-700 font-semibold hover:underline disabled:opacity-50 disabled:no-underline">Advance +10%</button>
                 )}
               </div>
             </div>
