@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Radar, MapPin, Cloud, Mountain, Waves, Flame, Wind, AlertCircle, ExternalLink, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useHazards, insertRow, Hazard } from '@/hooks/useDDriveData';
+import { useHazards, Hazard } from '@/hooks/useDDriveData';
+import { reportHazard, NewHazard } from '@/lib/actions';
+import GatedButton from '@/components/ddrive/GatedButton';
 
 const agencies = [
   { name: 'PAGASA', desc: 'Weather & Typhoon', color: 'from-blue-500 to-blue-700', icon: Cloud },
@@ -31,19 +33,20 @@ const DetectionModule: React.FC = () => {
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const row = {
+    const psgc = String(form.get('psgc') ?? '').trim();
+    const hazard: NewHazard = {
       agency: form.get('agency') as string,
       type: form.get('type') as string,
       name: form.get('name') as string,
-      severity: form.get('severity') as string,
+      severity: form.get('severity') as NewHazard['severity'],
       location: form.get('location') as string,
       // Required and range-checked by the form; never defaulted to a made-up location.
       lat: Number(form.get('lat')),
       lng: Number(form.get('lng')),
-      status: 'Active',
+      psgc_code: psgc || null,
     };
-    const { error } = await insertRow('ddrive_hazards', row);
-    if (error) { toast.error(error.message); return; }
+    const { error } = await reportHazard(hazard);
+    if (error) { toast.error(error); return; }
     toast.success('Hazard record saved');
     setShowAdd(false);
     refetch();
@@ -59,12 +62,12 @@ const DetectionModule: React.FC = () => {
             </div>
             <div>
               <h1 className="font-montserrat font-bold text-2xl">Detection Module</h1>
-              <p className="text-sm text-slate-500 font-poppins">Phase 1 · Multi-agency hazard monitoring (Supabase live)</p>
+              <p className="text-sm text-slate-500 font-poppins">Phase 1 · Hazard records with their source agency</p>
             </div>
           </div>
-          <button onClick={() => setShowAdd(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Report Hazard
-          </button>
+          <GatedButton min="responder" onClick={() => setShowAdd(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
+            <Plus className="w-4 h-4" aria-hidden="true" /> Report Hazard
+          </GatedButton>
         </div>
       </GlassCard>
 
@@ -230,6 +233,7 @@ const DetectionModule: React.FC = () => {
                 <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
                 <input name="lng" type="number" step="any" min="116" max="127" required aria-label="Longitude (116 to 127)" placeholder="Longitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               </div>
+              <input name="psgc" inputMode="numeric" pattern="[0-9]{10}" aria-label="PSGC code (optional, 10 digits)" placeholder="PSGC code (optional, 10 digits)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <select name="severity" required aria-label="Severity" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
               </select>
