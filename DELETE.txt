@@ -1,9 +1,10 @@
-DDRiVE-M Phase 0 (0.1.0) - delete these files from the repository before or after copying the new files in.
-They were replaced by routed modules or were broken/dead code.
+DDRiVE-M Phase 1 (0.2.0) - delete these files from the repository.
+They were the unused second risk model, replaced by ddrive_risks and database-computed levels.
 
-public/gk.js
-src/components/ddrive/diagnosisModule/RiskAssessment.tsx
-src/components/ddrive/documentsModule/PlanGenerator.tsx
-src/components/ddrive/documentsModule/PlanLibrary.tsx
-src/components/ddrive/enhancementModule/Compliance.tsx
-src/components/ddrive/monitoringModule/Collaboration.tsx
+src/components/ddrive/dashboardModule/RiskStats.tsx
+src/components/ddrive/detectionModule/RiskMatrix.tsx
+src/components/ddrive/detectionModule/RiskToolbar.tsx
+src/components/ddrive/diagnosisModule/AddRiskModal.tsx
+src/components/ddrive/diagnosisModule/RiskDetailModal.tsx
+src/hooks/useRisks.ts
+src/lib/risk.ts
