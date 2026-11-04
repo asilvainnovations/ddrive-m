@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertTriangle, Shield, TrendingUp, Activity } from 'lucide-react';
-import { Risk, getRiskLevel } from '@/types/risk';
+import { Risk, getRiskLevel } from '@/lib/risk';
 
 interface RiskStatsProps {
   risks: Risk[];
