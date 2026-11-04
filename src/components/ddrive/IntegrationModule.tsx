@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Network, TrendingUp, ExternalLink, FileText, ClipboardCheck, Search, Building2, ArrowRight, CheckCircle2, Clock, Users, BarChart3, X, ChevronRight, Download, Sparkles } from 'lucide-react';
 import { useUndrr } from '@/hooks/useDDriveData';
 import { toast } from '@/components/ui/sonner';
@@ -111,7 +111,6 @@ const IntegrationModule: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-montserrat font-bold text-xl">SPARC Assessment</h3>
-                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wider">Live</span>
               </div>
               <p className="text-sm text-slate-500 font-poppins">Assess organizational resilience through the SPARC framework</p>
             </div>
@@ -243,14 +242,20 @@ const IntegrationModule: React.FC = () => {
           <div className="relative">
             <p className="text-xs uppercase tracking-widest text-amber-300 font-bold">Composite Resilience Score</p>
             <div className="flex items-end gap-4 mt-2">
-              <span className="font-montserrat text-6xl font-bold">{avgScore}</span>
-              <span className="text-xl text-blue-200 mb-2">/100</span>
-              <div className="flex items-center gap-1 text-emerald-300 mb-3 ml-auto">
-                <TrendingUp className="w-4 h-4" />
-                <span className="font-semibold">+{totalImprovement} YoY</span>
-              </div>
+              <span className="font-montserrat text-6xl font-bold">{undrr.length > 0 ? avgScore : '—'}</span>
+              <span className="text-xl text-blue-200 mb-2">{undrr.length > 0 ? '/100' : 'No data yet'}</span>
+              {undrr.length > 0 && (
+                <div className="flex items-center gap-1 text-emerald-300 mb-3 ml-auto">
+                  <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                  <span className="font-semibold">{totalImprovement >= 0 ? '+' : ''}{totalImprovement} change recorded</span>
+                </div>
+              )}
             </div>
-            <p className="text-sm text-blue-100 mt-2">Resilience rating: <strong className="text-amber-300">GOOD</strong> — continuing improvement trajectory.</p>
+            <p className="text-sm text-blue-100 mt-2">
+              {undrr.length > 0
+                ? `Average of ${undrr.length} scorecard ${undrr.length === 1 ? 'entry' : 'entries'}.`
+                : 'Record your UNDRR scorecard results to see a score here.'}
+            </p>
             <div className="h-3 bg-blue-950/50 rounded-full mt-4 overflow-hidden">
               <div className="h-full bg-gradient-to-r from-amber-400 to-amber-300 rounded-full" style={{ width: `${avgScore}%` }} />
             </div>
@@ -258,14 +263,11 @@ const IntegrationModule: React.FC = () => {
         </GlassCard>
 
         <GlassCard className="p-6">
-          <h3 className="font-montserrat font-bold text-lg mb-3">Year-over-Year</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-slate-500">2023</span><strong>68/100</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">2024</span><strong>71/100</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">2025</span><strong className="text-emerald-600">{avgScore}/100</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">Target 2026</span><strong className="text-blue-600">85/100</strong></div>
-          </div>
-          <button className="w-full mt-4 px-3 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Generate Gap Analysis</button>
+          <h3 className="font-montserrat font-bold text-lg mb-3">Year-over-year</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Not available yet. Year-by-year comparison needs dated scorecard entries, which come with the Phase 1 data model.
+          </p>
+          <button type="button" onClick={() => toast.info('Gap analysis is not available yet.')} className="w-full mt-4 px-3 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Generate gap analysis</button>
         </GlassCard>
       </div>
 

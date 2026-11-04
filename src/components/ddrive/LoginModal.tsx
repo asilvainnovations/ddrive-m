@@ -129,10 +129,10 @@ const LoginModal: React.FC = () => {
               <input
                 type="password"
                 required
-                minLength={6}
+                minLength={12}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password (min 6 chars)"
+                placeholder="Password (at least 12 characters)"
                 className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm outline-none focus:border-blue-500"
               />
             </div>

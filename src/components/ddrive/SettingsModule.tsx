@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Settings, User, Lock, Bell, Palette, Bot, Globe } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { toast } from '@/components/ui/sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SettingsModule: React.FC = () => {
+  const { user, profile, openLogin } = useAuth();
   const { theme, setTheme } = useTheme();
   const [section, setSection] = useState<'profile' | 'security' | 'notifications' | 'ai' | 'general'>('profile');
   const [twoFA, setTwoFA] = useState(true);
@@ -60,35 +62,34 @@ const SettingsModule: React.FC = () => {
           {section === 'profile' && (
             <div className="space-y-4">
               <h3 className="font-montserrat font-bold text-lg">User Profile</h3>
-              <div className="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white text-xl font-bold">JD</div>
-                <button className="text-xs px-3 py-1.5 rounded-lg bg-white/60 dark:bg-white/5 border border-white/40 font-semibold">Upload Photo</button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold">Full Name</label>
-                  <input defaultValue="Juan Dela Cruz" className="w-full mt-1 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+              {!user ? (
+                <div className="text-sm text-slate-600 dark:text-slate-300">
+                  <p className="mb-3">Sign in to see your profile.</p>
+                  <button type="button" onClick={openLogin} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Sign in</button>
                 </div>
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold">Role</label>
-                  <select className="w-full mt-1 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm">
-                    <option>Super Admin</option>
-                    <option>Field Operator</option>
-                    <option>Analyst</option>
-                    <option>Compliance Officer</option>
-                    <option>Emergency Responder</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold">Organization</label>
-                  <input defaultValue="NDRRMC - OCD" className="w-full mt-1 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
-                </div>
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold">Email</label>
-                  <input defaultValue="jdelacruz@ddrive.gov.ph" className="w-full mt-1 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
-                </div>
-              </div>
-              <button onClick={() => toast.success('Profile updated')} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Save Changes</button>
+              ) : (
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <dt className="text-xs text-slate-500 font-semibold">Full name</dt>
+                    <dd className="mt-1">{profile?.full_name || '—'}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-slate-500 font-semibold">Email</dt>
+                    <dd className="mt-1">{user.email}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-slate-500 font-semibold">Role</dt>
+                    <dd className="mt-1">{profile?.role || 'Not assigned yet'}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-slate-500 font-semibold">Organisation</dt>
+                    <dd className="mt-1">{profile?.organization || 'Not assigned yet'}</dd>
+                  </div>
+                  <p className="sm:col-span-2 text-xs text-slate-500">
+                    Your administrator assigns your role and organisation. You cannot change them here.
+                  </p>
+                </dl>
+              )}
             </div>
           )}
 
@@ -150,14 +151,10 @@ const SettingsModule: React.FC = () => {
                 </button>
               </div>
               <div className="p-3 rounded-xl bg-white/60 dark:bg-white/5">
-                <p className="text-sm font-semibold mb-2">Active Sessions (3)</p>
-                <div className="space-y-1 text-xs text-slate-500">
-                  <p>· MacBook Pro · Manila · Current</p>
-                  <p>· iPhone 15 · Manila · 2h ago</p>
-                  <p>· Chrome Windows · Cebu · 1d ago</p>
-                </div>
+                <p className="text-sm font-semibold mb-1">Active sessions</p>
+                <p className="text-xs text-slate-500">The list of signed-in devices is not available yet.</p>
               </div>
-              <button onClick={() => toast.success('Security settings updated')} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Save Changes</button>
+              <button onClick={() => toast.info('Saving security settings is not available yet.')} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Save Changes</button>
             </div>
           )}
 
@@ -206,7 +203,7 @@ const SettingsModule: React.FC = () => {
                   {['concise', 'detailed'].map(s => (
                     <button
                       key={s}
-                      onClick={() => setAiStyle(s as any)}
+                      onClick={() => setAiStyle(s as 'concise' | 'detailed')}
                       className={`p-3 rounded-xl border text-sm font-semibold capitalize ${aiStyle === s ? 'border-purple-500 bg-purple-500/10 text-purple-700' : 'border-slate-300'}`}
                     >
                       {s}
@@ -226,7 +223,7 @@ const SettingsModule: React.FC = () => {
                 <p className="text-sm font-semibold">Proactive risk insights</p>
                 <input type="checkbox" defaultChecked />
               </div>
-              <button onClick={() => toast.success('AI preferences saved')} className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold text-sm">Save AI Settings</button>
+              <button onClick={() => toast.info('AI settings are not available yet.')} className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold text-sm">Save AI Settings</button>
             </div>
           )}
         </GlassCard>

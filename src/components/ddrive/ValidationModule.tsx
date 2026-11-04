@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { FlaskConical, Play, Users, Clock, Award, Gamepad2, X, ExternalLink, Radio, Shield, Zap } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useScenarios, updateRow, Scenario } from '@/hooks/useDDriveData';
@@ -50,7 +50,7 @@ const ValidationModule: React.FC = () => {
 
   const completeScenario = async (id: number, currentParticipants: number) => {
     await updateRow('ddrive_scenarios', id, { participants: currentParticipants + 1 });
-    toast.success('Simulation completed! Participation logged to Supabase.');
+    toast.success('Participation recorded');
     refetch();
     setLaunched(null);
   };
@@ -117,11 +117,10 @@ const ValidationModule: React.FC = () => {
         </div>
       </GlassCard>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           { label: 'Active Scenarios', val: scenarios.length, icon: Gamepad2, color: 'from-amber-500 to-orange-600' },
           { label: 'Total Participants', val: totalParticipants.toLocaleString(), icon: Users, color: 'from-blue-500 to-cyan-500' },
-          { label: 'Hours Logged', val: 8420, icon: Clock, color: 'from-emerald-500 to-teal-500' },
           { label: 'Avg Completion', val: `${avgCompletion}%`, icon: Award, color: 'from-purple-500 to-pink-500' },
         ].map((s, i) => {
           const Icon = s.icon;

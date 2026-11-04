@@ -5,39 +5,36 @@ import {
   Sparkles, Radio, FileText, Bot, Settings, X
 } from 'lucide-react';
 
-export type ModuleKey =
-  | 'dashboard'
-  | 'detection'
-  | 'diagnosis'
-  | 'response'
-  | 'integration'
-  | 'validation'
-  | 'enhancement'
-  | 'monitoring'
-  | 'documents'
-  | 'assistant'
-  | 'settings';
+import { MODULES, ModuleKey } from '@/lib/modules';
+
+export type { ModuleKey };
 
 interface SidebarProps {
-  active: ModuleKey;
+  active?: ModuleKey;
   onSelect: (key: ModuleKey) => void;
   open: boolean;
   onClose: () => void;
 }
 
-const items: { key: ModuleKey; label: string; icon: React.ElementType; badge?: string; phase?: number }[] = [
-  { key: 'dashboard', label: 'Command Dashboard', icon: LayoutDashboard },
-  { key: 'detection', label: 'Detection', icon: Radar, phase: 1 },
-  { key: 'diagnosis', label: 'Diagnosis', icon: Stethoscope, phase: 2 },
-  { key: 'response', label: 'Response', icon: Shield, phase: 3 },
-  { key: 'integration', label: 'Integration', icon: Network, phase: 4 },
-  { key: 'validation', label: 'Validation', icon: FlaskConical, phase: 5 },
-  { key: 'enhancement', label: 'Enhancement', icon: Sparkles, phase: 6 },
-  { key: 'monitoring', label: 'Monitoring', icon: Radio, phase: 7 },
-  { key: 'documents', label: 'Documents', icon: FileText },
-  { key: 'assistant', label: 'DDRiVER AI', icon: Bot, badge: 'AI' },
-  { key: 'settings', label: 'Settings', icon: Settings },
-];
+const icons: Record<ModuleKey, React.ElementType> = {
+  dashboard: LayoutDashboard,
+  detection: Radar,
+  diagnosis: Stethoscope,
+  response: Shield,
+  integration: Network,
+  validation: FlaskConical,
+  enhancement: Sparkles,
+  monitoring: Radio,
+  documents: FileText,
+  assistant: Bot,
+  settings: Settings,
+};
+
+const items = MODULES.map((m) => ({
+  ...m,
+  icon: icons[m.key],
+  badge: m.key === 'assistant' ? 'AI' : undefined,
+}));
 
 const Sidebar: React.FC<SidebarProps> = ({ active, onSelect, open, onClose }) => {
   return (
@@ -67,19 +64,21 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onSelect, open, onClose }) =>
               <p className="text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-roboto-condensed">Intelligence Platform</p>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden text-slate-600">
+          <button type="button" onClick={onClose} aria-label="Close menu" className="lg:hidden text-slate-600 p-2">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="p-3 overflow-y-auto h-[calc(100vh-80px)]">
+        <nav aria-label="Modules" className="p-3 overflow-y-auto h-[calc(100vh-80px)]">
           <p className="px-3 py-2 text-[10px] uppercase tracking-widest text-slate-400 font-roboto-condensed font-semibold">Intelligence Cycle</p>
           {items.map((item) => {
             const Icon = item.icon;
             const isActive = active === item.key;
             return (
               <button
+                type="button"
                 key={item.key}
+                aria-current={isActive ? 'page' : undefined}
                 onClick={() => { onSelect(item.key); onClose(); }}
                 className={cn(
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 text-sm font-poppins transition-all group relative',
@@ -107,17 +106,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onSelect, open, onClose }) =>
             );
           })}
 
-          <div className="mt-6 mx-3 p-4 rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 text-white relative overflow-hidden">
-            <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-amber-300/20 blur-2xl" />
-            <div className="relative">
-              <p className="text-[10px] uppercase tracking-widest text-amber-300 font-bold">System Status</p>
-              <p className="text-sm font-poppins font-semibold mt-1">All Systems Operational</p>
-              <div className="flex items-center gap-2 mt-3">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs text-blue-100">Live Feeds Active</span>
-              </div>
-            </div>
-          </div>
+          <p className="mt-6 mx-3 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+            Hazard information shown here is entered by your team. For official warnings, follow PAGASA,
+            PHIVOLCS and your local DRRM office.
+          </p>
         </nav>
       </aside>
     </>

@@ -1,5 +1,5 @@
 import React from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,16 +25,16 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, trend, icon: Icon, co
   const gradients = colorMap[color];
   return (
     <GlassCard className="p-5">
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-roboto-condensed font-semibold">{label}</p>
-          <p className="text-3xl font-montserrat font-bold mt-1 text-slate-900 dark:text-white tracking-tight">
+          <p className={cn('font-montserrat font-bold mt-1 text-slate-900 dark:text-white tracking-tight', typeof value === 'string' ? 'text-base' : 'text-3xl')}>
             {value}
             {suffix && <span className="text-base font-normal text-slate-500 ml-1">{suffix}</span>}
           </p>
         </div>
-        <div className={cn('w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg', gradients)}>
-          <Icon className="w-5 h-5 text-white" strokeWidth={2} />
+        <div className={cn('shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg', gradients)}>
+          <Icon className="w-5 h-5 text-white" strokeWidth={2} aria-hidden="true" />
         </div>
       </div>
       {trend !== undefined && (
