@@ -877,7 +877,7 @@ code {
               <tr><td><span class="status-badge badge-blue" style="font-size:10px;padding:2px 8px;">Info</span></td><td>Blue border</td><td>Monitor status only</td></tr>
             </tbody>
           </table>
-          <div class="prose" style="margin-top:14px;"><h3>Multi-Agency Hazard Feed</h3><p>Live stream of hazard data from official Philippine agencies — filter by single agency or view all combined. Sort by severity (Critical first) or date (newest first).</p></div>
+          <div class="prose" style="margin-top:14px;"><h3>Multi-Agency Hazard Feed</h3><p>Hazard records entered by your team, each with the agency it came from. Automatic agency feeds are not connected yet. Filter by single agency or view all combined. Sort by severity (Critical first) or date (newest first).</p></div>
           <table class="data-table">
             <thead><tr><th>Agency</th><th>Data Source</th><th>Typical Events</th></tr></thead>
             <tbody>
@@ -942,9 +942,9 @@ code {
         <div class="coll-body"><div class="coll-body-inner">
           <div class="flow-steps" style="margin-top:8px;">
             <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Click "Report Hazard" button</div><div class="flow-step-desc">Opens the hazard reporting form modal.</div></div></div>
-            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill out all form fields</div><div class="flow-step-desc">Agency (dropdown), Hazard type, Name (custom title), Location, Coordinates (optional; auto-filled defaults available), Severity (Low/Medium/High/Critical).</div></div></div>
-            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Click "Save to Supabase"</div><div class="flow-step-desc">Toast confirmation appears. New hazard is immediately visible in all live feeds.</div></div></div>
-            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Escalate if needed</div><div class="flow-step-desc">Click any hazard row to open detail modal → click <strong>"Escalate to Response"</strong> for incidents requiring action.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill out all form fields</div><div class="flow-step-desc">Agency (dropdown), Hazard type, Name (custom title), Location, Latitude and longitude (required; must be inside the Philippines: latitude 4 to 22, longitude 116 to 127), Severity (Low/Medium/High/Critical). Choose "Local DRRM office" or "Field observation" as the source when the information did not come from an agency.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Click "Save hazard record"</div><div class="flow-step-desc">A confirmation appears and the record shows in the hazard list.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Escalate if needed</div><div class="flow-step-desc">Escalation from a hazard to the Response module is not available yet. Create the incident in the Response module.</div></div></div>
           </div>
           <div class="callout callout-warning" style="margin-top:12px;">
             <div class="callout-icon">⚡</div>
@@ -1376,8 +1376,7 @@ code {
         <div class="coll-body"><div class="coll-body-inner">
           <div class="prose" style="margin-top:8px;"><p>The left sidebar provides access to all modules. Active module is highlighted with a gradient background and orange phase circle. On mobile, tap the hamburger (☰) menu to expand — the menu auto-closes after selecting a module.</p></div>
           <div class="example-box">
-            <strong>System Status Footer:</strong> Persistent indicator at the bottom of the sidebar showing Connection state (Operational/Disconnected), live feed pulse animation (green dot), and database connectivity confirmation.
-          </div>
+            <strong>Sidebar note:</strong> A reminder that hazard information in DDRiVE-M is entered by your team, and that official warnings come from PAGASA, PHIVOLCS and your local DRRM office. Data-loading status is shown at the top of the Command Dashboard.</div>
           <div class="grid-3" style="gap:10px; margin-top:12px;">
             <div style="padding:11px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md);"><div style="font-family:var(--font-condensed);font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Desktop</div><div style="font-size:12px;color:var(--text-secondary);">Hover → Click to navigate</div></div>
             <div style="padding:11px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md);"><div style="font-family:var(--font-condensed);font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Tablet/Mobile</div><div style="font-size:12px;color:var(--text-secondary);">Tap hamburger → Slide-out → Tap module</div></div>
@@ -1419,7 +1418,7 @@ code {
         <div class="callout-icon">◈</div>
         <div class="callout-body">
           <div class="callout-title">What Is DDRiVER AI?</div>
-          <div class="callout-text">DDRiVER is an intelligent conversational assistant providing expert guidance on Philippine disaster risk reduction laws, international standards (ISO 31000, ISO 22301, UNDRR), and emergency protocols. Think of it as a subject matter expert available 24/7 for quick fact-checking and procedural references.</div>
+          <div class="callout-text"><strong>Not connected in version 0.1.0.</strong> The assistant cannot answer questions yet. An earlier version gave fixed, pre-written answers that could be mistaken for facts about your area, so it was switched off. When it is connected, it will run on a secure server, answer only from official laws, guidance and your own records, and show its sources.</div>
         </div>
       </div>
 
@@ -1551,10 +1550,10 @@ code {
               <tr><td>Form submission fails</td><td>Missing required field</td><td>Verify all mandatory inputs completed</td></tr>
               <tr><td>Alert notifications missing</td><td>Browser permissions denied</td><td>Allow pop-ups for notifications</td></tr>
               <tr><td>Map not displaying</td><td>API key issue</td><td>Report to Technical Team immediately</td></tr>
-              <tr><td>Supabase disconnected</td><td>Database outage</td><td>Check SUPABASE status badge in sidebar</td></tr>
+              <tr><td>Supabase disconnected</td><td>Database outage</td><td>Check the data status line at the top of the Command Dashboard</td></tr>
               <tr><td>Slow loading speeds</td><td>Large dataset retrieval</td><td>Filter queries to reduce data load</td></tr>
               <tr><td>Session timeouts frequent</td><td>Extended idle periods</td><td>Save work frequently; review timeout settings</td></tr>
-              <tr><td>Chatbot responds incorrectly</td><td>Knowledge base outdated</td><td>Refresh page to reload DDRiVER knowledge base</td></tr>
+              <tr><td>DDRiVER AI does not answer</td><td>Not connected in this version</td><td>Use PAGASA, PHIVOLCS and NDRRMC sources directly</td></tr>
             </tbody>
           </table>
           <div class="callout callout-info" style="margin-top:12px;">
@@ -1664,7 +1663,7 @@ code {
               <tr><td>Enhancement</td><td>Plan Generation</td><td>Generate with AI</td><td>Compliance plan saved</td></tr>
               <tr><td>Monitoring</td><td>Messages Sent</td><td>Send Broadcast</td><td>Team receives notification</td></tr>
               <tr><td>Documents</td><td>Document Count</td><td>Upload Document</td><td>New entry added to library</td></tr>
-              <tr><td>DDRiVER AI</td><td>Query Response</td><td>Ask a DRRM question</td><td>Guidance with legal citations</td></tr>
+              <tr><td>DDRiVER AI</td><td>Query Response</td><td>Ask a DRRM question</td><td>Not available yet</td></tr>
             </tbody>
           </table>
         </div></div>

@@ -72,6 +72,12 @@
 
         <!-- Main Workspace -->
         <main class="flex-1 overflow-y-auto custom-scrollbar">
+            <div role="note" class="m-4 p-4 rounded-2xl border-2 border-amber-400 bg-amber-50 text-amber-900 text-sm">
+                <p class="font-bold">Practice and training only. Do not enter real community or household data.</p>
+                <p class="mt-1">Records on this page are kept unencrypted in this browser and can be read by anyone using this device.
+                FPIC records belong to the community (IPRA, RA 8371) and are protected personal data (RA 10173).
+                Use the official NCIP process and your organisation's secure records system for real cases.</p>
+            </div>
             <!-- Mobile Header -->
             <div class="lg:hidden bg-white border-b p-4 flex justify-between items-center sticky top-0 z-50">
                 <div class="flex items-center space-x-2">
@@ -307,6 +313,13 @@
         /** * APP STATE
          */
         const STORE_KEY = "SAFEGUARD_FPIC_TRACKER_DATA";
+
+        // Escape anything a person typed before it goes into the page as HTML.
+        function esc(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
         let state = {
             profile: { region: "", barangay: "", ipGroup: "", cadt: "", coords: "Awaiting Sensor..." },
             sessions: [],
@@ -453,16 +466,16 @@
                 sGrid.innerHTML = state.sessions.map(s => `
                     <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-md transition-all">
                         <div class="flex justify-between items-start mb-6">
-                            <span class="text-[9px] font-black bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg uppercase">${s.date}</span>
+                            <span class="text-[9px] font-black bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg uppercase">${esc(s.date)}</span>
                             <div class="flex -space-x-2">
-                                <div class="h-8 w-8 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-pink-500">${s.stats.w}</div>
-                                <div class="h-8 w-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-blue-500">${s.stats.m}</div>
+                                <div class="h-8 w-8 rounded-full bg-pink-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-pink-500">${esc(s.stats.w)}</div>
+                                <div class="h-8 w-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-blue-500">${esc(s.stats.m)}</div>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">${s.stage}</h4>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Facilitated by ${s.facilitator}</p>
+                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">${esc(s.stage)}</h4>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Facilitated by ${esc(s.facilitator)}</p>
                         <div class="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
-                            <span class="text-[10px] font-black text-slate-800">Total Pax: ${s.stats.total}</span>
+                            <span class="text-[10px] font-black text-slate-800">Total Pax: ${esc(s.stats.total)}</span>
                             <i class="fas fa-chevron-right text-slate-200"></i>
                         </div>
                     </div>
@@ -481,11 +494,11 @@
                 const colorMap = { 'Yes': 'bg-emerald-50 text-emerald-600 border-emerald-100', 'No': 'bg-rose-50 text-rose-600 border-rose-100', 'Pending': 'bg-amber-50 text-amber-600 border-amber-100' };
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="p-6 font-mono text-xs font-black text-slate-500">${h.id}</td>
-                        <td class="p-6"><span class="status-pill ${colorMap[h.status]}">${h.status}</span></td>
-                        <td class="p-6 text-[10px] font-bold text-slate-400 uppercase">${h.date}</td>
+                        <td class="p-6 font-mono text-xs font-black text-slate-500">${esc(h.id)}</td>
+                        <td class="p-6"><span class="status-pill ${colorMap[h.status] || ''}">${esc(h.status)}</span></td>
+                        <td class="p-6 text-[10px] font-bold text-slate-400 uppercase">${esc(h.date)}</td>
                         <td class="p-6 text-right">
-                            <button onclick="toggleHH('${h.id}')" class="p-2.5 text-slate-300 hover:text-emerald-600 bg-slate-50 rounded-xl transition-all"><i class="fas fa-rotate"></i></button>
+                            <button data-hhid="${esc(h.id)}" onclick="toggleHH(this.dataset.hhid)" aria-label="Change consent status" class="p-2.5 text-slate-300 hover:text-emerald-600 bg-slate-50 rounded-xl transition-all"><i class="fas fa-rotate"></i></button>
                         </td>
                     </tr>
                 `;

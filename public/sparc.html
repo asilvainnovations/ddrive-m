@@ -192,62 +192,9 @@
           });
         };
 
-        // --- OpenAI Integration ---
-        const fetchAIRecommendations = async (apiKey, scores) => {
-          const summary = Object.entries(scores.componentScores)
-            .map(([comp, score]) => `${COMPONENTS_MAP[comp].name}: ${score}/5`)
-            .join('; ');
-
-          const prompt = `You are a world-class organizational resilience consultant. Based on the following SPARC assessment scores (scale 1-5), provide 3-5 actionable, prioritized recommendations. Focus on the weakest areas first. Be specific, practical, and avoid generic advice.
-
-Scores: ${summary}
-Overall Resilience Level: ${scores.resilienceLevel.level}
-
-Format each recommendation as:
-- [Priority: Critical/High/Medium] | [Area] | [Concrete Action]
-
-Do not include disclaimers.`;
-
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: 'gpt-4o-mini',
-              messages: [{ role: 'user', content: prompt }],
-              temperature: 0.5,
-              max_tokens: 500
-            })
-          });
-
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || 'Failed to fetch recommendations');
-          }
-
-          const data = await response.json();
-          const rawText = data.choices[0].message.content.trim();
-
-          // Parse into structured format
-          const lines = rawText.split('\n').filter(line => line.trim().startsWith('-'));
-          const recommendations = lines.map(line => {
-            const match = line.match(/-\s*\[Priority:\s*(\w+)\]\s*\|\s*\[(.+?)\]\s*\|\s*(.+)/);
-            if (match) {
-              const [, priority, area, action] = match;
-              // Find matching component score
-              const compKey = Object.keys(COMPONENTS_MAP).find(k => 
-                COMPONENTS_MAP[k].name.toLowerCase() === area.toLowerCase()
-              );
-              const score = compKey ? scores.componentScores[compKey] : 0;
-              return { priority, area, action: action.trim(), score };
-            }
-            return { priority: 'Medium', area: 'General', action: line.replace(/^- /, ''), score: 0 };
-          });
-
-          return recommendations.length > 0 ? recommendations : generateFallbackRecommendations(scores);
-        };
+        // AI recommendations removed: they called the OpenAI API from the browser with a key the user pasted in.
+        // Recommendations below come from the SPARC scoring rules on this page. A server-side, source-citing
+        // assistant is planned (DDRiVE-M roadmap Phase 2).
 
         // --- Components ---
 
@@ -343,34 +290,8 @@ Do not include disclaimers.`;
           return <div className="w-full h-80"><canvas ref={canvasRef}></canvas></div>;
         };
 
-        const ResultsDashboard = ({ scores, handleReset, apiKey, setApiKey }) => {
-          const [recommendations, setRecommendations] = useState([]);
-          const [loading, setLoading] = useState(false);
-          const [error, setError] = useState('');
-
-          // Fetch AI recommendations on mount or when API key changes
-          useEffect(() => {
-            const getRecommendations = async () => {
-              if (!apiKey) {
-                setRecommendations(generateFallbackRecommendations(scores));
-                return;
-              }
-
-              setLoading(true);
-              setError('');
-              try {
-                const aiRecs = await fetchAIRecommendations(apiKey, scores);
-                setRecommendations(aiRecs);
-              } catch (err) {
-                console.error('AI API error:', err);
-                setError('Failed to get AI recommendations. Using standard analysis.');
-                setRecommendations(generateFallbackRecommendations(scores));
-              } finally {
-                setLoading(false);
-              }
-            };
-            getRecommendations();
-          }, [apiKey, scores]);
+        const ResultsDashboard = ({ scores, handleReset }) => {
+          const recommendations = useMemo(() => generateFallbackRecommendations(scores), [scores]);
 
           const handleExport = () => {
             const reportTitle = `SPARC Resilience Assessment Report - ${new Date().toLocaleDateString()}`;
@@ -394,7 +315,7 @@ ${assessmentSummary}
 ${recommendationsText}
 
 --- Disclaimer ---
-This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenAI (if enabled).
+This analysis uses the SPARC/CASE framework. Recommendations are generated from the SPARC scoring rules, not by AI.
 `;
 
             const blob = new Blob([fullReport], { type: 'text/plain;charset=utf-8' });
@@ -449,30 +370,6 @@ This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenA
                 </div>
               </div>
 
-              {/* OpenAI API Key Input */}
-              <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="flex items-start">
-                  <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-                  <div className="flex-1">
-                    <label htmlFor="apiKey" className="block text-sm font-medium text-blue-800 mb-1">
-                      Optional: Enter your OpenAI API key for AI-enhanced recommendations
-                    </label>
-                    <input
-                      id="apiKey"
-                      type="password"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      placeholder="sk-..."
-                      className="w-full max-w-md px-3 py-2 border border-blue-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <p className="text-xs text-blue-600 mt-1">
-                      Your key is used only in this browser session. For security, do not use in shared environments.
-                    </p>
-                    {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-                  </div>
-                </div>
-              </div>
-
               <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">Component Breakdown</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
@@ -491,21 +388,9 @@ This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenA
               <div className="mt-12">
                 <div className="flex items-center justify-between mb-6 border-b pb-2">
                   <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-sky-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Generating AI Insights...
-                      </>
-                    ) : (
-                      'AI-Powered Strategic Recommendations'
-                    )}
+                    Strategic Recommendations
                   </h3>
-                  {apiKey && !loading && (
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">AI Enabled</span>
-                  )}
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Based on your scores</span>
                 </div>
                 <div className="space-y-6">
                   {recommendations.map((rec, index) => (
@@ -537,7 +422,6 @@ This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenA
         const App = () => {
           const [answers, setAnswers] = useState({});
           const [isAssessmentComplete, setIsAssessmentComplete] = useState(false);
-          const [apiKey, setApiKey] = useState(''); // Stored in memory only
 
           const scores = useMemo(() => calculateScores(answers), [answers]);
           const isFormComplete = scores.answeredQuestions === scores.totalQuestions;
@@ -556,7 +440,6 @@ This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenA
           const handleReset = () => {
             setAnswers({});
             setIsAssessmentComplete(false);
-            setApiKey(''); // Clear key on reset
             window.scrollTo({ top: 0, behavior: 'smooth' });
           };
 
@@ -617,7 +500,7 @@ This analysis uses the SPARC/CASE framework. AI recommendations powered by OpenA
 
               <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                 {isAssessmentComplete ? (
-                  <ResultsDashboard scores={scores} handleReset={handleReset} apiKey={apiKey} setApiKey={setApiKey} />
+                  <ResultsDashboard scores={scores} handleReset={handleReset} />
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div className="lg:col-span-2">

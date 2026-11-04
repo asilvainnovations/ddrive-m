@@ -307,7 +307,7 @@
                         <i class="fas fa-file-pdf text-brand-blue text-2xl"></i>
                     </div>
                     <h2 class="text-2xl font-bold font-montserrat text-white mb-2">Get Your Detailed Report</h2>
-                    <p class="text-gray-400">Enter your details to generate your personalized PDF risk assessment.</p>
+                    <p class="text-gray-400">Enter your details to label your PDF risk assessment. Read the privacy notice below before you continue.</p>
                 </div>
                 <form id="leadForm" onsubmit="submitLead(event)" class="space-y-5">
                     <div>
@@ -334,6 +334,15 @@
                             <option value="Government/LGU">Government / LGU</option>
                             <option value="NGO/Development">NGO / Development</option>
                         </select>
+                    </div>
+                    <div class="rounded-lg border border-gray-600 p-4 text-sm text-gray-300 space-y-3">
+                        <p class="font-semibold text-white">Privacy notice (Data Privacy Act of 2012, RA 10173)</p>
+                        <p>Your name, company and facility type are used on this device to label your PDF report. They are not sent anywhere unless you tick the box below.</p>
+                        <p>If you tick it, Stronghold A3 Security Agency receives your name, email, company, facility type, score and risk level, and uses them only to contact you about this assessment. You can ask to see, correct or delete your data by writing to <a class="underline" href="mailto:info@strongholda3.com">info@strongholda3.com</a>.</p>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" id="consentShare" class="mt-1">
+                            <span>I agree to share my details with Stronghold A3 Security Agency so they can contact me. (Optional. You get your report either way.)</span>
+                        </label>
                     </div>
                     <button type="submit" class="w-full bg-brand-gold text-[#0A1628] px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20 mt-6">
                         <i class="fas fa-download mr-2"></i>Generate My PDF Report
@@ -534,6 +543,7 @@
                 email: document.getElementById('email').value,
                 company: document.getElementById('company').value,
                 facilityType: document.getElementById('facilityType').value,
+                consentShare: document.getElementById('consentShare').checked,
                 timestamp: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })
             };
 
@@ -545,13 +555,14 @@
             document.getElementById('resultsSection').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // 4. 🚀 ROUTE LEAD TO STRONGHOLD A3 SUPABASE DATABASE
-            // We use a slight timeout to ensure the DOM has updated with the OSRI score
+            // 4. Send the lead ONLY with the visitor's freely given consent (RA 10173).
+            // Without consent nothing leaves the browser; the PDF is built locally.
+            if (!leadData.consentShare) return;
             setTimeout(async () => {
                 const osriScore = parseInt(document.getElementById('overallScore').textContent) || 0;
                 const riskLevel = document.getElementById('riskLevel').textContent || 'Unknown';
 
-                const { data, error } = await sb
+                const { error } = await sb
                     .from('security_assessment_leads')
                     .insert([{
                         full_name: leadData.fullName,
@@ -560,13 +571,12 @@
                         facility_type: leadData.facilityType,
                         osri_score: osriScore,
                         risk_level: riskLevel,
-                        status: 'New'
+                        status: 'New',
+                        consent_given_at: new Date().toISOString()
                     }]);
 
                 if (error) {
-                    console.error('⚠️ Lead routing failed:', error);
-                } else {
-                    console.log('✅ LEAD SUCCESSFULLY ROUTED TO STRONGHOLD A3 OPS DASHBOARD!', data);
+                    console.error('Sharing details failed:', error.message);
                 }
             }, 500); 
         }
