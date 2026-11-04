@@ -1,50 +1,72 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
-
-// Layout
+import { AuthProvider } from "@/contexts/AuthContext";
 import AppLayout from "@/components/AppLayout";
-
-// Pages/Modules (Imported directly from the ddrive structure as defined in your project tree)
-import Dashboard from "@/components/ddrive/dashboardModule/Dashboard";
-import RiskAssessment from "@/components/ddrive/diagnosisModule/RiskAssessment";
-import PlanGenerator from "@/components/ddrive/documentsModule/PlanGenerator";
-import PlanLibrary from "@/components/ddrive/documentsModule/PlanLibrary";
-import Compliance from "@/components/ddrive/enhancementModule/Compliance";
-import Collaboration from "@/components/ddrive/monitoringModule/Collaboration";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
+import { LEGACY_REDIRECTS } from "@/lib/modules";
+
+// Each module is loaded only when it is opened, so the first screen stays small on slow connections.
+const Dashboard = lazy(() => import("@/components/ddrive/dashboardModule/Dashboard"));
+const Detection = lazy(() => import("@/components/ddrive/detectionModule/Detection"));
+const Diagnosis = lazy(() => import("@/components/ddrive/diagnosisModule/Diagnosis"));
+const Response = lazy(() => import("@/components/ddrive/responseModule/Response"));
+const Integration = lazy(() => import("@/components/ddrive/IntegrationModule"));
+const Validation = lazy(() => import("@/components/ddrive/ValidationModule"));
+const Enhancement = lazy(() => import("@/components/ddrive/enhancementModule/Enhancement"));
+const Monitoring = lazy(() => import("@/components/ddrive/monitoringModule/Monitoring"));
+const Documents = lazy(() => import("@/components/ddrive/documentsModule/Documents"));
+const Assistant = lazy(() => import("@/components/ddrive/AIChatbot"));
+const Settings = lazy(() => import("@/components/ddrive/SettingsModule"));
 
 const queryClient = new QueryClient();
+
+const Loading = () => (
+  <div role="status" className="p-8 text-sm text-slate-500 font-poppins">
+    Loading…
+  </div>
+);
 
 const App = () => (
   <ThemeProvider defaultTheme="light">
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* AppLayout wraps all these routes, providing Sidebar, TopBar, and Background */}
-            <Route path="/" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="risk-assessment" element={<RiskAssessment />} />
-              <Route path="plan-generator" element={<PlanGenerator />} />
-              <Route path="plan-library" element={<PlanLibrary />} />
-              <Route path="compliance" element={<Compliance />} />
-              <Route path="collaboration" element={<Collaboration />} />
-              
-              {/* Future routes can be added here following the same pattern (e.g., detection, response, etc.) */}
-            </Route>
-            
-            {/* Catch-all route for 404 (outside AppLayout so it renders a clean error page) */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ErrorBoundary>
+              <Suspense fallback={<Loading />}>
+                <Routes>
+                  <Route path="/" element={<AppLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="detection" element={<Detection />} />
+                    <Route path="diagnosis" element={<Diagnosis />} />
+                    <Route path="response" element={<Response />} />
+                    <Route path="integration" element={<Integration />} />
+                    <Route path="validation" element={<Validation />} />
+                    <Route path="enhancement" element={<Enhancement />} />
+                    <Route path="monitoring" element={<Monitoring />} />
+                    <Route path="documents" element={<Documents />} />
+                    <Route path="assistant" element={<Assistant embedded />} />
+                    <Route path="settings" element={<Settings />} />
+                    {Object.entries(LEGACY_REDIRECTS).map(([from, to]) => (
+                      <Route key={from} path={from.slice(1)} element={<Navigate to={to} replace />} />
+                    ))}
+                    {/* 404 stays inside the layout so the navigation is still there */}
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </ThemeProvider>
 );
