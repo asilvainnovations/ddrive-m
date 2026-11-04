@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/ddrive/Sidebar';
 import TopBar from '@/components/ddrive/TopBar';
 import LoginModal from '@/components/ddrive/LoginModal';
+import AccessGate from '@/components/AccessGate';
 import { FloatingChatbot } from '@/components/ddrive/AIChatbot';
 import { ModuleKey, moduleByKey, moduleByPath } from '@/lib/modules';
 
@@ -47,7 +48,9 @@ const AppLayout: React.FC = () => {
             subtitle={subtitle}
           />
           <main id="main" className="flex-1 p-4 lg:p-8 max-w-[1600px] w-full mx-auto">
-            <Outlet />
+            <AccessGate>
+              <Outlet />
+            </AccessGate>
           </main>
         </div>
       </div>
