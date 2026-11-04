@@ -43,43 +43,47 @@ function buildInitials(name: string) {
     .toUpperCase();
 }
 
-async function upsertProfile(user: User): Promise<DDriveProfile | null> {
+// The browser may create or update only the user's own name, email and initials.
+// Role and organisation are NOT sent from here: an administrator assigns them on the server
+// (database default + admin-only update policy, Phase 1 migration). Until then they show as unassigned.
+async function upsertProfile(user: User): Promise<DDriveProfile> {
   const fullName =
     (user.user_metadata?.full_name as string) ||
     (user.user_metadata?.name as string) ||
     (user.email ? user.email.split('@')[0] : 'DDRiVE User');
-  const initials = buildInitials(fullName);
 
-  const profile = {
+  const fallback: DDriveProfile = {
     id: user.id,
     full_name: fullName,
     email: user.email || '',
-    role: 'Operator',
-    organization: 'NDRRMC',
-    avatar_initials: initials,
+    role: '',
+    organization: '',
+    avatar_initials: buildInitials(fullName),
   };
 
   try {
-    // Try insert; if exists, fetch
-    const { error: insertErr } = await supabase
+    const { data: existing } = await supabase
       .from('ddrive_users')
-      .upsert(profile, { onConflict: 'id' })
-      .select()
-      .single();
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (existing) return existing as DDriveProfile;
 
-    if (insertErr) {
-      // Fallback: fetch existing
-      const { data } = await supabase
-        .from('ddrive_users')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (data) return data as DDriveProfile;
-    }
-    return profile;
+    const { data: created, error } = await supabase
+      .from('ddrive_users')
+      .insert({
+        id: user.id,
+        full_name: fallback.full_name,
+        email: fallback.email,
+        avatar_initials: fallback.avatar_initials,
+      })
+      .select()
+      .maybeSingle();
+    if (error) console.warn('[Auth] profile create failed:', error.message);
+    return (created as DDriveProfile) ?? fallback;
   } catch (e) {
-    console.warn('[Auth] profile upsert fallback', e);
-    return profile;
+    console.warn('[Auth] profile lookup failed', e);
+    return fallback;
   }
 }
 
