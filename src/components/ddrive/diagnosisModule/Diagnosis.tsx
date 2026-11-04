@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Stethoscope, Upload, Brain, FileSearch, Plus, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useRisks, insertRow } from '@/hooks/useDDriveData';
+import { useRisks } from '@/hooks/useDDriveData';
+import { addRisk } from '@/lib/actions';
+import GatedButton from '@/components/ddrive/GatedButton';
 
 const categories = ['All', 'Strategic', 'Operational', 'Financial', 'Compliance', 'Environmental'];
 
@@ -32,21 +34,16 @@ const DiagnosisModule: React.FC = () => {
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const likelihood = parseInt(form.get('likelihood') as string);
-    const impact = parseInt(form.get('impact') as string);
-    const score = likelihood * impact;
-    const level = score >= 20 ? 'Critical' : score >= 12 ? 'High' : score >= 6 ? 'Medium' : 'Low';
-    const nextId = `R-${String(risks.length + 1).padStart(3, '0')}`;
-    const { error } = await insertRow('ddrive_risks', {
-      id: nextId,
-      title: form.get('title'),
-      category: form.get('category'),
-      likelihood, impact, level,
-      owner: form.get('owner'),
-      status: 'Open',
+    // Score, level, id and reference number are set by the database from the organisation's risk criteria.
+    const { error, ref } = await addRisk({
+      title: String(form.get('title') ?? ''),
+      category: String(form.get('category') ?? 'Operational'),
+      likelihood: parseInt(form.get('likelihood') as string),
+      impact: parseInt(form.get('impact') as string),
+      owner: String(form.get('owner') ?? ''),
     });
-    if (error) { toast.error(error.message); return; }
-    toast.success(`Risk ${nextId} saved`);
+    if (error) { toast.error(error); return; }
+    toast.success(`Risk ${ref ?? ''} saved`);
     setShowAdd(false);
     refetch();
   };
@@ -68,9 +65,9 @@ const DiagnosisModule: React.FC = () => {
             <button onClick={() => setShowUpload(true)} className="px-3 py-2 rounded-xl bg-white/80 dark:bg-white/10 border border-white/40 text-sm font-semibold flex items-center gap-2">
               <Upload className="w-4 h-4" /> Upload Data
             </button>
-            <button onClick={() => setShowAdd(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
+            <GatedButton min="analyst" onClick={() => setShowAdd(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
               <Plus className="w-4 h-4" /> Add Risk
-            </button>
+            </GatedButton>
           </div>
         </div>
       </GlassCard>
@@ -143,7 +140,7 @@ const DiagnosisModule: React.FC = () => {
             <tbody>
               {filtered.map(r => (
                 <tr key={r.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-white/50 dark:hover:bg-white/5">
-                  <td className="py-2.5 px-2 font-mono text-xs">{r.id}</td>
+                  <td className="py-2.5 px-2 font-mono text-xs">{r.ref}</td>
                   <td className="py-2.5 px-2 font-medium">{r.title}</td>
                   <td className="py-2.5 px-2 text-slate-600">{r.category}</td>
                   <td className="py-2.5 px-2 text-xs">{r.likelihood} × {r.impact}</td>
