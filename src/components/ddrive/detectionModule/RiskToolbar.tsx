@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from '@/components/ui/sonner';
 import { Plus, Filter, Download, RefreshCw, Search } from 'lucide-react';
 
 interface RiskToolbarProps {
@@ -20,7 +21,7 @@ const RiskToolbar: React.FC<RiskToolbarProps> = ({
   const frameworks = ['All', 'ISO 31000', 'COSO ERM', 'DRRM', 'NIST'];
 
   const handleExport = () => {
-    alert('Exporting risk register to CSV...');
+    toast.info('CSV export is not available yet.');
   };
 
   return (

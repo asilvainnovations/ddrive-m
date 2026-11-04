@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Radar, MapPin, Cloud, Mountain, Waves, Flame, Wind, AlertCircle, ExternalLink, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useHazards, insertRow, Hazard } from '@/hooks/useDDriveData';
@@ -37,13 +37,14 @@ const DetectionModule: React.FC = () => {
       name: form.get('name') as string,
       severity: form.get('severity') as string,
       location: form.get('location') as string,
-      lat: parseFloat(form.get('lat') as string) || 12,
-      lng: parseFloat(form.get('lng') as string) || 122,
+      // Required and range-checked by the form; never defaulted to a made-up location.
+      lat: Number(form.get('lat')),
+      lng: Number(form.get('lng')),
       status: 'Active',
     };
     const { error } = await insertRow('ddrive_hazards', row);
     if (error) { toast.error(error.message); return; }
-    toast.success('Hazard added to live feed');
+    toast.success('Hazard record saved');
     setShowAdd(false);
     refetch();
   };
@@ -86,7 +87,7 @@ const DetectionModule: React.FC = () => {
               <div className="flex items-center justify-between mt-3">
                 <span className="text-2xl font-bold font-montserrat">{count}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 flex items-center gap-1">
-                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> LIVE
+                  records
                 </span>
               </div>
             </GlassCard>
@@ -149,7 +150,7 @@ const DetectionModule: React.FC = () => {
             })}
           </div>
           <button
-            onClick={() => toast.success('Connecting to Open-Meteo Flood API...')}
+            onClick={() => toast.info('Automatic agency feeds is not available yet.')}
             className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-900 text-white font-semibold text-sm flex items-center justify-center gap-2"
           >
             <ExternalLink className="w-3.5 h-3.5" /> Sync External APIs
@@ -204,7 +205,7 @@ const DetectionModule: React.FC = () => {
               <div className="flex justify-between"><span className="text-slate-500">Status</span><strong>{selectedHazard.status}</strong></div>
             </div>
             <div className="flex gap-2 mt-6">
-              <button onClick={() => { toast.success('Escalated to Response Module'); setSelectedHazard(null); }} className="flex-1 px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Escalate</button>
+              <button onClick={() => { toast.info('Escalation to the Response module is not available yet.'); setSelectedHazard(null); }} className="flex-1 px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Escalate</button>
               <button onClick={() => setSelectedHazard(null)} className="px-4 py-2 rounded-xl border border-slate-300 font-semibold text-sm">Close</button>
             </div>
           </div>
@@ -216,23 +217,23 @@ const DetectionModule: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <h3 className="font-montserrat font-bold text-xl mb-4">Report New Hazard</h3>
             <form onSubmit={handleAdd} className="space-y-3">
-              <select name="agency" required className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
-                <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option>
+              <select name="agency" required aria-label="Source of the information" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+                <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option><option>Local DRRM office</option><option>Field observation</option>
               </select>
-              <select name="type" required className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="type" required aria-label="Hazard type" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Typhoon</option><option>Earthquake</option><option>Flood</option>
                 <option>Volcanic</option><option>Landslide</option><option>Storm Surge</option><option>Tsunami</option>
               </select>
-              <input name="name" required placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-              <input name="location" required placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+              <input name="name" required aria-label="Hazard name" placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+              <input name="location" required aria-label="Location" placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <div className="grid grid-cols-2 gap-2">
-                <input name="lat" placeholder="Latitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-                <input name="lng" placeholder="Longitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+                <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+                <input name="lng" type="number" step="any" min="116" max="127" required aria-label="Longitude (116 to 127)" placeholder="Longitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               </div>
-              <select name="severity" required className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="severity" required aria-label="Severity" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
               </select>
-              <button type="submit" className="w-full px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold">Save to Supabase</button>
+              <button type="submit" className="w-full px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold">Save hazard record</button>
             </form>
           </div>
         </div>
