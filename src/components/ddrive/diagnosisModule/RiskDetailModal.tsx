@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Edit2, Trash2, Save, AlertTriangle, Shield, Target } from 'lucide-react';
-import { Risk, RiskCategory, getRiskLevel, getRiskLevelColor } from '@/types/risk';
+import { Risk, RiskCategory, getRiskLevel, getRiskLevelColor } from '@/lib/risk';
 
 interface RiskDetailModalProps {
   risk: Risk | null;

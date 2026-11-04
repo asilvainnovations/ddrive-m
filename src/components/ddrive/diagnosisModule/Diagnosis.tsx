@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Stethoscope, Upload, Brain, FileSearch, Plus, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useRisks, insertRow } from '@/hooks/useDDriveData';
@@ -46,7 +46,7 @@ const DiagnosisModule: React.FC = () => {
       status: 'Open',
     });
     if (error) { toast.error(error.message); return; }
-    toast.success(`Risk ${nextId} registered to Supabase`);
+    toast.success(`Risk ${nextId} saved`);
     setShowAdd(false);
     refetch();
   };
@@ -104,26 +104,11 @@ const DiagnosisModule: React.FC = () => {
             <Brain className="w-5 h-5 text-purple-600" />
             <h3 className="font-montserrat font-bold text-lg">AI Vulnerability Scanner</h3>
           </div>
-          <p className="text-xs text-slate-500 mb-4">ML classifier trained on historical PH disaster data.</p>
-          <div className="space-y-2">
-            {[
-              { label: 'Physical Domain', val: 78, color: 'bg-blue-500' },
-              { label: 'Environmental', val: 85, color: 'bg-emerald-500' },
-              { label: 'Operational', val: 62, color: 'bg-amber-500' },
-              { label: 'Cyber/Digital', val: 54, color: 'bg-red-500' },
-            ].map(d => (
-              <div key={d.label}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span>{d.label}</span>
-                  <span className="font-semibold">{d.val}%</span>
-                </div>
-                <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className={`h-full ${d.color} rounded-full`} style={{ width: `${d.val}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => toast.success('AI analysis started')} className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-sm flex items-center justify-center gap-2">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Not available yet. Vulnerability scoring will use your own hazard, exposure and capacity data once that
+            model is in place, and will show its inputs.
+          </p>
+          <button onClick={() => toast.info('AI analysis is not available yet.')} className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-sm flex items-center justify-center gap-2">
             <FileSearch className="w-4 h-4" /> Run AI Analysis
           </button>
         </GlassCard>
@@ -194,7 +179,7 @@ const DiagnosisModule: React.FC = () => {
                   <p className="text-sm font-semibold">Drop files here</p>
                   <p className="text-xs text-slate-500">Drone footage · Images · Text · CSV · JSON</p>
                 </div>
-                <button onClick={() => { toast.success('Files queued for AI analysis'); setShowUpload(false); }} className="w-full px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold">Start AI Analysis</button>
+                <button onClick={() => { toast.info('File analysis is not available yet.'); setShowUpload(false); }} className="w-full px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold">Start AI Analysis</button>
               </div>
             ) : (
               <form onSubmit={handleAdd} className="space-y-3">

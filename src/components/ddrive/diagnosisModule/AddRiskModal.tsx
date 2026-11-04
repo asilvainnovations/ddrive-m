@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { RiskCategory } from '@/types/risk';
+import { Risk, RiskCategory } from '@/lib/risk';
 
 interface AddRiskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (risk: any) => void;
+  onSubmit: (risk: Partial<Risk>) => void;
   categories: RiskCategory[];
 }
 
 const AddRiskModal: React.FC<AddRiskModalProps> = ({ isOpen, onClose, onSubmit, categories }) => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Partial<Risk> & { name: string; description: string; owner: string }>({
     name: '', description: '', category_id: '', likelihood: 3, impact: 3,
     framework: 'ISO 31000', status: 'Identified', owner: ''
   });
@@ -53,7 +53,7 @@ const AddRiskModal: React.FC<AddRiskModalProps> = ({ isOpen, onClose, onSubmit, 
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Framework</label>
-              <select value={form.framework} onChange={e => setForm({...form, framework: e.target.value})}
+              <select value={form.framework} onChange={e => setForm({...form, framework: e.target.value as Risk['framework']})}
                 className="w-full px-3 py-2 border rounded-lg">
                 <option>ISO 31000</option><option>COSO ERM</option><option>DRRM</option><option>NIST</option>
               </select>
