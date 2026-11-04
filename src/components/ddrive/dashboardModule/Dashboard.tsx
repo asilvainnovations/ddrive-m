@@ -8,6 +8,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatCard from '@/components/ddrive/StatCard';
 import { ModuleKey, moduleByKey } from '@/lib/modules';
 import { isBackendConfigured } from '@/lib/supabase';
+import { useOfficialAlerts, ago } from '@/hooks/useOfficialAlerts';
 import {
   useHazards, useRisks, useIncidents, useUndrr, useScenarios, usePlans, useMessages, TableState,
 } from '@/hooks/useDDriveData';
@@ -29,6 +30,7 @@ const Dashboard: React.FC = () => {
   const scenarios = useScenarios();
   const plans = usePlans();
   const messages = useMessages();
+  const official = useOfficialAlerts();
 
   const sources: TableState<unknown>[] = [hazards, risks, incidents, undrr, scenarios, plans, messages];
   const loading = sources.some((s) => s.loading);
@@ -79,6 +81,23 @@ const Dashboard: React.FC = () => {
                 <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-300">
                   Data loaded {fmtTime(lastLoaded)} (Manila time)
                 </span>
+              )}
+              {isBackendConfigured && !official.loading && (
+                official.stale ? (
+                  <span className="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-900 dark:text-amber-300">
+                    PAGASA alerts last read {ago(official.feed.lastOk)}; may be out of date
+                  </span>
+                ) : official.inArea.length > 0 ? (
+                  <button type="button" onClick={() => go('detection')}
+                    className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-950 dark:text-amber-200 border border-amber-500 underline-offset-2 hover:underline">
+                    {official.inArea.length} PAGASA {official.inArea.length === 1 ? 'alert' : 'alerts'} in your watch areas
+                    {official.maxSignalInArea ? ` · highest: Wind Signal No. ${official.maxSignalInArea}` : ''}
+                  </button>
+                ) : (
+                  <span className="px-2.5 py-1 rounded-full bg-slate-500/10 text-slate-700 dark:text-slate-300">
+                    No PAGASA alert in your watch areas · read {ago(official.feed.lastOk)}
+                  </span>
+                )
               )}
             </div>
             <h1 className="font-montserrat font-bold text-3xl lg:text-4xl text-slate-900 dark:text-white tracking-tight">
