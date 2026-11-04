@@ -1,8 +1,19 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+
+// Every row carries these, stamped by the database (Phase 1). Never sent by the app.
+interface Governed {
+  tenant_id: string;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+  version: number;
+}
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
-export interface Hazard {
+export interface Hazard extends Governed {
   id: number;
   agency: string;
   type: string;
@@ -13,22 +24,29 @@ export interface Hazard {
   lng: number;
   status: string;
   detected_at: string;
+  psgc_code: string | null;
+  source_url: string | null;
 }
 
-export interface Risk {
+export interface Risk extends Governed {
   id: string;
+  /** Reference number shown to people, issued by the database (R-001). */
+  ref: string;
   title: string;
   category: string;
   likelihood: number;
   impact: number;
+  /** likelihood × impact, computed by the database. */
   score: number;
+  /** From the organisation's risk criteria, computed by the database. */
   level: string;
-  owner: string;
+  owner: string | null;
   status: string;
 }
 
-export interface Incident {
+export interface Incident extends Governed {
   id: string;
+  ref: string;
   title: string;
   priority: string;
   assignee_name: string;
@@ -37,7 +55,7 @@ export interface Incident {
   eta: string;
 }
 
-export interface UndrrScore {
+export interface UndrrScore extends Governed {
   id: number;
   name: string;
   score: number;
@@ -45,7 +63,7 @@ export interface UndrrScore {
   status: string;
 }
 
-export interface Scenario {
+export interface Scenario extends Governed {
   id: number;
   name: string;
   type: string;
@@ -55,8 +73,9 @@ export interface Scenario {
   completion: number;
 }
 
-export interface Plan {
+export interface Plan extends Governed {
   id: string;
+  ref: string;
   title: string;
   type: string;
   standard: string;
@@ -64,31 +83,28 @@ export interface Plan {
   /** Compliance score 0–100, or null when not yet assessed. */
   compliance: number | null;
   last_updated: string;
+  approved_by: string | null;
+  approved_at: string | null;
 }
 
-export interface Message {
+export interface Message extends Governed {
   id: number;
+  user_id: string | null;
   user_name: string;
   role: string;
   message: string;
   priority: string;
-  created_at: string;
   time?: string; // Added for UI convenience
 }
 
-export interface DocumentRow {
+export interface DocumentRow extends Governed {
   id: string;
+  ref: string;
   name: string;
   category: string;
-  size: string;
-  updated_at: string;
+  size: string | null;
 }
 
-export interface PresenceUser {
-  id: string;
-  name: string;
-  role: string;
-}
 
 // ─── Tables ───────────────────────────────────────────────────────────────────
 // The only tables the browser may read or write. Anything else is a compile error.
@@ -128,17 +144,27 @@ function timeAgo(iso: string): string {
 
 // ─── Standard (Non-Realtime) Hook ─────────────────────────────────────────────
 export function useTable<T>(table: DDriveTable, orderBy: string = 'created_at', ascending = false): TableState<T> {
+  const tenantId = useAuth().activeTenant?.tenant_id ?? null;
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loadedAt, setLoadedAt] = useState<Date | null>(null);
 
   const refetch = useCallback(async () => {
+    if (!tenantId) {
+      // Not signed in or no organisation chosen: nothing to load. The layout explains what to do.
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
+      // Row Level Security already limits rows to the user's organisations; the filter keeps it to the active one.
       const { data: rows, error: err } = await supabase
         .from(table)
         .select('*')
+        .eq('tenant_id', tenantId)
         .order(orderBy, { ascending });
       if (err) {
         console.error(`[Supabase Error] ${table}:`, err.message);
@@ -157,7 +183,7 @@ export function useTable<T>(table: DDriveTable, orderBy: string = 'created_at', 
     } finally {
       setLoading(false);
     }
-  }, [table, orderBy, ascending]);
+  }, [table, orderBy, ascending, tenantId]);
 
   useEffect(() => { void refetch(); }, [refetch]);
 
@@ -174,6 +200,7 @@ interface ChangePayload {
 }
 
 export function useRealtimeTable<T>(table: DDriveTable, orderBy: string = 'created_at', ascending = false): TableState<T> {
+  const tenantId = useAuth().activeTenant?.tenant_id ?? null;
   const base = useTable<T>(table, orderBy, ascending);
   const [live, setLive] = useState<T[] | null>(null);
   const latest = useRef<T[]>(base.data);
@@ -185,7 +212,8 @@ export function useRealtimeTable<T>(table: DDriveTable, orderBy: string = 'creat
   }, [base.data]);
 
   useEffect(() => {
-    const channel = supabase.channel(`${table}_realtime`);
+    if (!tenantId) return;
+    const channel = supabase.channel(`${table}_${tenantId}`);
 
     const sortRows = (rows: T[]) =>
       rows.sort((a, b) => {
@@ -218,58 +246,19 @@ export function useRealtimeTable<T>(table: DDriveTable, orderBy: string = 'creat
     };
 
     channel
-      .on('postgres_changes', { event: '*', schema: 'public', table }, handleChanges)
+      .on('postgres_changes', { event: '*', schema: 'public', table, filter: `tenant_id=eq.${tenantId}` }, handleChanges)
       .subscribe((status) => {
         if (status !== 'SUBSCRIBED') {
-          console.warn(`[Supabase] Channel ${table}_realtime status:`, status);
+          console.warn(`[Supabase] Channel ${table} status:`, status);
         }
       });
 
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [table, orderBy, ascending]);
+  }, [table, orderBy, ascending, tenantId]);
 
   return { ...base, data: live ?? base.data };
-}
-
-// ─── Presence Hook ────────────────────────────────────────────────────────────
-export function useDashboardPresence(currentUser: PresenceUser | null) {
-  const [onlineUsers, setOnlineUsers] = useState<PresenceUser[]>([]);
-
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const channel = supabase.channel('dashboard_presence', {
-      config: { presence: { key: currentUser.id } }
-    });
-
-    channel.on('presence', { event: 'sync' }, () => {
-      const state = channel.presenceState();
-      const users = Object.values(state)
-        .flat()
-        .map((p) => p as Partial<PresenceUser>)
-        .filter((p): p is PresenceUser => typeof p.id === 'string' && typeof p.name === 'string')
-        .map((p) => ({ id: p.id, name: p.name, role: p.role ?? '' }));
-      setOnlineUsers(users);
-    });
-
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await channel.track({
-          id: currentUser.id,
-          name: currentUser.name,
-          role: currentUser.role
-        });
-      }
-    });
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUser]);
-
-  return onlineUsers;
 }
 
 // ─── Table-Specific Hooks ─────────────────────────────────────────────────────
@@ -309,15 +298,6 @@ export function useDocuments() {
   return useTable<DocumentRow>('ddrive_documents', 'updated_at', false);
 }
 
-// ─── Write Helpers ────────────────────────────────────────────────────────────
-// Restricted to DDriveTable. Phase 1 replaces these with named domain functions
-// (for example addHazard, closeIncident) backed by RLS-checked RPCs.
-export async function insertRow<T extends object>(table: DDriveTable, row: T) {
-  return await supabase.from(table).insert(row).select();
-}
-
-export async function updateRow<T extends object>(table: DDriveTable, id: string | number, patch: T, idCol: string = 'id') {
-  return await supabase.from(table).update(patch).eq(idCol, id).select();
-}
+// Writes live in src/lib/actions.ts as named functions, one per thing a person does.
 
 export { timeAgo };
