@@ -2,47 +2,38 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Radio, Send, Users, Bell, Share2, Download } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useMessages, insertRow } from '@/hooks/useDDriveData';
+import { useMessages } from '@/hooks/useDDriveData';
 import { useAuth } from '@/contexts/AuthContext';
+import { sendMessage } from '@/lib/actions';
+import { needsRole } from '@/lib/roles';
 
 const MonitoringModule: React.FC = () => {
   const { data: messages, refetch } = useMessages();
   const [draft, setDraft] = useState('');
   const [priority, setPriority] = useState<'medium' | 'high' | 'critical'>('medium');
 
-  const { user, profile, openLogin } = useAuth();
+  const { can } = useAuth();
   const [armed, setArmed] = useState(false);
+  const canPost = can('responder');
+  const canCritical = can('drrm_officer');
 
-  // Messages are sent under the signed-in user's own name. Sign-in is required.
-  const sender = () => ({
-    user_id: user?.id,
-    user_name: profile?.full_name || user?.email || 'Unknown user',
-    role: profile?.role || 'Role not assigned',
-  });
-
+  // The database stamps the sender's real name and role; the app sends only the text and priority.
   const send = async () => {
     if (!draft.trim()) return;
-    if (!user) { openLogin(); return; }
-    const { error } = await insertRow('ddrive_messages', { ...sender(), message: draft, priority });
-    if (error) { toast.error(error.message); return; }
+    const { error } = await sendMessage(draft, priority);
+    if (error) { toast.error(error); return; }
     setDraft('');
     toast.success('Message sent');
     refetch();
   };
 
-  // Emergency broadcast: an authority action. Needs sign-in and a second, deliberate click.
-  // It is sent under the sender's own name, never as an agency.
+  // Emergency message: an authority action (DRRM officer or above), confirmed with a second click.
   const broadcast = async () => {
-    if (!user) { openLogin(); return; }
     if (!armed) { setArmed(true); return; }
     setArmed(false);
-    const { error } = await insertRow('ddrive_messages', {
-      ...sender(),
-      message: 'EMERGENCY: all team members check in and report to your assigned zones.',
-      priority: 'critical',
-    });
-    if (error) { toast.error(error.message); return; }
-    toast.success('Emergency message sent to all members of this workspace');
+    const { error } = await sendMessage('EMERGENCY: all team members check in and report to your assigned zones.', 'critical');
+    if (error) { toast.error(error); return; }
+    toast.success('Emergency message sent to all members of this organisation');
     refetch();
   };
 
@@ -110,19 +101,21 @@ const MonitoringModule: React.FC = () => {
             ))}
           </div>
           <div className="flex gap-2">
-            <select value={priority} onChange={(e) => setPriority(e.target.value as 'medium' | 'high' | 'critical')} className="px-2 py-2 rounded-xl border border-slate-300 bg-transparent text-xs">
+            <select value={priority} onChange={(e) => setPriority(e.target.value as 'medium' | 'high' | 'critical')} disabled={!canPost} aria-label="Message priority" className="px-2 py-2 rounded-xl border border-slate-300 bg-transparent text-xs">
               <option value="medium">Medium</option>
               <option value="high">High</option>
-              <option value="critical">Critical</option>
+              {canCritical && <option value="critical">Critical</option>}
             </select>
             <input
+              disabled={!canPost}
+              aria-label="Message to your team"
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
-              placeholder="Send team broadcast..."
+              placeholder={canPost ? 'Message your team…' : needsRole('responder')}
               className="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-white/5 text-sm"
             />
-            <button onClick={send} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm flex items-center gap-2">
+            <button type="button" onClick={send} disabled={!canPost} className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm flex items-center gap-2 disabled:opacity-50">
               <Send className="w-4 h-4" /> Send
             </button>
           </div>
@@ -146,17 +139,20 @@ const MonitoringModule: React.FC = () => {
           </div>
           <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 text-white">
             <p className="text-xs font-bold uppercase tracking-wider">Emergency Protocol</p>
-            <p className="text-sm mt-1">Message every member of this workspace</p>
+            <p className="text-sm mt-1">Message every member of this organisation</p>
             <button
               type="button"
               onClick={broadcast}
               onBlur={() => setArmed(false)}
-              className="w-full mt-2 px-3 py-1.5 rounded-lg bg-white/20 text-white text-xs font-bold hover:bg-white/30"
+              disabled={!canCritical}
+              className="w-full mt-2 px-3 py-1.5 rounded-lg bg-white/20 text-white text-xs font-bold hover:bg-white/30 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {!user ? 'Sign in to send' : armed ? 'Select again to confirm and send' : 'Send emergency message'}
+              {armed ? 'Select again to confirm and send' : 'Send emergency message'}
             </button>
             <p className="mt-1 text-[11px] text-white/90">
-              Reaches members of this workspace only. It is not a public warning.
+              {canCritical
+                ? 'Reaches members of this organisation only. It is not a public warning.'
+                : needsRole('drrm_officer')}
             </p>
           </div>
         </GlassCard>
