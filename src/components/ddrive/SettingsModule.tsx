@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
-import { Settings, User, Lock, Bell, Palette, Bot, Globe } from 'lucide-react';
+import { Settings, User, Lock, Bell, Palette, Bot, Globe, Building2 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { ROLE_LABELS } from '@/lib/roles';
+import OrganisationSettings from '@/components/ddrive/OrganisationSettings';
 
 const SettingsModule: React.FC = () => {
-  const { user, profile, openLogin } = useAuth();
+  const { user, profile, openLogin, activeTenant } = useAuth();
   const { theme, setTheme } = useTheme();
-  const [section, setSection] = useState<'profile' | 'security' | 'notifications' | 'ai' | 'general'>('profile');
+  const [section, setSection] = useState<'profile' | 'organisation' | 'security' | 'notifications' | 'ai' | 'general'>('profile');
   const [twoFA, setTwoFA] = useState(true);
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifSMS, setNotifSMS] = useState(false);
@@ -17,6 +19,7 @@ const SettingsModule: React.FC = () => {
 
   const sections = [
     { key: 'profile', label: 'Profile', icon: User },
+    { key: 'organisation', label: 'Organisation', icon: Building2 },
     { key: 'general', label: 'General', icon: Globe },
     { key: 'security', label: 'Security', icon: Lock },
     { key: 'notifications', label: 'Notifications', icon: Bell },
@@ -79,11 +82,11 @@ const SettingsModule: React.FC = () => {
                   </div>
                   <div>
                     <dt className="text-xs text-slate-500 font-semibold">Role</dt>
-                    <dd className="mt-1">{profile?.role || 'Not assigned yet'}</dd>
+                    <dd className="mt-1">{activeTenant ? ROLE_LABELS[activeTenant.role] : 'Not assigned yet'}</dd>
                   </div>
                   <div>
                     <dt className="text-xs text-slate-500 font-semibold">Organisation</dt>
-                    <dd className="mt-1">{profile?.organization || 'Not assigned yet'}</dd>
+                    <dd className="mt-1">{activeTenant?.tenant_name ?? 'Not assigned yet'}</dd>
                   </div>
                   <p className="sm:col-span-2 text-xs text-slate-500">
                     Your administrator assigns your role and organisation. You cannot change them here.
@@ -92,6 +95,8 @@ const SettingsModule: React.FC = () => {
               )}
             </div>
           )}
+
+          {section === 'organisation' && <OrganisationSettings />}
 
           {section === 'general' && (
             <div className="space-y-4">

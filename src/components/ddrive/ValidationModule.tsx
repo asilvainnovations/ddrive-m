@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { FlaskConical, Play, Users, Clock, Award, Gamepad2, X, ExternalLink, Radio, Shield, Zap } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useScenarios, updateRow, Scenario } from '@/hooks/useDDriveData';
+import { useScenarios, Scenario } from '@/hooks/useDDriveData';
+import { recordParticipation } from '@/lib/actions';
+import { useAuth } from '@/contexts/AuthContext';
+import { needsRole } from '@/lib/roles';
 
 const ValidationModule: React.FC = () => {
   const { data: scenarios, refetch } = useScenarios();
+  const { can } = useAuth();
   const [launched, setLaunched] = useState<Scenario | null>(null);
   const [step, setStep] = useState(0);
 
@@ -48,12 +52,14 @@ const ValidationModule: React.FC = () => {
   const totalParticipants = scenarios.reduce((a, s) => a + s.participants, 0);
   const avgCompletion = scenarios.length ? Math.round(scenarios.reduce((a, s) => a + s.completion, 0) / scenarios.length) : 0;
 
-  const completeScenario = async (id: number, currentParticipants: number) => {
-    await updateRow('ddrive_scenarios', id, { participants: currentParticipants + 1 });
+  const completeScenario = async (id: number) => {
+    const { error } = await recordParticipation(id);
+    if (error) { toast.error(error); return; }
     toast.success('Participation recorded');
     refetch();
     setLaunched(null);
   };
+
 
   const openExternalSim = (url: string, name: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -195,7 +201,7 @@ const ValidationModule: React.FC = () => {
               {step < simSteps.length - 1 ? (
                 <button onClick={() => setStep(s => s + 1)} className="flex-1 px-4 py-2 rounded-xl bg-amber-500 text-slate-900 font-semibold text-sm">Next Step</button>
               ) : (
-                <button onClick={() => completeScenario(launched.id, launched.participants)} className="flex-1 px-4 py-2 rounded-xl bg-emerald-500 text-white font-semibold text-sm">Complete Simulation</button>
+                <button onClick={() => completeScenario(launched.id)} disabled={!can('responder')} title={can('responder') ? undefined : needsRole('responder')} className="flex-1 px-4 py-2 rounded-xl bg-emerald-500 text-white font-semibold text-sm">Complete Simulation</button>
               )}
             </div>
           </div>

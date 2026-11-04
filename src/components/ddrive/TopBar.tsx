@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Menu, Bell, Sun, Moon, ChevronDown, LogIn } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { useAuth } from '@/contexts/AuthContext';
+import { ROLE_LABELS } from '@/lib/roles';
+import { toast } from '@/components/ui/sonner';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -11,13 +13,19 @@ interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
   const { theme, setTheme } = useTheme();
-  const { user, profile, loading, openLogin, signOut } = useAuth();
+  const { user, profile, loading, openLogin, signOut, memberships, activeTenant, setActiveTenant } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
 
   const name = profile?.full_name || user?.email || '';
   const initials = profile?.avatar_initials || (name ? name.slice(0, 2).toUpperCase() : '');
-  const role = profile?.role || 'Role not assigned';
+  const role = activeTenant ? `${ROLE_LABELS[activeTenant.role]} · ${activeTenant.tenant_name}` : 'No organisation';
+
+  const switchTo = async (tenantId: string) => {
+    setShowProfile(false);
+    const { error } = await setActiveTenant(tenantId);
+    if (error) toast.error(error);
+  };
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/40 dark:border-white/10 bg-white/90 dark:bg-slate-900/90">
@@ -90,8 +98,24 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
                 <div className="pb-3 border-b border-slate-200 dark:border-slate-700">
                   <p className="font-semibold">{name}</p>
                   <p className="text-xs text-slate-500">{user.email}</p>
-                  {profile?.organization ? <p className="text-xs text-slate-500">{profile.organization}</p> : null}
                 </div>
+                {memberships.length > 1 && (
+                  <div className="py-2 border-b border-slate-200 dark:border-slate-700">
+                    <p className="px-2 pb-1 text-[11px] uppercase tracking-wide text-slate-500">Switch organisation</p>
+                    {memberships.map((m) => (
+                      <button
+                        type="button"
+                        key={m.tenant_id}
+                        onClick={() => switchTo(m.tenant_id)}
+                        aria-current={m.tenant_id === activeTenant?.tenant_id ? 'true' : undefined}
+                        className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex justify-between gap-2"
+                      >
+                        <span className="truncate">{m.tenant_name}</span>
+                        <span className="text-[11px] text-slate-500 shrink-0">{ROLE_LABELS[m.role]}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => { setShowProfile(false); signOut(); }}
