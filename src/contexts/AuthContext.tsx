@@ -1,20 +1,32 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
+import { Role, hasRole } from '@/lib/roles';
 
 export interface DDriveProfile {
   id: string;
-  full_name: string;
-  email: string;
-  role: string;
-  organization: string;
-  avatar_initials: string;
+  full_name: string | null;
+  email: string | null;
+  avatar_initials: string | null;
+  active_tenant_id: string | null;
+}
+
+export interface Membership {
+  tenant_id: string;
+  tenant_name: string;
+  role: Role;
 }
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: DDriveProfile | null;
+  /** Organisations the user belongs to (active memberships only). */
+  memberships: Membership[];
+  /** The organisation the user is working in, if any. */
+  activeTenant: Membership | null;
+  /** True when the user has at least this role in the active organisation. UI only; the database decides. */
+  can: (min: Role) => boolean;
   loading: boolean;
   loginModalOpen: boolean;
   openLogin: () => void;
@@ -23,6 +35,9 @@ interface AuthContextType {
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
   signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  setActiveTenant: (tenantId: string) => Promise<{ error: string | null }>;
+  createTenant: (name: string, kind: string) => Promise<{ error: string | null }>;
+  refresh: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,105 +48,83 @@ export const useAuth = () => {
   return ctx;
 };
 
-function buildInitials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .map((n) => n[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+interface MembershipRow {
+  tenant_id: string;
+  role: Role;
+  status: string;
+  ddrive_tenants: { name: string } | { name: string }[] | null;
 }
 
-// The browser may create or update only the user's own name, email and initials.
-// Role and organisation are NOT sent from here: an administrator assigns them on the server
-// (database default + admin-only update policy, Phase 1 migration). Until then they show as unassigned.
-async function upsertProfile(user: User): Promise<DDriveProfile> {
-  const fullName =
-    (user.user_metadata?.full_name as string) ||
-    (user.user_metadata?.name as string) ||
-    (user.email ? user.email.split('@')[0] : 'DDRiVE User');
+// Profiles are created by the database when an account is made (Phase 1). Role and organisation come
+// from memberships, which only administrators can change.
+async function loadAccount(user: User): Promise<{ profile: DDriveProfile | null; memberships: Membership[] }> {
+  const [{ data: profile, error: pErr }, { data: rows, error: mErr }] = await Promise.all([
+    supabase.from('ddrive_users').select('id, full_name, email, avatar_initials, active_tenant_id').eq('id', user.id).maybeSingle(),
+    supabase.from('ddrive_memberships').select('tenant_id, role, status, ddrive_tenants(name)').eq('user_id', user.id),
+  ]);
+  if (pErr) console.warn('[Auth] profile load failed:', pErr.message);
+  if (mErr) console.warn('[Auth] membership load failed:', mErr.message);
 
-  const fallback: DDriveProfile = {
-    id: user.id,
-    full_name: fullName,
-    email: user.email || '',
-    role: '',
-    organization: '',
-    avatar_initials: buildInitials(fullName),
-  };
+  const memberships: Membership[] = ((rows as MembershipRow[] | null) ?? [])
+    .filter((m) => m.status === 'active')
+    .map((m) => {
+      const t = Array.isArray(m.ddrive_tenants) ? m.ddrive_tenants[0] : m.ddrive_tenants;
+      return { tenant_id: m.tenant_id, tenant_name: t?.name ?? 'Organisation', role: m.role };
+    })
+    .sort((a, b) => a.tenant_name.localeCompare(b.tenant_name));
 
-  try {
-    const { data: existing } = await supabase
-      .from('ddrive_users')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
-    if (existing) return existing as DDriveProfile;
-
-    const { data: created, error } = await supabase
-      .from('ddrive_users')
-      .insert({
-        id: user.id,
-        full_name: fallback.full_name,
-        email: fallback.email,
-        avatar_initials: fallback.avatar_initials,
-      })
-      .select()
-      .maybeSingle();
-    if (error) console.warn('[Auth] profile create failed:', error.message);
-    return (created as DDriveProfile) ?? fallback;
-  } catch (e) {
-    console.warn('[Auth] profile lookup failed', e);
-    return fallback;
-  }
+  return { profile: (profile as DDriveProfile | null) ?? null, memberships };
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<DDriveProfile | null>(null);
+  const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  const refreshProfile = useCallback(async (u: User | null) => {
+  const load = useCallback(async (u: User | null) => {
     if (!u) {
       setProfile(null);
+      setMemberships([]);
       return;
     }
-    const p = await upsertProfile(u);
-    setProfile(p);
+    const account = await loadAccount(u);
+    setProfile(account.profile);
+    setMemberships(account.memberships);
   }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      if (data.session?.user) {
-        refreshProfile(data.session.user);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    supabase.auth.getSession()
+      .then(async ({ data }) => {
+        if (!mounted) return;
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+        await load(data.session?.user ?? null);
+      })
+      .catch(() => undefined)
+      .finally(() => { if (mounted) setLoading(false); });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
       setSession(sess);
       setUser(sess?.user ?? null);
-      if (sess?.user) {
-        refreshProfile(sess.user);
-        setLoginModalOpen(false);
-      } else {
-        setProfile(null);
-      }
+      void load(sess?.user ?? null);
+      if (sess?.user) setLoginModalOpen(false);
     });
 
     return () => {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, [refreshProfile]);
+  }, [load]);
+
+  const activeTenant =
+    memberships.find((m) => m.tenant_id === profile?.active_tenant_id) ?? null;
+
+  const can = useCallback((min: Role) => hasRole(activeTenant?.role, min), [activeTenant]);
 
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -159,12 +152,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
+  const setActiveTenant = async (tenantId: string) => {
+    const { error } = await supabase.rpc('ddrive_set_active_tenant', { p_tenant: tenantId });
+    if (!error) await load(user);
+    return { error: error ? error.message : null };
+  };
+
+  const createTenant = async (name: string, kind: string) => {
+    const { error } = await supabase.rpc('ddrive_create_tenant', { p_name: name, p_kind: kind });
+    if (!error) await load(user);
+    return { error: error ? error.message : null };
+  };
+
+  const refresh = useCallback(() => load(user), [load, user]);
+
   return (
     <AuthContext.Provider
       value={{
         user,
         session,
         profile,
+        memberships,
+        activeTenant,
+        can,
         loading,
         loginModalOpen,
         openLogin: () => setLoginModalOpen(true),
@@ -173,6 +183,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signUpWithEmail,
         signInWithGoogle,
         signOut,
+        setActiveTenant,
+        createTenant,
+        refresh,
       }}
     >
       {children}
