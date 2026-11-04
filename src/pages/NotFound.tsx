@@ -1,24 +1,19 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const NotFound = () => {
   const location = useLocation();
 
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center p-8 rounded-lg border border-border bg-card shadow-md animate-slide-in">
-        <h1 className="text-5xl font-bold mb-6 text-primary">404</h1>
-        <p className="text-xl text-card-foreground mb-6">Page not found</p>
-        <a href="/" className="text-primary hover:text-primary/80 underline transition-colors">
-          Return to Home
-        </a>
+    <div className="flex items-center justify-center py-16">
+      <div className="text-center p-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/60 max-w-md">
+        <h1 className="text-4xl font-bold mb-3 font-montserrat text-slate-900 dark:text-white">Page not found</h1>
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 font-poppins">
+          There is no page at <code className="px-1 rounded bg-slate-100 dark:bg-slate-800">{location.pathname}</code>.
+          Use the menu, or go back to the dashboard.
+        </p>
+        <Link to="/" className="text-blue-700 dark:text-blue-400 font-semibold underline">
+          Go to the Command Dashboard
+        </Link>
       </div>
     </div>
   );
