@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Sparkles, FileText, Wand2, CheckCircle2, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { usePlans, insertRow } from '@/hooks/useDDriveData';
@@ -26,11 +26,11 @@ const EnhancementModule: React.FC = () => {
       type: generating.type,
       standard: generating.standard,
       status: 'Draft',
-      compliance: 70,
+      compliance: null, // not assessed yet; never a made-up score
       last_updated: new Date().toISOString().split('T')[0],
     });
     if (error) { toast.error(error.message); return; }
-    toast.success(`${generating.name} generated and saved to Supabase`);
+    toast.success(`${generating.name} saved as a draft`);
     setGenerating(null);
     refetch();
   };
@@ -83,7 +83,7 @@ const EnhancementModule: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="font-montserrat font-bold text-lg">{p.compliance}%</p>
+                  <p className="font-montserrat font-bold text-lg">{p.compliance == null ? 'Not assessed' : `${p.compliance}%`}</p>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                     p.status === 'Approved' ? 'bg-emerald-500/15 text-emerald-700' :
                     p.status === 'In Review' ? 'bg-amber-500/15 text-amber-700' :
@@ -97,45 +97,20 @@ const EnhancementModule: React.FC = () => {
 
         <GlassCard className="p-6">
           <h3 className="font-montserrat font-bold text-lg mb-4">Compliance Dashboard</h3>
-          <div className="space-y-3">
-            {[
-              { std: 'RA 10121', val: 95 },
-              { std: 'ISO 22301', val: 88 },
-              { std: 'ISO 31000', val: 92 },
-              { std: 'DILG MC 2023-01', val: 85 },
-              { std: 'PSCP 2nd Ed', val: 78 },
-            ].map(c => (
-              <div key={c.std}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="font-poppins font-medium">{c.std}</span>
-                  <span className="font-bold">{c.val}%</span>
-                </div>
-                <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${c.val >= 90 ? 'bg-emerald-500' : c.val >= 80 ? 'bg-amber-500' : 'bg-orange-500'}`} style={{ width: `${c.val}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => toast.success('Regulatory report generated')} className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-900 text-white font-semibold text-sm">Generate Regulatory Report</button>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Not assessed yet. Compliance against RA 10121, ISO 22301, ISO 31000 and PSCP guidance will be scored
+            clause by clause, with the evidence behind each score, once that checklist is built.
+          </p>
+          <button onClick={() => toast.info('Regulatory reports is not available yet.')} className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-900 text-white font-semibold text-sm">Generate Regulatory Report</button>
         </GlassCard>
       </div>
 
       <GlassCard className="p-6">
         <h3 className="font-montserrat font-bold text-lg mb-4">Resource Availability & Recovery Tracking</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'Emergency Funds', val: '₱842M', detail: '78% available' },
-            { label: 'Relief Goods', val: '14,200', detail: 'Family Packs' },
-            { label: 'Evacuation Centers', val: '328', detail: '65% capacity' },
-            { label: 'Medical Teams', val: '47', detail: '12 deployed' },
-          ].map((r, i) => (
-            <div key={i} className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-white/40 dark:border-white/10">
-              <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">{r.label}</p>
-              <p className="font-montserrat font-bold text-2xl mt-1">{r.val}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">{r.detail}</p>
-            </div>
-          ))}
-        </div>
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          Not set up yet. Resource figures (funds, relief stocks, evacuation centres, teams) will appear here once your
+          organisation records them.
+        </p>
       </GlassCard>
 
       {generating && (
