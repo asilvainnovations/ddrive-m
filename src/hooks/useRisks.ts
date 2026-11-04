@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Risk, RiskCategory } from '@/types/risk';
+import { Risk, RiskCategory } from '@/lib/risk';
 
 export const useRisks = () => {
   const [risks, setRisks] = useState<Risk[]>([]);

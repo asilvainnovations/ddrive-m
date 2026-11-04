@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
@@ -61,7 +61,8 @@ export interface Plan {
   type: string;
   standard: string;
   status: string;
-  compliance: number;
+  /** Compliance score 0–100, or null when not yet assessed. */
+  compliance: number | null;
   last_updated: string;
 }
 
@@ -89,6 +90,30 @@ export interface PresenceUser {
   role: string;
 }
 
+// ─── Tables ───────────────────────────────────────────────────────────────────
+// The only tables the browser may read or write. Anything else is a compile error.
+// Real protection is Row Level Security on the server (Phase 1 migrations); this list
+// stops the client code from being used as a generic writer to arbitrary tables.
+export type DDriveTable =
+  | 'ddrive_hazards'
+  | 'ddrive_risks'
+  | 'ddrive_incidents'
+  | 'ddrive_undrr_scores'
+  | 'ddrive_scenarios'
+  | 'ddrive_plans'
+  | 'ddrive_messages'
+  | 'ddrive_documents';
+
+export interface TableState<T> {
+  data: T[];
+  loading: boolean;
+  /** Error message from the last load, or null when it succeeded. */
+  error: string | null;
+  /** When the data was last loaded successfully. */
+  loadedAt: Date | null;
+  refetch: () => Promise<void>;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function timeAgo(iso: string): string {
   if (!iso) return '';
@@ -102,114 +127,94 @@ function timeAgo(iso: string): string {
 }
 
 // ─── Standard (Non-Realtime) Hook ─────────────────────────────────────────────
-export function useTable<T>(table: string, orderBy: string = 'created_at', ascending = false) {
+export function useTable<T>(table: DDriveTable, orderBy: string = 'created_at', ascending = false): TableState<T> {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loadedAt, setLoadedAt] = useState<Date | null>(null);
 
-  const fetchData = useCallback(async () => {
+  const refetch = useCallback(async () => {
     setLoading(true);
     try {
-      const { data: rows, error } = await supabase
+      const { data: rows, error: err } = await supabase
         .from(table)
         .select('*')
         .order(orderBy, { ascending });
-
-      // ✅ FIX: Always ensure data is an array
-      if (error) {
-        console.error(`[Supabase Error] ${table}:`, error.message);
+      if (err) {
+        console.error(`[Supabase Error] ${table}:`, err.message);
+        setError(err.message);
         setData([]);
-      } else if (rows && Array.isArray(rows)) {
-        setData(rows as T[]);
       } else {
-        setData([]);
+        setError(null);
+        setData(Array.isArray(rows) ? (rows as T[]) : []);
+        setLoadedAt(new Date());
       }
-    } catch (err) {
-      console.error(`[Fetch Error] ${table}:`, err);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`[Fetch Error] ${table}:`, message);
+      setError(message);
       setData([]);
     } finally {
       setLoading(false);
     }
   }, [table, orderBy, ascending]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { void refetch(); }, [refetch]);
 
-  return { data, loading, refetch: fetchData };
+  return { data, loading, error, loadedAt, refetch };
 }
 
 // ─── Realtime-Enabled Hook ────────────────────────────────────────────────────
-export function useRealtimeTable<T>(table: string, orderBy: string = 'created_at', ascending = false) {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
+type Row = Record<string, unknown> & { id?: string | number };
 
-  // Initial fetch
+interface ChangePayload {
+  eventType?: 'INSERT' | 'UPDATE' | 'DELETE';
+  new?: Row;
+  old?: Row;
+}
+
+export function useRealtimeTable<T>(table: DDriveTable, orderBy: string = 'created_at', ascending = false): TableState<T> {
+  const base = useTable<T>(table, orderBy, ascending);
+  const [live, setLive] = useState<T[] | null>(null);
+  const latest = useRef<T[]>(base.data);
+
+  // A fresh load replaces any live edits applied on top of the previous load.
   useEffect(() => {
-    setLoading(true);
-    supabase
-      .from(table)
-      .select('*')
-      .order(orderBy, { ascending })
-      .then(({ data: rows, error }) => {
-        if (error) {
-          console.error(`[Initial Fetch Error] ${table}:`, error.message);
-          setData([]);
-        } else if (rows && Array.isArray(rows)) {
-          setData(rows as T[]);
-        } else {
-          setData([]);
-        }
-        setLoading(false);
-      });
-  }, [table, orderBy, ascending]);
+    latest.current = base.data;
+    setLive(null);
+  }, [base.data]);
 
-  // Realtime subscription
   useEffect(() => {
     const channel = supabase.channel(`${table}_realtime`);
 
-    const handleChanges = (payload: any) => {
-      // ✅ FIX: Validate payload structure before processing
-      if (!payload || !payload.eventType) {
-        console.warn('[Realtime Warning] Invalid payload:', payload);
-        return;
-      }
-
-      // Safe data mutation helper
-      const safeUpdate = (current: T[]) => {
-        let updated = [...current];
-
-        if (payload.eventType === 'INSERT') {
-          if (payload.new && typeof payload.new === 'object') {
-            updated.push(payload.new as T);
-          }
-        } else if (payload.eventType === 'UPDATE') {
-          if (payload.new && typeof payload.new === 'object') {
-            // Safe ID comparison using loose equality
-            const newId = (payload.new as any)?.id;
-            if (newId != null) {
-              updated = updated.map(row => ((row as any)?.id == newId) ? { ...payload.new } as T : row);
-            }
-          }
-        } else if (payload.eventType === 'DELETE') {
-          const oldId = (payload.old as any)?.id;
-          if (oldId != null) {
-            updated = updated.filter(row => (row as any)?.id != oldId);
-          }
+    const sortRows = (rows: T[]) =>
+      rows.sort((a, b) => {
+        const valA = (a as Row)[orderBy];
+        const valB = (b as Row)[orderBy];
+        if (valA == null && valB == null) return 0;
+        if (valA == null) return 1;
+        if (valB == null) return -1;
+        if (typeof valA === 'string' || typeof valA === 'number') {
+          return ascending ? (valA > (valB as typeof valA) ? 1 : -1) : (valA < (valB as typeof valA) ? 1 : -1);
         }
+        return 0;
+      });
 
-        // Maintain sort order after mutation
-        return updated.sort((a, b) => {
-          const valA = (a as any)[orderBy];
-          const valB = (b as any)[orderBy];
-          if (valA == null && valB == null) return 0;
-          if (valA == null) return 1;
-          if (valB == null) return -1;
-          if (typeof valA === 'string' || typeof valA === 'number') {
-            return ascending ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
-          }
-          return 0;
-        });
-      };
-
-      setData(safeUpdate);
+    const handleChanges = (payload: ChangePayload) => {
+      if (!payload?.eventType) return;
+      setLive((current) => {
+        let updated = [...(current ?? latest.current)];
+        if (payload.eventType === 'INSERT' && payload.new) {
+          updated.push(payload.new as T);
+        } else if (payload.eventType === 'UPDATE' && payload.new?.id != null) {
+          const newId = String(payload.new.id);
+          updated = updated.map((row) => (String((row as Row).id) === newId ? (payload.new as T) : row));
+        } else if (payload.eventType === 'DELETE' && payload.old?.id != null) {
+          const oldId = String(payload.old.id);
+          updated = updated.filter((row) => String((row as Row).id) !== oldId);
+        }
+        return sortRows(updated);
+      });
     };
 
     channel
@@ -221,11 +226,11 @@ export function useRealtimeTable<T>(table: string, orderBy: string = 'created_at
       });
 
     return () => {
-      supabase.removeChannel(channel);
+      void supabase.removeChannel(channel);
     };
   }, [table, orderBy, ascending]);
 
-  return { data, loading };
+  return { ...base, data: live ?? base.data };
 }
 
 // ─── Presence Hook ────────────────────────────────────────────────────────────
@@ -240,10 +245,13 @@ export function useDashboardPresence(currentUser: PresenceUser | null) {
     });
 
     channel.on('presence', { event: 'sync' }, () => {
-      const state = channel.presence.state();
-      const users = Object.values(state).flat() as PresenceUser[];
-      // ✅ FIX: Ensure array before setting state
-      setOnlineUsers(Array.isArray(users) ? users : []);
+      const state = channel.presenceState();
+      const users = Object.values(state)
+        .flat()
+        .map((p) => p as Partial<PresenceUser>)
+        .filter((p): p is PresenceUser => typeof p.id === 'string' && typeof p.name === 'string')
+        .map((p) => ({ id: p.id, name: p.name, role: p.role ?? '' }));
+      setOnlineUsers(users);
     });
 
     channel.subscribe(async (status) => {
@@ -289,11 +297,11 @@ export function usePlans() {
   return useTable<Plan>('ddrive_plans', 'last_updated', false);
 }
 
-export function useMessages() {
+export function useMessages(): TableState<Message> {
   const result = useRealtimeTable<Message>('ddrive_messages', 'created_at', false);
   return {
     ...result,
-    data: (result.data || []).map(m => ({ ...m, time: timeAgo(m.created_at) })),
+    data: result.data.map(m => ({ ...m, time: timeAgo(m.created_at) })),
   };
 }
 
@@ -301,12 +309,14 @@ export function useDocuments() {
   return useTable<DocumentRow>('ddrive_documents', 'updated_at', false);
 }
 
-// ─── CRUD Helpers ─────────────────────────────────────────────────────────────
-export async function insertRow(table: string, row: any) {
+// ─── Write Helpers ────────────────────────────────────────────────────────────
+// Restricted to DDriveTable. Phase 1 replaces these with named domain functions
+// (for example addHazard, closeIncident) backed by RLS-checked RPCs.
+export async function insertRow<T extends object>(table: DDriveTable, row: T) {
   return await supabase.from(table).insert(row).select();
 }
 
-export async function updateRow(table: string, id: any, patch: any, idCol: string = 'id') {
+export async function updateRow<T extends object>(table: DDriveTable, id: string | number, patch: T, idCol: string = 'id') {
   return await supabase.from(table).update(patch).eq(idCol, id).select();
 }
 
