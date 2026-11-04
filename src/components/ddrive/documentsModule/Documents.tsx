@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { FileText, Search, Upload, Download, Folder, ExternalLink } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { useDocuments, insertRow } from '@/hooks/useDDriveData';
+import { useDocuments } from '@/hooks/useDDriveData';
+import { registerDocument } from '@/lib/actions';
+import GatedButton from '@/components/ddrive/GatedButton';
 
 const DocumentsModule: React.FC = () => {
   const { data: documents, refetch } = useDocuments();
@@ -34,15 +36,13 @@ const DocumentsModule: React.FC = () => {
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const nextId = `D-${String(documents.length + 1).padStart(3, '0')}`;
-    const { error } = await insertRow('ddrive_documents', {
-      id: nextId,
-      name: form.get('name'),
-      category: form.get('category'),
-      size: form.get('size') || '1.0 MB',
-      updated_at: new Date().toISOString().split('T')[0],
+    const size = String(form.get('size') ?? '').trim();
+    const { error } = await registerDocument({
+      name: String(form.get('name') ?? ''),
+      category: String(form.get('category') ?? 'Other'),
+      size: size || null,
     });
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(error); return; }
     toast.success('Document saved');
     setShowUpload(false);
     refetch();
@@ -69,9 +69,9 @@ const DocumentsModule: React.FC = () => {
               <p className="text-sm text-slate-500 font-poppins">Centralized library (Supabase persisted)</p>
             </div>
           </div>
-          <button onClick={() => setShowUpload(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
+          <GatedButton min="analyst" onClick={() => setShowUpload(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
             <Upload className="w-4 h-4" /> Upload Document
-          </button>
+          </GatedButton>
         </div>
       </GlassCard>
 
@@ -100,7 +100,7 @@ const DocumentsModule: React.FC = () => {
                   <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-bold">{d.category}</span>
                   <span>{d.size}</span>
                   <span>·</span>
-                  <span>{d.updated_at}</span>
+                  <span>{new Date(d.updated_at).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium' })}</span>
                   {'externalUrl' in d && <span className="text-emerald-600 font-semibold">External</span>}
                 </div>
               </div>
