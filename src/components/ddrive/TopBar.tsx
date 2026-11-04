@@ -4,6 +4,8 @@ import { useTheme } from '@/components/theme-provider';
 import { useAuth } from '@/contexts/AuthContext';
 import { ROLE_LABELS } from '@/lib/roles';
 import { toast } from '@/components/ui/sonner';
+import { Link } from 'react-router-dom';
+import { useOfficialAlerts, alertTitle, ago } from '@/hooks/useOfficialAlerts';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -16,6 +18,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
   const { user, profile, loading, openLogin, signOut, memberships, activeTenant, setActiveTenant } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
+  const { inArea, feed, stale } = useOfficialAlerts();
 
   const name = profile?.full_name || user?.email || '';
   const initials = profile?.avatar_initials || (name ? name.slice(0, 2).toUpperCase() : '');
@@ -59,18 +62,38 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
           <button
             type="button"
             onClick={() => setShowNotif(!showNotif)}
-            aria-label="Notifications"
+            aria-label={inArea.length ? `Official alerts: ${inArea.length} in your watch areas` : 'Official alerts'}
             aria-expanded={showNotif}
             className="relative p-2 rounded-xl hover:bg-white/60 dark:hover:bg-white/5 transition"
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-5 h-5" aria-hidden="true" />
+            {inArea.length > 0 && (
+              <span aria-hidden="true" className="absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-amber-500 text-[10px] font-bold text-slate-950 flex items-center justify-center">
+                {inArea.length}
+              </span>
+            )}
           </button>
           {showNotif && (
             <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl p-4 text-xs">
-              <p className="font-semibold text-sm mb-1 font-montserrat">Notifications</p>
-              <p className="text-slate-600 dark:text-slate-300">
-                No notifications yet. Agency alert feeds are not connected in this version.
+              <p className="font-semibold text-sm mb-1 font-montserrat">Official alerts in your watch areas</p>
+              {inArea.length === 0 ? (
+                <p className="text-slate-600 dark:text-slate-300">None in force.</p>
+              ) : (
+                <ul className="space-y-2 my-2">
+                  {inArea.slice(0, 5).map((a) => (
+                    <li key={a.id}>
+                      <p className="font-semibold text-slate-900 dark:text-white">{alertTitle(a)}</p>
+                      <p className="text-slate-600 dark:text-slate-400">{a.area_names.join(', ')} · {ago(new Date(a.sent))}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className={`mt-1 ${stale ? 'text-amber-800 dark:text-amber-300 font-semibold' : 'text-slate-500'}`}>
+                PAGASA feed read {ago(feed.lastOk)}{stale ? '; may be out of date' : ''}.
               </p>
+              <Link to="/detection" onClick={() => setShowNotif(false)} className="mt-2 inline-block font-semibold text-blue-700 dark:text-blue-400">
+                See all official alerts
+              </Link>
             </div>
           )}
         </div>

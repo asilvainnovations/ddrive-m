@@ -4,13 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ROLES, ROLE_LABELS, ROLE_DESCRIPTIONS, Role } from '@/lib/roles';
 import {
   Member, listMembers, addOrUpdateMember, removeMember, getRiskThresholds, setRiskThresholds,
+  WatchArea, listWatchAreas, addWatchArea, removeWatchArea,
 } from '@/lib/actions';
+import { needsRole } from '@/lib/roles';
+import { useOfficialAlerts } from '@/hooks/useOfficialAlerts';
 
 // Members, roles and risk criteria for the active organisation.
 // Everyone sees the member list; only administrators can change it. The database enforces the same.
 const OrganisationSettings: React.FC = () => {
   const { user, activeTenant, can, refresh } = useAuth();
   const isAdmin = can('tenant_admin');
+  const canWatch = can('drrm_officer');
+  const { alerts, refetch: refetchAlerts } = useOfficialAlerts();
   const tenantId = activeTenant?.tenant_id ?? null;
 
   const [members, setMembers] = useState<Member[]>([]);
@@ -19,14 +24,18 @@ const OrganisationSettings: React.FC = () => {
   const [newRole, setNewRole] = useState<Role>('viewer');
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [thresholds, setThresholds] = useState({ critical: 20, high: 12, medium: 6 });
+  const [areas, setAreas] = useState<WatchArea[]>([]);
+  const [areaLabel, setAreaLabel] = useState('');
+  const [areaCode, setAreaCode] = useState('');
 
   const load = useCallback(async () => {
     if (!tenantId) return;
     setLoading(true);
-    const [{ data, error }, th] = await Promise.all([listMembers(tenantId), getRiskThresholds(tenantId)]);
+    const [{ data, error }, th, wa] = await Promise.all([listMembers(tenantId), getRiskThresholds(tenantId), listWatchAreas(tenantId)]);
     if (error) toast.error(error);
     setMembers(data);
     if (th) setThresholds(th);
+    setAreas(wa);
     setLoading(false);
   }, [tenantId]);
 
@@ -59,6 +68,28 @@ const OrganisationSettings: React.FC = () => {
     toast.success(`${m.full_name ?? m.email} was removed`);
     if (m.user_id === user?.id) { await refresh(); return; }
     void load();
+  };
+
+  // Province names and codes exactly as PAGASA writes them in alerts now in force, as suggestions.
+  const suggestions = new Map<string, string>();
+  alerts.forEach((a) => a.area_names.forEach((n, i) => { if (!suggestions.has(n)) suggestions.set(n, a.area_codes[i] ?? ''); }));
+  const watched = new Set(areas.map((w) => w.label.trim().toLowerCase()));
+
+  const addArea = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const code = areaCode.trim() || suggestions.get(areaLabel.trim()) || '';
+    const { error } = await addWatchArea(areaLabel, code || null);
+    if (error) { toast.error(error); return; }
+    toast.success(`Now watching ${areaLabel.trim()}`);
+    setAreaLabel(''); setAreaCode('');
+    await load(); void refetchAlerts();
+  };
+
+  const dropArea = async (w: WatchArea) => {
+    const { error } = await removeWatchArea(w.id);
+    if (error) { toast.error(error); return; }
+    toast.success(`Stopped watching ${w.label}`);
+    await load(); void refetchAlerts();
   };
 
   const saveThresholds = async (e: React.FormEvent) => {
@@ -166,6 +197,47 @@ const OrganisationSettings: React.FC = () => {
           <p className="text-xs text-slate-500">{ROLE_DESCRIPTIONS[newRole]}</p>
         </form>
       )}
+
+      <section aria-labelledby="watch-heading" className="space-y-2">
+        <h4 id="watch-heading" className="font-semibold">Watch areas</h4>
+        <p className="text-xs text-slate-500">
+          Provinces whose PAGASA alerts concern this organisation. Their alerts are flagged on the dashboard and in Detection.
+          Use the province name as PAGASA writes it; the PSGC code (9 or 10 digits) is optional but makes matching exact.
+        </p>
+        {areas.length === 0 ? (
+          <p className="text-sm text-slate-600 dark:text-slate-300">No watch areas yet.</p>
+        ) : (
+          <ul className="flex flex-wrap gap-2">
+            {areas.map((w) => (
+              <li key={w.id} className="flex items-center gap-2 px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-sm">
+                <span>{w.label}{w.psgc_code ? <span className="text-xs text-slate-500"> · {w.psgc_code}</span> : null}</span>
+                {canWatch && (
+                  <button type="button" onClick={() => dropArea(w)} aria-label={`Stop watching ${w.label}`} className="text-xs font-semibold text-red-700">
+                    Remove
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        {canWatch ? (
+          <form onSubmit={addArea} className="flex flex-wrap gap-2">
+            <label className="sr-only" htmlFor="watch-label">Province</label>
+            <input id="watch-label" list="watch-suggestions" required minLength={2} maxLength={120} value={areaLabel}
+              onChange={(e) => setAreaLabel(e.target.value)} placeholder="Province, e.g. Leyte"
+              className="flex-1 min-w-[12rem] px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+            <datalist id="watch-suggestions">
+              {[...suggestions.keys()].filter((n) => !watched.has(n.toLowerCase())).sort().map((n) => <option key={n} value={n} />)}
+            </datalist>
+            <label className="sr-only" htmlFor="watch-code">PSGC code (optional)</label>
+            <input id="watch-code" inputMode="numeric" pattern="[0-9]{9,10}" value={areaCode} onChange={(e) => setAreaCode(e.target.value)}
+              placeholder="PSGC code (optional)" className="w-44 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+            <button type="submit" className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Add watch area</button>
+          </form>
+        ) : (
+          <p className="text-xs text-slate-500">{needsRole('drrm_officer')}</p>
+        )}
+      </section>
 
       <form onSubmit={saveThresholds} className="space-y-2" aria-labelledby="criteria-heading">
         <h4 id="criteria-heading" className="font-semibold">Risk criteria</h4>
