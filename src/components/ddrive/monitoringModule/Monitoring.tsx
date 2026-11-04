@@ -1,26 +1,48 @@
 import React, { useState } from 'react';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/ui/GlassCard';
 import { Radio, Send, Users, Bell, Share2, Download } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useMessages, insertRow } from '@/hooks/useDDriveData';
+import { useAuth } from '@/contexts/AuthContext';
 
 const MonitoringModule: React.FC = () => {
   const { data: messages, refetch } = useMessages();
   const [draft, setDraft] = useState('');
   const [priority, setPriority] = useState<'medium' | 'high' | 'critical'>('medium');
 
+  const { user, profile, openLogin } = useAuth();
+  const [armed, setArmed] = useState(false);
+
+  // Messages are sent under the signed-in user's own name. Sign-in is required.
+  const sender = () => ({
+    user_id: user?.id,
+    user_name: profile?.full_name || user?.email || 'Unknown user',
+    role: profile?.role || 'Role not assigned',
+  });
+
   const send = async () => {
     if (!draft.trim()) return;
-    const { error } = await insertRow('ddrive_messages', {
-      user_id: '11111111-1111-1111-1111-111111111111',
-      user_name: 'Juan Dela Cruz',
-      role: 'Super Admin',
-      message: draft,
-      priority,
-    });
+    if (!user) { openLogin(); return; }
+    const { error } = await insertRow('ddrive_messages', { ...sender(), message: draft, priority });
     if (error) { toast.error(error.message); return; }
     setDraft('');
-    toast.success('Broadcast sent & persisted');
+    toast.success('Message sent');
+    refetch();
+  };
+
+  // Emergency broadcast: an authority action. Needs sign-in and a second, deliberate click.
+  // It is sent under the sender's own name, never as an agency.
+  const broadcast = async () => {
+    if (!user) { openLogin(); return; }
+    if (!armed) { setArmed(true); return; }
+    setArmed(false);
+    const { error } = await insertRow('ddrive_messages', {
+      ...sender(),
+      message: 'EMERGENCY: all team members check in and report to your assigned zones.',
+      priority: 'critical',
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success('Emergency message sent to all members of this workspace');
     refetch();
   };
 
@@ -40,10 +62,10 @@ const MonitoringModule: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Active Members', val: 342, icon: Users, color: 'from-blue-500 to-blue-700' },
+          { label: 'People who posted', val: new Set(messages.map(m => m.user_name)).size, icon: Users, color: 'from-blue-500 to-blue-700' },
           { label: 'Messages Logged', val: messages.length, icon: Send, color: 'from-emerald-500 to-teal-500' },
           { label: 'Critical Broadcasts', val: messages.filter(m => m.priority === 'critical').length, icon: Bell, color: 'from-amber-500 to-orange-500' },
-          { label: 'Reports Generated', val: 156, icon: Share2, color: 'from-purple-500 to-pink-500' },
+          { label: 'High-priority messages', val: messages.filter(m => m.priority === 'high').length, icon: Share2, color: 'from-purple-500 to-pink-500' },
         ].map((s, i) => {
           const Icon = s.icon;
           return (
@@ -81,14 +103,14 @@ const MonitoringModule: React.FC = () => {
                       <p className="text-[10px] text-slate-500">{m.role}</p>
                     </div>
                   </div>
-                  <span className="text-[10px] text-slate-500">{(m as any).time || ''}</span>
+                  <span className="text-[10px] text-slate-500">{m.time || ''}</span>
                 </div>
                 <p className="text-sm font-poppins">{m.message}</p>
               </div>
             ))}
           </div>
           <div className="flex gap-2">
-            <select value={priority} onChange={(e) => setPriority(e.target.value as any)} className="px-2 py-2 rounded-xl border border-slate-300 bg-transparent text-xs">
+            <select value={priority} onChange={(e) => setPriority(e.target.value as 'medium' | 'high' | 'critical')} className="px-2 py-2 rounded-xl border border-slate-300 bg-transparent text-xs">
               <option value="medium">Medium</option>
               <option value="high">High</option>
               <option value="critical">Critical</option>
@@ -116,7 +138,7 @@ const MonitoringModule: React.FC = () => {
               'Compliance Snapshot',
               'Community Engagement Brief',
             ].map((r, i) => (
-              <button key={i} onClick={() => toast.success(`${r} generated`)} className="w-full p-3 rounded-xl bg-white/60 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-left flex items-center justify-between transition">
+              <button key={i} onClick={() => toast.info(`${r} is not available yet.`)} className="w-full p-3 rounded-xl bg-white/60 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-left flex items-center justify-between transition">
                 <span className="text-sm font-poppins">{r}</span>
                 <Download className="w-4 h-4 text-slate-400" />
               </button>
@@ -124,19 +146,18 @@ const MonitoringModule: React.FC = () => {
           </div>
           <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 text-white">
             <p className="text-xs font-bold uppercase tracking-wider">Emergency Protocol</p>
-            <p className="text-sm mt-1">Trigger mass alert to all members</p>
-            <button onClick={async () => {
-              await insertRow('ddrive_messages', {
-                user_name: 'NDRRMC EMERGENCY',
-                role: 'System Broadcast',
-                message: 'EMERGENCY CASCADE INITIATED. All responders report to assigned zones immediately.',
-                priority: 'critical',
-              });
-              toast.success('Emergency broadcast sent');
-              refetch();
-            }} className="w-full mt-2 px-3 py-1.5 rounded-lg bg-white/20 text-white text-xs font-bold backdrop-blur-sm hover:bg-white/30">
-              INITIATE CASCADE
+            <p className="text-sm mt-1">Message every member of this workspace</p>
+            <button
+              type="button"
+              onClick={broadcast}
+              onBlur={() => setArmed(false)}
+              className="w-full mt-2 px-3 py-1.5 rounded-lg bg-white/20 text-white text-xs font-bold hover:bg-white/30"
+            >
+              {!user ? 'Sign in to send' : armed ? 'Select again to confirm and send' : 'Send emergency message'}
             </button>
+            <p className="mt-1 text-[11px] text-white/90">
+              Reaches members of this workspace only. It is not a public warning.
+            </p>
           </div>
         </GlassCard>
       </div>
