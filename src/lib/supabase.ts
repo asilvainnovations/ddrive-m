@@ -1,24 +1,38 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize database client
-const supabaseUrl = 'https://tkmmgqqimvpqtipwbvrs.databasepad.com';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZmZTRlMTA1LTQxOGUtNDc0ZS05OGY0LTU1ZWFlNWQ1ZjVhNyJ9.eyJwcm9qZWN0SWQiOiJ0a21tZ3FxaW12cHF0aXB3YnZycyIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc2MTU2NjE5LCJleHAiOjIwOTE1MTY2MTksImlzcyI6ImZhbW91cy5kYXRhYmFzZXBhZCIsImF1ZCI6ImZhbW91cy5jbGllbnRzIn0.LZqQK9VQXdHhLwsunfUrLp0A91wFAGufCR5YD8v4_9Y';
+// Connection settings come from the environment (.env.local in development, the host's
+// environment variables in production). See .env.example. The anon key is public by design:
+// what protects the data is Row Level Security on the server, not hiding this key.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-// Configure realtime with safer binary handling to prevent decode errors
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 5,
+export const isBackendConfigured = Boolean(supabaseUrl && supabaseKey);
+
+if (!isBackendConfigured) {
+  console.error(
+    '[DDRiVE-M] VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are not set. ' +
+      'Copy .env.example to .env.local and fill them in.'
+  );
+}
+
+const supabase = createClient(
+  supabaseUrl || 'http://localhost:54321',
+  supabaseKey || 'missing-anon-key',
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
     },
-  },
-});
+    realtime: {
+      params: { eventsPerSecond: 5 },
+    },
+  }
+);
 
-// DDRiVE-M brand assets
-export const DDRIVE_LOGO_URL = 'https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png';
+// DDRiVE-M logo, served from the project's public storage bucket.
+export const DDRIVE_LOGO_URL = supabaseUrl
+  ? `${supabaseUrl}/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png`
+  : '';
 
 export { supabase };
