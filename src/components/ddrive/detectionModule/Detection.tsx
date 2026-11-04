@@ -5,6 +5,8 @@ import { toast } from '@/components/ui/sonner';
 import { useHazards, Hazard } from '@/hooks/useDDriveData';
 import { reportHazard, NewHazard } from '@/lib/actions';
 import GatedButton from '@/components/ddrive/GatedButton';
+import OfficialAlerts from '@/components/ddrive/detectionModule/OfficialAlerts';
+import { OfficialAlert, alertTitle, manila } from '@/hooks/useOfficialAlerts';
 
 const agencies = [
   { name: 'PAGASA', desc: 'Weather & Typhoon', color: 'from-blue-500 to-blue-700', icon: Cloud },
@@ -27,6 +29,15 @@ const DetectionModule: React.FC = () => {
   const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
   const [selectedHazard, setSelectedHazard] = useState<Hazard | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  // When set, the hazard form is prefilled from this official alert and the record links to it.
+  const [fromAlert, setFromAlert] = useState<OfficialAlert | null>(null);
+  const openForm = (alert: OfficialAlert | null) => { setFromAlert(alert); setShowAdd(true); };
+  const alertType = (a: OfficialAlert) =>
+    /tropical cyclone/i.test(a.event) ? 'Typhoon'
+      : /tsunami/i.test(a.event) ? 'Tsunami'
+      : /storm surge/i.test(a.event) ? 'Storm Surge'
+      : /flood|rain/i.test(a.event) ? 'Flood'
+      : 'Typhoon';
 
   const filtered = selectedAgency ? hazards.filter(h => h.agency === selectedAgency) : hazards;
 
@@ -44,11 +55,15 @@ const DetectionModule: React.FC = () => {
       lat: Number(form.get('lat')),
       lng: Number(form.get('lng')),
       psgc_code: psgc || null,
+      official_alert_id: fromAlert?.id ?? null,
+      // The database accepts only https links; the record keeps the alert itself either way.
+      source_url: fromAlert?.cap_url.startsWith('https://') ? fromAlert.cap_url : null,
     };
     const { error } = await reportHazard(hazard);
     if (error) { toast.error(error); return; }
     toast.success('Hazard record saved');
     setShowAdd(false);
+    setFromAlert(null);
     refetch();
   };
 
@@ -65,11 +80,13 @@ const DetectionModule: React.FC = () => {
               <p className="text-sm text-slate-500 font-poppins">Phase 1 · Hazard records with their source agency</p>
             </div>
           </div>
-          <GatedButton min="responder" onClick={() => setShowAdd(true)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
+          <GatedButton min="responder" onClick={() => openForm(null)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
             <Plus className="w-4 h-4" aria-hidden="true" /> Report Hazard
           </GatedButton>
         </div>
       </GlassCard>
+
+      <OfficialAlerts onLogAsHazard={(a) => openForm(a)} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {agencies.map((a) => {
@@ -102,13 +119,8 @@ const DetectionModule: React.FC = () => {
         <GlassCard className="p-0 overflow-hidden lg:col-span-2 min-h-[480px]">
           <div className="p-4 border-b border-white/40 dark:border-white/10 flex items-center justify-between">
             <div>
-              <h3 className="font-montserrat font-bold text-lg">Geospatial Threat Map</h3>
-              <p className="text-xs text-slate-500">Google Maps + Zoom Earth + Faultfinder + Open-Meteo</p>
-            </div>
-            <div className="flex gap-1">
-              {['3D', 'Satellite', 'Terrain'].map(v => (
-                <button key={v} className="text-[10px] px-2 py-1 rounded-lg bg-white/60 dark:bg-white/10 border border-white/40 hover:bg-white">{v}</button>
-              ))}
+              <h3 className="font-montserrat font-bold text-lg">Map of the Philippines</h3>
+              <p className="text-xs text-slate-500">Google Maps base map. Hazard records and alert areas are not plotted on it yet.</p>
             </div>
           </div>
           <div className="relative" style={{ height: 420 }}>
@@ -120,16 +132,8 @@ const DetectionModule: React.FC = () => {
             />
             <div className="absolute top-4 left-4 space-y-2 pointer-events-none">
               <div className="px-3 py-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/60 shadow-lg">
-                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Active Threats</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Hazard records</p>
                 <p className="font-montserrat font-bold text-lg">{hazards.length}</p>
-              </div>
-            </div>
-            <div className="absolute bottom-4 right-4 px-3 py-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/60 shadow-lg pointer-events-none">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Legend</p>
-              <div className="space-y-1 text-xs">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500" /> Critical</div>
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-orange-500" /> High</div>
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-500" /> Medium</div>
               </div>
             </div>
           </div>
@@ -219,16 +223,21 @@ const DetectionModule: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowAdd(false)}>
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <h3 className="font-montserrat font-bold text-xl mb-4">Report New Hazard</h3>
-            <form onSubmit={handleAdd} className="space-y-3">
-              <select name="agency" required aria-label="Source of the information" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+            <form key={fromAlert?.id ?? 'new'} onSubmit={handleAdd} className="space-y-3">
+              {fromAlert && (
+                <p className="text-xs rounded-lg bg-blue-50 dark:bg-blue-900/20 p-2 text-slate-700 dark:text-slate-200">
+                  Linked to the PAGASA alert issued {manila(fromAlert.sent)}. Add the coordinates of the place you are recording.
+                </p>
+              )}
+              <select name="agency" required aria-label="Source of the information" defaultValue={fromAlert ? 'PAGASA' : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option><option>Local DRRM office</option><option>Field observation</option>
               </select>
-              <select name="type" required aria-label="Hazard type" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="type" required aria-label="Hazard type" defaultValue={fromAlert ? alertType(fromAlert) : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Typhoon</option><option>Earthquake</option><option>Flood</option>
                 <option>Volcanic</option><option>Landslide</option><option>Storm Surge</option><option>Tsunami</option>
               </select>
-              <input name="name" required aria-label="Hazard name" placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-              <input name="location" required aria-label="Location" placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+              <input name="name" required aria-label="Hazard name" defaultValue={fromAlert ? alertTitle(fromAlert) : undefined} placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+              <input name="location" required aria-label="Location" defaultValue={fromAlert ? fromAlert.area_names.join(', ') : undefined} placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <div className="grid grid-cols-2 gap-2">
                 <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
                 <input name="lng" type="number" step="any" min="116" max="127" required aria-label="Longitude (116 to 127)" placeholder="Longitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
