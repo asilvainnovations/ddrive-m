@@ -17,13 +17,14 @@ function refuseServerKeys(env: Record<string, string>) {
   };
   const leaks = Object.entries(env)
     .filter(([name]) => name.startsWith("VITE_"))
-    .filter(([, value]) => value.startsWith("sb_secret_") || role(value) === "service_role")
+    .filter(([, value]) => value.startsWith("sb_secret_") || value.startsWith("GOCSPX-") || role(value) === "service_role")
     .map(([name]) => name);
   if (leaks.length > 0) {
     throw new Error(
-      `[DDRiVE-M] ${leaks.join(", ")} holds a Supabase secret or service_role key, which would be published ` +
-        "to every visitor. Use the publishable key (sb_publishable_...) instead, and rotate the exposed key " +
-        "in Supabase (Settings → API Keys) if it was ever committed or deployed."
+      `[DDRiVE-M] ${leaks.join(", ")} holds a secret (a Supabase secret or service_role key, or a Google client secret), which would be published ` +
+        "to every visitor. Only public values belong in VITE_ variables: the Supabase publishable key and the Google " +
+        "Client ID. Put the Google Client Secret in Supabase (Authentication → Providers → Google), and rotate any " +
+        "secret that was ever committed or deployed."
     );
   }
 }

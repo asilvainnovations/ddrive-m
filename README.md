@@ -29,7 +29,7 @@ cp .env.example .env.local   # already points at DDRiVE-M's Supabase project
 npm run dev                  # http://localhost:8080
 ```
 
-Production builds read the same two public values from `.env.production`; your host's environment variables (for example on Vercel or Netlify) override them. Only the publishable key (`sb_publishable_...`) belongs in the app; secret keys stay in Supabase. Without a URL and key, the app runs and shows "Database not configured". See [DEPLOY.md](DEPLOY.md) for the database, the alert schedule and which key goes where.
+For Google sign-in, also set `VITE_GOOGLE_CLIENT_ID` (the public Client ID; the secret goes in Supabase, see DEPLOY.md). Production builds read the same two public values from `.env.production`; your host's environment variables (for example on Vercel or Netlify) override them. Only the publishable key (`sb_publishable_...`) belongs in the app; secret keys stay in Supabase. Without a URL and key, the app runs and shows "Database not configured". See [DEPLOY.md](DEPLOY.md) for the database, the alert schedule and which key goes where.
 
 Apply the database migrations in `supabase/migrations/` in filename order, in the Supabase SQL editor. Each file is safe to run twice. Upgrading an existing database: follow [DEPLOY.md](DEPLOY.md).
 
@@ -44,6 +44,7 @@ Apply the database migrations in `supabase/migrations/` in filename order, in th
 | `npm run check` | Type-check, lint and build; run before every pull request |
 | `npm run test:db` | Access-rule tests on a throwaway local Postgres, fresh and upgraded from the old schema |
 | `npm run test:e2e` | Browser tests: the production build against a local Postgres and PostgREST 12, including the alert ingest function under Deno |
+| `npm run build` | Production build, then `scripts/prerender.mjs` writes static HTML for Home and the policies (what crawlers and Google's verification read) |
 | `npm run icons` | Downloads the logo and makes the app icons in `public/icons/` (run once with internet access, then commit) |
 | `npm run test:functions` | Tests for the CAP parser and ingest logic, using real PAGASA documents (needs Deno 2) |
 
@@ -68,6 +69,8 @@ supabase/migrations/         Versioned SQL, applied in order
 supabase/functions/          Edge Functions: ingest-pagasa (official alerts), with a shared CAP parser
 src/site/                    Public pages: Home, policies, Support, Resources, Contact
 src/content/legal/           Policy texts, and facts.ts (details only ASilva can confirm)
+supabase/templates/          Branded auth email templates (see its README)
+vercel.json                  Vercel build and routing (policy addresses, app fallback, headers)
 supabase/tests/              Access-rule tests (plain SQL) and a Supabase stand-in for local runs
 e2e/                         Browser tests and a local stand-in for the Supabase gateway
 docs/adr/                    Architecture decision records

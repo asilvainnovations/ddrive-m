@@ -125,6 +125,40 @@ If the feed has not been read successfully for 30 minutes, the app warns that al
 4. Deploy the 0.4.0 app build. Addresses change: Home is now `/` and the Command Dashboard is `/dashboard`. The host must serve `index.html` for unknown paths (the usual single-page app setting) and serve `sw.js` without long caching, so updates reach people.
 5. In **Authentication → URL Configuration**, keep the Site URL as the app's address; sign-in now returns people to the page they started from.
 
+### To 0.4.1 (Google sign-in, Google verification fixes, password reset, email templates)
+
+1. Deploy on Vercel with the `vercel.json` in the repository. It runs `npm run build`, which also writes the static Home and policy pages that Google's checker reads, and routes `/privacy-policy`, `/terms-of-service` and the app's addresses.
+2. Set up Google sign-in: see **Google sign-in** below.
+3. Install the email templates: see `supabase/templates/README.md`.
+4. Before asking Google to verify again, complete `src/content/legal/facts.ts` and set `reviewed: true`, so the policies no longer say "draft".
+
+## Google sign-in
+
+DDRiVE-M uses Google's own sign-in button with Supabase (`signInWithIdToken`). The consent screen and Google's checks then refer to `ddrive-m.asilvainnovations.com`, not to the Supabase project's address.
+
+**Where each credential goes**
+
+| Credential | Where | Why |
+| --- | --- | --- |
+| Client ID (`…apps.googleusercontent.com`) | Vercel: `VITE_GOOGLE_CLIENT_ID`, and Supabase: Google provider → Client IDs | Public; the button needs it, Supabase checks tokens against it |
+| Client Secret (`GOCSPX-…`) | Supabase only: Google provider → Client Secret | Secret; the build refuses to run if it is in a `VITE_` variable |
+
+**1. Google Auth Platform** (console.cloud.google.com/auth)
+- **Branding**: App name **DDRiVE-M** (the name shown at the top of the Home page and in its title); user support email; logo; Application home page `https://ddrive-m.asilvainnovations.com`; Privacy policy `https://ddrive-m.asilvainnovations.com/privacy-policy`; Terms of service `https://ddrive-m.asilvainnovations.com/terms-of-service`; Authorized domain `asilvainnovations.com`, verified in Google Search Console by someone who is an owner of the Google Cloud project.
+- **Data access**: only `openid`, `.../auth/userinfo.email` and `.../auth/userinfo.profile`. These are not sensitive scopes, so no security assessment is needed.
+- **Clients** → Web application. Authorized JavaScript origins: `https://ddrive-m.asilvainnovations.com`, plus `http://localhost` and `http://localhost:8080` for development. Authorized redirect URIs: none are needed for the button. Add `https://mytnwrctkubhrfjwloln.supabase.co/auth/v1/callback` only if you want the fallback redirect flow; Google may then ask about the `supabase.co` domain during verification (a Supabase custom domain such as `auth.asilvainnovations.com` avoids that).
+
+**2. Supabase** → Authentication → Sign In / Providers → Google: enable it; Client IDs: the web Client ID; Client Secret: the secret; leave **Skip nonce check** off (DDRiVE-M sends a nonce). In **URL Configuration**, Site URL `https://ddrive-m.asilvainnovations.com` and Redirect URLs `https://ddrive-m.asilvainnovations.com/**`.
+
+**3. Vercel** → Project → Settings → Environment Variables: `VITE_GOOGLE_CLIENT_ID` for Production (and Preview if you test there), then redeploy: Vite reads it at build time. Without it, the sign-in window falls back to Supabase's redirect flow.
+
+**4. Check before re-submitting for verification**
+```bash
+curl -s https://ddrive-m.asilvainnovations.com/ | grep -o 'href="/privacy-policy"' | head -1
+curl -s -o /dev/null -w "%{http_code}\n" https://ddrive-m.asilvainnovations.com/privacy-policy   # 200
+curl -s https://ddrive-m.asilvainnovations.com/privacy-policy | grep -c "If you sign in with Google"   # 1 or more
+```
+
 ## Roles
 
 | Role | Can |
