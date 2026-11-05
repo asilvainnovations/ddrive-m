@@ -9,10 +9,10 @@ const NotFound = () => {
         <h1 className="text-4xl font-bold mb-3 font-montserrat text-slate-900 dark:text-white">Page not found</h1>
         <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 font-poppins">
           There is no page at <code className="px-1 rounded bg-slate-100 dark:bg-slate-800">{location.pathname}</code>.
-          Use the menu, or go back to the dashboard.
+          Use the menu, or go to the Home page.
         </p>
         <Link to="/" className="text-blue-700 dark:text-blue-400 font-semibold underline">
-          Go to the Command Dashboard
+          Go to the Home page
         </Link>
       </div>
     </div>
