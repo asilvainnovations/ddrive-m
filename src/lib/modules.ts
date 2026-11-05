@@ -6,6 +6,7 @@ export type ModuleKey =
   | 'detection'
   | 'diagnosis'
   | 'response'
+  | 'anticipatory'
   | 'integration'
   | 'validation'
   | 'enhancement'
@@ -24,10 +25,11 @@ export interface ModuleMeta {
 }
 
 export const MODULES: ModuleMeta[] = [
-  { key: 'dashboard', label: 'Command Dashboard', path: '/', title: 'Command Dashboard', subtitle: 'Overview of all 7 phases' },
+  { key: 'dashboard', label: 'Command Dashboard', path: '/dashboard', title: 'Command Dashboard', subtitle: 'Overview of all 7 phases' },
   { key: 'detection', label: 'Detection', path: '/detection', title: 'Detection Module', subtitle: 'Phase 1 · Multi-agency hazard monitoring', phase: 1 },
   { key: 'diagnosis', label: 'Diagnosis', path: '/diagnosis', title: 'Diagnosis Module', subtitle: 'Phase 2 · ISO 31000 risk registry', phase: 2 },
   { key: 'response', label: 'Response', path: '/response', title: 'Response Module', subtitle: 'Phase 3 · Treatment and incident management', phase: 3 },
+  { key: 'anticipatory', label: 'Anticipatory Action', path: '/anticipatory-action', title: 'Anticipatory Action', subtitle: 'RA 12287 · Forecast trigger to lifting report', phase: 3 },
   { key: 'integration', label: 'Integration', path: '/integration', title: 'Integration Module', subtitle: 'Phase 4 · UNDRR 10 Essentials', phase: 4 },
   { key: 'validation', label: 'Validation', path: '/validation', title: 'Validation Module', subtitle: 'Phase 5 · Simulations and exercises', phase: 5 },
   { key: 'enhancement', label: 'Enhancement', path: '/enhancement', title: 'Enhancement Module', subtitle: 'Phase 6 · Plans and lessons learned', phase: 6 },
@@ -48,7 +50,7 @@ export const moduleByPath = (pathname: string): ModuleMeta | undefined => {
 
 // Older URLs that used to point at standalone pages. They now redirect to the module that replaced them.
 export const LEGACY_REDIRECTS: Record<string, string> = {
-  '/dashboard': '/',
+  '/command-dashboard': '/dashboard',
   '/risk-assessment': '/diagnosis',
   '/plan-generator': '/enhancement',
   '/plan-library': '/documents',
