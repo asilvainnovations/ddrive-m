@@ -67,9 +67,10 @@ const BlockView: React.FC<{ block: Block }> = ({ block }) => {
   );
 };
 
-const PolicyPage: React.FC = () => {
-  const { slug } = useParams();
-  const policy = policyBySlug(slug);
+// `slug` is given for the fixed addresses (/privacy-policy, /terms-of-service, …) that Google and others link to.
+const PolicyPage: React.FC<{ slug?: string }> = ({ slug: fixed }) => {
+  const params = useParams();
+  const policy = policyBySlug(fixed ?? params.slug);
   if (!policy) return <NotFound />;
 
   return (

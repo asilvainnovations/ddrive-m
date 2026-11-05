@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, BellRing, CheckCircle2, Clock4, LayoutDashboard, PlayCircle, ShieldCheck, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { SITE_FULL_NAME } from '@/lib/brand';
 
 // Copy adapted from the DDRiVE-M landing page (formerly public/index.html). Claims are limited to what
 // the platform does today; modules say plainly what is still being built. Figures such as numbers of
@@ -100,7 +101,7 @@ const VideoPlayer: React.FC = () => {
 const Home: React.FC = () => {
   const { user, openLogin } = useAuth();
   useEffect(() => {
-    document.title = 'DDRiVE-M | Risk and Resilience Intelligence Platform';
+    document.title = `DDRiVE-M | ${SITE_FULL_NAME}`;
   }, []);
 
   const Primary: React.FC<{ label: string; className?: string }> = ({ label, className }) =>
@@ -119,7 +120,9 @@ const Home: React.FC = () => {
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-900 via-blue-900 to-sky-900 text-white">
         <div className="max-w-4xl mx-auto px-4 pt-16 pb-10 text-center">
-          <p className="text-amber-300 font-semibold text-sm tracking-widest uppercase mb-4">DDRiVE-M · Data-Driven Resilience Management</p>
+          <p className="text-amber-300 font-semibold text-sm tracking-wide mb-4">
+            <span className="text-lg">DDRiVE-M</span> · {SITE_FULL_NAME}
+          </p>
           <h1 className="font-montserrat font-extrabold text-3xl sm:text-5xl leading-tight">
             Disaster resilience intelligence for LGUs, enterprises and development institutions
           </h1>
@@ -140,6 +143,10 @@ const Home: React.FC = () => {
           </ul>
           <p className="mt-6 text-xs text-blue-200">
             DDRiVE-M relays official warnings; it does not issue them. Always follow PAGASA, PHIVOLCS and your local DRRM office.
+          </p>
+          <p className="mt-2 text-xs text-blue-100">
+            <Link to="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link> ·{' '}
+            <Link to="/terms-of-service" className="underline hover:text-white">Terms of Service</Link>
           </p>
         </div>
         <img

@@ -40,8 +40,8 @@ export const FOOTER_NAV: { heading: string; links: SiteLink[] }[] = [
   {
     heading: 'Policies',
     links: [
-      { label: 'Privacy Policy', to: '/policies/privacy' },
-      { label: 'Terms of Service', to: '/policies/terms' },
+      { label: 'Privacy Policy', to: '/privacy-policy' },
+      { label: 'Terms of Service', to: '/terms-of-service' },
       { label: 'Cookie Policy', to: '/policies/cookies' },
       { label: 'Accessibility', to: '/policies/accessibility' },
       { label: 'AI Ethics and Governance', to: '/policies/ai-ethics' },
