@@ -64,3 +64,6 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUP
   "$ROOT/supabase/functions/ingest-pagasa/index.ts" > "$WORK/ingest.log" 2>&1 & PIDS+=($!)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2.mjs || { echo "--- ingest log"; tail -20 "$WORK/ingest.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+
+echo "Phase 2b: public site, policies, PWA files and anticipatory action"
+cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2b.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
