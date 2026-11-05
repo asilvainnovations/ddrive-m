@@ -1,10 +1,1 @@
-DDRiVE-M Phase 1 (0.2.0) - delete these files from the repository.
-They were the unused second risk model, replaced by ddrive_risks and database-computed levels.
-
-src/components/ddrive/dashboardModule/RiskStats.tsx
-src/components/ddrive/detectionModule/RiskMatrix.tsx
-src/components/ddrive/detectionModule/RiskToolbar.tsx
-src/components/ddrive/diagnosisModule/AddRiskModal.tsx
-src/components/ddrive/diagnosisModule/RiskDetailModal.tsx
-src/hooks/useRisks.ts
-src/lib/risk.ts
+public/index.html

@@ -1,7 +1,7 @@
 {
   "name": "ddrive-m",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,9 @@
     "check": "npm run typecheck && npm run lint && npm run build",
     "preview": "vite preview",
     "test:db": "bash scripts/test_db.sh && bash scripts/test_db.sh --legacy",
-    "test:e2e": "bash scripts/test_e2e.sh"
+    "test:e2e": "bash scripts/test_e2e.sh",
+    "test:functions": "deno test --allow-read --config supabase/functions/ingest-pagasa/deno.json supabase/functions/_shared/",
+    "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -83,9 +85,11 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
+    "sharp": "^0.34.4",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^1.0.3"
   }
 }

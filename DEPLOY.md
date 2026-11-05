@@ -2,10 +2,32 @@
 
 ## 1. New installation
 
-1. Create a Supabase project (or use any Supabase-compatible host).
-2. In the SQL editor, run every file in `supabase/migrations/` in filename order.
-3. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in your host's environment (see `.env.example`) and deploy the build (`npm run build`, output in `dist/`).
-4. Sign up in the app. With no organisation yet, you are offered to set one up; you become its administrator and can add colleagues from **Settings → Organisation**.
+DDRiVE-M's hosted Supabase project is `mytnwrctkubhrfjwloln` (`https://mytnwrctkubhrfjwloln.supabase.co`). Its URL and publishable key are already in `.env.production` and `.env.example`. To use another project, change both files or set the variables in your host.
+
+### Keys: which goes where
+
+| Key | Looks like | Where it goes |
+| --- | --- | --- |
+| Publishable | `sb_publishable_...` | The app: `VITE_SUPABASE_PUBLISHABLE_KEY`. Public by design. |
+| Secret | `sb_secret_...` | Only Supabase itself: Vault (for the alert schedule) and Edge Function secrets, which Supabase fills in automatically. Never in a `VITE_` variable, a committed file or a chat. |
+| Legacy `anon` / `service_role` | long JWTs | Still accepted until Supabase retires them at the end of 2026. The app and the alert function prefer the new keys. |
+
+The build stops if a `VITE_` variable holds a secret or service_role key, because anything in a `VITE_` variable is published with the app.
+
+### Steps
+
+1. Apply the migrations in order. With the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started), from the repository root:
+   ```bash
+   supabase login
+   supabase link --project-ref mytnwrctkubhrfjwloln
+   supabase db push
+   ```
+   `db push` records what it has applied. If you have already run some migrations by hand in the SQL editor, don't use `db push`; run the remaining files from `supabase/migrations/` in filename order in the SQL editor instead.
+2. In **Authentication → URL Configuration**, set **Site URL** to the address where the app is deployed and add it (and `http://localhost:8080` for development) to **Redirect URLs**, so sign-up confirmation and password-reset links return to the app.
+3. Build and deploy: `npm run build` (output in `dist/`). The build reads `.env.production`; on Vercel or Netlify you can also set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the project's environment settings, which take precedence.
+4. The app's logo is loaded from the public Storage bucket `image-assets`, at `public/DDRiVE-M logo.png`. In a new project, create that bucket (public) and upload the logo, or the logo will be missing.
+5. Set up official alerts: follow **To 0.3.0** below from step 2.
+6. Sign up in the app. With no organisation yet, you are offered to set one up; you become its administrator and can add colleagues from **Settings → Organisation**.
 
 ## 2. Before you deploy to real users
 
@@ -56,6 +78,52 @@ What changes for users:
 | Any change, by anyone, untraced | Every change is recorded in the audit log (DRRM officers and administrators can read it) |
 
 To roll back: restore the backup from step 1 and redeploy the 0.1.0 build.
+
+### To 0.3.0 (Phase 2: official PAGASA alerts)
+
+1. Run `supabase/migrations/20261103020000_phase2_official_alerts.sql` in the SQL editor.
+2. Deploy the ingest function with the Supabase CLI, from the repository root:
+   ```bash
+   supabase functions deploy ingest-pagasa --project-ref mytnwrctkubhrfjwloln --no-verify-jwt
+   ```
+   `--no-verify-jwt` (also set in `supabase/config.toml`) is needed because secret keys are not JWTs; the function checks the key itself and refuses everything else. Supabase fills in `SUPABASE_URL` and `SUPABASE_SECRET_KEYS` for the function automatically.
+3. In **Settings → API Keys**, copy the `default` **secret** key (`sb_secret_...`). Run the function once by hand and check the answer (`added` should be above 0 when PAGASA has alerts in force):
+   ```bash
+   curl -X POST https://mytnwrctkubhrfjwloln.supabase.co/functions/v1/ingest-pagasa \
+     -H "apikey: <secret key>"
+   ```
+   Send the secret key in the `apikey` header only, never as `Authorization: Bearer`. (The legacy service_role key still works as a bearer token until the end of 2026.)
+4. Schedule it every 10 minutes. In **Database → Extensions**, enable `pg_cron` and `pg_net`, then in the SQL editor (the secret key is stored in Vault, never in the job's text):
+   ```sql
+   select vault.create_secret('<secret key>', 'ddrive_secret_key');
+   select cron.schedule('ddrive-ingest-pagasa', '*/10 * * * *', $$
+     select net.http_post(
+       url := 'https://mytnwrctkubhrfjwloln.supabase.co/functions/v1/ingest-pagasa',
+       headers := jsonb_build_object('apikey',
+         (select decrypted_secret from vault.decrypted_secrets where name = 'ddrive_secret_key')),
+       timeout_milliseconds := 60000);
+   $$);
+   ```
+   If you scheduled the job earlier with the service_role key, replace it before the end of 2026: `select cron.unschedule('ddrive-ingest-pagasa');`, then run the two statements above.
+
+   If your host has no Edge Functions or pg_cron, run `supabase/functions/ingest-pagasa/index.ts` on a schedule elsewhere (for example a GitHub Actions workflow with Deno), with `SUPABASE_URL` and `SUPABASE_SECRET_KEYS` (`{"default":"sb_secret_..."}`) as secrets.
+5. Check it is running: `select started_at, ok, alerts_new, error from ddrive_ingest_runs order by started_at desc limit 5;`
+6. Deploy the 0.3.0 app build. DRRM officers then set their **watch areas** in **Settings → Organisation**.
+
+If the feed has not been read successfully for 30 minutes, the app warns that alert information may be out of date and points to pagasa.dost.gov.ph.
+
+### To 0.4.0 (Phase 2: Home page, policies, installable app, anticipatory action)
+
+1. Run `supabase/migrations/20261105010000_phase2_anticipatory_action.sql` (or `supabase db push`).
+2. Make the app icons once, on a computer with internet access, and commit them:
+   ```bash
+   npm run icons        # downloads the logo and writes public/icons/
+   git add public/icons && git commit -m "Add app icons"
+   ```
+   Until then the app loads the logo from its original address, and phones cannot install the app (they need the icon files).
+3. Review the policies with counsel and your Data Protection Officer. Fill in `src/content/legal/facts.ts` (DPO name, NPC registration, the Supabase region from **Settings → General**), then set `reviewed: true`. Until then every policy page says it is a draft under review.
+4. Deploy the 0.4.0 app build. Addresses change: Home is now `/` and the Command Dashboard is `/dashboard`. The host must serve `index.html` for unknown paths (the usual single-page app setting) and serve `sw.js` without long caching, so updates reach people.
+5. In **Authentication → URL Configuration**, keep the Site URL as the app's address; sign-in now returns people to the page they started from.
 
 ## Roles
 

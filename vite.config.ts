@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
 // Everything in a VITE_ variable is copied into the public app bundle. Stop the build (and the dev
@@ -35,7 +36,66 @@ export default defineConfig(({ mode }) => {
       host: "::",
       port: 8080,
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      // Installable app (PWA). The service worker caches the app's own files so screens open offline.
+      // It never caches Supabase responses (records, official alerts): offline, the app says it is
+      // offline instead of showing old alerts as if they were current.
+      VitePWA({
+        registerType: "autoUpdate",
+        includeAssets: ["icons/*.png"],
+        manifest: {
+          id: "/",
+          name: "DDRiVE-M · Risk and Resilience Intelligence",
+          short_name: "DDRiVE-M",
+          description: "Disaster risk reduction, anticipatory action and continuity planning for Philippine LGUs and organisations.",
+          lang: "en-PH",
+          start_url: "/dashboard",
+          scope: "/",
+          display: "standalone",
+          background_color: "#ffffff",
+          theme_color: "#1e3a8a",
+          categories: ["productivity", "government", "utilities"],
+          icons: [
+            { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+            { src: "/icons/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          ],
+          shortcuts: [
+            { name: "Command Dashboard", url: "/dashboard" },
+            { name: "Official alerts", url: "/detection" },
+            { name: "Anticipatory action", url: "/anticipatory-action" },
+          ],
+        },
+        workbox: {
+          globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+          globIgnores: ["**/node_modules/**"],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+          navigateFallback: "/index.html",
+          // The standalone tool pages (*.html) load as themselves, not as the app.
+          navigateFallbackDenylist: [/^\/[^/]+\.html$/, /^\/functions\//, /^\/rest\//, /^\/auth\//],
+          cleanupOutdatedCaches: true,
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com",
+              handler: "StaleWhileRevalidate",
+              options: { cacheName: "ddrive-font-css" },
+            },
+            {
+              urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
+              handler: "CacheFirst",
+              options: { cacheName: "ddrive-fonts", expiration: { maxEntries: 30, maxAgeSeconds: 365 * 24 * 3600 }, cacheableResponse: { statuses: [0, 200] } },
+            },
+            {
+              // The logo and Home page images, until `npm run icons` stores the logo locally.
+              urlPattern: ({ url }) => url.origin === "https://appimize.app",
+              handler: "CacheFirst",
+              options: { cacheName: "ddrive-images", expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 3600 }, cacheableResponse: { statuses: [0, 200] } },
+            },
+          ],
+        },
+      }),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
