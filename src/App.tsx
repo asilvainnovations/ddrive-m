@@ -23,6 +23,16 @@ const Monitoring = lazy(() => import("@/components/ddrive/monitoringModule/Monit
 const Documents = lazy(() => import("@/components/ddrive/documentsModule/Documents"));
 const Assistant = lazy(() => import("@/components/ddrive/AIChatbot"));
 const Settings = lazy(() => import("@/components/ddrive/SettingsModule"));
+const AnticipatoryAction = lazy(() => import("@/components/ddrive/anticipatoryModule/AnticipatoryAction"));
+
+// Public pages: Home, policies and help. Readable without signing in.
+import SiteLayout from "@/site/SiteLayout";
+const Home = lazy(() => import("@/site/Home"));
+const PolicyIndex = lazy(() => import("@/site/PolicyIndex"));
+const PolicyPage = lazy(() => import("@/site/PolicyPage"));
+const Support = lazy(() => import("@/site/Support"));
+const Resources = lazy(() => import("@/site/Resources"));
+const Contact = lazy(() => import("@/site/Contact"));
 
 const queryClient = new QueryClient();
 
@@ -43,11 +53,27 @@ const App = () => (
             <ErrorBoundary>
               <Suspense fallback={<Loading />}>
                 <Routes>
-                  <Route path="/" element={<AppLayout />}>
-                    <Route index element={<Dashboard />} />
+                  <Route element={<SiteLayout />}>
+                    <Route index element={<Home />} />
+                    <Route path="policies" element={<PolicyIndex />} />
+                    <Route path="policies/:slug" element={<PolicyPage />} />
+                    <Route path="support" element={<Support />} />
+                    <Route path="resources" element={<Resources />} />
+                    <Route path="contact" element={<Contact />} />
+                    {/* Old policy URLs from the ASilva site */}
+                    <Route path="privacy-policy" element={<Navigate to="/policies/privacy" replace />} />
+                    <Route path="terms" element={<Navigate to="/policies/terms" replace />} />
+                    <Route path="cookie-policy" element={<Navigate to="/policies/cookies" replace />} />
+                    <Route path="accessibility-policy" element={<Navigate to="/policies/accessibility" replace />} />
+                    <Route path="ai-ethics" element={<Navigate to="/policies/ai-ethics" replace />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                  <Route element={<AppLayout />}>
+                    <Route path="dashboard" element={<Dashboard />} />
                     <Route path="detection" element={<Detection />} />
                     <Route path="diagnosis" element={<Diagnosis />} />
                     <Route path="response" element={<Response />} />
+                    <Route path="anticipatory-action" element={<AnticipatoryAction />} />
                     <Route path="integration" element={<Integration />} />
                     <Route path="validation" element={<Validation />} />
                     <Route path="enhancement" element={<Enhancement />} />
@@ -58,8 +84,6 @@ const App = () => (
                     {Object.entries(LEGACY_REDIRECTS).map(([from, to]) => (
                       <Route key={from} path={from.slice(1)} element={<Navigate to={to} replace />} />
                     ))}
-                    {/* 404 stays inside the layout so the navigation is still there */}
-                    <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>
               </Suspense>
