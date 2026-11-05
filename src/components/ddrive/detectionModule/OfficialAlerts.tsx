@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ExternalLink, AlertTriangle, ChevronDown, ChevronUp, FilePlus2 } from 'lucide-react';
+import { ExternalLink, AlertTriangle, ChevronDown, ChevronUp, FilePlus2, Hourglass } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { needsRole } from '@/lib/roles';
@@ -115,6 +116,11 @@ const OfficialAlerts: React.FC<Props> = ({ onLogAsHazard }) => {
                       className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1 disabled:opacity-50">
                       <FilePlus2 className="w-3.5 h-3.5" aria-hidden="true" /> Log as hazard record
                     </button>
+                  )}
+                  {can('analyst') && (
+                    <Link to={`/anticipatory-action?alert=${encodeURIComponent(a.id)}`} className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                      <Hourglass className="w-3.5 h-3.5" aria-hidden="true" /> Start anticipatory action
+                    </Link>
                   )}
                   <span className="text-slate-500 ml-auto">Source: {a.sender ?? a.source}{a.license ? ` · ${a.license.replace(/^.*?(CC BY [0-9]+(?:\.[0-9]+)?).*$/i, '$1')}` : ''}</span>
                 </div>
