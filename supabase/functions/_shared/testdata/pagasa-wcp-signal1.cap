@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>21b29a06-e297-47bd-a79d-20826e724a2c</identifier><sender>PAGASA-DOST</sender><sent>2026-10-24T04:50:38+08:00</sent><status>Actual</status><msgType>Alert</msgType><scope>Public</scope><info><category>Met</category><event>Tropical Cyclone Warning</event><responseType>Prepare</responseType><urgency>Future</urgency><severity>Minor</severity><certainty>Likely</certainty><expires>2026-10-24T16:50:27+08:00</expires><senderName>PAGASA-DOST</senderName><headline>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</headline><description>A tropical cyclone will affect the locality.&#xD;
+Winds of 39-61 kph or intermittent rains may be expected within 36 hours.
+
+ROSAL WEAKENS SLIGHTLY WHILE OVER THE SEA EAST OF TAIWAN.&#xD;
+&#xD;
+Location of eye/center : The center of Typhoon ROSAL was estimated based on all available data at  at 420 km North of Itbayat, Batanes (24.5, 122.6).&#xD;
+Strength : Maximum winds of 150 kph near the centerand gustiness of up to 185 kph.&#xD;
+Forecast movement : Forecast to move Southwestward at 10 kph&#xD;
+&#xD;
+Forecast position : &#xD;
+Oct 24, 2026 02:00 PM - 625 km North of Itbayat, Batanes (OUTSIDE PAR)&#xD;
+Oct 25, 2026 02:00 AM - 845 km North Northeast of Extreme Northern Luzon (OUTSIDE PAR)&#xD;
+&#xD;
+HAZARDS AFFECTING LAND AREAS&#xD;
+Severe Winds&#xD;
+&#xA0;&#xD;
+The wind signals warn the public of the general wind threat over an area due to the tropical cyclone. Local winds may be slightly stronger/enhanced in coastal and upland/mountainous areas exposed to winds. Winds are less strong in areas sheltered from the prevailing wind direction.&#xD;
+&#xD;
+Minimal to minor impacts from strong winds are possible within any of the areas under Wind Signal No. 1.&#xD;
+&#xD;
+The periphery of ROSAL will bring strong to gale-force gusts over the following areas (especially in coastal and upland areas exposed to winds):&#xD;
+&#xA0;&#xD;
+Today (24 October): Babuyan Islands, Ilocos Norte, Aurora, northern Quezon, Polillo Islands, Bicol Region, Romblon, Capiz, Iloilo, and Negros Occidental.&#xD;
+Tomorrow (25 October): Batanes and Babuyan Islands.&#xD;
+&#xD;
+HAZARDS AFFECTING COASTAL WATERS&#xD;
+A Gale Warning is in effect over the seaboards of Northern Luzon. For more details, refer to Gale Warning No. 8 issued at 5:00 AM today.&#xD;
+&#xD;
+24-Hour Sea Condition Outlook &#xD;
+Up to very rough seas over the following coastal waters:&#xD;
+Up to 5.5 m: The seaboards of Batanes.&#xD;
+Up to 4.5 m: The northern seaboard of Babuyan Islands.&#xD;
+Sea travel is risky for all types or tonnage of vessels. All mariners must remain in port or, if underway, seek shelter or safe harbor as soon as possible until winds and waves subside. &#xD;
+&#xD;
+Up to rough seas over the following coastal waters: &#xD;
+Up to 4.0 m: The remaining seaboards of Babuyan Islands; the northeastern seaboard of mainland Cagayan; the northern seaboard of Ilocos Norte.&#xD;
+Up to 3.5 m: The remaining seaboard of Ilocos Norte; the seaboard of Ilocos Sur.&#xD;
+Up to 3.0 m: The remaining seaboards of mainland Cagayan; the western seaboard of Pangasinan; the seaboards of Isabela and northern Aurora; the northern and eastern seaboards of Catanduanes.&#xD;
+Mariners of small seacrafts, including all types of motorbancas, are advised not to venture out to sea under these conditions, especially if inexperienced of operating ill-equipped vessels.&#xD;
+&#xD;
+Up to moderate to rough seas over the following coastal waters:&#xD;
+Up to 2.5 m: The remaining seaboards of Aurora and Pangasinan; the seaboards of La Union and Eastern Samar; the northern and eastern seaboards of Polillo Islands; the northern seaboards of Camarines Norte and Camarines Sur; the eastern seaboards of Albay, Sorsogon, Dinagat Islands, Siargao-Bucas Grande Islands, and Surigao del Sur; the northern seaboard of Kalayaan Islands.&#xD;
+Up to 2.0 m: &#xA0;The seaboards of Zambales and Lubang Islands; the western seaboards of Batangas, Cavite, Occidental Mindoro, and Palawan including Calamian Islands; the remaining seaboards of Kalayaan Islands &#xD;
+Mariners of motorbancas and similarly sized vessels are advised to take precautionary measures while venturing out to sea and, if possible, avoid navigation under these conditions.&#xD;
+&#xD;
+Other coastal waters have forecast wave heights of less than 2.0 m.&#xD;
+&#xD;
+TRACK AND INTENSITY OUTLOOK&#xD;
+It must be emphasized that heavy rainfall and severe winds may still be experienced in localities outside the landfall point and the forecast confidence cone. Refer to &#x201C;Other Hazards affecting Land Areas&#x201D; for more details. Furthermore, the track may still shift within the limit of the forecast confidence cone.&#xD;
+ROSAL has made a counterclockwise loop over the sea east of Taiwan and will gradually accelerate north northeastward. On the forecast track, ROSAL will exit the Philippine Area of Responsibility (PAR) this morning before heading towards the East China Sea.&#xD;
+ROSAL is forecast to gradually weaken in the next 12 hours. As it moves over the East China Sea, rapid weakening will begin and it may be downgraded into a severe tropical storm by tomorrow. &#xD;
+&#xD;
+</description><instruction>Considering these developments, the public and disaster risk reduction and management offices concerned are advised to take all necessary measures to protect life and property. Persons living in areas identified to be highly or very highly susceptible to these hazards are advised to follow evacuation and other instructions from local officials. For heavy rainfall warnings, thunderstorm/rainfall advisories, and other severe weather information specific to your area, please monitor products issued by your local PAGASA Regional Services Division.&#xD;
+</instruction><web>https://www.pagasa.dost.gov.ph/learnings/legend#tropical-cyclone-warning-icons</web><contact>PAGASA DOST</contact><parameter><valueName>layer:Google:Region:0.1</valueName><value>Northern Luzon</value></parameter><parameter><valueName>Public Storm Warning Signal Level</valueName><value>1</value></parameter><area><areaDesc>Batanes</areaDesc><geocode><valueName>SAME</valueName><value>020900000</value></geocode></area></info><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>2tC1msNASynye64PUf9tIiWIF/M=</DigestValue></Reference></SignedInfo><SignatureValue>xRsFsAAk3qACxuoA/E/qfLXBROyb5hpV89InLJnu97JEa+xFM399GNHAxU/kVIo0
+qrYHU1Hs2jtxtg5pBB6ZKmyjkotKLK8uc4wssAhwfKRX41I9MGkH5SQdrTO6VOwV
+nCwXK8DPer7MPMyvrdl2Cem9Y1h2TXjVQ6AQZoTXgjhJfQwJkGRoaKtXcBqFVf19
+t0pE1Xrf9oUjvqu6Mp39cCJBt0hmF07qgNvHQWwA2dvZidpfXbN6FerqbXF0OZDK
+/yPO246CXtX2bIr6dIWW4/NUJZCSr3uoxcBTuG6TDViIIMeLWM5QStlLrcjMquSI
+mWC951LXVLiETrWP4zRPq7f0sQCwWvgCBUHkmZANZHgRakG2Bx+Xsv2ScSwXjPJ1
+6rGFAbAG1pVNCmBnkq2g9RiPDWic6y4/p8toyj5DSxh2rd/m2zxp1jFi+oP84OGc
+6aXfYCnFyvvEx4Fs13oIF4hwhuZihUSAIl+X1kotXhXSnrxuB/BEMt3QuN3ohZeE
+TMLkKeGyiLI2VhT2rtbjc15U77SXewOEJVzhl5hgCTS0gqGQ2SpFwakHdHa6CgoI
+Lkj+6SkIecaex6Fxair2bUB7RIm3UapJgqoLuHL3zOpUVH6rnvMkHYGMxlmYeCtX
+FV2FkNgk3NB82i3mvtvjmYlISjdNtv2hCqA/8sAMs4E=</SignatureValue><KeyInfo><KeyValue>
+<RSAKeyValue>
+<Modulus>
+1pm7X28TTIESx7uWklHbVIlO0Y+fUBZ7LynhaRQ9w1rMsMhF0dNEvUdYBKVF1xPz
+SGD0IrbU6Uemw8Xb/sOy263ZOkSxqWIh3UEluOW7s6J3Hgv8UMDZkWDgj3+m2qWT
+UTgbNO3drHGvlRBg6liD15iNusSdSMw/kqmHxe/9tnStpsHo/u57rsH3/ROTvuz2
+yHD2t7I7zo0Kv7mfAAHodU4QoL8/7c3u29szxRu13M4SRkiLKwbgrwlsMCvXhkys
+oEKlX8/SnXDL8iSPExAiP7xVpfbmh8TNiGvtbjH7Ro2EYjUsEcv9qC7G5jLu7Klt
+8TkTobHqES26/F5/u42Ra3rIDunTxczbIHF1qoumAzdsJmFCBc9D1IKTTWKR3D2J
+eAZfpuvMeOEcpRxBayYf2jOBx8iD8gag5cIZWl2/62IfUxTk92A00M5QrzTocNkg
+0U5K1gN5WmhObUN/3fa/Ob5uriELGzRdzXJ+3QE8FpPmSPJZFA//UWmpJqsboO7p
+AhbB8efPIV42nxjwQEbJdkxUOlfAyPMRGcp4RhmaAnX7KmB33j4klYeNktH+OeV8
+S9q/nMJoA/d76K1hCbo9PJTa/UxwZJYh0LEs1YnHP/5wgydZJcyNjmcu7P5ur90L
+qyr2FB0fZYAmWi6SEaA0F7yi2Y0uqV4FP7dfcbfOf+E=
+</Modulus>
+<Exponent>
+AQAB
+</Exponent>
+</RSAKeyValue>
+</KeyValue></KeyInfo></Signature></alert>

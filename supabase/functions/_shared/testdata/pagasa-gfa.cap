@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>3c0fc291-74a3-414b-8ffc-61e3bc7e18fa</identifier><sender>PAGASA-DOST</sender><sent>2026-10-25T17:31:57+08:00</sent><status>Actual</status><msgType>Update</msgType><scope>Public</scope><references>PAGASA-DOST,2a1c3f86-001d-4c62-a14c-d0d9f7c8217f,2026-10-25T05:17:31+08:00</references><info><category>Met</category><event>General Flood Advisory (Moderate)</event><responseType>Monitor</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Possible</certainty><expires>2026-10-26T05:31:57+08:00</expires><senderName>PAGASA-DOST</senderName><headline>General Flood Advisory</headline><description>Under present weather conditions, Intertropical Convergence Zone (ITCZ) affecting Palawan, Visayas, and Mindanao.  
+The 12-hour rainfall forecast is light to moderate rains and thunderstorms.  
+WATERCOURSES LIKELY TO BE AFFECTED :  
+
+ + **Eastern Samar** - Rivers and its tributaries particularly Oras, Dolores, Ulot, Taft, Borongan, Suribao, Llorente, Balangiga and Sulat.  
+ + **Northern Samar** - Rivers and its tributaries particularly Catarman, Bugko, Pambujan, Catubig, Palapag, Mawo and Gamay.  
+ + **Southern Leyte** - Rivers and its tributaries particularly Bisay, Himbangan and Pandan.  
+ + **Leyte** - Rivers and its tributaries particularly Sangputan, Palo, Solano (Quilot), Daguitan Marabang, Cadac-an, Bongquirogon, Salug, Pagbangahan, Pagsangahan and Binahaan.  
+ + **Biliran** - All rivers and its tributaries  
+ + **Samar** - Rivers and its tributaries particularly Basey, Silanga, Calbiga and Jibatan.  
+</description><instruction>People living near the mountain slopes and in the low lying areas of the above mentioned river systems and the **Local Disaster Risk Reduction and Management Councils** concerned still advised to take necessary precautionary measures.</instruction><web>http://www.pagasa.dost.gov.ph/index.php/26-hydromet/1582-flood-forecast-terms-and-symbols</web><contact>PAGASA-DOST</contact><parameter><valueName>layer:Google:Region:0.1</valueName><value>Region 8 (Eastern Visayas)</value></parameter><area><areaDesc>Eastern Samar</areaDesc><polygon>12.280342907736,125.32609783647 12.189941161706,125.5162526284 11.979823499887,125.43935106058 11.612763215433,125.43908880237 11.40729040569,125.55482080159 11.151265121289,125.5331817459 11.088331219625,125.40593559145 11.11928904577,125.25269737959 11.38414223878,125.30590153245 11.415837349108,125.21270891127 11.684830769268,125.29080252948 11.894527195967,125.26733356959 11.975327567429,125.11960531818 12.284837381813,125.11855132355 12.280342907736,125.32609783647</polygon><geocode><valueName>SAME</valueName><value>082600000</value></geocode></area><area><areaDesc>Northern Samar</areaDesc><polygon>12.280342907736,125.32609783647 12.284837381813,125.11855132355 12.245668452569,124.96284468011 12.246331710059,124.94855465302 12.247295184937,124.94088660884 12.25930927724,124.90511458748 12.216221188625,124.84708618949 12.327876585696,124.50294970945 12.283495659797,124.35883311826 12.547079600107,124.26444025508 12.507448398883,124.64347797696 12.531834214655,125.027738372 12.573155966883,125.15464749353 12.468377576666,125.2878236504 12.280342907736,125.32609783647</polygon><geocode><valueName>SAME</valueName><value>084800000</value></geocode></area><area><areaDesc>Southern Leyte</areaDesc><polygon>10.191994783714,124.76119804315 10.27539719634,124.90646224988 10.52207058805,124.95223452319 10.616837742105,125.15712691996 10.429137821185,125.18220176072 10.367692485139,125.02489634858 10.033686285374,124.98557219877 10.191994783714,124.76119804315</polygon><geocode><valueName>SAME</valueName><value>086400000</value></geocode></area><area><areaDesc>Leyte</areaDesc><polygon>10.404969646596,124.72390666071 10.658730675926,124.80528367819 10.818466749719,124.76014981509 11.011979015614,124.59576388244 10.861776394448,124.49302309239 11.062087223699,124.37076421995 11.292890831311,124.39037458856 11.530091323871,124.28679274064 11.424705438472,124.53912423101 11.300847980246,124.6963231142 11.426292551241,124.82343400036 11.398683591405,124.98339888082 11.220122477578,125.02153921408 10.726543802261,125.02807997721 10.616837742105,125.15712691996 10.52207058805,124.95223452319 10.27539719634,124.90646224988 10.191994783714,124.76119804315 10.404969646596,124.72390666071</polygon><geocode><valueName>SAME</valueName><value>083700000</value></geocode></area><area><areaDesc>Biliran</areaDesc><polygon>11.701395557883,124.43694904524 11.675819207004,124.53914149999 11.50970677339,124.61994577492 11.487040518257,124.44282317825 11.701395557883,124.43694904524</polygon><geocode><valueName>SAME</valueName><value>087800000</value></geocode></area><area><areaDesc>Samar</areaDesc><polygon>12.25930927724,124.90511458748 12.247295184937,124.94088660884 12.246331710059,124.94855465302 12.245668452569,124.96284468011 12.284837381813,125.11855132355 11.975327567429,125.11960531818 11.894527195967,125.26733356959 11.684830769268,125.29080252948 11.415837349108,125.21270891127 11.38414223878,125.30590153245 11.11928904577,125.25269737959 11.280364959766,125.14458138201 11.285077301519,124.9785222224 11.424255151085,124.98729607094 11.521569730849,124.83327659077 11.620346187888,124.99765739205 12.0538252576,124.63829652507 12.060619199816,124.5428843278 12.283495659797,124.35883311826 12.327876585696,124.50294970945 12.216221188625,124.84708618949 12.25930927724,124.90511458748</polygon><geocode><valueName>SAME</valueName><value>086000000</value></geocode></area></info><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>c3CFMHviujwcin7Z9ZqnUgWM9Kk=</DigestValue></Reference></SignedInfo><SignatureValue>gVJVmfQp8QbEtLUm6qWLRWIF6s1WK9rOuDjPsWY0lAUNZJ4gAf14SA3VYca5mUOL
+O0GJPw0Nxg5PZ81qrNw8ZPMXS/k2BEgK7k6JhfM6zh79N3MHOzZQ92YlBpx+2/O3
+M2/b35C9grz4NeTu+wTa+M+3YKPHwAatAXykJ0WaFbcYmk1NWppMeyDmTnLcps8L
+IeFO7folJgExJes+zGK6+CtIjCBrjl1RLZaJU8NO+PPm3zTiJbE6ktedJZ4JHlKr
+DQcGXmVbv5xVMsWY3GLwo+II6iyOIjRH64hBcdYesnYqtqFYy7ILSN9YFBgGLosM
+0wLQyPqsETx634rSJFZY2rDys9MglBlcAnm9x6EdW6ZoVdfxG7TJLKsKfeYcZafV
+XX3WcmqVYJe184BY1E6dBsgpqO9m1ddgzjTPp8HhtAN2Zkzzvxsm4dv92DoKky4j
+xcmky159WFgs+C5ATSsbqc+/ypJI++NmTUy/9IsGVM7GlNJNDtnOgbfAXwDtT0At
+94CPOKWSnTd871cZahWO2Faz6dM6rLvFURVFXQ9RGMT+2YTfjLMdYbIg8qRHs4im
+U/XQI+t0tqzdCDpAxm3apeG7hUKiMcZL0r6xYBtTcJvY5foSoaTiwVokNFOCyoh6
+47qDSlh66jl1SLCyiXeSzhhoPO5SYqf0G77LcuOYNL4=</SignatureValue><KeyInfo><KeyValue>
+<RSAKeyValue>
+<Modulus>
+1pm7X28TTIESx7uWklHbVIlO0Y+fUBZ7LynhaRQ9w1rMsMhF0dNEvUdYBKVF1xPz
+SGD0IrbU6Uemw8Xb/sOy263ZOkSxqWIh3UEluOW7s6J3Hgv8UMDZkWDgj3+m2qWT
+UTgbNO3drHGvlRBg6liD15iNusSdSMw/kqmHxe/9tnStpsHo/u57rsH3/ROTvuz2
+yHD2t7I7zo0Kv7mfAAHodU4QoL8/7c3u29szxRu13M4SRkiLKwbgrwlsMCvXhkys
+oEKlX8/SnXDL8iSPExAiP7xVpfbmh8TNiGvtbjH7Ro2EYjUsEcv9qC7G5jLu7Klt
+8TkTobHqES26/F5/u42Ra3rIDunTxczbIHF1qoumAzdsJmFCBc9D1IKTTWKR3D2J
+eAZfpuvMeOEcpRxBayYf2jOBx8iD8gag5cIZWl2/62IfUxTk92A00M5QrzTocNkg
+0U5K1gN5WmhObUN/3fa/Ob5uriELGzRdzXJ+3QE8FpPmSPJZFA//UWmpJqsboO7p
+AhbB8efPIV42nxjwQEbJdkxUOlfAyPMRGcp4RhmaAnX7KmB33j4klYeNktH+OeV8
+S9q/nMJoA/d76K1hCbo9PJTa/UxwZJYh0LEs1YnHP/5wgydZJcyNjmcu7P5ur90L
+qyr2FB0fZYAmWi6SEaA0F7yi2Y0uqV4FP7dfcbfOf+E=
+</Modulus>
+<Exponent>
+AQAB
+</Exponent>
+</RSAKeyValue>
+</KeyValue></KeyInfo></Signature></alert>

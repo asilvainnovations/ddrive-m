@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>a53f2598-479a-40b1-b1a3-89561dc43dd4</identifier><sender>PAGASA-DOST</sender><sent>2026-10-23T17:40:00+08:00</sent><status>Actual</status><msgType>Update</msgType><scope>Public</scope><references>PAGASA-DOST,855536fb-a3b5-4721-9015-92cc1dd493dc,2026-10-23T05:39:38+08:00</references><info><category>Met</category><event>General Flood Advisory (Moderate)</event><responseType>Monitor</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Possible</certainty><expires>2026-10-24T05:40:00+08:00</expires><senderName>PAGASA-DOST</senderName><headline>General Flood Advisory</headline><description>Under present weather conditions, At 3:00 PM today, the center of the eye of Typhoon "ROSAL" {CHAMPI} was estimated based on all available data at 375 km North Northeast of Itbayat, Batanes (23.9&#xB0;N, 123.3&#xB0;E) with maximum sustained winds of 155 km/h near the center and gustiness of up to 190 km/h. It is moving North Northwestward at 20 km/h.  
+The 12-hour rainfall forecast is light to moderate rains and thunderstorms.  
+WATERCOURSES STILL LIKELY TO BE AFFECTED :  
+
+ + **Cagayan** - Rivers and its tributaries particularly Linao, Lower Abulug, Lower Pamplona, Cabicungan, Aunugay, Baua, Palawig and Taboan.  
+ + **Batanes** - All rivers and its tributaries  
+</description><instruction>People living near the mountain slopes and in the low lying areas of the above mentioned river systems and the **Local Disaster Risk Reduction and Management Councils** concerned still advised to take necessary precautionary measures.</instruction><web>http://www.pagasa.dost.gov.ph/index.php/26-hydromet/1582-flood-forecast-terms-and-symbols</web><contact>PAGASA-DOST</contact><parameter><valueName>layer:Google:Region:0.1</valueName><value>Region 2 (Cagayan Valley)</value></parameter><area><areaDesc>Cagayan</areaDesc><polygon>17.544357360493,122.19383966217 17.517056105107,121.65297335526 17.6914035175,121.43922758427 17.841954038726,121.31119655133 18.119791968792,121.47173553313 18.313131842547,121.45234277396 18.530970939076,121.05220008975 18.447321817624,120.96087162877 18.579611337753,120.97239650866 18.624809479961,121.15592083304 18.363624153438,121.63075201141 18.284534693434,121.85460153117 18.289253702461,122.01171675271 18.387234603238,122.13363908777 18.380704328247,122.32193902704 18.219594107103,122.30573714349 18.114464382048,122.18206624985 17.79380440239,122.14256584761 17.544357360493,122.19383966217</polygon><geocode><valueName>SAME</valueName><value>021500000</value></geocode></area><area><areaDesc>Batanes</areaDesc><polygon>20.482878224317,122.02360572053 20.452643576969,122.02629775526 20.408589155683,121.96347148931 20.366095173456,121.97386873411 20.348038630495,121.91849970251 20.404843493649,121.92863582449 20.488478973437,122.00314244964 20.482878224317,122.02360572053</polygon><geocode><valueName>SAME</valueName><value>020900000</value></geocode></area></info><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>NK7fpw+DtLUyKDPvsJQIVyl3Qrk=</DigestValue></Reference></SignedInfo><SignatureValue>dDTqRRWFIJ8SGEXRZHnU6HaylbdljAYbmQXbQWKMN+Q2ksrEFZYgQwf/up4TgkKe
+TsY8J6ihmu027GiPuPTGIc67a5l/DriLbKTpxXo8NscyWNsPfmTak/yY1UzlXuj7
+I8UtlP0plSdM8tgwVwUJC2UfrvO+6qjo/nqwlVzW+FmbRWG0N3DiOZDOMAXUpWND
+vGMlNh54f8EuZ8Ybem8aiKBku8AqgBAF+pe8Yv9g4T7oGJjn4btTOsaixMpcjMyM
+HoxqSLB/HQyvvKe61eXoXHmLQYsapjN+6DfV4hk4EqtPVKXcEVg1ucqzJdeKT1Oc
+xk1Jixh0ZPFmazWH6iFoTNsbImDyXQHHM2eROjKZLFYyvpkQwtJmWiLeSXKSX3p7
+L6xfOUSsOq3w51k+B5szlxhUgjLZLN8pqk4bucN2za4aSUrSaxcCRkuTEmWy6Fw1
+SXaEC/Xa7UchodTHGfTxNhaflEETSF+YsHsHeC2ojuWltn/j1+8w/kP6G5pXrXza
+He3SQYzROqnMhOjlp4cyJkc982hMU0yUG9XbY+Ue4CjXqA+appzt3DvniqLYqJY3
+5EvOAJXAXch17lSjIO2c7dwVRuxR732CpmhIwJJ/lDFGl/NN1TCafd/WtF1XgKXK
+w0s0KSpfYy2KK4/wMqT4dmy7JSHmnVlHlLUe8Wrqecg=</SignatureValue><KeyInfo><KeyValue>
+<RSAKeyValue>
+<Modulus>
+1pm7X28TTIESx7uWklHbVIlO0Y+fUBZ7LynhaRQ9w1rMsMhF0dNEvUdYBKVF1xPz
+SGD0IrbU6Uemw8Xb/sOy263ZOkSxqWIh3UEluOW7s6J3Hgv8UMDZkWDgj3+m2qWT
+UTgbNO3drHGvlRBg6liD15iNusSdSMw/kqmHxe/9tnStpsHo/u57rsH3/ROTvuz2
+yHD2t7I7zo0Kv7mfAAHodU4QoL8/7c3u29szxRu13M4SRkiLKwbgrwlsMCvXhkys
+oEKlX8/SnXDL8iSPExAiP7xVpfbmh8TNiGvtbjH7Ro2EYjUsEcv9qC7G5jLu7Klt
+8TkTobHqES26/F5/u42Ra3rIDunTxczbIHF1qoumAzdsJmFCBc9D1IKTTWKR3D2J
+eAZfpuvMeOEcpRxBayYf2jOBx8iD8gag5cIZWl2/62IfUxTk92A00M5QrzTocNkg
+0U5K1gN5WmhObUN/3fa/Ob5uriELGzRdzXJ+3QE8FpPmSPJZFA//UWmpJqsboO7p
+AhbB8efPIV42nxjwQEbJdkxUOlfAyPMRGcp4RhmaAnX7KmB33j4klYeNktH+OeV8
+S9q/nMJoA/d76K1hCbo9PJTa/UxwZJYh0LEs1YnHP/5wgydZJcyNjmcu7P5ur90L
+qyr2FB0fZYAmWi6SEaA0F7yi2Y0uqV4FP7dfcbfOf+E=
+</Modulus>
+<Exponent>
+AQAB
+</Exponent>
+</RSAKeyValue>
+</KeyValue></KeyInfo></Signature></alert>

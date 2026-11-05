@@ -1,0 +1,366 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<id>https://publicalert.pagasa.dost.gov.ph/feeds/</id>
+<title type="text">Latest Alerts from Philippine Atmospheric Geophysical and Astronomical Services Administration</title>
+<link rel="hub" href="//alert-hub.appspot.com" />
+<link rel="self" href="https://publicalert.pagasa.dost.gov.ph/feeds/" />
+<rights>Copyright, Philippine Atmospheric Geophysical and Astronomical Services Administration. Licensed under CC BY 4.0.</rights>
+<updated>2026-10-25T17:31:57+08:00</updated>
+<entry>
+  <id>urn:uuid:3c0fc291-74a3-414b-8ffc-61e3bc7e18fa</id>
+  <title>GFA #5 - Region 8 (Eastern Visayas)</title>
+  <updated>2026-10-25T17:31:57+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/3c0fc291-74a3-414b-8ffc-61e3bc7e18fa.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:e615201c-d5a9-49ed-880e-052a3a781da7</id>
+  <title>GFA #5 (Final) - Region 18 (Negros Island Region)</title>
+  <updated>2026-10-25T17:29:27+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/e615201c-d5a9-49ed-880e-052a3a781da7.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:f1232c02-5d52-4786-90aa-46865ab991a4</id>
+  <title>GFA #5 - Region 7 (Central Visayas)</title>
+  <updated>2026-10-25T17:27:04+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/f1232c02-5d52-4786-90aa-46865ab991a4.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:f56beee1-6dbb-4341-a8e0-069ccc29d6a0</id>
+  <title>GFA #5 - Region 6 (Western Visayas)</title>
+  <updated>2026-10-25T17:25:57+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/f56beee1-6dbb-4341-a8e0-069ccc29d6a0.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:f1ef7728-3f16-4522-843f-db5d951a5baa</id>
+  <title>GFA #8 (Final) - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-25T05:22:00+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/f1ef7728-3f16-4522-843f-db5d951a5baa.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:9694218b-a6a6-4b96-839f-ed5db054d77b</id>
+  <title>GFA #4 - Region 6 (Western Visayas)</title>
+  <updated>2026-10-25T05:20:55+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/9694218b-a6a6-4b96-839f-ed5db054d77b.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:d55b0615-6aeb-4c35-b2ba-1b017405a779</id>
+  <title>GFA #4 - Region 7 (Central Visayas)</title>
+  <updated>2026-10-25T05:20:03+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/d55b0615-6aeb-4c35-b2ba-1b017405a779.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:7e6bff1d-64df-4f8c-b15a-51880eda0080</id>
+  <title>GFA #4 - Region 18 (Negros Island Region)</title>
+  <updated>2026-10-25T05:18:55+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/7e6bff1d-64df-4f8c-b15a-51880eda0080.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:2a1c3f86-001d-4c62-a14c-d0d9f7c8217f</id>
+  <title>GFA #4 - Region 8 (Eastern Visayas)</title>
+  <updated>2026-10-25T05:17:31+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/2a1c3f86-001d-4c62-a14c-d0d9f7c8217f.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:9c46f1ee-c145-4f09-877b-c41b031ec7d1</id>
+  <title>GFA #2 (Final) - BARMM (Bangsamoro Autonomous Region of Muslim Mindanao)</title>
+  <updated>2026-10-25T05:15:50+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/9c46f1ee-c145-4f09-877b-c41b031ec7d1.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:fd4190b2-831e-46a4-9cb5-eae65f7a725c</id>
+  <title>GFA #1 - BARMM (Bangsamoro Autonomous Region of Muslim Mindanao)</title>
+  <updated>2026-10-24T17:29:53+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/fd4190b2-831e-46a4-9cb5-eae65f7a725c.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:574b35b2-4346-4151-8717-706346b0673b</id>
+  <title>GFA #3 - Region 8 (Eastern Visayas)</title>
+  <updated>2026-10-24T17:18:27+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/574b35b2-4346-4151-8717-706346b0673b.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:777cf558-c865-4ee1-a3f5-a0d334b6bea9</id>
+  <title>GFA #3 - Region 18 (Negros Island Region)</title>
+  <updated>2026-10-24T17:16:56+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/777cf558-c865-4ee1-a3f5-a0d334b6bea9.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:f47a2138-bc73-472b-9979-ec115fa62632</id>
+  <title>GFA #3 - Region 7 (Central Visayas)</title>
+  <updated>2026-10-24T17:15:51+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/f47a2138-bc73-472b-9979-ec115fa62632.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:b4b59347-d729-4717-bc6c-aabf995ad409</id>
+  <title>GFA #3 - Region 6 (Western Visayas)</title>
+  <updated>2026-10-24T17:14:27+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/b4b59347-d729-4717-bc6c-aabf995ad409.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:bd6359e0-9d35-4f44-a6bf-4749653df92d</id>
+  <title>GFA #7   - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-24T17:13:21+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/bd6359e0-9d35-4f44-a6bf-4749653df92d.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:a431156f-570f-403a-8391-b384d23fc11c</id>
+  <title>Tropical Cyclone Alert : Typhoon Rosal (CHAMPI)</title>
+  <updated>2026-10-24T10:52:06+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/acp/a431156f-570f-403a-8391-b384d23fc11c.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:550ec3d6-d549-463e-a7d2-133da7dad7c6</id>
+  <title>GFA #6   - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-24T05:19:37+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/550ec3d6-d549-463e-a7d2-133da7dad7c6.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:becb90dd-841b-4682-b16b-262bec820949</id>
+  <title>GFA #2 - Region 6 (Western Visayas)</title>
+  <updated>2026-10-24T05:16:56+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/becb90dd-841b-4682-b16b-262bec820949.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:b081e7d0-fee4-4a7d-881b-99bded80edfb</id>
+  <title>GFA #2 - Region 7 (Central Visayas)</title>
+  <updated>2026-10-24T05:16:09+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/b081e7d0-fee4-4a7d-881b-99bded80edfb.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:1896a3b0-c5ef-4e81-9a10-ab3c2ef4ebfe</id>
+  <title>GFA #2 - Region 18 (Negros Island Region)</title>
+  <updated>2026-10-24T05:15:29+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/1896a3b0-c5ef-4e81-9a10-ab3c2ef4ebfe.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:1254c673-f21c-4b7b-93f8-14fce3808986</id>
+  <title>GFA #2 - Region 8 (Eastern Visayas)</title>
+  <updated>2026-10-24T05:14:45+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/1254c673-f21c-4b7b-93f8-14fce3808986.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:21b29a06-e297-47bd-a79d-20826e724a2c</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-24T04:50:38+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/21b29a06-e297-47bd-a79d-20826e724a2c.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:a48da0d2-bee0-4c9f-a68b-e8709ff4b0a5</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-23T22:42:25+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/a48da0d2-bee0-4c9f-a68b-e8709ff4b0a5.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:2865b5a9-3636-4924-898d-cb640811031f</id>
+  <title>GFA #1 - Region 8 (Eastern Visayas)</title>
+  <updated>2026-10-23T17:45:37+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/2865b5a9-3636-4924-898d-cb640811031f.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:6988c9e7-289b-4ecf-b751-e06f69f5cecb</id>
+  <title>GFA #1 - Region 18 (Negros Island Region)</title>
+  <updated>2026-10-23T17:44:57+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/6988c9e7-289b-4ecf-b751-e06f69f5cecb.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:90572a6a-5135-4f73-abea-9e04b0f87572</id>
+  <title>GFA #1 - Region 7 (Central Visayas)</title>
+  <updated>2026-10-23T17:43:28+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/90572a6a-5135-4f73-abea-9e04b0f87572.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:ddec424d-90b4-4fe6-8356-d377ca1aabc3</id>
+  <title>GFA #1 - Region 6 (Western Visayas)</title>
+  <updated>2026-10-23T17:42:24+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/ddec424d-90b4-4fe6-8356-d377ca1aabc3.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:a53f2598-479a-40b1-b1a3-89561dc43dd4</id>
+  <title>GFA #5   - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-23T17:40:00+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/a53f2598-479a-40b1-b1a3-89561dc43dd4.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:b6cb7676-9a0a-4072-8d5f-e554de03422d</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-23T16:52:08+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/b6cb7676-9a0a-4072-8d5f-e554de03422d.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:fdf153e2-fd16-42b0-a001-22a4d625aecb</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-23T16:52:08+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/fdf153e2-fd16-42b0-a001-22a4d625aecb.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:b07022db-9bfa-44eb-af8f-297be3269722</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-23T10:46:47+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/b07022db-9bfa-44eb-af8f-297be3269722.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:d3ec00f1-6a62-4e79-924b-b662ad79c9a1</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-23T10:46:47+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/d3ec00f1-6a62-4e79-924b-b662ad79c9a1.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:855536fb-a3b5-4721-9015-92cc1dd493dc</id>
+  <title>GFA #4 - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-23T05:39:38+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/855536fb-a3b5-4721-9015-92cc1dd493dc.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:0b388184-2411-4eed-8933-a3b64b259b02</id>
+  <title>Cancellation of GFA #4 - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-23T05:34:32+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/0b388184-2411-4eed-8933-a3b64b259b02.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:fef26327-8053-41e5-a433-8e24347d148f</id>
+  <title>GFA #4 - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-23T05:33:27+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/fef26327-8053-41e5-a433-8e24347d148f.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:4cd25719-0f85-43f8-8aa7-8eb83f23e565</id>
+  <title>GFA #2 (Final) - Region 1 (Ilocos Region)</title>
+  <updated>2026-10-23T05:16:03+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/4cd25719-0f85-43f8-8aa7-8eb83f23e565.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:00bbef1f-9d73-438b-9e2a-26172d8688b8</id>
+  <title>GFA #2 (Final) - CAR (Cordillera Administrative Region)</title>
+  <updated>2026-10-23T05:14:26+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/00bbef1f-9d73-438b-9e2a-26172d8688b8.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:946dd5dc-b90b-44a8-82c6-2ad646078e56</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-23T04:52:13+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/946dd5dc-b90b-44a8-82c6-2ad646078e56.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:0cdf989c-e6ff-4711-a584-4db4160a2e27</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-23T04:52:13+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/0cdf989c-e6ff-4711-a584-4db4160a2e27.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:a11ca828-f628-4f72-8393-38b71c1e9857</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-22T23:01:14+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/a11ca828-f628-4f72-8393-38b71c1e9857.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:50f6258b-8605-40cf-9d3a-fa497616c094</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-22T23:01:14+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/50f6258b-8605-40cf-9d3a-fa497616c094.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:052284af-b5f8-409a-9f3d-aef22b241285</id>
+  <title>GFA #1 - CAR (Cordillera Administrative Region)</title>
+  <updated>2026-10-22T17:26:44+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://121.58.193.10/output/gfa/052284af-b5f8-409a-9f3d-aef22b241285.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:c0e1085c-7ad8-4686-946e-76b132b175cc</id>
+  <title>GFA #1 - Region 1 (Ilocos Region)</title>
+  <updated>2026-10-22T17:26:07+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://121.58.193.10/output/gfa/c0e1085c-7ad8-4686-946e-76b132b175cc.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:f76a4287-260f-4215-9443-a19ea2494c55</id>
+  <title>GFA #3 - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-22T17:26:00+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://121.58.193.10/output/gfa/f76a4287-260f-4215-9443-a19ea2494c55.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:69e380d3-d57a-43da-afb6-b51f6d90ee91</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-22T17:20:35+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/69e380d3-d57a-43da-afb6-b51f6d90ee91.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:9e0007ec-847c-4b10-b27e-527b06edcefb</id>
+  <title>Tropical Cyclone Warning : Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-22T17:20:35+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/9e0007ec-847c-4b10-b27e-527b06edcefb.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:00b97630-70ad-4f31-abed-f66a53754ca1</id>
+  <title>Tropical Cyclone Warning : Super Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-22T10:48:32+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/00b97630-70ad-4f31-abed-f66a53754ca1.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:decffd29-11e1-49a6-be87-09ebf82bd740</id>
+  <title>Tropical Cyclone Warning : Super Typhoon Rosal (CHAMPI) Signal #1</title>
+  <updated>2026-10-22T10:48:32+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/decffd29-11e1-49a6-be87-09ebf82bd740.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:0d5a9d15-dbb8-404e-b577-6d5da9ab1fda</id>
+  <title>GFA #2 - Region 2 (Cagayan Valley)</title>
+  <updated>2026-10-22T05:11:20+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/gfa/0d5a9d15-dbb8-404e-b577-6d5da9ab1fda.cap"/>
+</entry>
+<entry>
+  <id>urn:uuid:9f20c346-c42f-4f37-aecd-308dcdbe29c1</id>
+  <title>Tropical Cyclone Warning : Super Typhoon Rosal (CHAMPI) Signal #2</title>
+  <updated>2026-10-22T04:46:45+08:00</updated>
+  <author><name>PAGASA DOST</name></author>
+  <link type="application/cap+xml" href="https://publicalert.pagasa.dost.gov.ph/output/wcp/9f20c346-c42f-4f37-aecd-308dcdbe29c1.cap"/>
+</entry>
+</feed>
