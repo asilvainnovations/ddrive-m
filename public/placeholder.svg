@@ -1,0 +1,78 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="512" height="512" viewBox="0 0 512 512"
+ preserveAspectRatio="xMidYMid meet">
+  
+  <!-- Define gradient for liquid glass effect -->
+  <defs>
+    <radialGradient id="circularBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#1a2f4d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A1628;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60A5FA;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="glassShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="240"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Outer border ring -->
+  <circle cx="256" cy="256" r="245" 
+          fill="none" stroke="url(#accentGradient)" stroke-width="8"
+          filter="url(#glassShadow)"/>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" 
+          fill="url(#circularBg)" stroke="none"/>
+  
+  <!-- Main content layer with circular clipping -->
+  <g clip-path="url(#circleClip)">
+    <!-- Transformed original path elements for circular layout -->
+    <g transform="translate(256,256) scale(0.45)" fill="url(#accentGradient)">
+      
+      <!-- Simplified letter D form -->
+      <path d="M700 4500 c-514 -86 -975 -362 -1344 -783 -253 -279 -435 -646 -544 -1101 -106 -441 -143 -900 -118 -1427 52 -1076 530 -2004 1363 -2665 444 -352 965 -580 1582 -690 143 -31 6500 -31 6643 0 604 99 1132 341 1562 710 735 624 1197 1528 1291 2496 14 143 14 6479 0 6622 -69 693 -491 1301 -1114 1604 -218 107 -442 170 -685 195 -143 14 -6479 14 -6622 0z m5500 -1800 c167 -185 305 -383 392 -578 146 -301 223 -600 243 -939 22 -375 -51 -727 -217 -1038 -135 -243 -314 -443 -529 -589 -103 -65 -253 -138 -330 -158 -107 -27 -612 -27 -719 0 -56 14 -239 95 -426 191 -504 270 -929 633 -1294 1102 -260 333 -450 727 -545 1124 -14 58 -26 120 -26 138 0 33 62 165 116 263 250 466 618 866 1064 1151 205 120 454 201 698 228 130 15 753 15 883 0 247 -31 456 -98 681 -219 134 -76 274 -191 374 -305z"/>
+      
+      <!-- Accent decorative elements -->
+      <circle cx="450" cy="2300" r="50" fill="#60A5FA"/>
+      <circle cx="600" cy="2450" r="35" fill="#60A5FA"/>
+      <circle cx="550" cy="2150" r="40" fill="#60A5FA"/>
+      
+      <!-- Letter M stylized element -->
+      <path d="M800 3000 l-150 2000 l150 200 l150 -200 z m400 0 l150 2000 l-150 200 l-150 -200 z"/>
+      
+      <!-- Central accent symbol -->
+      <rect x="1100" y="2000" width="200" height="200" rx="30" 
+            fill="none" stroke="url(#accentGradient)" stroke-width="25"/>
+    </g>
+  </g>
+  
+  <!-- Additional circular detail rings -->
+  <circle cx="256" cy="256" r="230" 
+          fill="none" stroke="#3B82F6" stroke-width="2" opacity="0.3"/>
+  <circle cx="256" cy="256" r="220" 
+          fill="none" stroke="#3B82F6" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Inner shadow for depth -->
+  <circle cx="256" cy="256" r="240" 
+          fill="none" stroke="url(#accentGradient)" stroke-width="1" opacity="0.5"/>
+  
+</svg>
