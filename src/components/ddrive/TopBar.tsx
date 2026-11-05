@@ -6,6 +6,7 @@ import { ROLE_LABELS } from '@/lib/roles';
 import { toast } from '@/components/ui/sonner';
 import { Link } from 'react-router-dom';
 import { useOfficialAlerts, alertTitle, ago } from '@/hooks/useOfficialAlerts';
+import DDriveLogo from './DDriveLogo';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -41,6 +42,10 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
         >
           <Menu className="w-5 h-5" />
         </button>
+
+        <span className="lg:hidden">
+          <DDriveLogo size={32} />
+        </span>
 
         <div className="hidden md:block">
           <h2 className="font-montserrat font-bold text-lg text-slate-900 dark:text-white leading-tight">{title}</h2>

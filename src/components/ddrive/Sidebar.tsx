@@ -2,10 +2,11 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Radar, Stethoscope, Shield, Network, FlaskConical,
-  Sparkles, Radio, FileText, Bot, Settings, X
+  Sparkles, Radio, FileText, Bot, Settings, X, Hourglass
 } from 'lucide-react';
 
 import { MODULES, ModuleKey } from '@/lib/modules';
+import DDriveLogo from './DDriveLogo';
 
 export type { ModuleKey };
 
@@ -21,6 +22,7 @@ const icons: Record<ModuleKey, React.ElementType> = {
   detection: Radar,
   diagnosis: Stethoscope,
   response: Shield,
+  anticipatory: Hourglass,
   integration: Network,
   validation: FlaskConical,
   enhancement: Sparkles,
@@ -56,11 +58,9 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onSelect, open, onClose }) =>
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/40 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-blue-900 flex items-center justify-center shadow-lg shadow-blue-900/30">
-              <Shield className="w-5 h-5 text-amber-300" strokeWidth={2.5} />
-            </div>
+            <DDriveLogo size={40} />
             <div>
-              <h1 className="font-montserrat font-bold text-lg tracking-tight text-slate-900 dark:text-white">DDRiVE-M</h1>
+              <p className="font-montserrat font-bold text-lg tracking-tight text-slate-900 dark:text-white">DDRiVE-M</p>
               <p className="text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-roboto-condensed">Intelligence Platform</p>
             </div>
           </div>

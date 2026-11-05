@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Mail, Lock, User as UserIcon, Loader2 } from 'lucide-react';
 import DDriveLogo from './DDriveLogo';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,6 +11,14 @@ const LoginModal: React.FC = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Escape closes the window, as people expect from a dialog.
+  useEffect(() => {
+    if (!loginModalOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeLogin(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [loginModalOpen, closeLogin]);
 
   if (!loginModalOpen) return null;
 
@@ -52,20 +60,25 @@ const LoginModal: React.FC = () => {
       onClick={closeLogin}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-title"
         className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-6 bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 text-white">
           <button
+            type="button"
             onClick={closeLogin}
+            aria-label="Close"
             className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10"
           >
             <X className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-3">
-            <DDriveLogo size={48} />
+            <DDriveLogo size={48} linkHome={false} />
             <div>
-              <h2 className="font-montserrat font-bold text-xl">DDRiVE-M Access</h2>
+              <h2 id="login-title" className="font-montserrat font-bold text-xl">Sign in to DDRiVE-M</h2>
               <p className="text-xs text-blue-200 font-poppins">
                 Disaster · Detection · Risk · Intelligence · Validation · Enhancement
               </p>
