@@ -1,8 +1,0 @@
-{
-  "confirmation": "Confirm your email to start using DDRiVE-M",
-  "invite": "You’re invited to join DDRiVE-M",
-  "magic_link": "Your DDRiVE-M sign-in link",
-  "email_change": "Confirm your new DDRiVE-M email address",
-  "recovery": "Reset your DDRiVE-M password",
-  "reauthentication": "{{ .Token }} is your DDRiVE-M verification code"
-}

@@ -1,8 +1,0 @@
-# Supabase CLI settings for DDRiVE-M. Hosted project: mytnwrctkubhrfjwloln
-# (link once with: supabase link --project-ref mytnwrctkubhrfjwloln).
-project_id = "ddrive-m"
-
-[functions.ingest-pagasa]
-# Called by pg_cron with a secret key in the apikey header. Secret keys are not JWTs, so the
-# platform's JWT check must be off; the function checks the key itself (_shared/auth.ts).
-verify_jwt = false
