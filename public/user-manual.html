@@ -561,7 +561,7 @@ code {
 <!-- HEADER -->
 <header class="top-bar">
   <a class="logo" href="#">
-    <img src="https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png" class="logo-img" alt="DDRiVE-M">
+    <img style="border-radius:50%;object-fit:cover" src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" class="logo-img" alt="DDRiVE-M">
     <div>
       <div class="logo-text">DDRiVE-M</div>
     </div>
@@ -621,7 +621,7 @@ code {
       <div class="hero-body">
         <div class="hero-inner">
           <div class="hero-logo-wrap">
-            <img src="https://tkmmgqqimvpqtipwbvrs.databasepad.com/storage/v1/object/public/image-assets/public/DDRiVE-M%20logo.png" class="hero-logo-img" alt="DDRiVE-M Logo">
+            <img style="border-radius:50%;object-fit:cover" src="https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png" class="hero-logo-img" alt="DDRiVE-M Logo">
           </div>
           <div class="hero-text">
             <div class="hero-eyebrow">🛡 Official Documentation</div>
@@ -897,39 +897,44 @@ code {
         <div class="section-num">4</div>
         <div>
           <div class="section-title">Phase 1: Detection Module</div>
-          <div class="section-subtitle">Track and monitor all disaster types from official government feeds</div>
+          <div class="section-subtitle">Official PAGASA alerts and your team's hazard records</div>
         </div>
       </div>
       <div class="callout callout-danger">
         <div class="callout-icon">🔴</div>
-        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">Track and monitor all types of disasters coming from official government feeds. This is where new threats enter the system. Navigation: <strong>Dashboard → Detection card</strong> or <strong>Sidebar → Phase 1 Detection</strong></div></div>
+        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">See the official alerts PAGASA has in force, and keep your team's hazard records. DDRiVE-M relays PAGASA's alerts; it does not issue warnings. Always follow PAGASA, PHIVOLCS and your local DRRM office. Navigation: <strong>Dashboard → Detection card</strong> or <strong>Sidebar → Phase 1 Detection</strong></div></div>
       </div>
 
       <div class="coll-card open">
         <div class="coll-header" onclick="toggleColl(this.parentElement)">
           <div class="coll-header-icon">🗺</div>
-          <div class="coll-header-text"><div class="coll-header-title">Screen Layout & Agency Monitoring Cards</div><div class="coll-header-sub">Map view, feeds, and classification panel</div></div>
+          <div class="coll-header-text"><div class="coll-header-title">Screen Layout</div><div class="coll-header-sub">Official alerts, hazard records and map</div></div>
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
           <div class="grid-2" style="gap:12px; margin-top:8px;">
             <div style="padding:13px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">① Agency Monitoring Cards</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Four colorful cards for PAGASA, PHIVOLCS, NOAH, NDRRMC. Click to filter feed by that agency only. Green "LIVE" badge = real-time updating.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">① Official PAGASA alerts</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Wind signals and flood advisories PAGASA has in force, read from PAGASA's public alert feed every 10 minutes. Choose <strong>My watch areas</strong> or <strong>All Philippines</strong>. Each alert shows its title, areas, when it was issued and when it expires, the CAP fields exactly as PAGASA issued them, and a link to the full alert. The line above the list says when the feed was last read.</div>
             </div>
             <div style="padding:13px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">② Geospatial Threat Map</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Interactive Google Maps view. <span style="color:#991b1b;font-weight:600;">Red pin</span> = Critical · <span style="color:#7c2d12;font-weight:600;">Orange pin</span> = High · <span style="color:#78350f;font-weight:600;">Yellow pin</span> = Medium severity.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">② If the feed is out of date</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">If PAGASA's feed has not been read for 30 minutes, the dashboard and Detection show a warning. Check <strong>pagasa.dost.gov.ph</strong> directly until the warning clears.</div>
             </div>
             <div style="padding:13px; background:rgba(13,148,136,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">③ Hazard Classification Panel</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">List of threat types with counts. Quick summary of what kinds of disasters are affecting which areas.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">③ Hazard records</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Hazards your team has logged, with their source agency. Responders and above can log an official alert as a hazard record with <strong>Log as hazard record</strong>; the record keeps a link to the alert.</div>
             </div>
             <div style="padding:13px; background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">④ Active Hazard Feed</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Detailed table with full information: ID, name, location, severity, detected date. Click any row to open detail modal.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">④ Map of the Philippines</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">A Google Maps base map. Hazard records and alert areas are not plotted on it yet.</div>
             </div>
           </div>
+          <div class="callout callout-info" style="margin-top:12px;">
+            <div class="callout-icon">📍</div>
+            <div class="callout-body"><div class="callout-title">Watch areas</div><div class="callout-text">Watch areas are the provinces your organisation follows. A DRRM officer or administrator sets them in <strong>Settings → Organisation → Watch areas</strong>: type the province name as PAGASA writes it (suggestions come from current alerts), and optionally its PSGC code. Alerts for these provinces are flagged on the dashboard and counted on the bell icon in the top bar.</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px;">Alert information: PAGASA-DOST, licensed CC BY 4.0.</div>
         </div></div>
       </div>
 
@@ -1089,6 +1094,28 @@ code {
               <tr><td>DOH</td><td>Health Emergencies</td><td>14 procedures</td></tr>
             </tbody>
           </table>
+        </div></div>
+      </div>
+    
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">⏳</div>
+          <div class="coll-header-text"><div class="coll-header-title">Anticipatory Action under RA 12287</div><div class="coll-header-sub">From forecast trigger to the report to OCD · Sidebar → Anticipatory Action</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <div class="flow-steps" style="margin-top:8px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Open a case from a forecast</div><div class="flow-step-desc">On an official alert in Detection, choose <strong>Start anticipatory action</strong>, or choose <strong>Open a case</strong>. Give the areas covered and the expected onset of the hazard. Analysts and above.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Record the pre-disaster risk assessment</div><div class="flow-step-desc">Confirm the two conditions of section 6: (a) the forecast hazard is severe or its equivalent; (b) there is enough lead time, three days extendable to five. Write the basis: forecasts, hazard maps and exposure data used. DDRiVE-M records the lead time remaining. A declaration can only be recommended when both conditions are met.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Record the recommendation</div><div class="flow-step-desc">A DRRM officer names the recommending council and edits the draft request to the declaring official, prepared from the assessment.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Record the declaration</div><div class="flow-step-desc">Once the President or the local chief executive has issued the executive order, record who declared it, their position, the order number and the date. DDRiVE-M records the declaration; it does not make it.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-body"><div class="flow-step-title">Plan measures and record fund use</div><div class="flow-step-desc">Add the anticipatory measures of section 9 with their fund source. Disbursements can be recorded only while the declaration is in force, and only by a DRRM officer or administrator.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-body"><div class="flow-step-title">Record the lifting, then submit the report</div><div class="flow-step-desc">Record that the hazard occurred (automatic lifting), or that a new assessment found the impacts are not met and the order lifting it. The report shows fund use and unused funds; add the estimated costs minimised with how they were worked out, and submit. The case is then closed.</div></div></div>
+          </div>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⚖️</div>
+            <div class="callout-body"><div class="callout-title">Accuracy is a legal duty</div><div class="callout-text">Under sections 12 and 13 of RA 12287, spreading false hazard information or manipulating assessments to support a declaration is punishable by a fine of ₱50,000 to ₱500,000, imprisonment, or both. Assessments cannot be edited once recorded: record a new one.</div></div>
+          </div>
         </div></div>
       </div>
     </section>
@@ -1671,7 +1698,7 @@ code {
           <table class="data-table" style="margin-top:8px;">
             <thead><tr><th>Module</th><th>Primary Metric</th><th>Key Action</th><th>Expected Result</th></tr></thead>
             <tbody>
-              <tr><td>Detection</td><td>Active Hazards</td><td>Report Hazard</td><td>New hazard logged to feeds</td></tr>
+              <tr><td>Detection</td><td>Official alerts, hazard records</td><td>Report Hazard, Log as hazard record</td><td>Hazard record saved, linked to the alert when logged from one</td></tr>
               <tr><td>Diagnosis</td><td>Risk Score</td><td>Add Risk + Upload Data</td><td>Updated risk registry</td></tr>
               <tr><td>Response</td><td>Incident Progress %</td><td>Advance +10%</td><td>Incident moves forward</td></tr>
               <tr><td>Integration</td><td>Resilience Score</td><td>Complete Assessment</td><td>Score improves over time</td></tr>
