@@ -1,88 +1,39 @@
 import type { Policy } from './types';
 import { LEGAL_FACTS as F } from './facts';
 
-// Adapted from the ASilva Innovations Cookie Policy for DDRiVE-M. Lists only what the app really stores
-// (see src/components/theme-provider.tsx, the Supabase client, and the service worker in vite.config.ts).
 export const cookies: Policy = {
   slug: 'cookies',
-  title: 'Cookie Policy',
-  summary: 'What DDRiVE-M stores on your device, what third parties may set, and how to clear it.',
+  title: 'Cookie and Device Storage Policy',
+  summary: 'How DDRiVE-M may use cookies, local storage, session storage and cached application files.',
   effective: F.effective,
   updated: F.updated,
   keyPoints: [
-    'DDRiVE-M uses no advertising or analytics cookies.',
-    'It stores a few things on your device so you stay signed in and the app opens offline.',
-    'The Google map on the Detection screen and the Home page video (only if you press play) come from Google, which may set its own cookies.',
-    'You can clear everything from your browser settings at any time.',
+    'The application may use browser storage to support sign-in, remember preferences and cache application resources.',
+    'Third-party services may receive technical information when their content or features are loaded.',
+    'The exact storage inventory must be checked against the deployed build and browser behaviour.',
+    'Clearing site data may sign you out and remove locally cached application resources.',
   ],
   sections: [
-    {
-      id: 'what',
-      title: '1. Cookies and local storage',
-      blocks: [
-        { p: 'Cookies are small files a website saves on your device. DDRiVE-M mostly uses similar browser features instead: local storage, which holds small settings, and the cache, which holds the app’s files so it can open offline. This policy covers all of them.' },
-      ],
-    },
-    {
-      id: 'ours',
-      title: '2. What DDRiVE-M stores',
-      blocks: [
-        {
-          table: {
-            head: ['Item', 'Where', 'Purpose', 'How long', 'Type'],
-            rows: [
-              ['Sign-in session (named sb-…-auth-token)', 'Local storage', 'Keeps you signed in', 'Until you sign out or the session expires', 'Essential'],
-              ['theme', 'Local storage', 'Remembers light or dark mode', 'Until you clear it', 'Functional'],
-              ['App files (workbox-precache)', 'Cache storage, through a service worker', 'Lets the app open quickly and without a connection', 'Until the next app update or until you clear it', 'Essential'],
-            ],
-          },
-        },
-        { p: 'DDRiVE-M does not cache your organisation’s records or official alerts for offline use, so it never shows an old alert as if it were current.' },
-      ],
-    },
-    {
-      id: 'third',
-      title: '3. Third-party services',
-      blocks: [
-        {
-          table: {
-            head: ['Service', 'When', 'What may be set or sent'],
-            rows: [
-              ['Google Maps', 'When you open the Detection screen', 'Google may set cookies and receives your IP address, under Google’s privacy policy'],
-              ['Google Fonts', 'When the app loads', 'Google receives your IP address; no cookies'],
-              ['YouTube, privacy-enhanced mode', 'Only after you press play on the Home page video', 'YouTube may store information on your device once the video plays'],
-              ['Sign in with Google', 'When you open the sign-in window, Google’s sign-in script loads; when you use it, Google signs you in', 'Google may set its own cookies on Google’s domain, under Google’s privacy policy'],
-            ],
-          },
-        },
-      ],
-    },
-    {
-      id: 'consent',
-      title: '4. Why there is no cookie banner',
-      blocks: [
-        { p: 'Everything DDRiVE-M stores itself is needed for the service you asked for, or remembers a setting you chose. The Home page video loads only when you choose to play it. If we ever add analytics, we will ask for your consent first and add a choice here.' },
-        { p: 'For people in the Philippines, this follows the Data Privacy Act (RA 10173); for visitors from the European Union, storage that is strictly necessary for a service you request does not need consent.' },
-      ],
-    },
-    {
-      id: 'manage',
-      title: '5. Clearing or blocking storage',
-      blocks: [
-        {
-          ul: [
-            'Sign out to remove your sign-in session.',
-            'In your browser’s settings, clear "site data" or "cookies and site data" for this site to remove everything, including the offline files.',
-            'If you installed DDRiVE-M, uninstalling it removes its files.',
-            'If you block storage completely, you will not be able to stay signed in, and the app will not open offline.',
-          ],
-        },
-      ],
-    },
-    {
-      id: 'contact',
-      title: '6. Changes and contact',
-      blocks: [{ p: `We will update this page and its date when what we store changes. Questions: ${F.privacyEmail}.` }],
-    },
+    { id: 'scope', title: '1. What this policy covers', blocks: [
+      { p: 'Cookies are small files stored by a website. Web applications may also use local storage, session storage, IndexedDB, service-worker caches and similar technologies. This policy covers these technologies when used by DDRiVE-M.' },
+    ] },
+    { id: 'first-party', title: '2. First-party storage', blocks: [
+      { p: 'DDRiVE-M may use browser storage for authentication session handling, user interface preferences and application resources. The exact keys, purposes, expiry, persistence and whether any operational or personal records are cached must be verified against the current production build before this inventory is treated as complete.' },
+      { note: 'Do not assume that offline caching is limited to static application files until the service worker, browser storage and network behaviour have been tested in the deployed version.' },
+    ] },
+    { id: 'third-party', title: '3. Third-party services', blocks: [
+      { p: 'Maps, fonts, identity providers, embedded media and other external services may receive technical information such as IP address, browser details and request metadata when loaded. The services actually used must be listed in the current third-party inventory, together with their purpose and privacy links.' },
+    ] },
+    { id: 'choices', title: '4. Your choices', blocks: [
+      { ul: [
+        'Use your browser settings to review, block or clear cookies and site data.',
+        'Signing out may clear or invalidate your authentication session.',
+        'Blocking all storage may prevent sign-in, preferences or some application functions from working.',
+        'If an optional third-party feature is not needed, do not open or activate it.',
+      ] },
+    ] },
+    { id: 'review', title: '5. Review and contact', blocks: [
+      { p: 'The storage inventory will be updated when the deployed application or its third-party services change. Questions may be sent to ' + F.privacyEmail + '.' },
+    ] },
   ],
 };

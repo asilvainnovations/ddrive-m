@@ -1,207 +1,143 @@
 import type { Policy } from './types';
 import { LEGAL_FACTS as F, fact } from './facts';
 
-// Adapted from the ASilva Innovations Privacy Policy (29 April 2026) for DDRiVE-M. Statements are limited
-// to what DDRiVE-M actually does: its hosting (Supabase), the third parties the app loads, and the
-// security controls that exist in the code. Anything only ASilva can confirm comes from facts.ts.
+// Publication draft. This policy deliberately avoids representing untested technical
+// controls, contractual allocations, retention schedules or regulatory registrations as verified.
 export const privacy: Policy = {
   slug: 'privacy',
   title: 'Privacy Policy',
-  summary: 'What personal information DDRiVE-M collects, why, who processes it, and your rights under the Data Privacy Act.',
+  summary: 'How DDRiVE-M handles account information, organisation records, disaster-related information and privacy requests.',
   effective: F.effective,
   updated: F.updated,
   keyPoints: [
-    'We collect what is needed to run your account and your organisation’s workspace, nothing for advertising.',
-    'Your organisation owns the records it enters and decides how they are used; we process them on its behalf.',
-    'Each organisation sees only its own records. This is enforced in the database, not just on screen.',
-    'We do not sell personal information, and we do not use your records to train AI models.',
-    'You can ask to see, correct or delete your information, and complain to the National Privacy Commission.',
+    'DDRiVE-M is designed to support disaster risk reduction, climate adaptation and resilience work; information entered may include sensitive details about affected people.',
+    'The organisation using the platform and ASilva Innovations may have different controller and processor responsibilities depending on the purpose and the applicable agreement.',
+    'The platform owner identifies Supabase as the database and authentication provider and the hosting region as Northeast Asia; the live project configuration must be checked before publication.',
+    'Do not enter personal or sensitive information unless your organisation has an appropriate lawful basis, authority and safeguards.',
+    'You may raise a privacy request with the Data Protection Officer or, where the organisation determines the processing, with that organisation.',
   ],
   sections: [
     {
-      id: 'scope',
-      title: '1. Who we are and what this policy covers',
+      id: 'who',
+      title: '1. Who we are and who this policy covers',
       blocks: [
-        { p: `${F.publisher} publishes DDRiVE-M. This policy covers the DDRiVE-M web app, its Home, help and policy pages, and DDRiVE-M installed on a phone or computer.` },
-        { p: 'There are two kinds of information in DDRiVE-M, and the Data Privacy Act of 2012 (RA 10173) treats them differently:' },
-        {
-          ul: [
-            `Your account (your name, email address, organisation and sign-in records). For these, ${F.publisher} is the personal information controller.`,
-            'The records your organisation enters (hazards, incidents, risk registers, plans, anticipatory action cases and team messages). Your organisation, for example your LGU, decides why and how these are processed, so it is the personal information controller and we are its personal information processor.',
-          ],
-        },
-        { p: 'If an organisation recorded your details in DDRiVE-M, for example in an evacuation or incident record, contact that organisation first. We will help it answer you.' },
+        { p: `${F.publisher} publishes and operates DDRiVE-M. This policy applies to the public website, the web application and its installable application experience.` },
+        { p: 'DDRiVE-M is intended for use by organisations involved in disaster risk reduction, climate change adaptation, emergency management and resilience planning. Depending on the deployment, it may process account information and records relating to hazards, exposure, vulnerability, incidents, evacuation, response, recovery, plans and organisational operations.' },
+        { p: 'The organisation that decides why and how personal information is processed may be the personal information controller for those activities. ASilva Innovations may act as a personal information processor when processing information on that organisation’s documented instructions. For account administration, service security, support and other purposes determined by ASilva Innovations, its role must be assessed separately. The parties’ actual roles must be confirmed in the applicable service agreement and privacy documentation; this policy does not by itself determine them.' },
       ],
     },
     {
-      id: 'collect',
-      title: '2. What we collect',
+      id: 'information',
+      title: '2. Information that may be processed',
       blocks: [
-        {
-          table: {
-            head: ['Information', 'What it includes', 'Where it comes from'],
-            rows: [
-              ['Account', 'Name, email address, organisation, role. A password, which our sign-in provider stores only as a one-way hash, or your Google identity if you sign in with Google.', 'You, or your organisation’s administrator'],
-              ['Organisation records', 'Whatever your team enters. This can include personal information about residents, such as names of evacuees or people affected by an incident.', 'Your team'],
-              ['Change history', 'Who created or changed which record, and when.', 'The system, automatically'],
-              ['Technical information', 'IP address, browser and device type, and request times, kept in our hosting provider’s logs.', 'Your device, automatically'],
-              ['Settings on your device', 'Your sign-in session, light or dark theme, and the app’s files for offline use. See the Cookie Policy.', 'Your device'],
-            ],
-          },
-        },
-        { p: 'We do not use advertising or analytics trackers. The app does not take payments, so it holds no card details. It does not track your location: coordinates are stored only when you type them into a record.' },
-        { p: 'Official alerts from PAGASA are public information and contain no personal information.' },
+        { p: 'Depending on the features enabled and how an organisation uses the service, information may include:' },
+        { ul: [
+          'Account and identity information, such as name, email address, organisation membership, assigned role and authentication-related identifiers.',
+          'Operational and organisational records entered by users, including hazard observations, risk assessments, incidents, plans, actions, resources, messages and monitoring records.',
+          'Information about affected or at-risk people, which may include names, location details, age, sex, disability-related information, health information, household details or other sensitive personal information.',
+          'User-generated files, attachments, coordinates and other information submitted to the platform.',
+          'Technical and security information generated through use of the service, such as device, browser, access and diagnostic logs, to the extent collected by the application and its service providers.',
+        ] },
+        { note: 'Do not enter personal information that is not necessary for the DRRM or resilience purpose. Avoid placing sensitive personal information in free-text fields unless the organisation has approved the purpose, lawful basis, access controls and retention arrangements.' },
       ],
     },
     {
-      id: 'use',
-      title: '3. Why we use it',
+      id: 'purposes',
+      title: '3. Purposes and lawful basis',
       blocks: [
-        {
-          table: {
-            head: ['Purpose', 'Lawful basis under RA 10173'],
-            rows: [
-              ['Running your account and the service', 'Performance of a contract (section 12(b))'],
-              ['Keeping each organisation’s records separate and applying roles', 'Contract, and our legitimate interest in security (section 12(f))'],
-              ['Keeping a change history for accountability', 'Legitimate interest; for government users, the public functions of the LGU or agency (section 12(e))'],
-              ['Answering support requests', 'Contract and legitimate interest'],
-              ['Meeting legal obligations, such as answering lawful orders and reporting personal data breaches', 'Legal obligation (section 12(c))'],
-              ['Sensitive personal information your organisation enters, such as the health status of evacuees', 'Your organisation’s basis under section 13, for example a law or regulation, or protecting life and health'],
-            ],
-          },
-        },
-        { p: 'We do not use your account information or your organisation’s records to train artificial intelligence models, and we do not sell personal information.' },
+        { p: 'Information may be processed to provide user accounts and organisation workspaces; support risk analysis and planning; record preparedness, response, anticipatory action and recovery activities; maintain security and accountability; provide technical support; and meet applicable legal obligations.' },
+        { p: 'The appropriate lawful basis must be identified for each processing purpose under Republic Act No. 10173 (Data Privacy Act of 2012) and its implementing rules. Where sensitive personal information is involved, the organisation responsible for the processing must identify and document a basis permitted under section 13, together with any applicable safeguards.' },
+        { p: 'A user’s acceptance of this policy is not a substitute for the lawful basis, authority, transparency notices or consent that may be required for a particular processing activity.' },
       ],
     },
     {
-      id: 'share',
-      title: '4. Who processes it for us',
+      id: 'sharing',
+      title: '4. Service providers and disclosures',
       blocks: [
-        { p: 'Inside DDRiVE-M, members of your organisation see records according to their role. Other organisations cannot see your organisation’s records; the database refuses those requests. Official PAGASA alerts are shared with everyone.' },
-        { p: 'Outside DDRiVE-M, these providers process information so the service can work:' },
-        {
-          table: {
-            head: ['Provider', 'What for', 'Information involved'],
-            rows: [
-              ['Supabase', 'Database, sign-in, sign-in emails, server functions and file storage', `Everything stored in the app. Hosting region: ${fact(F.hostingRegion)}.`],
-              ['Google', 'The map on the Detection screen, the fonts the app uses, and "Sign in with Google" if you choose it', 'Your IP address and browser details when the map or fonts load; your Google account email if you sign in with Google'],
-              ['YouTube (Google)', 'The video on the Home page, only after you press play', 'Your IP address and browser details'],
-              ['PAGASA', 'We read PAGASA’s public alert feed', 'None: we send PAGASA nothing about you'],
-            ],
-          },
-        },
-        { p: 'We share information with anyone else only if the law requires it, for example a court order, and we tell your organisation unless the law forbids it.' },
+        { p: 'The platform owner identifies Supabase as the provider used for database and authentication services. The owner-supplied hosting region is Northeast Asia. This region must be verified against the live Supabase project configuration, and the applicable provider terms, subprocessors, backup locations and support-access arrangements must be reviewed before this policy is treated as final.' },
+        { p: 'Other third-party services may be used for functions such as maps, fonts, identity sign-in, video or public hazard information. The services actually loaded by the deployed version, their purposes and the information they receive must be maintained in a current third-party services inventory.' },
+        { p: 'Information may also be disclosed where required by law or valid legal process, or where necessary to protect vital interests, public safety or the security of the service, subject to applicable law and documented procedures.' },
+        { p: 'The platform must not be represented as sharing data only with the providers listed here until the production dependency, network-request and subprocessor inventories have been checked.' },
       ],
     },
     {
-      id: 'google',
-      title: '5. If you sign in with Google',
+      id: 'location',
+      title: '5. Hosting and international transfers',
       blocks: [
-        { p: 'You can sign in to DDRiVE-M with your Google account instead of a password. When you do, Google shares only basic profile information with DDRiVE-M, through the "openid", "email" and "profile" permissions:' },
-        {
-          table: {
-            head: ['Google user data', 'How DDRiVE-M uses it'],
-            rows: [
-              ['Your name', 'Shown in your account and next to records you create or change, so your team knows who did what'],
-              ['Your email address', 'Your sign-in name; used to add you to your organisation and to send account emails such as sign-in links'],
-              ['Your profile picture address', 'Not used. It may be stored with your sign-in record by our sign-in provider'],
-              ['Your Google account identifier', 'Links your Google account to your DDRiVE-M account so you can sign in again'],
-            ],
-          },
-        },
-        {
-          ul: [
-            'DDRiVE-M does not ask for, and cannot reach, your Gmail, Drive, Calendar, Contacts or any other Google data.',
-            'Google user data is used only to sign you in and run your account. It is not used for advertising, not sold, not used to train AI models, and not shared with anyone except Supabase, our sign-in and database provider, which stores it for us.',
-            'People in your organisation see your name and email address; other organisations do not.',
-            'It is kept while your account is active, and deleted with your account as set out in section 8.',
-            'You can disconnect DDRiVE-M from your Google account at any time at myaccount.google.com/permissions. To delete the information we hold, email our Data Protection Officer (section 12).',
-          ],
-        },
-        { p: 'DDRiVE-M’s use and transfer of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements.' },
-      ],
-    },
-    {
-      id: 'transfers',
-      title: '6. Where it is stored',
-      blocks: [
-        { p: `Your information is stored by Supabase in its ${fact(F.hostingRegion)} region. Google’s services may process information outside the Philippines. Under section 21 of RA 10173 we remain responsible for personal information we transfer, and we use providers that commit to protecting it to a comparable standard.` },
+        { p: `The platform owner has identified the Supabase host region as ${fact(F.hostingRegion)}. This is an owner-supplied configuration statement, not an independent verification of the live production project or of every backup, support or subprocessor location.` },
+        { p: 'Where personal information is transferred or made accessible outside the Philippines, the responsible personal information controller and processor must assess the transfer, contractual safeguards, security measures and accountability requirements under the Data Privacy Act and applicable rules. The location of the primary database alone does not establish the location of all processing.' },
       ],
     },
     {
       id: 'security',
-      title: '7. How we protect it',
+      title: '6. Security and confidentiality',
       blocks: [
-        {
-          ul: [
-            'Connections to DDRiVE-M are encrypted (HTTPS), and our hosting provider encrypts stored data.',
-            'Access rules are enforced in the database for every organisation and role, so a fault in a screen cannot show another organisation’s records.',
-            'Passwords are stored only as one-way hashes by the sign-in provider. We cannot see them.',
-            'Every change to a record is logged with who made it and when. Approved plans are locked against changes.',
-            'Server keys never reach your device, and the app refuses to be built with one.',
-          ],
-        },
-        { note: 'Two-step sign-in (multi-factor authentication) is not available yet. It is planned; until then, use a long, unique password.' },
-        { p: 'If a personal data breach is likely to cause serious harm, we will notify the National Privacy Commission and the people affected within 72 hours of finding out, as NPC Circular 16-03 requires. Where your organisation is the controller, we will notify it without delay so it can do the same.' },
+        { p: 'ASilva Innovations is committed to applying appropriate organisational, physical and technical safeguards proportionate to the nature of the information and the risks of disaster-related processing.' },
+        { p: 'The production security statement must be supported by evidence for the deployed configuration, including authentication and role controls, organisation-level access isolation, database policies, encryption in transit and at rest, privileged access, secrets management, audit logging, backup and restoration, vulnerability management, incident response and personnel confidentiality.' },
+        { note: 'The existence of source code, a database policy or a design document is not by itself proof that a control is correctly configured or operating in production. Do not rely on this policy as a certification that every listed safeguard has passed independent testing.' },
+        { p: 'Users must protect their credentials, use approved devices and accounts, report suspected unauthorised access promptly and avoid exporting or sharing records outside authorised channels.' },
       ],
     },
     {
       id: 'retention',
-      title: '8. How long we keep it',
+      title: '7. Retention and deletion',
       blocks: [
-        {
-          table: {
-            head: ['Information', 'How long', 'Why'],
-            rows: [
-              ['Account', 'While the account is active, and 2 years after it is closed', 'Running the service and legal compliance'],
-              ['Organisation records and their change history', 'As long as the organisation keeps its workspace. When it closes, we delete them after the organisation has had the chance to export them, unless a law requires us to keep them.', 'They belong to the organisation'],
-              ['Support requests', '3 years from your last message', 'Service improvement and resolving disputes'],
-              ['Official alert feed logs', '30 days', 'Checking that alerts are arriving'],
-              ['Hosting logs', 'As kept by our hosting provider, up to 90 days', 'Security monitoring and fixing faults'],
-            ],
-          },
-        },
+        { p: 'Information should be retained only for as long as necessary for the declared purpose, applicable legal obligations, operational accountability and any documented records-management schedule.' },
+        { p: 'Retention periods differ by record type and by the organisation using the service. The organisation acting as controller must establish and communicate the applicable retention schedule for its records. ASilva Innovations must document retention for account administration, support, security logs, backups and service operations.' },
+        { p: 'Deletion requests may be subject to legal retention requirements, public records obligations, investigation holds, backup cycles or the rights of other data subjects. Where deletion cannot be completed immediately, the responsible party should explain the reason and the applicable schedule.' },
       ],
     },
     {
       id: 'rights',
-      title: '9. Your rights',
+      title: '8. Data subject rights and requests',
       blocks: [
-        { p: 'Under RA 10173 you have the right to be informed, to access your personal information, to object to processing, to have it erased or blocked, to have it corrected, to receive it in a portable format, to claim damages, and to file a complaint with the National Privacy Commission.' },
-        { p: `To use these rights, email our Data Protection Officer at ${F.dpoEmail}. We aim to reply within 14 business days. If the request concerns records your organisation holds, we will pass it to your organisation and help it reply.` },
+        { p: 'Subject to the Data Privacy Act and applicable exceptions, data subjects may exercise rights including being informed, access, correction, objection, erasure or blocking, data portability and complaint.' },
+        { p: `For privacy questions or requests involving ASilva Innovations’ own processing, contact the Data Protection Officer at ${F.dpoEmail}. If the information was entered by an LGU, agency or other customer organisation and that organisation determines the purpose of processing, the request may need to be directed to that organisation. We will route requests appropriately where possible.` },
+        { p: 'Requests will be handled within the periods required by applicable law. Any service target published by the organisation must not shorten or replace a statutory deadline.' },
+      ],
+    },
+    {
+      id: 'breach',
+      title: '9. Personal data breaches',
+      blocks: [
+        { p: 'Suspected or confirmed personal data breaches must be reported promptly through the organisation’s designated incident channel and to the Data Protection Officer. The responsible controller must assess the nature, scope, risk and notification obligations under the Data Privacy Act, its implementing rules and applicable National Privacy Commission issuances.' },
+        { p: 'Where notification to the National Privacy Commission and affected data subjects is legally required, the responsible controller must meet the applicable notification conditions and deadlines. A processor must notify the controller without undue delay in accordance with the applicable agreement and incident-response procedure.' },
+        { p: 'Do not treat this policy as a substitute for the incident-response plan, breach register, notification decision record or controller–processor notification procedure.' },
       ],
     },
     {
       id: 'children',
-      title: '10. Children',
+      title: '10. Information about children and vulnerable people',
       blocks: [
-        { p: 'DDRiVE-M accounts are for people aged 18 and over. Organisations may need to record information about minors, for example in an evacuation list; the organisation is responsible for that information as its controller.' },
+        { p: 'Disaster operations may require organisations to process information about children, older persons, persons with disabilities, displaced people and other at-risk groups. Such processing requires heightened necessity, proportionality, access, security and retention safeguards.' },
+        { p: 'The organisation determining the purpose of processing must ensure that the processing is lawful, necessary for the stated purpose, appropriately disclosed and restricted to authorised personnel. Avoid collecting information about children or vulnerable people merely because a field is available.' },
       ],
     },
     {
       id: 'changes',
       title: '11. Changes to this policy',
       blocks: [
-        { p: 'When we change this policy we update the date at the top. For important changes, we tell account holders by email or in the app at least 30 days before the change takes effect.' },
+        { p: 'This policy will be reviewed when the platform’s processing purposes, features, providers, hosting arrangements or legal requirements materially change. The updated date will be shown at the top of the policy page. Material changes should be communicated through an appropriate channel.' },
       ],
     },
     {
       id: 'contact',
-      title: '12. Contact',
+      title: '12. Data Protection Officer and contact details',
       blocks: [
-        {
-          table: {
-            head: ['', ''],
-            rows: [
-              ['Data Protection Officer', fact(F.dpoName)],
-              ['Email', `${F.dpoEmail} or ${F.privacyEmail}`],
-              ['Phone', F.phone],
-              ['Address', `${F.publisher}, ${F.address}`],
-              ['NPC registration', fact(F.npcRegistration)],
-            ],
-          },
-        },
-        { p: 'If you are not satisfied with our answer, you can complain to the National Privacy Commission at privacy.gov.ph.' },
+        { table: {
+          head: ['Item', 'Details'],
+          rows: [
+            ['Publisher / service operator', F.publisher],
+            ['Data Protection Officer (owner-supplied designation)', fact(F.dpoName)],
+            ['DPO contact email', F.dpoEmail],
+            ['General enquiries', F.generalEmail],
+            ['Privacy enquiries', F.privacyEmail],
+            ['Business address', F.address],
+            ['Supabase primary host region (owner-supplied; verify live configuration)', fact(F.hostingRegion)],
+            ['NPC registration reference', fact(F.npcRegistration)],
+          ],
+        } },
+        { p: 'You may also contact the National Privacy Commission through its official website at privacy.gov.ph.' },
       ],
     },
   ],

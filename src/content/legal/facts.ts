@@ -1,9 +1,7 @@
-// Central facts used by the public legal and policy pages.
-// The values below were supplied by the platform owner. They must still be checked against
-// the live Supabase project settings and the organisation's formal privacy-governance records
-// before the policy-review gate is lifted.
+// Central facts used by DDRiVE-M public legal and policy pages.
+// Owner-supplied values are recorded here once. `reviewed` stays false until
+// documentary and technical verification and the required approvals are complete.
 export const LEGAL_FACTS = {
-  // Keep false until the DPO, management and Philippine privacy counsel complete the publication checklist.
   reviewed: false,
 
   publisher: 'ASilva Innovations',
@@ -14,16 +12,18 @@ export const LEGAL_FACTS = {
   legalEmail: 'legal@asilvainnovations.com',
   phone: '+63 917 855 5134',
 
-  /** Data Protection Officer name supplied by the platform owner; appointment evidence remains a governance record. */
+  // Supplied by the platform owner; formal appointment evidence must be retained.
   dpoName: 'Alvin M. Silva' as string | null,
-  /** NPC registration of the data processing system, if registration applies. */
-  npcRegistration: null as string | null,
-  /** Supabase host region supplied by the platform owner; verify against Supabase Dashboard → Settings → General. */
+
+  // Supplied by the platform owner; verify in the live Supabase project settings.
   hostingRegion: 'Northeast Asia' as string | null,
+
+  // Do not publish a registration number until its applicability and details are verified.
+  npcRegistration: null as string | null,
 
   effective: '2026-11-05',
   updated: '2026-11-05',
-};
+} as const;
 
 export const TO_CONFIRM = 'to be confirmed';
-export const fact = (v: string | null): string => v ?? TO_CONFIRM;
+export const fact = (value: string | null | undefined): string => value ?? TO_CONFIRM;
