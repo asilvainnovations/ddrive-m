@@ -1,16 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { GOOGLE_CLIENT_ID, renderGoogleButton } from '@/lib/googleSignIn';
 import { X, Mail, Lock, User as UserIcon, Loader2 } from 'lucide-react';
 import DDriveLogo from './DDriveLogo';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
 
 const LoginModal: React.FC = () => {
-  const { loginModalOpen, closeLogin, signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
+  const { loginModalOpen, closeLogin, signInWithEmail, signUpWithEmail, signInWithGoogle, sendPasswordReset } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Google's own button, when a Client ID is configured (VITE_GOOGLE_CLIENT_ID). If Google cannot be
+  // reached, the redirect button below is shown instead.
+  const googleBox = useRef<HTMLDivElement>(null);
+  const [googleReady, setGoogleReady] = useState(false);
+  const [googleFailed, setGoogleFailed] = useState(false);
+  useEffect(() => {
+    if (!loginModalOpen || !GOOGLE_CLIENT_ID || !googleBox.current) return;
+    let live = true;
+    renderGoogleButton(googleBox.current, Math.min(380, googleBox.current.clientWidth || 380), (error) => {
+      if (error) toast.error(error);
+      else {
+        toast.success('Signed in with Google');
+        closeLogin();
+      }
+    })
+      .then(() => live && setGoogleReady(true))
+      .catch(() => live && setGoogleFailed(true));
+    return () => { live = false; };
+  }, [loginModalOpen, closeLogin]);
 
   // Escape closes the window, as people expect from a dialog.
   useEffect(() => {
@@ -146,9 +168,25 @@ const LoginModal: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password (at least 12 characters)"
+                aria-label="Password"
                 className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm outline-none focus:border-blue-500"
               />
             </div>
+            {mode === 'signin' && (
+              <button
+                type="button"
+                className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline"
+                onClick={async () => {
+                  if (!/^\S+@\S+\.\S+$/.test(email)) { toast.error('Enter your email address first.'); return; }
+                  const { error } = await sendPasswordReset(email);
+                  // Same message whether or not an account exists, so the form cannot be used to find accounts.
+                  if (error && !/rate limit/i.test(error)) toast.error(error);
+                  else toast.success('If an account exists for that address, we have emailed a link to reset the password.');
+                }}
+              >
+                Forgot your password?
+              </button>
+            )}
 
             <button
               type="submit"
@@ -168,7 +206,15 @@ const LoginModal: React.FC = () => {
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
           </div>
 
+          {GOOGLE_CLIENT_ID && !googleFailed && (
+            <div className="flex justify-center min-h-[44px]">
+              <div ref={googleBox} className="w-full flex justify-center" aria-label="Sign in with Google" />
+              {!googleReady && <span role="status" className="text-xs text-slate-500 self-center">Loading Google sign-in…</span>}
+            </div>
+          )}
+          {(!GOOGLE_CLIENT_ID || googleFailed) && (
           <button
+            type="button"
             onClick={handleGoogle}
             disabled={loading}
             className="w-full py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition disabled:opacity-60"
@@ -193,10 +239,12 @@ const LoginModal: React.FC = () => {
             </svg>
             Continue with Google
           </button>
+          )}
 
           <p className="text-[11px] text-center text-slate-500 mt-4 font-poppins">
-            By continuing you agree to DDRiVE-M's Terms of Service and acknowledge
-            data handling per RA 10173 (Data Privacy Act).
+            By continuing you agree to DDRiVE-M’s{' '}
+            <Link to="/terms-of-service" onClick={closeLogin} className="underline">Terms of Service</Link> and acknowledge the{' '}
+            <Link to="/privacy-policy" onClick={closeLogin} className="underline">Privacy Policy</Link> (RA 10173).
           </p>
         </div>
       </div>
