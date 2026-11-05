@@ -90,7 +90,7 @@ try {
     check(t.includes('Supabase') && !/Stripe|Hotjar|Privacy Shield|ISO 27001 Certified/i.test(t), 'The Privacy Policy names DDRiVE-M’s real processors and none it does not use');
     await shot(page, 'privacy');
     await page.goto(`${APP}/privacy-policy`); await settle(page, 1000);
-    check(page.url().endsWith('/policies/privacy'), 'The old privacy-policy address redirects');
+    check(page.url().endsWith('/privacy-policy') && (await text(page)).includes('If you sign in with Google'), 'The privacy policy opens at /privacy-policy itself');
     await page.goto(`${APP}/policies/ai-ethics`); await settle(page, 1000);
     t = await text(page);
     check(t.includes('Alvin Silva') && t.includes('not connected yet'), 'The AI policy is signed and says plainly that DDRiVER AI is not connected yet');
