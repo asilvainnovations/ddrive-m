@@ -5,7 +5,9 @@
 export const LOGO_SOURCE_URL = 'https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png';
 export const LOGO_LOCAL_URL = '/icons/ddrive-m-logo-512.png';
 
+// The app's name, exactly as on the Google OAuth consent screen and the Home page (Google checks they match).
 export const SITE_NAME = 'DDRiVE-M';
+export const SITE_FULL_NAME = 'Data-Driven Risk and Vulnerability Evaluation and Management';
 export const SITE_TAGLINE = 'Risk and resilience intelligence for disaster risk reduction, climate adaptation and continuity';
 export const PUBLISHER = 'ASilva Innovations';
 export const SITE_URL = 'https://ddrive-m.asilvainnovations.com';

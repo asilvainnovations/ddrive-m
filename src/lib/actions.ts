@@ -29,6 +29,9 @@ export interface NewHazard {
   lat: number;
   lng: number;
   psgc_code?: string | null;
+  /** The official alert this record was logged from, if any. */
+  official_alert_id?: string | null;
+  source_url?: string | null;
 }
 
 export async function reportHazard(h: NewHazard): Promise<ActionResult> {
@@ -152,5 +155,29 @@ export async function setRiskThresholds(tenantId: string, critical: number, high
   const { error } = await supabase.rpc('ddrive_set_risk_thresholds', {
     p_tenant: tenantId, p_critical: critical, p_high: high, p_medium: medium,
   });
+  return result(error);
+}
+
+// ─── Watch areas (provinces whose official alerts an organisation follows) ────
+export interface WatchArea {
+  id: string;
+  label: string;
+  psgc_code: string | null;
+}
+
+export async function listWatchAreas(tenantId: string): Promise<WatchArea[]> {
+  const { data } = await supabase.from('ddrive_watch_areas').select('id, label, psgc_code').eq('tenant_id', tenantId).order('label');
+  return (data ?? []) as WatchArea[];
+}
+
+/** Province name as the agency writes it (e.g. "Leyte"); the PSGC code is optional (9 or 10 digits). DRRM officer or above. */
+export async function addWatchArea(label: string, psgcCode: string | null): Promise<ActionResult> {
+  const { error } = await supabase.from('ddrive_watch_areas').insert({ label: label.trim(), psgc_code: psgcCode || null });
+  if (error && /duplicate key/i.test(error.message)) return { error: `${label.trim()} is already a watch area.` };
+  return result(error);
+}
+
+export async function removeWatchArea(id: string): Promise<ActionResult> {
+  const { error } = await supabase.from('ddrive_watch_areas').delete().eq('id', id);
   return result(error);
 }
