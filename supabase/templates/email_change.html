@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Confirm your new email address</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;-webkit-text-size-adjust:100%;">
+<!-- Inbox preview text -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f1f5f9;">One step left to change the email on your DDRiVE-M account.&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f1f5f9" style="background:#f1f5f9;">
+<tr><td align="center" style="padding:32px 12px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #e2e8f0;">
+    <!-- Header -->
+    <tr><td bgcolor="#1e3a8a" style="background:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#0c4a6e 100%);padding:28px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td style="padding-right:14px;"><img src="https://ddrive-m.asilvainnovations.com/icons/ddrive-m-logo-512.png" width="56" height="56" alt="" style="display:block;width:56px;height:56px;border-radius:50%;border:3px solid #fcd34d;background:#ffffff;"></td>
+        <td style="font-family:'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+          <div style="font-size:24px;line-height:28px;font-weight:800;color:#ffffff;letter-spacing:.2px;">DDRiVE-M</div>
+          <div style="font-size:12px;line-height:18px;color:#fcd34d;font-weight:600;">Data-Driven Risk and Vulnerability Evaluation and Management</div>
+        </td>
+      </tr></table>
+    </td></tr>
+    <!-- Body -->
+    <tr><td style="padding:36px 32px 32px;font-family:'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+      <h1 style="margin:0 0 20px;font-size:26px;line-height:32px;font-weight:800;color:#1e3a8a;">Confirm your new email address</h1>
+      <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#0f172a;">{{ if .Data.full_name }}Hi {{ .Data.full_name }},{{ else }}Hello,{{ end }}</p><p style="margin:0 0 14px;font-size:16px;line-height:26px;color:#334155;">You asked to change the email address on your DDRiVE-M account from <strong>{{ .Email }}</strong> to <strong>{{ .NewEmail }}</strong>.</p><p style="margin:0 0 14px;font-size:16px;line-height:26px;color:#334155;">Confirm to finish. Sign-in links and account messages will then go to the new address.</p><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 8px;">
+  <tr><td align="center" bgcolor="#f59e0b" style="border-radius:999px;background:#f59e0b;">
+    <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 32px;font-family:'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#0f172a;text-decoration:none;border-radius:999px;">Confirm new email address</a>
+  </td></tr>
+</table>
+<p style="margin:16px 0 0;font-size:13px;line-height:20px;color:#64748b;">Button not working? Copy this link into your browser:<br>
+<a href="{{ .ConfirmationURL }}" style="color:#1d4ed8;word-break:break-all;">{{ .ConfirmationURL }}</a></p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+  <tr><td style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:14px 16px;font-family:'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#78350f;">Didn’t ask for this? Don’t press the button. Change your password and tell your organisation’s administrator.</td></tr>
+</table>
+    </td></tr>
+    <!-- Footer -->
+    <tr><td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:22px 32px;font-family:'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#64748b;">
+      <p style="margin:0 0 8px;">DDRiVE-M staff will never ask for your password or verification codes.</p>
+      <p style="margin:0 0 8px;">DDRiVE-M relays official warnings; it does not issue them. In an emergency, call 911 or your local DRRM office.</p>
+      <p style="margin:0;">Sent by DDRiVE-M, a product of ASilva Innovations, Muntinlupa City, Philippines ·
+        <a href="{{ .SiteURL }}/privacy-policy" style="color:#1d4ed8;">Privacy Policy</a> ·
+        <a href="{{ .SiteURL }}/terms-of-service" style="color:#1d4ed8;">Terms</a> ·
+        <a href="{{ .SiteURL }}/support" style="color:#1d4ed8;">Help</a></p>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
