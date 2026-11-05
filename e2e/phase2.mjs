@@ -75,7 +75,7 @@ try {
     t = await text(page);
     check(t.includes('Now watching Leyte') && t.includes('083700000'), 'Administrator adds Leyte; its PAGASA code is filled in from the alert');
 
-    await page.goto(`${APP}/`); await settle(page, 3000);
+    await page.goto(`${APP}/dashboard`); await settle(page, 3000);
     t = await text(page);
     check(t.includes('1 PAGASA alert in your watch areas'), 'Dashboard status shows the alert in the watch area', t.match(/PAGASA[^.]{0,80}/)?.[0]);
     const bell = page.getByRole('button', { name: /Official alerts: 1 in your watch areas/ });
@@ -135,7 +135,7 @@ try {
   {
     await fetch(`${API}/rest/v1/ddrive_ingest_runs?id=gt.0`, { method: 'DELETE', headers: { authorization: `Bearer ${SERVICE}` } });
     const { page, ctx } = await pageAs(browser, 'admin@a.ph');
-    await page.goto(`${APP}/`); await settle(page, 3000);
+    await page.goto(`${APP}/dashboard`); await settle(page, 3000);
     let t = await text(page);
     check(t.includes('may be out of date'), 'With no recent feed reading, the dashboard warns that alerts may be out of date');
     await page.goto(`${APP}/detection`); await settle(page);
