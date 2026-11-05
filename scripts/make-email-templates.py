@@ -1,6 +1,6 @@
 # Builds supabase/templates/*.html from one layout. Edit here, re-run, commit the HTML.
 import json, os
-LOGO = "https://appimize.app/assets/apps/user_1097/images/b4e60d94a143_503_1097.png"
+LOGO = "https://ddrive-m.asilvainnovations.com/icons/ddrive-m-logo-512.png"
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "supabase", "templates")
 FONT = "'Poppins','Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 
