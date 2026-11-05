@@ -1,9 +1,9 @@
-// Facts the policies depend on. Only ASilva Innovations can confirm these; nothing here may be guessed.
-//
-// While `reviewed` is false, every policy page shows a "draft under review" notice. Set it to true once
-// counsel and the Data Protection Officer have reviewed the five policies and every `null` below is filled
-// in. Values that are still null are shown on the pages as "to be confirmed", never left blank.
+// Central facts used by the public legal and policy pages.
+// The values below were supplied by the platform owner. They must still be checked against
+// the live Supabase project settings and the organisation's formal privacy-governance records
+// before the policy-review gate is lifted.
 export const LEGAL_FACTS = {
+  // Keep false until the DPO, management and Philippine privacy counsel complete the publication checklist.
   reviewed: false,
 
   publisher: 'ASilva Innovations',
@@ -14,12 +14,12 @@ export const LEGAL_FACTS = {
   legalEmail: 'legal@asilvainnovations.com',
   phone: '+63 917 855 5134',
 
-  /** Name of the Data Protection Officer (RA 10173 and NPC Circular 2022-04). */
-  dpoName: null as string | null,
-  /** NPC registration of the data processing system, if registration applies (NPC Circular 2022-04). */
+  /** Data Protection Officer name supplied by the platform owner; appointment evidence remains a governance record. */
+  dpoName: 'Alvin M. Silva' as string | null,
+  /** NPC registration of the data processing system, if registration applies. */
   npcRegistration: null as string | null,
-  /** Supabase project region, from the Supabase dashboard: Settings → General (for example "Singapore (ap-southeast-1)"). */
-  hostingRegion: null as string | null,
+  /** Supabase host region supplied by the platform owner; verify against Supabase Dashboard → Settings → General. */
+  hostingRegion: 'Northeast Asia' as string | null,
 
   effective: '2026-11-05',
   updated: '2026-11-05',
