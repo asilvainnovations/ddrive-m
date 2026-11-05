@@ -30,8 +30,25 @@ function refuseServerKeys(env: Record<string, string>) {
 }
 
 // https://vitejs.dev/config/
+// On Vercel, a build without the Supabase settings would deploy an app that cannot reach its database.
+// They come from .env.production (committed) or the project's environment variables.
+function requireBackendOnVercel(env: Record<string, string>) {
+  if (!process.env.VERCEL) return;
+  const missing = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"].filter(
+    (k) => !env[k] && !(k === "VITE_SUPABASE_PUBLISHABLE_KEY" && env.VITE_SUPABASE_ANON_KEY)
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `[DDRiVE-M] ${missing.join(" and ")} not set. Push .env.production with git (GitHub's web upload drops files ` +
+        "whose names start with a dot), or set the variables in Vercel → Project → Settings → Environment Variables."
+    );
+  }
+}
+
 export default defineConfig(({ mode }) => {
-  refuseServerKeys(loadEnv(mode, process.cwd(), "VITE_"));
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  refuseServerKeys(env);
+  requireBackendOnVercel(env);
   return {
     server: {
       host: "::",
