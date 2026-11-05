@@ -47,7 +47,7 @@ JWT_SECRET="$JWT_SECRET" POSTGREST_URL="http://127.0.0.1:$REST_PORT" node "$ROOT
 for i in $(seq 1 30); do curl -s -o /dev/null "http://127.0.0.1:$REST_PORT/" && break; sleep 0.5; done
 
 echo "3/5 build"
-(cd "$ROOT" && VITE_SUPABASE_URL=http://127.0.0.1:54321 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_e2e_test_key npx vite build --logLevel error)
+(cd "$ROOT" && VITE_SUPABASE_URL=http://127.0.0.1:54321 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_e2e_test_key npx vite build --logLevel error && node scripts/prerender.mjs)
 
 echo "4/5 serve"
 (cd "$ROOT" && setsid npx vite preview --host 127.0.0.1 --port 4173 --strictPort > "$WORK/preview.log" 2>&1) & PIDS+=($!)
@@ -67,3 +67,6 @@ cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase
 
 echo "Phase 2b: public site, policies, PWA files and anticipatory action"
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2b.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+
+echo "Crawler view: pages without JavaScript and the Vercel routing"
+cd "$ROOT/e2e" && node crawler.mjs
