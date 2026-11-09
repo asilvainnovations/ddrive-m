@@ -1,10 +1,21 @@
-# DDRiVE-M Production-Readiness Audit
+# DDRiVE-M — Updated Production Readiness and Control Register
 
-Nov 3, 2026 · @Alvin · Repository: asilvainnovations/ddrive-m (main, commit baa3246)
+**Assessment date:** 5 November 2026  
+**Repository:** `asilvainnovations/ddrive-m` (`main`)  
+**Reviewed tree:** `87fa74c48856e6b2821e1662def6535098098f11`  
+**Status:** Independent source review; not a penetration test or production certification.
 
-## Bottom line
+## 1. Executive Summary
 
 DDRiVE-M is a strong concept and a working prototype, not yet a production platform: the React app does not build, and most "live" figures are hard-coded. The domain thinking is the asset. The seven-phase cycle, the Philippine framework coverage (RA 10121, PSCP, Gawad Kalasag, ICS, FPIC) and the hazard-agency integrations are well chosen. What is missing is the engineering spine underneath them.
+
+The repository has advanced materially from the earlier prototype state. Current source includes a React/Vite application, authenticated routing, versioned Supabase migrations, tenant and membership tables, role helpers, Row Level Security policies, named write actions, official PAGASA CAP ingestion, architecture decision records, end-to-end test harnesses and a dedicated RA 12287 anticipatory-action workflow.
+
+The earlier audit statements that the app had no AuthProvider, no migrations/RLS, no official alert ingestion, no tenant model, or only a fake browser-side AI assistant are outdated when applied to the current `main` tree. They must not be repeated as current facts.
+
+However, **repository evidence does not establish production readiness**. The live Supabase project, scheduled ingestion, deployed policies, restore process, operational staffing, EOC facilities, reporting workflow, CDRA completeness and formal LGU user acceptance were not independently verified. The RA 12287 ADR expressly records that IRR graduated disbursement rules are not yet encoded.
+
+**Recommended disposition:** controlled pre-production / limited pilot only, with operational use restricted to workflows whose data, authority, training and contingency controls have been accepted by the adopting organisation. Do not represent the platform as a certified EOC, complete CDRA system, complete response-reporting system, or legally validated anticipatory-finance engine.
 
 | Area | Rating today | Why |
 | --- | --- | --- |
@@ -15,11 +26,29 @@ DDRiVE-M is a strong concept and a working prototype, not yet a production platf
 | UX and accessibility | Partial | Attractive visual language; ARIA labels in 1 of 30 components; English only |
 | Domain fit (PH DRRM-CCA) | Strong | Right frameworks, agencies and use cases; needs sourcing and versioning of the rules |
 
-Recommended path: a 4-phase, roughly 6-month programme. Phase 0 (2 weeks) makes the app build, removes misleading data and closes the privacy gaps. Phase 1 builds the data and security foundation. Phase 2 connects real hazard feeds and real AI. Phase 3 certifies against ISO 22301-aligned operations, OWASP ASVS Level 2, WCAG 2.2 AA and NPC registration.
+**Recommended path:** a 4-phase, roughly 6-month programme. Phase 0 (2 weeks) makes the app build, removes misleading data and closes the privacy gaps. Phase 1 builds the data and security foundation. Phase 2 connects real hazard feeds and real AI. Phase 3 certifies against ISO 22301-aligned operations, OWASP ASVS Level 2, WCAG 2.2 AA and NPC registration.
 
 ## Intent versus implementation
 
 The intended product is a resilience intelligence cycle for LGUs, agencies, enterprises and NGOs across Asia, with the Philippines as the home market. Each phase has a React module, and most read a Supabase table. But the router (\`App.tsx\`) mounts only 6 routes, 4 of them the older broken pages, so clicking any module except Dashboard (10 of 11) in the sidebar lands on the 404 page. No module ingests an external feed.
+
+## 2. What Changed Since the Earlier Audit
+
+| Earlier audit claim | Current source finding | Disposition |
+|---|---|---|
+| Build blocked by old broken RiskAssessment page and dozens of TS errors | Current main has a reworked route/module structure and strict TypeScript configuration; no fresh build was executed in this review | Supersede old claim; build result unverified |
+| Auth provider missing | `AuthProvider` is mounted in `src/App.tsx` | Resolved in repository; runtime auth still requires test |
+| No migrations or RLS | Versioned migrations and RLS policies are present; ADR-001 documents tenant/role model | Resolved in design/source; deployed database unverified |
+| Client-set roles / generic writes | Named actions and database role functions/policies are present | Materially improved; adversarial tests still required |
+| No official alert ingestion | PAGASA CAP Edge Function and ADR-002 are present | Resolved in code design; scheduler/feed health unverified |
+| Hard-coded dashboard figures | Dashboard source reads database-backed hooks and displays unavailable states for several unavailable sources | Materially improved; inspect every remaining static badge/metric in runtime acceptance |
+| False NDRRMC identity/default tenant | Previous default identity was removed in inspected current source | Resolved in inspected source; verify onboarding and tenant data |
+| Canned AI presents invented city scores | Current app labels DDRiVER AI as not connected | Resolved as an active production claim; AI remains not implemented |
+| FPIC localStorage / unsafe rendering | Standalone FPIC page includes training-only and local-browser warnings | Partial mitigation only; not approved for real community/consent records |
+| Security assessment form without privacy notice | Standalone security self-assessment has a consent/notice improvement | Partial; separate database and full data-flow review remain |
+| Standalone tools treated as integrated | Multiple standalone pages still exist | Open architecture/privacy/security boundary |
+
+### Verified, partial, unverified and gap controls
 
 | Phase | Intended capability | What the code does today | Main file |
 | --- | --- | --- | --- |
@@ -34,7 +63,67 @@ The intended product is a resilience intelligence cycle for LGUs, agencies, ente
 
 The repository also carries adjacent products: a Security Risk Self-Assessment that writes leads to a separate "Stronghold A3" database, an FPIC tracker, SPARC, PSCP templates and a Gawad Kalasag simulator. These are valuable, but they share no code, data model or login with the platform.
 
-## Critical findings (P0: fix before anyone relies on it)
+### Verified in repository (source-level only)
+- `AuthProvider` is mounted around the application routes.
+- Public Home and policy routes are separated from authenticated application routes.
+- Central module registry includes Detection, Diagnosis, Response, Anticipatory Action, Integration, Validation, Enhancement, Monitoring, Documents, Assistant and Settings.
+- Supabase migrations define tenant, membership, user, audit and domain structures.
+- RLS policies and role helper functions are defined in SQL.
+- Named server/database actions replace broad generic client-side table writes for the inspected workflows.
+- PAGASA CAP ingestion function and provenance-oriented ADR exist.
+- Anticipatory-action tables/functions/UI and ADR-003 exist.
+- The assistant is explicitly described as not connected yet.
+- The FPIC standalone tool includes a training-only notice and warns that browser-local records are not encrypted.
+
+### Partially verified
+- Tenant separation: policies exist, but the deployed database and complete access matrix have not been independently tested.
+- PAGASA ingestion: code exists, but production scheduler, monitoring, source uptime and real-world edge cases are unverified.
+- RA 12287: workflow is implemented in part, but IRR graduated disbursement rules are not encoded.
+- UNDRR scorecard: stored scoring exists, but evidence-backed indicator ownership and outcome traceability are incomplete.
+- Validation: scenarios and participation exist, but full exercise management, AAR and corrective-action closure are not evidenced.
+- Plan enhancement: templates/drafts exist, but approval, legal sufficiency, budget linkage and recovery planning are incomplete.
+- Monitoring: team messages and dashboard aggregation exist, but complete operational and resilience-outcome monitoring is not evidenced.
+- Offline: PWA assets can be cached; live operational records and current alerts are not thereby available offline.
+
+### Unverified (must not be described as passed)
+- Production Supabase project region, configuration, deployed migration versions and RLS enforcement.
+- Scheduled PAGASA polling and real feed behaviour under outage, delayed updates, malformed CAP and cancellations.
+- CI pipeline, current clean install, lint, typecheck, unit/integration/E2E and production build results.
+- Backup/restore, RPO/RTO, monitoring, incident response and key rotation.
+- MFA availability/enforcement and account recovery hardening.
+- Full static-page data flows, third-party scripts, XSS exposure and retention/deletion.
+- Formal privacy impact assessment, controller/processor contracts, NPC registration applicability and policy/legal sign-off.
+- LGU/EOC UAT, tabletop/functional exercise acceptance, training and institutional readiness.
+- LDDRMCO CY2026 toolkit indicator-level mapping; the workbook was not successfully parsed in the earlier review.
+
+### Gaps explicitly identified
+- Complete integrated CDRA including hazard, exposure, vulnerability, capacity, climate projections, spatial evidence and SADD.
+- Full EOC activation/operations, staffing/shift, resource/logistics, situation reporting, handover and demobilisation workflow.
+- DILG Region VIII harmonised pre-disaster, during-disaster, post-disaster and terminal report lifecycle.
+- IRR graduated disbursement controls for RA 12287.
+- Complete damage/loss/needs assessment and rehabilitation/recovery workflow aligned with NEDA guidance.
+- Evidence-backed MCR2030 scorecard linked to owners, baselines, targets, budgets, milestones and outcomes.
+- Integrated validation/AAR/corrective action lifecycle.
+- Production DDRiVER AI with tenant-scoped RAG, citations, safety and prompt-injection testing.
+
+### Severity and ownership
+
+Severity definitions and accountable role owners are in `TECHNICAL-FUNCTIONAL-BASELINE.md`, Section 4. The highest-priority controls are:
+
+| Priority | Control | Severity | Accountable owner |
+|---|---|---|---|
+| 1 | Live RLS and tenant isolation validation | Critical | Backend / Supabase security lead |
+| 2 | PAGASA ingestion freshness and production monitoring | Critical | Data integration lead |
+| 3 | RA 12287 legal workflow and graduated disbursement controls | Critical | DRRM domain lead + legal counsel + finance/control lead |
+| 4 | EOC operational capability and offline/degraded procedures | Critical | EOC operations lead + LGU DRRM authority |
+| 5 | Backup/restore and incident/breach response | Critical | Platform/SRE lead + DPO |
+| 6 | CDRA and climate-risk model | High | DRR/CCA technical lead + GIS/data lead |
+| 7 | Harmonised response reporting | High | DRRM operations lead + reporting/MEL lead |
+| 8 | Recovery and rehabilitation workflow | High | Recovery planning lead |
+| 9 | Privacy policy/PIA/static tool review | High | DPO + privacy counsel + security lead |
+| 10 | MCR2030 evidence and resilience outcome model | High | Resilience/MCR2030 lead |
+
+## 3. Critical findings (P0: fix before anyone relies on it)
 
 Ten issues block a credible launch. Each is either a crash, a security or privacy exposure, or a display that could mislead a responder during an actual event.
 
@@ -97,7 +186,7 @@ Ten issues block a credible launch. Each is either a crash, a security or privac
 
 DDRiVE-M names the right frameworks but implements them as labels and fixed percentages. Production means each framework becomes a versioned rule set with clauses, evidence and an owner, so a score can be traced to the clause and document behind it.
 
-### Philippine laws and policies
+### 4. Philippine Laws and Policies
 
 | Instrument | Where it bites in DDRiVE-M | Gap today | What to build |
 | --- | --- | --- | --- |
@@ -111,7 +200,7 @@ DDRiVE-M names the right frameworks but implements them as labels and fixed perc
 | PSA Philippine Standard Geographic Code | Every location field | Free-text locations | PSGC codes from region to barangay as the location key |
 | RA 12287 (Declaration of State of Imminent Disaster Act, 2025) and its IRR | Detection-to-Response hand-off, anticipatory action, LDRRMF use before impact | Not modelled; the cycle jumps from hazard to incident with no forecast-based trigger step | Pre-disaster risk assessment, trigger and lead-time rules held as editable parameters, declaration and lifting records, anticipatory action fund tracking. Settle contested readings with OCD before encoding |
 
-### Global standards
+## 5. Global Standards
 
 | Standard | Use in DDRiVE-M | Target |
 | --- | --- | --- |
@@ -126,7 +215,7 @@ DDRiVE-M names the right frameworks but implements them as labels and fixed perc
 | NIST AI RMF 1.0, ISO/IEC 42001, OWASP Top 10 for LLM Applications | DDRiVER AI and plan generator | Grounded answers with citations, human sign-off on generated plans, prompt-injection testing, model card |
 | NIST CSF 2.0 | Client-facing security assessment | Map the Security Self-Assessment questions to CSF functions |
 
-## Target architecture
+## 6. Target Architecture
 
 Keep the current stack (React, Vite, Supabase) and add the missing layers rather than rewriting. The decisive change is a single governed data core, so every phase reads the same tenant-scoped, audited records instead of its own table or local storage.
 
@@ -134,14 +223,14 @@ Keep the current stack (React, Vite, Supabase) and add the missing layers rather
 
 Key decisions to record as architecture decision records:
 
-1. **Monorepo with one app.** Port the standalone pages (ICS simulator, PSCP, Gawad Kalasag, SPARC, FPIC) into routed React modules sharing auth and data; keep marketing pages in a separate static site.
-2. **Postgres is the system of record.** Versioned SQL migrations, RLS on every table keyed to `tenant_id` and role, PostGIS for hazards and exposure, PSGC codes on every location.
-3. **Ingestion is server-side and attributed.** Scheduled Edge Functions pull PAGASA CAP, PHIVOLCS and NOAH data, normalise to CAP fields, store the original payload and source URL, and stamp issued and expiry times. The UI only ever relays an agency's warning; it never invents one.
-4. **AI is a governed service.** One Edge Function holds model keys, retrieves from the tenant's registry and a curated policy corpus (RA 10121 and its IRR, NDRRMP, NAP, OCD PSCP guidance), returns citations, and logs every prompt and answer. Generated plans stay drafts until a named officer approves them.
-5. **Risk as a model, not a number.** Store hazard, exposure, vulnerability and capacity separately, so scores are explainable and recalculated when inputs change.
-6. **Offline-first field use.** A service worker caches the shell and the tenant's plans; incident and assessment forms queue locally and sync with conflict rules.
+6.1  **Monorepo with one app.** Port the standalone pages (ICS simulator, PSCP, Gawad Kalasag, SPARC, FPIC) into routed React modules sharing auth and data; keep marketing pages in a separate static site.
+6.2 **Postgres is the system of record.** Versioned SQL migrations, RLS on every table keyed to `tenant_id` and role, PostGIS for hazards and exposure, PSGC codes on every location.
+6.3 **Ingestion is server-side and attributed.** Scheduled Edge Functions pull PAGASA CAP, PHIVOLCS and NOAH data, normalise to CAP fields, store the original payload and source URL, and stamp issued and expiry times. The UI only ever relays an agency's warning; it never invents one.
+6.4 **AI is a governed service.** One Edge Function holds model keys, retrieves from the tenant's registry and a curated policy corpus (RA 10121 and its IRR, NDRRMP, NAP, OCD PSCP guidance), returns citations, and logs every prompt and answer. Generated plans stay drafts until a named officer approves them.
+6.5 **Risk as a model, not a number.** Store hazard, exposure, vulnerability and capacity separately, so scores are explainable and recalculated when inputs change.
+6.6 **Offline-first field use.** A service worker caches the shell and the tenant's plans; incident and assessment forms queue locally and sync with conflict rules.
 
-## Roadmap to production
+## 7. Roadmap to Production
 
 Four phases over about 6 months, each closed by a gate that someone outside the build team checks. Durations assume 2–3 engineers plus part-time DRRM, privacy and UX input; adjust once the team is confirmed.
 
@@ -197,7 +286,19 @@ Gate: third-party penetration test closed, WCAG 2.2 AA audit passed, first payin
 
 Evidence comes from a clean clone of `main` at commit baa3246 (50 commits, July–October 2026): `npm ci`, `npm run build`, `tsc --noEmit` on a copy with the one syntax error stubbed, `eslint .`, `npm audit`, and a read of every platform module and the standalone pages' data, storage and network code. The live Supabase project's RLS policies were not visible, so security findings about authorization describe what the repository does and does not define. Standards status was checked on 3 November 2026.
 
-Sources:
+## 8. Readiness Conclusion
+
+No numeric production-readiness score is issued in this update. The prior weighted score was a provisional expert estimate, not a measured test result. A numeric score would imply a level of measurement that is not supported by the current evidence set.
+
+Use three independent acceptance gates:
+
+1. **Technical Production Readiness:** build, migrations, RLS, security, backup/restore, monitoring, performance and release controls pass.
+2. **DRRM Functional Readiness:** CDRA, EOC, official alert, anticipatory action, response reporting, validation and recovery workflows pass against approved requirements.
+3. **Institutional Operational Readiness:** the adopting LGU/organisation has approved roles/SOPs, staffing, facilities, redundant communications, training, exercises, accessible procedures and governance arrangements.
+
+A pass in one gate does not imply a pass in the others.
+
+## Sources:
 
 - [OWASP ASVS project page (5.0.0 released 30 May 2025)](https://www.owasp.org/index.php/OWASP_Application_Security_Verification_Standard)
 - [NPC Circular No. 2022-04 (full text)](https://privacy.gov.ph/wp-content/uploads/2023/05/Circular-2022-04.pdf)
