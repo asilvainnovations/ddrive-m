@@ -145,7 +145,7 @@ Key decisions to record as architecture decision records:
 
 Four phases over about 6 months, each closed by a gate that someone outside the build team checks. Durations assume 2–3 engineers plus part-time DRRM, privacy and UX input; adjust once the team is confirmed.
 
-### Phase 0: Stop the bleeding (weeks 1–2)
+### Phase 0: Stop the bleeding
 
 Gate: the app builds and type-checks clean, and no screen shows a value that is not from data.
 
@@ -158,7 +158,7 @@ Gate: the app builds and type-checks clean, and no screen shows a value that is 
 - [ ] Delete fake JSON-LD rating; reconcile README with the repository
 - [ ] Move Supabase URL and keys to environment variables; run `npm audit fix`
 
-### Phase 1: Foundation (weeks 3–8)
+### Phase 1: Foundation
 
 Gate: an external reviewer passes the RLS test suite and an OWASP ASVS Level 1 checklist.
 
@@ -170,7 +170,7 @@ Gate: an external reviewer passes the RLS test suite and an OWASP ASVS Level 1 c
 - [ ] CSP and SRI headers; MFA for admin and EOC roles; 12-character password minimum
 - [ ] Privacy impact assessment, DPO named, retention schedule; decide on NPC registration
 
-### Phase 2: Real intelligence (weeks 9–16)
+### Phase 2: Real intelligence
 
 Gate: a tabletop exercise with one partner LGU runs end to end on live feeds, and every AI answer cites its source.
 
@@ -182,7 +182,7 @@ Gate: a tabletop exercise with one partner LGU runs end to end on live feeds, an
 - [ ] Offline mode for field forms; Filipino translation of core flows
 - [ ] Anticipatory action workflow under RA 12287: forecast trigger, pre-disaster risk assessment, declaration request, fund use, lifting report
 
-### Phase 3: Assurance and scale (weeks 17–24)
+### Phase 3: Assurance and scale
 
 Gate: third-party penetration test closed, WCAG 2.2 AA audit passed, first paying tenant live.
 
