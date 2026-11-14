@@ -1,19 +1,13 @@
-*Created with [AIPRM Prompt "All in One Programming Tools
-100%"](https://www.aiprm.com/prompts/softwareengineering/web-development/1788825768235896832/)*
-
-# MODE Rapid Mapping & Geospatial Intelligence
+## Rapid Mapping & Geospatial Intelligence
 
 ## Technical Specification and Implementation Blueprint
 
-**Prepared for:** City Government of Ormoc --- City Disaster Risk
-Reduction and Management Office\
-**Platform:** MODE --- EOC, Geo-COP, DDRiVE, SitRep and Document Vault\
 **Version:** 1.0 \| **Date:** 14 November 2026\
 **Status:** Proposed design baseline --- validate against the live
 repository and deployed database before implementation.
 
 > **Implementation note:** This document is a technical blueprint, not a
-> claim that MODE already has satellite imagery subscriptions, automated
+> claim that DDRiVE-M has has satellite imagery subscriptions, automated
 > image processing, a production PostGIS database, or a deployed GIS
 > worker. The Copernicus model is adapted as a set of design patterns:
 > event-based activations, Areas of Interest (AOIs), staged products,
