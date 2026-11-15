@@ -102,7 +102,7 @@ capacity, QA and staffing are established.
   -----------------------------------------------------------------------
   Assumption                          Required validation
   ----------------------------------- -----------------------------------
-  Supabase is MODE's system of record Confirm deployed project and schema
+  Supabase is DDRiVE-M 's system of record Confirm deployed project and schema
 
   Dexie/IndexedDB supports offline    Confirm current DB versions and
   persistence                         sync behavior
@@ -140,7 +140,7 @@ standardized products. MODE should adapt the concepts, not copy
 Copernicus' institutional roles, service guarantees or data assumptions.
 
   -----------------------------------------------------------------------
-  Copernicus pattern      MODE product            Operational question
+  Copernicus pattern      DDRiVE-M product            Operational question
   ----------------------- ----------------------- -----------------------
   Activation              Mapping Activation      What incident/task
                                                   requires mapping
@@ -229,10 +229,10 @@ release. Audience and publication status are separate controls.
 Field / Barangay Reports / Drone or Aerial Data / Approved Imagery
                               |
                               v
-                       MODE EOC Incident
+                       DDRiVE EOC Incident
                               |
                               v
-                    MODE Mapping Activation
+                    DDRiVE Mapping Activation
                               |
                     AOI + Product Work Orders
                               |
@@ -264,7 +264,7 @@ Field / Barangay Reports / Drone or Aerial Data / Approved Imagery
 ```
 
   ------------------------------------------------------------------------------------------
-  MODE module             Authoritative           MODE-RM integration
+  DDRiVE module             Authoritative           MODE-RM integration
                           responsibility          
   ----------------------- ----------------------- ------------------------------------------
   EOC                     Incident, activation    Starts mapping activation; consumes
