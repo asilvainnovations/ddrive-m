@@ -24,6 +24,7 @@ const Documents = lazy(() => import("@/components/ddrive/documentsModule/Documen
 const Assistant = lazy(() => import("@/components/ddrive/AIChatbot"));
 const Settings = lazy(() => import("@/components/ddrive/SettingsModule"));
 const AnticipatoryAction = lazy(() => import("@/components/ddrive/anticipatoryModule/AnticipatoryAction"));
+const RapidMapping = lazy(() => import("@/components/ddrive/rapidMappingModule/RapidMapping"));
 
 // Public pages: Home, policies and help. Readable without signing in.
 import SiteLayout from "@/site/SiteLayout";
@@ -78,6 +79,7 @@ const App = () => (
                     <Route path="diagnosis" element={<Diagnosis />} />
                     <Route path="response" element={<Response />} />
                     <Route path="anticipatory-action" element={<AnticipatoryAction />} />
+                    <Route path="rapid-mapping" element={<RapidMapping />} />
                     <Route path="integration" element={<Integration />} />
                     <Route path="validation" element={<Validation />} />
                     <Route path="enhancement" element={<Enhancement />} />

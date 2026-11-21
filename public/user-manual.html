@@ -1118,6 +1118,29 @@ code {
           </div>
         </div></div>
       </div>
+
+      <div class="coll-card">
+        <div class="coll-header" onclick="toggleColl(this.parentElement)">
+          <div class="coll-header-icon">🗺️</div>
+          <div class="coll-header-text"><div class="coll-header-title">Rapid Mapping</div><div class="coll-header-sub">Incident-linked map products, from field report to published version · Sidebar → Rapid Mapping</div></div>
+          <div class="coll-chevron">▾</div>
+        </div>
+        <div class="coll-body"><div class="coll-body-inner">
+          <p>Rapid Mapping turns field observations and GIS data into versioned map products for EOC decisions. Product types follow the Copernicus Rapid Mapping model: preliminary impact estimate (FEP), impact extent (DEL), damage/severity layer (GRA), baseline context package (REF) and map-supported situation update (SR).</p>
+          <div class="flow-steps" style="margin-top:8px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Open an activation for an incident</div><div class="flow-step-desc">Choose <strong>Open activation</strong>, pick the incident (and the RA 12287 case, if any) and write the operational question the mapping must answer. Analysts and above. A DRRM officer then <strong>activates</strong> it.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Define and approve the area of interest</div><div class="flow-step-desc">Upload or paste a GeoJSON polygon (for example a barangay boundary from your CLUP), or type a bounding box. Submit it; a DRRM officer who did not draw it approves it or returns it with a note. Every boundary change is kept in the history. Field teams see an area once it is approved.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Send field observations, online or offline</div><div class="flow-step-desc">Responders record what they see, where (<strong>Use my location</strong> or coordinates) and when. Without signal, choose <strong>Save on this device</strong>: the report is sent once the phone reconnects, and sending twice never creates a duplicate. Do not write residents' names or numbers. An analyst triages and field-verifies each report; the person who sent it cannot verify it.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Build the product</div><div class="flow-step-desc">Create a product on the area, then add layers: import GeoJSON or GeoPackage in EPSG:4326 (other coordinate systems are refused: reproject in QGIS first), or build a layer from the field-verified observations. Each layer records what it is (observed, modelled, inferred, reference), its source, time and file checksum. Fill in the methodology, limitations, confidence and information cut-off.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-body"><div class="flow-step-title">Review, verify and publish</div><div class="flow-step-desc">Submit the version. Another analyst accepts, returns or rejects it, and may ask for field verification. A DRRM officer who did not submit it verifies it and publishes it. An unverified product can go only to the internal EOC (responders and above) and is labelled <strong>PRELIMINARY</strong> everywhere; verified products can go to the whole organisation; public release also needs an administrator.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-body"><div class="flow-step-title">Update, link, export, close</div><div class="flow-step-desc">New evidence? <strong>Start new version</strong>: the layers are copied, and the published version stays until the new one is published, then becomes <em>superseded</em> but stays readable. Link a published version to the incident, case, document or plan it supports. Export GeoJSON, a CSV summary, metadata.json, or print/save as PDF (with legend, scale bar, north arrow, cut-off and disclaimer). A DRRM officer closes the activation once no drafts or reviews are open.</div></div></div>
+          </div>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body"><div class="callout-title">Preliminary is not a damage assessment</div><div class="callout-text">Preliminary products are for operational situational awareness. They are not final damage assessments and must not be the sole basis for legal, administrative or resource-allocation decisions. Damage classes must be approved by your organisation (Rapid Mapping → Damage classes); <em>unknown</em> and <em>not assessed</em> are always valid answers. The map is a schematic preview without basemap; use the exports in QGIS for full analysis.</div></div>
+          </div>
+        </div></div>
+      </div>
     </section>
 
     <!-- ============================= SECTION 7: PHASE 4 INTEGRATION ============================= -->
