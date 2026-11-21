@@ -33,11 +33,15 @@ const DetectionModule: React.FC = () => {
   const [fromAlert, setFromAlert] = useState<OfficialAlert | null>(null);
   const openForm = (alert: OfficialAlert | null) => { setFromAlert(alert); setShowAdd(true); };
   const alertType = (a: OfficialAlert) =>
-    /tropical cyclone/i.test(a.event) ? 'Typhoon'
-      : /tsunami/i.test(a.event) ? 'Tsunami'
+    /tsunami/i.test(a.event) ? 'Tsunami'
       : /storm surge/i.test(a.event) ? 'Storm Surge'
-      : /flood|rain/i.test(a.event) ? 'Flood'
-      : 'Typhoon';
+      : /tropical cyclone|typhoon/i.test(a.event) ? 'Typhoon'
+      : /earthquake/i.test(a.event) ? 'Earthquake'
+      : /volcan/i.test(a.event) ? 'Volcanic'
+      : /landslide/i.test(a.event) ? 'Landslide'
+      : 'Flood';
+  // The record names the agency that issued the alert; international sources are named as such.
+  const alertAgency = (a: OfficialAlert) => (a.source === 'PAGASA' ? 'PAGASA' : a.source === 'PTWC' ? 'PTWC (NOAA)' : `${a.source} (international)`);
 
   const filtered = selectedAgency ? hazards.filter(h => h.agency === selectedAgency) : hazards;
 
@@ -77,7 +81,7 @@ const DetectionModule: React.FC = () => {
             </div>
             <div>
               <h1 className="font-montserrat font-bold text-2xl">Detection Module</h1>
-              <p className="text-sm text-slate-500 font-poppins">Phase 1 · Hazard records with their source agency</p>
+              <p className="text-sm text-slate-500 font-poppins">Phase 1 · Official alerts from four sources, risk-informed by your assessments, and hazard records</p>
             </div>
           </div>
           <GatedButton min="responder" onClick={() => openForm(null)} className="px-3 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold flex items-center gap-2">
@@ -156,12 +160,10 @@ const DetectionModule: React.FC = () => {
               );
             })}
           </div>
-          <button
-            onClick={() => toast.info('Automatic agency feeds is not available yet.')}
-            className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-900 text-white font-semibold text-sm flex items-center justify-center gap-2"
-          >
-            <ExternalLink className="w-3.5 h-3.5" /> Sync External APIs
-          </button>
+          <p className="mt-4 text-xs text-slate-600 dark:text-slate-400">
+            Official alerts are read automatically every 10 minutes from PAGASA, the Pacific Tsunami Warning Center, USGS and GDACS (see their
+            update times above). Hazard records here are the organisation's own log.
+          </p>
         </GlassCard>
       </div>
 
@@ -226,11 +228,12 @@ const DetectionModule: React.FC = () => {
             <form key={fromAlert?.id ?? 'new'} onSubmit={handleAdd} className="space-y-3">
               {fromAlert && (
                 <p className="text-xs rounded-lg bg-blue-50 dark:bg-blue-900/20 p-2 text-slate-700 dark:text-slate-200">
-                  Linked to the PAGASA alert issued {manila(fromAlert.sent)}. Add the coordinates of the place you are recording.
+                  Linked to the {fromAlert.source} alert issued {manila(fromAlert.sent)}. Add the coordinates of the place you are recording.
                 </p>
               )}
-              <select name="agency" required aria-label="Source of the information" defaultValue={fromAlert ? 'PAGASA' : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="agency" required aria-label="Source of the information" defaultValue={fromAlert ? alertAgency(fromAlert) : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option><option>Local DRRM office</option><option>Field observation</option>
+                <option>PTWC (NOAA)</option><option>USGS (international)</option><option>GDACS (international)</option>
               </select>
               <select name="type" required aria-label="Hazard type" defaultValue={fromAlert ? alertType(fromAlert) : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Typhoon</option><option>Earthquake</option><option>Flood</option>
@@ -239,8 +242,8 @@ const DetectionModule: React.FC = () => {
               <input name="name" required aria-label="Hazard name" defaultValue={fromAlert ? alertTitle(fromAlert) : undefined} placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <input name="location" required aria-label="Location" defaultValue={fromAlert ? fromAlert.area_names.join(', ') : undefined} placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <div className="grid grid-cols-2 gap-2">
-                <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-                <input name="lng" type="number" step="any" min="116" max="127" required aria-label="Longitude (116 to 127)" placeholder="Longitude" className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+                <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" defaultValue={fromAlert?.latitude ?? undefined} className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+                <input name="lng" type="number" step="any" min="116" max="127" required aria-label="Longitude (116 to 127)" placeholder="Longitude" defaultValue={fromAlert?.longitude ?? undefined} className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               </div>
               <input name="psgc" inputMode="numeric" pattern="[0-9]{10}" aria-label="PSGC code (optional, 10 digits)" placeholder="PSGC code (optional, 10 digits)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <select name="severity" required aria-label="Severity" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">

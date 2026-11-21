@@ -27,6 +27,7 @@ const OrganisationSettings: React.FC = () => {
   const [areas, setAreas] = useState<WatchArea[]>([]);
   const [areaLabel, setAreaLabel] = useState('');
   const [areaCode, setAreaCode] = useState('');
+  const [point, setPoint] = useState({ lat: '', lon: '', radius: '' });
 
   const load = useCallback(async () => {
     if (!tenantId) return;
@@ -78,10 +79,12 @@ const OrganisationSettings: React.FC = () => {
   const addArea = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = areaCode.trim() || suggestions.get(areaLabel.trim()) || '';
-    const { error } = await addWatchArea(areaLabel, code || null);
+    const hasPoint = point.lat.trim() !== '' || point.lon.trim() !== '' || point.radius.trim() !== '';
+    const { error } = await addWatchArea(areaLabel, code || null,
+      hasPoint ? { lat: Number(point.lat), lon: Number(point.lon), radius_km: Number(point.radius) } : null);
     if (error) { toast.error(error); return; }
     toast.success(`Now watching ${areaLabel.trim()}`);
-    setAreaLabel(''); setAreaCode('');
+    setAreaLabel(''); setAreaCode(''); setPoint({ lat: '', lon: '', radius: '' });
     await load(); void refetchAlerts();
   };
 
@@ -203,6 +206,7 @@ const OrganisationSettings: React.FC = () => {
         <p className="text-xs text-slate-500">
           Provinces whose PAGASA alerts concern this organisation. Their alerts are flagged on the dashboard and in Detection.
           Use the province name as PAGASA writes it; the PSGC code (9 or 10 digits) is optional but makes matching exact.
+          Add a point and a radius to also follow earthquakes and GDACS events near you (for example your city hall, 100 km).
         </p>
         {areas.length === 0 ? (
           <p className="text-sm text-slate-600 dark:text-slate-300">No watch areas yet.</p>
@@ -210,7 +214,8 @@ const OrganisationSettings: React.FC = () => {
           <ul className="flex flex-wrap gap-2">
             {areas.map((w) => (
               <li key={w.id} className="flex items-center gap-2 px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-sm">
-                <span>{w.label}{w.psgc_code ? <span className="text-xs text-slate-500"> · {w.psgc_code}</span> : null}</span>
+                <span>{w.label}{w.psgc_code ? <span className="text-xs text-slate-500"> · {w.psgc_code}</span> : null}
+                  {w.lat != null ? <span className="text-xs text-slate-500"> · {w.lat.toFixed(3)}, {w.lon?.toFixed(3)} · {w.radius_km} km</span> : null}</span>
                 {canWatch && (
                   <button type="button" onClick={() => dropArea(w)} aria-label={`Stop watching ${w.label}`} className="text-xs font-semibold text-red-700">
                     Remove
@@ -232,6 +237,18 @@ const OrganisationSettings: React.FC = () => {
             <label className="sr-only" htmlFor="watch-code">PSGC code (optional)</label>
             <input id="watch-code" inputMode="numeric" pattern="[0-9]{9,10}" value={areaCode} onChange={(e) => setAreaCode(e.target.value)}
               placeholder="PSGC code (optional)" className="w-44 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+            <fieldset className="flex flex-wrap gap-2 w-full">
+              <legend className="sr-only">Watch point (optional)</legend>
+              <label className="sr-only" htmlFor="watch-lat">Latitude (optional)</label>
+              <input id="watch-lat" type="number" step="any" min={-90} max={90} value={point.lat} onChange={(e) => setPoint({ ...point, lat: e.target.value })}
+                placeholder="Latitude (optional)" className="w-40 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+              <label className="sr-only" htmlFor="watch-lon">Longitude (optional)</label>
+              <input id="watch-lon" type="number" step="any" min={-180} max={180} value={point.lon} onChange={(e) => setPoint({ ...point, lon: e.target.value })}
+                placeholder="Longitude (optional)" className="w-40 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+              <label className="sr-only" htmlFor="watch-radius">Radius in km (optional)</label>
+              <input id="watch-radius" type="number" min={1} max={1000} value={point.radius} onChange={(e) => setPoint({ ...point, radius: e.target.value })}
+                placeholder="Radius km" className="w-32 px-3 py-2 rounded-xl border border-slate-300 bg-transparent text-sm" />
+            </fieldset>
             <button type="submit" className="px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Add watch area</button>
           </form>
         ) : (

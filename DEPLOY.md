@@ -1,295 +1,276 @@
-# Deployment and handover
+# Deploying DDRiVE-M
 
-This guide takes the platform from this repository to a running service owned by the City Government of Ormoc. The City's ICT office does each step under City accounts. The consultant may assist, but holds no production account or key after turnover.
+This guide takes DDRiVE-M from this repository to a running service: the database and access rules on Supabase, the alert-ingest functions and their schedule, sign-in, and the web app on Vercel. It also covers upgrades, checks after each step, and handover.
 
-Time needed: about half a day, plus the time to invite staff.
+Production today: app at `https://ddrive-m.asilvainnovations.com` (Vercel), database and functions on Supabase project `mytnwrctkubhrfjwloln`. Replace these with your own values for another deployment.
 
-## 0. Before you start
+Time needed: about two hours for a new deployment; 15 minutes for an upgrade.
 
-- [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any email address can, including personal and consultant addresses (sections 2 and 4).
-- [ ] A password manager or vault for the database password and keys.
-- [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Singapore ([ADR-002](docs/adr/002-hosting-and-privacy.md)).
-- [ ] A workstation with Node 22+, Git and `psql` (PostgreSQL 15+ client).
+## Contents
 
-## 1. Create the Supabase project (City-owned)
+1. [Before you start](#1-before-you-start)
+2. [Supabase project](#2-supabase-project)
+3. [Database: migrations](#3-database-migrations)
+4. [Sign-in](#4-sign-in)
+5. [Official alerts: functions and schedule](#5-official-alerts-functions-and-schedule)
+6. [Web app on Vercel](#6-web-app-on-vercel)
+7. [First administrator, organisation and watch areas](#7-first-administrator-organisation-and-watch-areas)
+8. [Checks after deployment](#8-checks-after-deployment)
+9. [Upgrading an existing deployment](#9-upgrading-an-existing-deployment)
+10. [Keys: which goes where](#10-keys-which-goes-where)
+11. [Tests before every release](#11-tests-before-every-release)
+12. [Data protection notes](#12-data-protection-notes)
+13. [Roles](#13-roles)
+14. [Rollback and switching things off](#14-rollback-and-switching-things-off)
 
-1. Sign up at supabase.com with the City email. Create an **organisation** named "City Government of Ormoc".
-2. Create a project:
-   - **Name:** `ormoc-drrm`
-   - **Region:** Southeast Asia (Singapore), `ap-southeast-1`
-   - **Database password:** generate a long one and store it in the vault
-3. Choose a **paid plan** for production:
-   - Free projects pause after a period of inactivity, which is unacceptable for an EOC.
-   - The paid plan includes daily backups. Add Point-in-Time Recovery if the budget allows.
-4. Under Project Settings → API, note:
-   - the **Project URL**
-   - the **publishable key** (`sb_publishable_…`; older projects show an anon key instead). It is safe in the browser; RLS protects the data
-   - the **service_role / secret key** (never put it in the app or in Git; keep it in the vault)
+## 1. Before you start
 
-## 2. Configure sign-in
+- [ ] An organisation account that will **own** the Supabase project, the Vercel project, the Google Cloud project and the GitHub repository (not a personal account), and a password manager or vault for keys.
+- [ ] A workstation with Node 20 or later, Git, the Supabase CLI (`npm i -g supabase` or `brew install supabase/tap/supabase`) and, optionally, `psql` (PostgreSQL 15+ client).
+- [ ] The Data Protection Officer has read the privacy notice (`/policies/privacy`) and the facts in `src/content/legal/facts.ts`, including where the Supabase project is hosted.
+- [ ] Decide the region DDRiVE-M watches for earthquakes and regional alerts (default: the Philippine Area of Responsibility with a margin; see section 5).
 
-People create their own accounts; an administrator approves each one by granting a role (Settings → Users and roles). Until then the account sees nothing: the database returns no rows to an account without a role (migration 0009). Staff can also still be invited.
+## 2. Supabase project
 
-Authentication → Sign In / Providers → Email:
+1. Create a project at [supabase.com](https://supabase.com/dashboard). Choose the region the DPO approved; note the **project ref** (the `xxxx` in `https://xxxx.supabase.co`) and the database password.
+2. **Settings → API Keys**: note the **publishable key** (`sb_publishable_…`) for the app. Create a **secret key** (`sb_secret_…`) named `default` for the functions and the schedule. Never put a secret key in the app or in Git.
+3. **Database → Extensions**: enable `pg_cron` and `pg_net` (needed by the schedule in section 5). `pgcrypto` is on by default. PostGIS is **not** needed (ADR-004).
+4. Link the repository to the project once, from the repository folder:
 
-- **Allow new users to sign up: on.**
-- **Confirm email: on.** An administrator cannot grant a role to an unconfirmed address.
-- **Minimum password length: 10**, with letters and digits. Turn on **leaked password protection** if the plan offers it.
+   ```bash
+   supabase login
+   supabase link --project-ref <project-ref>
+   ```
 
-Authentication → URL Configuration:
+## 3. Database: migrations
 
-- **Site URL:** the app address (for example, `https://drrm.ormoc.gov.ph`).
-- **Redirect URLs:** add `https://<each app address>/**`: the custom domain AND the `netlify.app` address, plus `https://deploy-preview-*--<name>.netlify.app/**` if previews use this project. The app sends people back to the exact address they used; one that is not listed falls back to the Site URL and the link fails.
+The migrations in `supabase/migrations/` build every table, access rule (Row Level Security), server function and reference list. Apply them **in file-name order**. Each file is safe to run more than once; never edit a file that has been applied (add a new one instead).
 
-Authentication → Emails → Templates. Change the link in these four templates so that every link works on any device, including an iPhone home-screen app (which does not share storage with Safari):
+| # | File | What it adds |
+| --- | --- | --- |
+| 1 | `20261103000000_phase0_profile_guard.sql` | Profiles; users cannot set their own role |
+| 2 | `20261103010000_phase1_core.sql` | Organisations, memberships, the role ladder, reference numbers |
+| 3 | `20261103010100_phase1_domain.sql` | Hazards, risks, incidents, plans, documents, messages; server stamping; audit log |
+| 4 | `20261103010200_phase1_access.sql` | Row Level Security on every table; server functions for members and roles |
+| 5 | `20261103020000_phase2_official_alerts.sql` | Official alerts (PAGASA CAP), feed runs, watch areas |
+| 6 | `20261105010000_phase2_anticipatory_action.sql` | RA 12287 anticipatory action cases, assessments and measures |
+| 7 | `20261122010000_phase3_rapid_mapping.sql` | Rapid Mapping: activations, areas of interest, versioned map products, field observations |
+| 8 | `20261122020000_phase3_ddrive_assessment.sql` | DDRiVE hazard, vulnerability and risk assessments; hazard catalogue; link to the risk register |
+| 9 | `20261122030000_phase3_detection_sources.sql` | PTWC, USGS and GDACS alerts; watch points; risk-informed warnings. **Needs #8 first** |
 
-| Template | Link |
-|---|---|
-| Confirm signup | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup` |
-| Invite user | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` |
-| Magic Link | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink` |
-| Reset Password | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` |
-
-With the default templates links still work, but only when opened in the same browser where they were requested.
-
-Authentication → SMTP: **required** once sign-up is open. Set the City's mail server or a transactional mail service. The built-in sender is limited to a few emails an hour and is not meant for production.
-
-Authentication → Rate Limits: keep the defaults or lower them. Consider **Attack Protection → CAPTCHA** (hCaptcha or Turnstile) if the sign-up form attracts spam; tell the developer, because the app must then send the CAPTCHA token.
-
-### 2a. Sign in with Ormoc DRRM (OAuth 2.1 server), optional
-
-Turn this on when another City system should sign people in with their Ormoc DRRM account. The design is in [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md). Apps signed in this way can read what the person's role allows, and cannot change anything (migration 0010).
-
-1. **Signing keys first.** Project Settings → JWT Keys: create an asymmetric key (ECC P-256 or RSA), and make it the current key once it has been on standby for a while. This is needed for OpenID Connect ID tokens, and lets the app check sessions on the device. Legacy shared-secret keys still work, but nothing is checked on the device.
-2. Authentication → OAuth Server: **enable** the OAuth 2.1 server. Set **Authorization Path** to `/oauth/consent`. Leave **dynamic client registration off**.
-3. The Site URL (section 2) plus the path must be the app's address, for example `https://drrm.ormoc.gov.ph/oauth/consent`.
-4. Authentication → OAuth Apps: register each app with its name, website and **exact** redirect URI (https only). Give its developer the client ID, and the client secret only for server-side apps. Public apps (mobile, single-page) use PKCE without a secret.
-5. Give the developer the endpoints. They are also listed in the app under Settings → Connected apps (administrators only):
-
-   | | Production project |
-   |---|---|
-   | Authorization | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/oauth/authorize` |
-   | Token | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/oauth/token` |
-   | JWKS | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/.well-known/jwks.json` |
-   | OIDC discovery | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/.well-known/openid-configuration` |
-
-6. Test it: start a sign-in from the other app, sign in, check that the consent screen names the right app and return address, then Allow. Try a write with the app's token: it must fail with "Apps signed in with Ormoc DRRM can read records but cannot change them". Then withdraw access under Settings → Connected apps.
-
-## 3. Create the database
-
-There are two ways to do this. Both give the same result.
-
-### Option A: Supabase SQL editor (no tools to install)
-
-The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (thirteen at present). Each part is under 400 lines; long manual text is written on a single line.
-
-1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261102001200_single_manual.sql` last). Wait for "Success" before the next. Run each migration once only.
-2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
-3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 10 | 66 | 29 | 10 | 140** (the last two: functional areas, and indicators with an area).
-4. **Operational data (once).** Paste and run, in order, the four files in `supabase/seed/operational/`:
-   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
-   - `04_vault_register.sql`: Document Vault entries for the engagement's source documents. Attach the files in the app afterwards.
-
-   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. 27 baseline scores are loaded below the workbook score, because the evidence on record does not support them (see the note at the top of each response's Gap / Remarks).
-
-Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. Re-running the parts is safe after go-live: manual versions are only ever added, never rewritten, and the approval status of manual sections and protocols is kept.
-
-### Option B: `psql` from a workstation
-
-Use the **Session pooler** connection string from Project Settings → Database (it works over IPv4). Run, in order:
+**Option A, Supabase CLI (recommended):**
 
 ```bash
-export DB_URL='postgresql://postgres.<project-ref>:<password>@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres'
-
-for f in supabase/migrations/*.sql; do
-  echo "== $f"; psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break
-done
-psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f supabase/seed/seed.sql
-# once, on a new database:
-for f in supabase/seed/operational/*.sql; do psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break; done
+supabase db push          # applies every file not yet applied, in order
 ```
 
-`psql` has no length limit, so it takes the whole seed in one file.
+**Option B, SQL editor:** Supabase dashboard → SQL Editor → New query. Paste and run each file in the order above, one at a time, waiting for "Success" before the next.
 
-### Either way
-
-Do **not** run anything in `supabase/tests/`. The stub there imitates Supabase for local testing only.
-
-The migrations can also be applied with the Supabase CLI (`supabase link`, then `supabase db push`) if the City prefers. However they are applied, apply them in file order, once.
-
-When the workbooks change, `npm run seed:generate` rewrites both `seed.sql` and the parts (the number of parts can change). Load all of the new parts again, in order, rather than mixing old and new ones.
-
-Check the result:
-
-```sql
-select (select count(*) from iat_indicators)      as indicators,    -- 140
-       (select count(*) from master_requirements) as requirements,  -- 18
-       (select count(*) from protocol_templates)  as protocols,     -- 10
-       (select count(*) from aa_action_templates) as aa_actions,    -- 29
-       (select count(*) from storage.buckets where id in ('evidence', 'vault')) as buckets;  -- 2
-```
-
-Then, in the dashboard:
-
-- **Advisors → Security.** It should report no tables without RLS.
-- **Database → Publications → `supabase_realtime`.** It should list the EOC tables.
-
-### Updating an existing database
-
-- **To 1.1** (database created before 16 October 2026): run `supabase/migrations/20261016000800_document_vault.sql` once. It adds the Document Vault table and its private `vault` bucket.
-- **To 1.2:** run `supabase/migrations/20261016000900_accounts_and_integrity.sql` once, **before** turning sign-up on (section 2). It makes accounts without a role read nothing, adds the administrator's account list, and locks finalised and approved records.
-- **To 1.3** (31 October 2026): no migration. Run the reference parts `01_seed.sql` to `07_seed.sql` again (delete any old `08`–`10` part files first). They add the Chapter 1 v0.9 draft (a new version of MOO Ch.1), eight new Library documents (Annexes 1-0 to 1-G, including SOP GOV-04 and SOP GOV-05), the new protocol PR-SOC-DECLARE, and revised steps for PR-SOID-REQUEST, PR-EOC-ACTIVATE and PR-LIFT-REPORT. Then run `supabase/seed/operational/` once if the baseline has not been entered by hand.
-- **To 1.4** (31 October 2026): run `supabase/migrations/20261031001000_oauth_clients_read_only.sql` once. It makes tokens issued to other apps read-only. Run it even if section 2a stays off; it is safe to run again. No seed changes.
-- **To 1.5** (31 October 2026): no migration. Delete the old part files, upload the new ones, and run every part in `supabase/seed/parts/` again (nine parts). They add Chapter 2 as a new version of MOO Ch.2 and 23 new Library documents (Annexes 2-A to 2-W, SOPs HR-01 to HR-08, forms HR-F01 to HR-F08). Run `supabase/seed/operational/04_vault_register.sql` again to add the Chapter 2 Vault entry. Chapter figures deploy with the app (since 1.5.1 they are in `public/library/chp2/`; see 1.6).
-- **To 1.5.1** (31 October 2026): run `supabase/migrations/20261031001100_resource_request_lock.sql` once. It locks resource requests once they are decided and removes the delete grant on them. It is safe to run again. No seed changes. Then republish the app: a refused evidence upload now stays on the phone (Settings → Sync → Retry upload, Save a copy, or Discard).
-- **To 1.6** (2 November 2026), one manual: 
-  1. Run `supabase/migrations/20261102001200_single_manual.sql` once (safe to run again). It adds the five Parts and ten functional areas, gives Library documents an area and aliases, records each indicator's functional area, and fixes the Chapter 2 figure links in unapproved versions.
-  2. Delete the old files in `supabase/seed/parts/`, upload the new ones, and run all **13** parts in order. They add the ten area outlines; rename MOO Ch.1 to Ch.3 to Chapters 1 to 3 and the annexes to "Annex 1-A" and so on (old codes stay as aliases); mark the other 15 shells and the JD annex as merged; load Chapter 1 v1.0 with Annexes 1-A to 1-H (1-H is new; 1-0 is merged into Chapter 1); load Chapter 3 with Annexes 3-A to 3-M; and point protocols at the new homes. Approved text and approval status are never changed. The last part's check should return **… | 10 | 140**.
-  3. Run `supabase/seed/operational/04_vault_register.sql` again. It adds Vault entries for Chapter 1 v1.0 and Chapter 3 and leaves existing entries alone.
-  4. Republish the app. Phones update their Library on the next open. Figures: `public/library/ch1/` (two flowcharts in SOPs GOV-04 and GOV-05), `public/library/chp2/` (unchanged) and `public/library/ch3/`.
-- **To 1.6.1** (5 November 2026): no database change. Upload the files and redeploy. Repairs the Tools page (the 4 November edit stopped the build) and keeps its new service list.
-- **To 1.6.2** (5 November 2026): run `supabase/migrations/20261105001300_barangay_report_counts.sql` once (safe to run again), then redeploy. A blank evacuation count is now stored as "not reported" instead of 0; an evacuating barangay needs both counts; persons cannot be fewer than families. The EOC board, the barangay list and "Fill from barangay reports" on a SitRep count only the current event (a past typhoon no longer adds to today's totals). Run the migration **before** redeploying: the new app sends blank counts as empty, which the old columns refuse.
-- **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
-
-## 4. First administrator and the CDRRMO Head
-
-1. The City ICT administrator and the CDRRMO Head create their accounts in the app (Create an account) and confirm their email. (Authentication → Users → **Invite user** also works.)
-2. In the SQL editor:
-
-```sql
-insert into public.user_roles (user_id, role)
-select id, 'admin' from auth.users where email = 'ict.admin@ormoc.gov.ph';
-insert into public.user_roles (user_id, role)
-select id, r::public.app_role from auth.users, unnest(array['cdrrmo_head','validator','eoc_manager']) r
-where email = 'cdrrmo.head@ormoc.gov.ph';
-update public.profiles set full_name = 'Full Name', position = 'CDRRM Officer' where id = (select id from auth.users where email = 'cdrrmo.head@ormoc.gov.ph');
-```
-
-From here staff create their own accounts, and the administrator approves them in the app (Settings → Users and roles): accounts waiting for approval are listed first, with the email they confirmed. Check who the person is (for example with their office) before granting a role. Declining is deactivating. A person waiting for approval sees only a waiting page.
-
-### Platform developer access
-
-The platform developer (Alvin M. Silva, `alvin.silva@cognitioplus.com`) needs to sign in to set up and support the platform. The access is given by the City and is time-boxed:
-
-1. The developer creates an account in the app with `alvin.silva@cognitioplus.com` and confirms it (or the City invites that address from Authentication → Users).
-2. In the SQL editor, open and run block 1 of [`supabase/admin/developer_access.sql`](supabase/admin/developer_access.sql). It sets the profile and grants `admin` for the setup period. The script stops with a clear message if the address has not been invited yet.
-3. When setup ends, run block 2. It removes `admin` and keeps `author`, `assessor` and `viewer` for drafting, testing and support.
-4. At turnover, run block 3. It removes every role and deactivates the account. Past entries and the audit trail stay.
-
-The `admin` role passes every role check, including approving SOP versions and recording declaration steps. Those acts belong to City officials, so the developer does not perform them, and the City should move to block 2 as soon as setup is complete. Every change the developer makes is in the audit log.
-
-Personal data note for the DPO: the developer's name and email are held like any staff account's (section 9).
-
-| Role | Give to |
-|---|---|
-| `cdrrmo_head` | CDRRM Officer |
-| `eoc_manager` | EOC Manager / Operations Section Chief and alternates |
-| `eoc_staff` | EOC section staff |
-| `duty_officer` | 24/7 operations centre duty officers |
-| `assessor` / `validator` | Assessment team / validation panel (keep them separate people) |
-| `lead_office_focal` | Focal persons of CSWDO, CHO, CEO, CPDO and other Part C lead offices (set their office in the profile) |
-| `author` | Manual drafters |
-| `viewer` | CDRRMC members and oversight |
-| `admin` | City ICT (two people at most) |
-
-## 5. Barangays
-
-Sign in as admin and go to Settings → Barangays → Import CSV. Load Ormoc’s 85 barangays from the PSA PSGC masterlist, one per line. Since the PSA 4th quarter 2022 update, the former numbered Poblacion barangays are South, East and West (28 merged under City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is North:
-
-```
-psgc,name,classification,population,lat,lng
-083738001,Airport,urban;coastal,1234,11.05,124.56
-```
-
-Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`, separated by `;`. The importer checks PSGC codes before saving.
-
-## 6. Publish the app
-
-### Option A: Netlify (City-owned team)
-
-`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 22, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
-
-1. Sign in to Netlify with the City email and create a team named "City Government of Ormoc".
-2. **Add new site → Import an existing project → GitHub**. Authorise Netlify for the repository only (not the whole GitHub account) and pick the repository.
-3. On the build screen, leave the detected settings as they are. Under **Environment variables**, add:
-   - `VITE_SUPABASE_URL` = Project URL, for example `https://jmctsspadywjcbbqwweh.supabase.co` (no slash at the end)
-   - `VITE_SUPABASE_PUBLISHABLE_KEY` = the publishable key (`sb_publishable_…`)
-
-   The app also accepts the older name `VITE_SUPABASE_ANON_KEY`, for projects that still use an anon key. If both are set, the publishable key is used. Never add the service_role key: the build stops if it sees a secret key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site). A deploy with a missing or mistyped value fails with a message saying which one.
-4. Deploy. The site opens at `https://<name>.netlify.app`. Rename it under Site configuration → Change site name (for example, `ormoc-drrm`).
-5. **Domain:** Domain management → Add a domain (for example, `drrm.ormoc.gov.ph`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
-6. **Supabase:** put the final address in Authentication → URL Configuration (Site URL and Redirect URLs, step 2). Sign-in links and invites fail until this matches.
-7. **Previews (optional):** pull requests get deploy previews. Add their address pattern (`https://deploy-preview-*--<name>.netlify.app`) to the Supabase Redirect URLs, or point previews at a separate test Supabase project by setting different values for the "Deploy Previews" context.
-
-Check after the first deploy:
-
-- Open a deep link such as `/eoc/log` directly. It should load the app, not a Netlify 404.
-- Look at the response headers of the home page (browser dev tools → Network). `content-security-policy` should be present.
-- Create a test account from the sign-in page: the confirmation email should arrive, its link should open the app at the waiting page, and the account should appear under Settings → Users and roles for the administrator. Deactivate the test account afterwards.
-
-### Option B: Vercel (City-owned team)
-
-1. Create a Vercel team under the City email and import the Git repository.
-2. Add environment variables for Production and Preview:
-   - `VITE_SUPABASE_URL` = Project URL
-   - `VITE_SUPABASE_PUBLISHABLE_KEY` = publishable key (or `VITE_SUPABASE_ANON_KEY` on older projects)
-3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and `*.supabase.co`.
-4. Add the City domain (for example, `drrm.ormoc.gov.ph`) and update the Site URL in step 2.
-
-### Option C: a City web server
+**Option C, psql:**
 
 ```bash
-VITE_SUPABASE_URL=... VITE_SUPABASE_PUBLISHABLE_KEY=... npm ci && npm run build   # output in dist/
+export DATABASE_URL='postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres'
+for f in supabase/migrations/*.sql; do echo "$f"; psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break; done
 ```
 
-Serve `dist/` over HTTPS. Send unknown paths to `/index.html`. Serve `sw.js` with `Cache-Control: no-cache`. Copy the headers from `netlify.toml`. Example for nginx:
+Check: Table Editor shows the `ddrive_*` tables, each marked "RLS enabled", and `ddrive_hazard_catalogue` has 84 rows.
 
-```nginx
-location / { try_files $uri /index.html; }
-location = /sw.js { add_header Cache-Control "no-cache"; }
-location /assets/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
+## 4. Sign-in
+
+### 4a. Email and password
+
+1. **Authentication → URL Configuration**: Site URL `https://ddrive-m.asilvainnovations.com`; Redirect URLs add `https://ddrive-m.asilvainnovations.com/**` (and `http://localhost:8080/**` for development).
+2. **Authentication → Sign In / Providers → Email**: on, with "Confirm email" on. Minimum password length 12.
+3. **Email templates**: install the branded templates in `supabase/templates/` (see its README), from the dashboard or with `SUPABASE_ACCESS_TOKEN=sbp_… node scripts/push-email-templates.mjs <project-ref>`.
+4. **Custom SMTP** (Authentication → Emails → SMTP): Supabase's built-in sender is for testing only. Send from an address on your own domain with SPF and DKIM set.
+
+### 4b. Google (optional)
+
+DDRiVE-M uses Google's own button (Google Identity Services) and Supabase's `signInWithIdToken`, so the consent screen shows DDRiVE-M's domain (see `src/lib/googleSignIn.ts`).
+
+1. Google Cloud console → APIs & Services → **OAuth consent screen**: app name DDRiVE-M, the home page, `/privacy-policy` and `/terms-of-service` (fixed addresses served by the app), authorised domain `asilvainnovations.com`. Submit for verification if needed.
+2. **Credentials → Create OAuth client ID → Web application**. Authorised JavaScript origins: `https://ddrive-m.asilvainnovations.com` and `http://localhost:8080`. Authorised redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback` (used by the fallback redirect flow).
+3. Supabase → Authentication → Sign In / Providers → **Google**: on; paste the Client ID and the **Client Secret**. The secret goes only here.
+4. Vercel: set `VITE_GOOGLE_CLIENT_ID` to the Client ID (section 6). The build refuses to run if a `VITE_` variable holds a Google client secret.
+
+## 5. Official alerts: functions and schedule
+
+Two Edge Functions read official sources every 10 minutes and store what they find. Both relay and attribute; neither originates a warning (RA 10639).
+
+| Function | Reads | ADR |
+| --- | --- | --- |
+| `ingest-pagasa` | PAGASA-DOST CAP feed (`publicalert.pagasa.dost.gov.ph/feeds/`) | ADR-002 |
+| `ingest-official` | NOAA Pacific Tsunami Warning Center (CAP), USGS earthquakes (FDSN GeoJSON), GDACS (GeoJSON) | ADR-005 |
+
+PHIVOLCS publishes no data feed; DDRiVE-M links to `phivolcs.dost.gov.ph` for official earthquake, tsunami and volcano information.
+
+### 5a. Deploy the functions
+
+```bash
+supabase functions deploy ingest-pagasa
+supabase functions deploy ingest-official
 ```
 
-## 7. Go-live checklist
+`supabase/config.toml` sets `verify_jwt = false` for both: the schedule calls them with a secret key, which is not a JWT, and each function checks the key itself (`supabase/functions/_shared/auth.ts`). A call without a valid server key gets `401`.
 
-- [ ] Sign in on an Android phone and an iPhone. Install to the home screen ("Add to Home screen").
-- [ ] Turn on airplane mode, add a logbook entry, turn it off, and confirm the entry reaches the server (Settings → Sync shows nothing waiting).
-- [ ] Raise the EOC to Blue and back to White on a test day. Confirm the logbook recorded both.
-- [ ] Viewer account: confirm it cannot create or change records.
-- [ ] Resource request: record one, approve it as the EOC Manager, then try to change its quantity. The app must refuse with "An approved request cannot be changed".
-- [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
-- [ ] Password reset: request one and set a new password through the emailed link.
-- [ ] If section 2a is on: a test app can sign in through the consent screen, cannot write, and loses access when it is withdrawn.
-- [ ] Back up: confirm a daily backup exists (Database → Backups).
-- [ ] Record who holds admin, the database password and the service key, in the City's ICT asset register.
+### 5b. Function settings (optional)
 
-## 8. Keys, access and turnover
+Supabase sets `SUPABASE_URL` and the server keys automatically. These are optional (Edge Functions → Secrets, or `supabase secrets set NAME=value`):
 
-- The anon key is public by design; RLS enforces access. The service_role key and the database password are secrets.
-- **At turnover:**
-  - Run block 3 of `supabase/admin/developer_access.sql` to remove the developer's app access.
-  - Remove the consultant from the Supabase organisation, the Netlify or Vercel team and the GitHub repository.
-  - Rotate the database password.
-  - If any secret was ever shared, rotate the API keys too (Project Settings → API). Then update the two environment variables and redeploy.
-- Review the roles list each quarter, and the accounts waiting for approval each week (decline ones nobody recognises). Deactivate leavers in Settings → Users and roles; their records and audit trail remain.
+| Name | Default | Meaning |
+| --- | --- | --- |
+| `PAGASA_FEED_URL` | PAGASA's official feed | Only change for testing |
+| `DETECTION_SOURCES` | `PTWC,USGS,GDACS` | Which sources `ingest-official` reads |
+| `DETECTION_BBOX` | `114,2,136,26` | Region for USGS and GDACS: `minLon,minLat,maxLon,maxLat` |
+| `DETECTION_COUNTRIES` | `PHL` | ISO3 codes; a GDACS event affecting one of them is kept even outside the region |
+| `USGS_MIN_MAGNITUDE` | `4.0` | Smallest earthquake stored |
+| `PTWC_FEED_URL` | `https://www.tsunami.gov/events/xml/PHEBAtom.xml` | Only change for testing |
 
-## 9. Data protection notes for the DPO
+For a tenant outside the Philippines, set the region and countries to that country and name its national agencies in the organisation's guidance; never assume Philippine rules apply.
 
-- **Data held.** The platform holds staff identity (name, email, position, office, roles) and institutional records. It has no fields for affected persons, evacuees, beneficiaries or informants. Free-text fields remind users of this, but mistakes are possible. Include them in the redaction procedure.
-- **Audit log.** `audit_log` records every change, with who and when. Agree a retention period (for example, the same as the paper logbook under the City's records disposition schedule).
-- **Evidence files.** These are private and are opened through five-minute links. Delete files no longer needed after a cycle is archived.
-- **Devices.** Signing out erases the copy on a device. Lost devices: deactivate the user, then rotate their password.
+### 5c. Schedule (pg_cron and pg_net)
 
-## 10. Updating the platform
-
-- **Schema changes.** Never edit a migration that has been applied. Add a new file `supabase/migrations/<timestamp>_<name>.sql`. Run `npm run test:db`, `npm run test:it` and `npm run test:e2e` locally (GitHub Actions runs them on every push), apply it to production with `psql`, then deploy the app.
-- **Uploading through the GitHub website** drops file permissions and can drop hidden files (`.github/`, `.env.example`, `.gitignore`). Prefer `git push`; if you upload, check that those files are still there.
-- **Reference data (IAT or traceability workbooks).** Follow the steps in the README.
-- **National guidance pending under the RA 12287 IRR.** When the NDRRMC guidelines on triggers and the DBM–COA rules on AA fund use and liquidation are issued:
-  - Update `aa_rules` (admin, SQL editor). Changes are audited.
-  - Revise the AA checklist templates.
-  - Re-validate protocols PR-PDRA and PR-LIFT-REPORT.
+Run once in the SQL editor, replacing `<project-ref>` and the secret key. The key is kept in Supabase Vault, not in the job text.
 
 ```sql
-update public.aa_rules set value = 0.10, source_ref = 'IRR Rule V Sec. __; JMC No. __' where key = 'aa_share_of_ldrrmf_70';
+select vault.create_secret('sb_secret_REPLACE_ME', 'ddrive_ingest_key', 'Server key for the alert-ingest schedule');
+
+select cron.schedule('ddrive-ingest-pagasa', '*/10 * * * *', $$
+  select net.http_post(
+    url := 'https://<project-ref>.supabase.co/functions/v1/ingest-pagasa',
+    headers := jsonb_build_object('apikey', (select decrypted_secret from vault.decrypted_secrets where name = 'ddrive_ingest_key'),
+                                  'content-type', 'application/json'),
+    body := '{}'::jsonb, timeout_milliseconds := 60000)
+$$);
+
+select cron.schedule('ddrive-ingest-official', '3-59/10 * * * *', $$
+  select net.http_post(
+    url := 'https://<project-ref>.supabase.co/functions/v1/ingest-official',
+    headers := jsonb_build_object('apikey', (select decrypted_secret from vault.decrypted_secrets where name = 'ddrive_ingest_key'),
+                                  'content-type', 'application/json'),
+    body := '{}'::jsonb, timeout_milliseconds := 60000)
+$$);
 ```
+
+`ingest-official` runs three minutes after `ingest-pagasa`, so the two do not start together.
+
+Check, after 15 minutes:
+
+```sql
+select source, max(finished_at) filter (where ok) as last_ok, count(*) filter (where not ok) as failures
+from public.ddrive_ingest_runs where started_at > now() - interval '1 hour' group by source;
+```
+
+All four sources (PAGASA, PTWC, USGS, GDACS) should have a recent `last_ok`. In the app, Detection → Official alerts shows the same per source and warns when a source has not been read for 30 minutes (PAGASA, PTWC) or 60 minutes (USGS, GDACS).
+
+To run a function by hand: `curl -X POST -H "apikey: sb_secret_…" https://<project-ref>.supabase.co/functions/v1/ingest-official`.
+
+If the host has no Edge Functions or pg_cron, run the same functions on a schedule elsewhere (for example a GitHub Actions workflow with Deno 2) with the same secret key.
+
+## 6. Web app on Vercel
+
+1. Vercel → Add New → Project → import the GitHub repository. Framework: Vite. `vercel.json` sets the build (`npm run build`), the output (`dist`), the policy page addresses and the security headers.
+2. **Settings → Environment Variables** (Production and Preview):
+
+   | Name | Value |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | `https://<project-ref>.supabase.co` |
+   | `VITE_SUPABASE_PUBLISHABLE_KEY` | the `sb_publishable_…` key |
+   | `VITE_GOOGLE_CLIENT_ID` | the Google Client ID, if Google sign-in is used |
+
+   These values are public by design: Row Level Security protects the data, not the key. `VITE_SUPABASE_ANON_KEY` is still read as a fallback until Supabase retires legacy keys (end of 2026). The build stops if any `VITE_` variable holds a secret.
+3. **Settings → Domains**: add `ddrive-m.asilvainnovations.com` and set the DNS record Vercel shows.
+4. Deploy. Every push to `main` redeploys production; pull requests get preview URLs (add those origins to Supabase redirect URLs if you sign in on previews).
+
+For local development: create `.env.local` with the same three variables, then `npm ci && npm run dev` (http://localhost:8080).
+
+## 7. First administrator, organisation and watch areas
+
+1. Sign up in the app with the administrator's email and confirm it.
+2. Signed in, open Settings → Organisation and **create the organisation** (the creator becomes its administrator). If an organisation already exists (for example "Migrated organisation" after an upgrade), give yourself the role in the SQL editor instead:
+
+   ```sql
+   select public.ddrive_admin_set_role('admin@example.ph', 'tenant_admin');             -- one organisation
+   select public.ddrive_admin_set_role('admin@example.ph', 'tenant_admin', '<tenant-id>'); -- several
+   ```
+
+   This function works only from the SQL editor (admin context), never from the app.
+3. Add members (they must sign up first) and give each the lowest role they need (section 13).
+4. **Watch areas** (DRRM officer): the provinces whose alerts concern you, as PAGASA writes them, with the PSGC code if known; and at least one **watch point** with a radius (for example the city hall, 100 km) so nearby earthquakes and GDACS events are flagged.
+5. **Diagnosis**: run a DDRiVE hazard assessment workshop (start from a template, or import the filled DDRiVE workbook), score it, and have a DRRM officer approve it. Approved assessments feed the "assessed risk" shown beside official alerts.
+6. **Rapid Mapping** (optional): a DRRM officer approves the local damage/severity classes under Rapid Mapping → Damage classes before grading products use them.
+
+## 8. Checks after deployment
+
+- [ ] Home, `/privacy-policy` and `/terms-of-service` load without signing in.
+- [ ] Sign-up email arrives from your domain; the link opens `/dashboard`.
+- [ ] Google sign-in works (if set up).
+- [ ] A viewer cannot add a risk; an analyst can; nobody can change their own role.
+- [ ] Detection shows all four sources with a recent read time; a watch point near a recent earthquake flags it "In your watch area".
+- [ ] With an approved DDRiVE assessment that rates Tropical Cyclone, a wind-signal alert in a watch area shows "Your assessed risk for this hazard".
+- [ ] Diagnosis: importing the DDRiVE workbook creates a draft; the ratings match the workbook (for the case study: riverine flood M6, coastal flood H7).
+- [ ] Rapid Mapping: an activation, an approved area, and a preliminary product published to the internal EOC show the PRELIMINARY label.
+- [ ] The app installs (Add to Home Screen) and opens its shell offline with the offline notice.
+
+## 9. Upgrading an existing deployment
+
+Apply new migrations **before** deploying the app that uses them (`supabase db push`, or the SQL editor in file order). Then redeploy the functions if they changed, then the app.
+
+| Version | Steps |
+| --- | --- |
+| **0.4 → 0.5** (Rapid Mapping, 22 Nov 2026) | Run `20261122010000_phase3_rapid_mapping.sql`. Redeploy the app. No new settings |
+| **0.5 → 0.6** (Detection sources and DDRiVE assessment, 22 Nov 2026) | 1. Run `20261122020000_phase3_ddrive_assessment.sql`, then `20261122030000_phase3_detection_sources.sql` (in that order). 2. `supabase functions deploy ingest-official` (`ingest-pagasa` is unchanged). 3. Add the `ddrive-ingest-official` schedule (section 5c). 4. Redeploy the app. 5. Officers add watch points (section 7). Existing alerts, risks and watch areas are kept |
+
+## 10. Keys: which goes where
+
+| Key | Where it lives | Never |
+| --- | --- | --- |
+| Supabase publishable key `sb_publishable_…` | Vercel `VITE_SUPABASE_PUBLISHABLE_KEY`, `.env.local` | — (public by design) |
+| Supabase secret key `sb_secret_…` | Supabase (functions get it automatically); Vault secret `ddrive_ingest_key` for the schedule | In the app, a `VITE_` variable, Git, or chat |
+| Legacy service_role key | Supabase only, until it is retired | Same as above |
+| Database password | Password manager; `DATABASE_URL` on the operator's machine only | In Git |
+| Google Client ID | Vercel `VITE_GOOGLE_CLIENT_ID` | — (public) |
+| Google Client Secret | Supabase → Auth → Google | In the app or Git |
+| Supabase access token `sbp_…` (Management API) | The operator's shell, for `push-email-templates.mjs` only | In Git |
+
+Rotate a key at once if it is ever exposed: create a new one, update where it lives, delete the old one.
+
+## 11. Tests before every release
+
+| Command | Needs | What it proves |
+| --- | --- | --- |
+| `npm run check` | Node 20 | Type-check (strict), lint, production build |
+| `npm run test:unit` | Node 20 | Geometry and CRS checks, GeoPackage and DDRiVE workbook readers, DDRiVE scoring against the workbook's case study, exports, offline queue, rendering |
+| `npm run test:db` | PostgreSQL 15+ | Every migration, twice (safe to re-run); access rules for each role; a database upgraded from before Phase 1; Rapid Mapping, DDRiVE assessment and detection-source rules |
+| `npm run test:functions` | Deno 2 | CAP parser and PAGASA ingest on real PAGASA documents; PTWC, USGS and GDACS readers |
+| `npm run test:e2e` | PostgREST 12, Playwright with Chromium | The production build against a local API, in a browser |
+
+Record the counts in the release notes (`docs/governance/TEST-REPORT-TEMPLATE.md`). A suite that was not run is reported as not run, never as passed.
+
+## 12. Data protection notes
+
+- **Official alerts** are public agency information, stored once for all organisations, never edited. The original documents are kept for provenance but not shown to users, who get the agency's link instead. USGS and GDACS readings are labelled as international.
+- **DDRiVE assessments** hold scores and justifications about places and assets, not people. Do not record names of residents or households in comments.
+- **Rapid Mapping field observations** must not contain residents' names or contact details; the form says so and the import check warns about personal-data columns (Data Privacy Act, RA 10173).
+- **Audit log**: every change to governed records is logged with who and when. Agree a retention period with the records officer.
+- The **FPIC tracker** page is for practice only until secure server storage exists; it must not hold real community or household data.
+- If DDRiVE-M is used for automated decision-making or profiling, check NPC registration (NPC Circular 2022-04).
+
+## 13. Roles
+
+The database enforces the role ladder (ADR-001); the app only shows or hides controls.
+
+| Role | Can also |
+| --- | --- |
+| Viewer | Read everything in the organisation; read published products for the whole organisation |
+| Responder | Report hazards and incidents; send Rapid Mapping field observations; read internal EOC map products |
+| Analyst | Manage risks, documents, plan drafts; open anticipatory action cases; draft and score DDRiVE assessments and add them to the register; draft, review (others' work) and import map products |
+| DRRM officer | Approve plans and DDRiVE assessments; take RA 12287 steps; approve areas of interest; verify and publish map products; manage watch areas and damage classes; read the audit log |
+| Administrator | Manage members and roles, organisation settings and risk criteria; approve map products for public release |
+
+## 14. Rollback and switching things off
+
+- **A source misbehaves:** remove it from `DETECTION_SOURCES` (for example `PTWC,USGS`) and redeploy `ingest-official`, or pause its job: `select cron.unschedule('ddrive-ingest-official');`. Stored alerts stay.
+- **The app release is bad:** Vercel → Deployments → promote the previous deployment. Migrations are additive, so the previous app keeps working against the newer database.
+- **A migration fails halfway:** each file is safe to re-run; fix the cause and run it again. Do not edit an applied migration; add a new one.
+- **Backups:** Supabase daily backups (and point-in-time recovery on paid plans). Test a restore into a separate project before go-live.

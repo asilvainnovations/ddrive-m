@@ -1,3 +1,12 @@
+# DDRiVE-M 0.6.0: Detection sources and DDRiVE assessment — 22 November 2026
+
+- **Detection** reads the NOAA Pacific Tsunami Warning Center (CAP), USGS earthquakes (FDSN GeoJSON) and GDACS (GeoJSON) beside PAGASA, through a new `ingest-official` Edge Function; watch areas can be a point and radius; each alert in a watch area shows the organisation's approved DDRiVE rating for that hazard ([ADR-005](docs/adr/005-official-detection-sources.md)). PHIVOLCS publishes no feed and is linked, not scraped.
+- **Diagnosis** runs the DDRiVE workbook's method (after UNDRR's Quick Risk Estimation): templates, workbook import (`.xlsm`/`.xlsx`, macros never run), scoring in the database, scenarios, Data Scores, Risk Summary and Vulnerability Report, glossary, print and CSV, approval and versions, and "Add to risk register" ([ADR-006](docs/adr/006-ddrive-hazard-assessment.md)).
+- **DEPLOY.md** rewritten for DDRiVE-M (it held another platform's guide).
+- **Apply:** migrations `20261122020000_phase3_ddrive_assessment.sql` then `20261122030000_phase3_detection_sources.sql`; deploy `ingest-official`; add its schedule; redeploy the app (DEPLOY.md § 9).
+
+---
+
 # DDRiVE-M 0.5.0: Rapid Mapping MVP — 22 November 2026
 
 Implements the operational MVP of `Rapid_Mapping_Technical_Specs.md` (spec Phase 1, with the Phase 2 field-observation and linking pieces), adapted to DDRiVE-M. Decisions and scope cuts: [ADR-004](docs/adr/004-rapid-mapping.md).

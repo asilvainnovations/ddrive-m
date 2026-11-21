@@ -82,10 +82,11 @@ const NewCaseForm: React.FC<{ onDone: () => void; onCancel: () => void; initialA
     if (!a) return;
     const t = alertTitle(a);
     setTitle(t);
-    setSource(`PAGASA: ${t}${a.headline ? ` (${a.headline})` : ''}`);
+    setSource(`${a.source}: ${t}${a.headline && a.headline !== t ? ` (${a.headline})` : ''}`);
     setIssued(toLocalInput(new Date(a.sent)));
     setAreas(a.area_names.join('; '));
-    setHazard(/cyclone|typhoon/i.test(a.event) ? 'tropical_cyclone' : /surge/i.test(a.event) ? 'storm_surge' : /rain/i.test(a.event) ? 'rainfall' : /flood/i.test(a.event) ? 'flood' : 'other');
+    setHazard(/tsunami/i.test(a.event) ? 'tsunami' : /surge/i.test(a.event) ? 'storm_surge' : /cyclone|typhoon/i.test(a.event) ? 'tropical_cyclone'
+      : /flood/i.test(a.event) ? 'flood' : /rain/i.test(a.event) ? 'rainfall' : /volcan/i.test(a.event) ? 'volcanic' : /drought/i.test(a.event) ? 'drought' : 'other');
   }, [alerts]);
 
   // Opened from an alert's "Start anticipatory action" link: fill in the form once the alerts have loaded.
