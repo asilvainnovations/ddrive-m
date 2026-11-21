@@ -1,0 +1,11 @@
+# Dependencies and build output (reproduced by npm ci and npm run build)
+node_modules/
+dist/
+# Local environment and secrets
+.env.local
+.env.*.local
+# Tooling caches
+.vite/
+coverage/
+*.log
+.DS_Store

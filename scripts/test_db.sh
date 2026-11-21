@@ -37,4 +37,5 @@ else
   "${PSQL[@]}" -f "$ROOT/supabase/tests/10_phase1_access.sql"
   "${PSQL[@]}" -f "$ROOT/supabase/tests/20_phase2_alerts.sql"
   "${PSQL[@]}" -f "$ROOT/supabase/tests/30_phase2_anticipatory.sql"
+  "${PSQL[@]}" -f "$ROOT/supabase/tests/40_phase3_rapid_mapping.sql"
 fi

@@ -2,7 +2,7 @@
 
 **DDRiVE-M (Data-Driven Resilience Management)** is a resilience intelligence platform by **ASilva Innovations**. It helps local governments, agencies, enterprises and NGOs in the Philippines and Asia anticipate, adapt to and respond to disruption, through a seven-phase intelligence cycle.
 
-> **Status: 0.4.0, pre-production.** Phase 0, the database part of Phase 1, and two parts of Phase 2 are done: access rules are enforced in the database, official PAGASA alerts flow in automatically, and the RA 12287 anticipatory action workflow runs end to end. DDRiVE-M has a public Home page and policies, and installs as an app. See [Roadmap](#roadmap). Do not use DDRiVE-M as a source of official warnings. Follow PAGASA, PHIVOLCS and your local DRRM office.
+> **Status: 0.5.0, pre-production.** Phase 0, the database part of Phase 1, and two parts of Phase 2 are done: access rules are enforced in the database, official PAGASA alerts flow in automatically, and the RA 12287 anticipatory action workflow runs end to end. The Rapid Mapping MVP (ADR-004) adds incident-linked mapping activations, areas of interest and versioned, reviewed map products. DDRiVE-M has a public Home page and policies, and installs as an app. See [Roadmap](#roadmap). Do not use DDRiVE-M as a source of official warnings. Follow PAGASA, PHIVOLCS and your local DRRM office.
 
 ## The intelligence cycle
 
@@ -12,6 +12,7 @@
 | 2 Diagnosis | `diagnosisModule/` | Risk registry (likelihood × impact) |
 | 3 Response | `responseModule/` | Incident list and progress |
 | 3 Anticipatory action | `anticipatoryModule/` | RA 12287 cases: forecast trigger, pre-disaster risk assessment, recommendation, declaration, measures and funds, lifting, report to OCD |
+| 3 Rapid Mapping | `rapidMappingModule/` | Mapping activations per incident; approved areas of interest; GeoJSON/GeoPackage import with geometry and CRS checks; preliminary → reviewed → verified → published product versions with separation of duties; offline-safe field observations; GeoJSON, CSV, metadata and print exports ([ADR-004](docs/adr/004-rapid-mapping.md)) |
 | 4 Integration | `IntegrationModule.tsx` | UNDRR 10 Essentials scorecard entries and guidance |
 | 5 Validation | `ValidationModule.tsx` | Exercise scenarios and links to the ICS simulators |
 | 6 Enhancement | `enhancementModule/` | Plan drafts from templates |
@@ -33,6 +34,8 @@ For Google sign-in, also set `VITE_GOOGLE_CLIENT_ID` (the public Client ID; the 
 
 Apply the database migrations in `supabase/migrations/` in filename order, in the Supabase SQL editor. Each file is safe to run twice. Upgrading an existing database: follow [DEPLOY.md](DEPLOY.md).
 
+**Upgrading to 0.5.0 (Rapid Mapping):** run `supabase/migrations/20261122010000_phase3_rapid_mapping.sql` once in the SQL editor (safe to run again), then redeploy the app. It needs no extension: PostGIS is not required (ADR-004). No new environment variables.
+
 ## Scripts
 
 | Command | Purpose |
@@ -43,6 +46,7 @@ Apply the database migrations in `supabase/migrations/` in filename order, in th
 | `npm run build` | Production build to `dist/` |
 | `npm run check` | Type-check, lint and build; run before every pull request |
 | `npm run test:db` | Access-rule tests on a throwaway local Postgres, fresh and upgraded from the old schema |
+| `npm run test:unit` | Unit tests (Vitest): geometry and CRS checks, GeoPackage reader, exports, offline queue, map rendering |
 | `npm run test:e2e` | Browser tests: the production build against a local Postgres and PostgREST 12, including the alert ingest function under Deno |
 | `npm run build` | Production build, then `scripts/prerender.mjs` writes static HTML for Home and the policies (what crawlers and Google's verification read) |
 | `npm run icons` | Downloads the logo and makes the app icons in `public/icons/` (run once with internet access, then commit) |
@@ -62,6 +66,7 @@ src/
   hooks/useDDriveData.ts     Typed data hooks scoped to the active organisation
   lib/actions.ts             Every write, as one named function per action
   lib/roles.ts               Role names, labels and the role ladder
+  lib/rapidMapping/          Rapid Mapping types, GeoJSON/CRS checks, GeoPackage reader, exports, offline queue, data access
   lib/
     modules.ts               Module keys, routes and titles (single source of truth)
     supabase.ts              Database client, configured from environment variables
@@ -99,7 +104,7 @@ Every record belongs to one organisation. People belong to one or more organisat
 | 0 (done) | App builds and type-checks in strict mode; all modules routed; fabricated figures, fake identity and browser-side AI keys removed; privacy notice and consent on lead capture |
 | 1 (database done) | Organisations, roles and Row Level Security on every table; audit log; server-issued ids; one risk model with per-organisation criteria; PSGC location codes. Still to do in Phase 1: CI, CSP headers, MFA |
 | 2 (PAGASA alerts and RA 12287 workflow done) | Still to do: DDRiVER AI as a server function with citations; PHIVOLCS and NOAH data; hazard × exposure × vulnerability with PSA census layers; plan drafts needing named approval; moving the ICS simulator, PSCP, Gawad Kalasag and FPIC tools into the app; offline field forms; Filipino translation |
-| 3 | OWASP ASVS Level 2 verification, WCAG 2.2 AA audit, penetration test, service levels |
+| 3 (Rapid Mapping MVP done) | Still to do for Rapid Mapping: PostGIS columns and spatial checks once confirmed on the live project; Shapefile ZIP import; a processing worker for reprojection, clipping and raster/COG; map tiles (MapLibre, once a tile source and licence are chosen); private object storage for source files; XLSX and GeoPackage export; public product pages. Platform: OWASP ASVS Level 2 verification, WCAG 2.2 AA audit, penetration test, service levels |
 
 ## Licence
 

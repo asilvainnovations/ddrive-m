@@ -245,3 +245,13 @@ svg[id*="badge"] {
   visibility: hidden !important;
   opacity: 0 !important;
 }
+
+/* Rapid Mapping print view: only the product's print area is printed (map, legend, metadata, disclaimer). */
+.rm-print-only { display: none; }
+@media print {
+  body.rm-printing * { visibility: hidden; }
+  body.rm-printing #rm-print-area, body.rm-printing #rm-print-area * { visibility: visible; }
+  body.rm-printing #rm-print-area { position: absolute; left: 0; top: 0; width: 100%; border: 0; box-shadow: none; background: #fff; color: #000; }
+  body.rm-printing .rm-print-only { display: block; }
+  body.rm-printing .rm-no-print { display: none; }
+}

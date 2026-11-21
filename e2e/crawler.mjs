@@ -25,7 +25,7 @@ const route = (p) => {
 const expect = {
   '/': '/index.html', '/privacy-policy': '/pages/privacy.html', '/privacy': '/pages/privacy.html', '/terms-of-service': '/pages/terms.html',
   '/cookie-policy': '/pages/cookies.html', '/accessibility-policy': '/pages/accessibility.html', '/ai-ethics': '/pages/ai-ethics.html',
-  '/policies': '/pages/policies.html', '/policies/privacy': '/pages/privacy.html', '/dashboard': '/index.html', '/anticipatory-action': '/index.html',
+  '/policies': '/pages/policies.html', '/policies/privacy': '/pages/privacy.html', '/dashboard': '/index.html', '/anticipatory-action': '/index.html', '/rapid-mapping': '/index.html',
 };
 const wrong = Object.entries(expect).filter(([p, d]) => (p === '/' ? '/index.html' : route(p)) !== d).map(([p]) => `${p} → ${route(p)}`);
 check(wrong.length === 0, 'Every policy and app address routes to the right page on Vercel', wrong.join(', '));
