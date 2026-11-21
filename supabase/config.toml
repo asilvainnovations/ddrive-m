@@ -6,3 +6,7 @@ project_id = "ddrive-m"
 # Called by pg_cron with a secret key in the apikey header. Secret keys are not JWTs, so the
 # platform's JWT check must be off; the function checks the key itself (_shared/auth.ts).
 verify_jwt = false
+
+[functions.ingest-official]
+# Same as ingest-pagasa: called by pg_cron with a secret key; the function checks the key itself.
+verify_jwt = false

@@ -158,22 +158,33 @@ export async function setRiskThresholds(tenantId: string, critical: number, high
   return result(error);
 }
 
-// ─── Watch areas (provinces whose official alerts an organisation follows) ────
+// ─── Watch areas (provinces, or points with a radius, whose official alerts an organisation follows) ────
 export interface WatchArea {
   id: string;
   label: string;
   psgc_code: string | null;
+  /** Optional point and radius: alerts with coordinates (earthquakes, GDACS events) within it count as in the area. */
+  lat: number | null;
+  lon: number | null;
+  radius_km: number | null;
 }
 
 export async function listWatchAreas(tenantId: string): Promise<WatchArea[]> {
-  const { data } = await supabase.from('ddrive_watch_areas').select('id, label, psgc_code').eq('tenant_id', tenantId).order('label');
+  const { data } = await supabase.from('ddrive_watch_areas').select('id, label, psgc_code, lat, lon, radius_km').eq('tenant_id', tenantId).order('label');
   return (data ?? []) as WatchArea[];
 }
 
-/** Province name as the agency writes it (e.g. "Leyte"); the PSGC code is optional (9 or 10 digits). DRRM officer or above. */
-export async function addWatchArea(label: string, psgcCode: string | null): Promise<ActionResult> {
-  const { error } = await supabase.from('ddrive_watch_areas').insert({ label: label.trim(), psgc_code: psgcCode || null });
+/**
+ * Province name as the agency writes it (e.g. "Leyte"); the PSGC code is optional (9 or 10 digits).
+ * A point (lat, lon) with a radius in km is optional too. DRRM officer or above.
+ */
+export async function addWatchArea(label: string, psgcCode: string | null, point?: { lat: number; lon: number; radius_km: number } | null): Promise<ActionResult> {
+  const { error } = await supabase.from('ddrive_watch_areas').insert({
+    label: label.trim(), psgc_code: psgcCode || null,
+    lat: point?.lat ?? null, lon: point?.lon ?? null, radius_km: point?.radius_km ?? null,
+  });
   if (error && /duplicate key/i.test(error.message)) return { error: `${label.trim()} is already a watch area.` };
+  if (error && /ddrive_watch_areas_point/i.test(error.message)) return { error: 'A watch point needs a latitude, a longitude and a radius between 1 and 1,000 km.' };
   return result(error);
 }
 

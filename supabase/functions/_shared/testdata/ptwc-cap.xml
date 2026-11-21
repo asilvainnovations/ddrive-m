@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+ <identifier>PHEB-2026-11-21-WEPA40-1</identifier>
+ <sender>ptwc@noaa.gov</sender>
+ <sent>2026-11-21T00:19:13-00:00</sent>
+ <status>Actual</status>
+ <msgType>Alert</msgType>
+ <scope>Public</scope>
+ <info>
+  <language>en-US</language>
+  <category>Geo</category>
+  <event>Tsunami Information Statement</event>
+  <urgency>Unknown</urgency>
+  <severity>Unknown</severity>
+  <certainty>Unlikely</certainty>
+  <senderName>NWS Pacific Tsunami Warning Center Honolulu HI</senderName>
+  <headline>Tsunami Information Statement Number 1</headline>
+  <description>An earthquake has occurred with these preliminary parameters: magnitude 6.9, location central Peru. There is no tsunami threat from this earthquake.</description>
+  <web>https://www.tsunami.gov</web>
+  <area><areaDesc>Pacific Ocean</areaDesc><circle>-10.98,-76.319 0</circle></area>
+ </info>
+</alert>

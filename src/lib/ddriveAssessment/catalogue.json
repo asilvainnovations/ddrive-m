@@ -1,0 +1,281 @@
+{
+ "source": "DDRiVE_Diagnosis_Tool.xlsm (Assumptions and Risk Matrix sheets)",
+ "families": [
+  {
+   "code": "H1",
+   "name": "Geophysical",
+   "mainHazards": [
+    "Earthquake",
+    "Mass Movement",
+    "Volcanic Activity"
+   ],
+   "events": [
+    "Ash fall",
+    "Fire following event",
+    "Ground movement",
+    "Landslide following event",
+    "Lahar",
+    "Lava flow",
+    "Liquefaction",
+    "Pyroclastic flow",
+    "Tsunami"
+   ]
+  },
+  {
+   "code": "H2",
+   "name": "Hydrological",
+   "mainHazards": [
+    "Flood",
+    "Landslide",
+    "Wave Action"
+   ],
+   "events": [
+    "Avalanche/Snow/Debris",
+    "Coastal Flood",
+    "Coastal Erosion",
+    "Landslide following event",
+    "Mudfall/Rockfall/Debris",
+    "Expansive Soil",
+    "Flash Flood",
+    "Ice Jam Flood",
+    "Riverine Flood",
+    "Rogue Wave",
+    "Seiche",
+    "Sinkhole"
+   ]
+  },
+  {
+   "code": "H3",
+   "name": "Meteorological",
+   "mainHazards": [
+    "Convective Storm",
+    "Extratropical Storm",
+    "Extreme Temperature",
+    "Fog",
+    "Tropical Cyclone"
+   ],
+   "events": [
+    "Cold Wave",
+    "Derecho",
+    "Frost/Freeze",
+    "Hail",
+    "Heatwave",
+    "Lightning",
+    "Rain",
+    "Sandstorm/Duststorm",
+    "Snow/Ice",
+    "Storm Surge",
+    "Tornado",
+    "Wind",
+    "Winter Storm/Blizzard"
+   ]
+  },
+  {
+   "code": "H4",
+   "name": "Climatological",
+   "mainHazards": [
+    "Drought",
+    "Glacial Lake Outburst",
+    "Wildfire"
+   ],
+   "events": [
+    "Forest Fire",
+    "Land Fire of Brush/Bush/Pasture",
+    "Subsidence"
+   ]
+  },
+  {
+   "code": "H5",
+   "name": "Biological",
+   "mainHazards": [
+    "Animal Incident",
+    "Disease",
+    "Insect Infestation"
+   ],
+   "events": [
+    "Bacterial Disease",
+    "Fungal Disease",
+    "Parasitic Disease",
+    "Prion Disease",
+    "Viral Disease"
+   ]
+  },
+  {
+   "code": "H6",
+   "name": "Extraterrestrial",
+   "mainHazards": [
+    "Impact to ground or water",
+    "Space Weather"
+   ],
+   "events": [
+    "Airburst",
+    "Collision",
+    "Energetic Particles",
+    "Geomagnetic Storm",
+    "Radio Disturbance",
+    "Shockwave"
+   ]
+  },
+  {
+   "code": "H7",
+   "name": "Anthropogenic",
+   "mainHazards": [
+    "Technological hazard",
+    "Chemical and radiological hazard",
+    "Transportation accidents"
+   ],
+   "events": [
+    "Industrial disaster",
+    "Structural collapse",
+    "Power outage",
+    "Fire following event",
+    "Industrial explosion",
+    "Mine disaster",
+    "Chemical spill",
+    "Oil spill",
+    "Radiation contamination, nuclear incident",
+    "Aviation accident",
+    "Rail accident",
+    "Road accident",
+    "Navigation accident",
+    "Space accident"
+   ]
+  },
+  {
+   "code": "H8",
+   "name": "Other (user-defined)",
+   "mainHazards": [],
+   "events": []
+  }
+ ],
+ "allPerils": [
+  "Airburst",
+  "Ash fall",
+  "Avalanche/Snow/Debris",
+  "Aviation accident",
+  "Bacterial Disease",
+  "Chemical spill",
+  "Coastal Erosion",
+  "Coastal Flood",
+  "Cold Wave",
+  "Collision",
+  "Derecho",
+  "Energetic Particles",
+  "Expansive Soil",
+  "Fire following event",
+  "Flash Flood",
+  "Forest Fire",
+  "Frost/Freeze",
+  "Fungal Disease",
+  "Geomagnetic Storm",
+  "Ground movement",
+  "Hail",
+  "Heatwave",
+  "Ice Jam Flood",
+  "Industrial disaster",
+  "Industrial explosion",
+  "Lahar",
+  "Land Fire of Brush/Bush/Pasture",
+  "Landslide following event",
+  "Lava flow",
+  "Lightning",
+  "Liquefaction",
+  "Mine disaster",
+  "Mudfall/Rockfall/Debris",
+  "Navigation accident",
+  "Oil spill",
+  "Parasitic Disease",
+  "Power outage",
+  "Prion Disease",
+  "Pyroclastic flow",
+  "Radiation contamination, nuclear incident",
+  "Radio Disturbance",
+  "Rail accident",
+  "Rain",
+  "Riverine Flood",
+  "Road accident",
+  "Rogue Wave",
+  "Sandstorm/Duststorm",
+  "Seiche",
+  "Shockwave",
+  "Sinkhole",
+  "Snow/Ice",
+  "Space accident",
+  "Storm Surge",
+  "Structural collapse",
+  "Subsidence",
+  "Tornado",
+  "Tsunami",
+  "Viral Disease",
+  "Wind",
+  "Winter Storm/Blizzard"
+ ],
+ "scales": {
+  "exposure": [
+   "0-Negligible",
+   "1-Extremely unlikely",
+   "2-Very unlikely",
+   "3-Unlikely",
+   "4-Improbable",
+   "5-Possible",
+   "6-Probable",
+   "7-Likely",
+   "8-Very likely",
+   "9-Extremely likely",
+   "10-Inevitable"
+  ],
+  "vulnerability": [
+   "0-Negligible",
+   "1-Extremely unlikely",
+   "2-Very unlikely",
+   "3-Unlikely",
+   "4-Improbable",
+   "5-Possible",
+   "6-Probable",
+   "7-Likely",
+   "8-Very likely",
+   "9-Extremely likely",
+   "10-Inevitable"
+  ],
+  "response": [
+   "0-No measures in place",
+   "1-Extremely few measures in place",
+   "2-Very few measures in place",
+   "3-Few measures in place",
+   "4-Some measures in place",
+   "5-Reasonable measures in place",
+   "6-Good measures in place",
+   "7-High measures in place",
+   "8-Extremely high measures in place",
+   "9-Immense measures in place",
+   "10-Complete control of disaster"
+  ]
+ },
+ "likelihoodGuide": [
+  {
+   "level": "Very High",
+   "definition": "It is almost certain to occur at least once",
+   "historical": "Has occurred 3 or more times in the last 5 years"
+  },
+  {
+   "level": "High",
+   "definition": "Reasonable chance of occurring at least once",
+   "historical": "Has occurred twice in the last 5 years"
+  },
+  {
+   "level": "Moderate",
+   "definition": "Might occur at least once",
+   "historical": "Has occurred once within the last 5 years"
+  },
+  {
+   "level": "Low",
+   "definition": "Not expected to occur",
+   "historical": "May occur and has occurred once in the last 10 years"
+  },
+  {
+   "level": "Very Low",
+   "definition": "Will only occur in exceptional circumstances",
+   "historical": "May only occur in exceptional circumstances and has occurred in the last 20 years"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+ <title>Pacific Tsunami Warning Center</title>
+ <id>urn:uuid:ptwc-feed-test</id>
+ <updated>2026-11-21T00:19:13Z</updated>
+ <link type="application/atom+xml" rel="self" href="https://www.tsunami.gov/events/xml/PHEBAtom.xml"/>
+ <entry>
+  <title>CENTRAL PERU</title>
+  <updated>2026-11-21T00:19:13Z</updated>
+  <geo:lat>-10.98</geo:lat><geo:long>-76.319</geo:long>
+  <id>urn:uuid:7d2c8f1e-0000-4000-8000-000000000001</id>
+  <link rel="related" title="Energy Map" href="https://www.tsunami.gov/events/PHEB/2026/11/21/test/1/WEPA40/" type="image/jpeg"/>
+  <link rel="related" title="CapXML document" href="https://www.tsunami.gov/events/PHEB/2026/11/21/test/1/WEPA40/PHEBCAP.xml" type="application/cap+xml"/>
+  <link rel="alternate" title="Bulletin" href="https://www.tsunami.gov/events/PHEB/2026/11/21/test/1/WEPA40/WEPA40.txt" type="application/xml"/>
+ </entry>
+</feed>

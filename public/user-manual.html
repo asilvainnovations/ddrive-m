@@ -897,12 +897,12 @@ code {
         <div class="section-num">4</div>
         <div>
           <div class="section-title">Phase 1: Detection Module</div>
-          <div class="section-subtitle">Official PAGASA alerts and your team's hazard records</div>
+          <div class="section-subtitle">Official alerts from four sources, your assessed risk beside each, and your team's hazard records</div>
         </div>
       </div>
       <div class="callout callout-danger">
         <div class="callout-icon">🔴</div>
-        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">See the official alerts PAGASA has in force, and keep your team's hazard records. DDRiVE-M relays PAGASA's alerts; it does not issue warnings. Always follow PAGASA, PHIVOLCS and your local DRRM office. Navigation: <strong>Dashboard → Detection card</strong> or <strong>Sidebar → Phase 1 Detection</strong></div></div>
+        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">See the official alerts in force from PAGASA, the Pacific Tsunami Warning Center, USGS and GDACS, with your own assessed risk beside each one, and keep your team's hazard records. DDRiVE-M relays and attributes alerts; it does not issue warnings. Always follow PAGASA, PHIVOLCS and your local DRRM office. Navigation: <strong>Dashboard → Detection card</strong> or <strong>Sidebar → Phase 1 Detection</strong></div></div>
       </div>
 
       <div class="coll-card open">
@@ -914,12 +914,12 @@ code {
         <div class="coll-body"><div class="coll-body-inner">
           <div class="grid-2" style="gap:12px; margin-top:8px;">
             <div style="padding:13px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">① Official PAGASA alerts</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Wind signals and flood advisories PAGASA has in force, read from PAGASA's public alert feed every 10 minutes. Choose <strong>My watch areas</strong> or <strong>All Philippines</strong>. Each alert shows its title, areas, when it was issued and when it expires, the CAP fields exactly as PAGASA issued them, and a link to the full alert. The line above the list says when the feed was last read.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">① Official alerts</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Read every 10 minutes from: <strong>PAGASA</strong> (wind signals, flood and rainfall advisories); the <strong>Pacific Tsunami Warning Center</strong> (regional tsunami messages); <strong>USGS</strong> (earthquakes in the region, preliminary international readings); and <strong>GDACS</strong> (UN/European Commission alert levels for earthquakes, cyclones, floods, volcanoes, droughts and wildfires). Choose <strong>My watch areas</strong> or <strong>Whole region</strong>, and filter by source. Each alert shows its source, title, areas (and for earthquakes the magnitude, depth and distance from your nearest watch point), when it was issued and until when it is in force, the agency's own fields as published, and a link to the original. PHIVOLCS publishes no data feed: for official earthquake, tsunami and volcano information use <strong>phivolcs.dost.gov.ph</strong>.</div>
             </div>
             <div style="padding:13px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md);">
-              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">② If the feed is out of date</div>
-              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">If PAGASA's feed has not been read for 30 minutes, the dashboard and Detection show a warning. Check <strong>pagasa.dost.gov.ph</strong> directly until the warning clears.</div>
+              <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">② Your assessed risk, and stale sources</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Beside each alert in a watch area, <strong>Your assessed risk for this hazard</strong> shows what your approved DDRiVE assessment says about it: the rating (VL1–VH9), total vulnerability and current response measures, with a link to the assessment. It is context for decisions, not a forecast. Above the list, each source shows when it was last read; a source not read for 30 minutes (PAGASA, PTWC) or 60 minutes (USGS, GDACS) is flagged. Then check the agency's site directly.</div>
             </div>
             <div style="padding:13px; background:rgba(13,148,136,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md);">
               <div style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:6px;">③ Hazard records</div>
@@ -932,9 +932,9 @@ code {
           </div>
           <div class="callout callout-info" style="margin-top:12px;">
             <div class="callout-icon">📍</div>
-            <div class="callout-body"><div class="callout-title">Watch areas</div><div class="callout-text">Watch areas are the provinces your organisation follows. A DRRM officer or administrator sets them in <strong>Settings → Organisation → Watch areas</strong>: type the province name as PAGASA writes it (suggestions come from current alerts), and optionally its PSGC code. Alerts for these provinces are flagged on the dashboard and counted on the bell icon in the top bar.</div></div>
+            <div class="callout-body"><div class="callout-title">Watch areas</div><div class="callout-text">Watch areas are the provinces your organisation follows, and optionally points with a radius. A DRRM officer or administrator sets them in <strong>Settings → Organisation → Watch areas</strong>: type the province name as PAGASA writes it (suggestions come from current alerts), optionally its PSGC code, and optionally a latitude, longitude and radius in km (for example your city hall, 100 km) so nearby earthquakes and GDACS events are flagged too. Alerts for these provinces are flagged on the dashboard and counted on the bell icon in the top bar.</div></div>
           </div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px;">Alert information: PAGASA-DOST, licensed CC BY 4.0.</div>
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px;">Alert information: PAGASA-DOST (CC BY 4.0); NOAA Pacific Tsunami Warning Center; USGS (public domain); GDACS (see gdacs.org terms of use).</div>
         </div></div>
       </div>
 
@@ -965,62 +965,56 @@ code {
         <div class="section-num">5</div>
         <div>
           <div class="section-title">Phase 2: Diagnosis Module</div>
-          <div class="section-subtitle">Analyze and classify risks using ISO 31000 standards</div>
+          <div class="section-subtitle">DDRiVE hazard, vulnerability and risk assessment, and the risk register</div>
         </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🔬</div>
+        <div class="callout-body"><div class="callout-title">Purpose</div><div class="callout-text">Diagnosis runs the method of the DDRiVE workbook (Data-Driven Risk and Vulnerability Estimation, after UNDRR's Quick Risk Estimation tool) and keeps the organisation's risk register. Use it in a workshop with several offices and community representatives, not as one person's judgement. Navigation: <strong>Sidebar → Phase 2 Diagnosis</strong>.</div></div>
       </div>
 
       <div class="coll-card open">
         <div class="coll-header" onclick="toggleColl(this.parentElement)">
-          <div class="coll-header-icon">📊</div>
-          <div class="coll-header-text"><div class="coll-header-title">ISO 31000 Risk Matrix (5×5 Grid)</div><div class="coll-header-sub">Likelihood × Impact scoring and color-coded priority</div></div>
+          <div class="coll-header-icon">📋</div>
+          <div class="coll-header-text"><div class="coll-header-title">Running a DDRiVE assessment</div><div class="coll-header-sub">Hazard assessments tab</div></div>
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
-          <div class="prose" style="margin-top:8px;"><p>A visual 5×5 chart showing where your risks fall based on <strong>Likelihood</strong> (how often will this happen, scale 1–5) and <strong>Impact</strong> (how bad will consequences be, scale 1–5). Multiply Likelihood × Impact = Risk Score.</p></div>
-          <table class="data-table">
-            <thead><tr><th>Color</th><th>Score Range</th><th>Priority</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td><span class="status-badge badge-gray" style="font-size:10px;padding:2px 8px;">Green Cell</span></td><td>1–5</td><td>Low</td><td>Monitor occasionally</td></tr>
-              <tr><td><span class="status-badge badge-yellow" style="font-size:10px;padding:2px 8px;">Amber Cell</span></td><td>6–11</td><td>Medium</td><td>Track and prepare contingencies</td></tr>
-              <tr><td><span class="status-badge badge-orange" style="font-size:10px;padding:2px 8px;">Orange Cell</span></td><td>12–19</td><td>High</td><td>Prepare action plans, monitor closely</td></tr>
-              <tr><td><span class="status-badge badge-red" style="font-size:10px;padding:2px 8px;">Red Cell</span></td><td>20–25</td><td>Critical</td><td>Immediate response — allocate resources now</td></tr>
-            </tbody>
-          </table>
+          <div class="flow-steps" style="margin-top:8px;">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Start an assessment</div><div class="flow-step-desc">Choose <strong>New assessment</strong>. Start from a template (coastal LGU, upland LGU, near an active volcano, highly urbanised city, enterprise or facility, or blank), or <strong>import a filled DDRiVE workbook</strong> (.xlsm or .xlsx): its Information and Hazard Data Entry sheets are read, macros are never run, and the scores are recomputed. Pick the likelihood method: <em>workbook</em> (matches the .xlsm exactly) or <em>continuous</em>. Analysts and above.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill in the Information</div><div class="flow-step-desc">Location or region, assets under examination, assessor (facilitator), participating offices, completion and review dates, version.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Choose the hazard events</div><div class="flow-step-desc">Hazards follow the UNDRR/IRDR classification in eight families (H1 Geophysical … H7 Anthropogenic, H8 Other, which you name yourself, such as the southwest monsoon). Add or remove rows; one row per hazard event.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Score each event in words</div><div class="flow-step-desc"><strong>Exposure</strong> (0-Negligible … 10-Inevitable), <strong>vulnerability</strong> in four categories (infrastructure; productive sectors; essential or basic services; human and social aspects), and <strong>current response measures</strong> (0-No measures … 10-Complete control). Write the justification in the comments. The rating appears at once.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-body"><div class="flow-step-title">Read the results</div><div class="flow-step-desc">Total vulnerability (0–100), likelihood ranking (0–10), severity (likelihood × 10 − response × 10) and the rating from the 5×5 matrix, VL1 to VH9. VL1 at or below zero severity means outside the threshold of a material risk, or response measures scored too high. Reports: the matrix with counts, Risk Summary and Vulnerability Report charts (each with a table view), and Data Scores with the total severity per family.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-body"><div class="flow-step-title">Build scenarios</div><div class="flow-step-desc">Combine events (for example an earthquake with landslides and riverine flooding). The scenario's likelihood is the average; its severity is the mean over families of Σ(likelihood × severity) ÷ 10, as the workbook describes.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">7</div><div class="flow-step-body"><div class="flow-step-title">Approve, register, print</div><div class="flow-step-desc">A DRRM officer approves the assessment once every event is scored and the completion date is set; it is then locked (start a <strong>New version</strong> to revise it). Approved assessments appear beside official alerts in Detection. <strong>Add to risk register</strong> copies a scored event into the register. <strong>Print or save as PDF</strong> and <strong>CSV</strong> export the results.</div></div></div>
+          </div>
+          <div class="callout callout-warning" style="margin-top:12px;">
+            <div class="callout-icon">⚖️</div>
+            <div class="callout-body"><div class="callout-title">Rankings, not probabilities</div><div class="callout-text">The scores rank this location's hazards against each other so the group can prioritise. They are not statistical probabilities or loss estimates. Record why each score was given so the assessment can be validated and revised.</div></div>
+          </div>
         </div></div>
       </div>
 
       <div class="coll-card">
         <div class="coll-header" onclick="toggleColl(this.parentElement)">
-          <div class="coll-header-icon">🤖</div>
-          <div class="coll-header-text"><div class="coll-header-title">AI Vulnerability Scanner & Risk Registry</div><div class="coll-header-sub">Machine learning analysis and risk management table</div></div>
+          <div class="coll-header-icon">📊</div>
+          <div class="coll-header-text"><div class="coll-header-title">Risk register</div><div class="coll-header-sub">Likelihood × impact, ISO 31000</div></div>
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
-          <div class="callout callout-ai" style="margin-top:8px;">
-            <div class="callout-icon">◈</div>
-            <div class="callout-body">
-              <div class="callout-title">AI Vulnerability Scanner</div>
-              <div class="callout-text">Machine learning tool trained on Philippine disaster history. Analyzes your registry for patterns across five domains: <strong>Physical Infrastructure</strong>, <strong>Environmental Conditions</strong>, <strong>Operational Continuity</strong>, <strong>Cyber/Digital Systems</strong>, and <strong>Organizational Capacity</strong>. Lower percentage = higher vulnerability = focus improvement efforts there.</div>
-            </div>
-          </div>
-          <div class="prose" style="margin-top:14px;"><h3>Adding a New Risk</h3><ol>
-            <li>Click <strong>"+ Add Risk"</strong> button in the Risk Registry section</li>
-            <li>Fill form: Risk Title (required), Category (dropdown), Likelihood score (1–5), Impact score (1–5), Owner department</li>
-            <li>System <strong>calculates score automatically</strong> (L × I)</li>
-            <li>Click <strong>"Register Risk"</strong> — confirmation toast appears, entry shows in table immediately</li>
-          </ol></div>
-          <table class="data-table" style="margin-top:10px;">
-            <thead><tr><th>Column</th><th>Description</th><th>Editable?</th></tr></thead>
+          <div class="prose" style="margin-top:8px;"><p>The register holds risks on a 1–5 likelihood × 1–5 impact scale; the level (Low, Medium, High, Critical) follows your organisation's risk criteria (Settings → Organisation). Add risks with <strong>Add risk</strong> (analysts and above), or from a scored DDRiVE event: its likelihood level (Very Low … Very High) becomes likelihood 1–5 and its severity class (Insignificant … Catastrophic) becomes impact 1–5; the DDRiVE rating and total vulnerability are kept and shown in the DDRiVE column.</p></div>
+          <table class="data-table">
+            <thead><tr><th>Score</th><th>Default level</th><th>Action</th></tr></thead>
             <tbody>
-              <tr><td>ID</td><td>Unique identifier (R-001, R-002…)</td><td>No (auto-generated)</td></tr>
-              <tr><td>Title</td><td>Risk name/description</td><td>Yes</td></tr>
-              <tr><td>Category</td><td>Strategic, Financial, Operational, etc.</td><td>Yes</td></tr>
-              <tr><td>L×I</td><td>Likelihood × Impact calculation</td><td>Calculated</td></tr>
-              <tr><td>Level</td><td>Low / Medium / High / Critical badge</td><td>Calculated</td></tr>
-              <tr><td>Owner</td><td>Department responsible</td><td>Yes</td></tr>
-              <tr><td>Status</td><td>Open, Closed, Under Review</td><td>Yes</td></tr>
+              <tr><td>1–5</td><td>Low</td><td>Monitor</td></tr>
+              <tr><td>6–11</td><td>Medium</td><td>Track and prepare contingencies</td></tr>
+              <tr><td>12–19</td><td>High</td><td>Prepare action plans, monitor closely</td></tr>
+              <tr><td>20–25</td><td>Critical</td><td>Act now and allocate resources</td></tr>
             </tbody>
           </table>
+          <div class="prose" style="margin-top:10px;"><p>The <strong>Method and glossary</strong> tab shows the DDRiVE risk matrix, the guide to likelihood, the rating scales and the hazard glossary.</p></div>
         </div></div>
       </div>
     </section>
