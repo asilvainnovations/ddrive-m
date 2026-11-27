@@ -78,7 +78,7 @@ try {
     check(t.includes('Hazard record saved'), 'Responder reports a hazard through the form', t.match(/Your role does not allow this[^.]*\.|One of the values[^.]*\./)?.[0]);
     check(t.includes('Rising river at Barangay 3'), 'The new hazard appears in the list');
 
-    await page.goto(`${APP}/diagnosis`); await settle(page);
+    await page.goto(`${APP}/diagnosis?tab=register`); await settle(page);
     const add = page.getByRole('button', { name: /Add Risk/i });
     check(await add.isDisabled(), 'Responder sees "Add risk" disabled');
     t = await text(page);
@@ -98,7 +98,7 @@ try {
   // ── Analyst ─────────────────────────────────────────────────────────────────
   {
     const { page, ctx, errors } = await pageAs(browser, 'analyst@a.ph');
-    await page.goto(`${APP}/diagnosis`); await settle(page);
+    await page.goto(`${APP}/diagnosis?tab=register`); await settle(page);
     await page.getByRole('button', { name: /Add Risk/i }).click();
     const form = page.locator('form').last();
     await form.locator('[name=title]').fill('Flooding of the evacuation centre');

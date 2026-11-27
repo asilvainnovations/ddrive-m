@@ -70,14 +70,17 @@ reset role;
 -- ─── Measures and fund use (s. 9, s. 10) ─────────────────────────────────────
 select tests.claims('analyst@a.ph'); set role authenticated;
 select tests.ok('An analyst plans pre-emptive evacuation funded from the LDRRMF', $q$
-  insert into public.ddrive_aa_actions (case_id, measure, description, responsible, fund_source, amount_php)
-  values (tests.case_id('Typhoon Ada'), 'preemptive_evacuation', 'Evacuate coastal barangays 1-12 to designated centres', 'CDRRMO', 'ldrrmf', 1500000) $q$);
+  insert into public.ddrive_aa_actions (case_id, measure, description, responsible, fund_source, amount_php, implement_by)
+  values (tests.case_id('Typhoon Ada'), 'preemptive_evacuation', 'Evacuate coastal barangays 1-12 to designated centres', 'CDRRMO', 'ldrrmf', 1500000, now() + interval '1 day') $q$);
 select tests.ok('An analyst plans a public advisory with no funds', $q$
   insert into public.ddrive_aa_actions (case_id, measure, description) values (tests.case_id('Typhoon Ada'), 'public_advisory', 'Radio and SMS advisory in Waray and Filipino') $q$);
 select tests.refused('An analyst cannot record a disbursement', $q$ update public.ddrive_aa_actions set disbursed_php = 500000 where measure = 'preemptive_evacuation' $q$);
 reset role;
 select tests.claims('officer@a.ph'); set role authenticated;
 select tests.refused('A measure with no fund source cannot disburse', $q$ insert into public.ddrive_aa_actions (case_id, measure, description, disbursed_php) values (tests.case_id('Typhoon Ada'), 'volunteers', 'Mobilise accredited volunteers', 1000) $q$);
+select tests.ok('The DRRM officer records the year''s LDRRMF allocation for anticipatory action (IRR Rule V)', $q$
+  insert into public.ddrive_aa_allocations (fiscal_year, fund_source, annual_ldrrmf_php, allocation_php, basis)
+  values (extract(year from now() at time zone 'Asia/Manila')::int, 'ldrrmf', 100000000, 5000000, 'LDRRMF Investment Plan 2026') $q$);
 select tests.ok('The DRRM officer records a disbursement under the declaration', $q$ update public.ddrive_aa_actions set disbursed_php = 1200000, status = 'done' where measure = 'preemptive_evacuation' $q$);
 select tests.refused('Disbursing more than the amount is refused', $q$ update public.ddrive_aa_actions set disbursed_php = 2000000 where measure = 'preemptive_evacuation' $q$);
 select tests.eq('A completed measure gets its completion time', $q$ select (done_at is not null)::text from public.ddrive_aa_actions where measure = 'preemptive_evacuation' $q$, 'true');

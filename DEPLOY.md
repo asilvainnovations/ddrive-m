@@ -57,6 +57,7 @@ The migrations in `supabase/migrations/` build every table, access rule (Row Lev
 | 7 | `20261122010000_phase3_rapid_mapping.sql` | Rapid Mapping: activations, areas of interest, versioned map products, field observations |
 | 8 | `20261122020000_phase3_ddrive_assessment.sql` | DDRiVE hazard, vulnerability and risk assessments; hazard catalogue; link to the risk register |
 | 9 | `20261122030000_phase3_detection_sources.sql` | PTWC, USGS and GDACS alerts; watch points; risk-informed warnings. **Needs #8 first** |
+| 10 | `20261127010000_phase3_aa_graduated_disbursement.sql` | RA 12287 IRR rules as data; anticipatory action allocations; graduated disbursement limits by lead time. **Needs #6 first** |
 
 **Option A, Supabase CLI (recommended):**
 
@@ -220,6 +221,7 @@ Apply new migrations **before** deploying the app that uses them (`supabase db p
 | --- | --- |
 | **0.4 → 0.5** (Rapid Mapping, 22 Nov 2026) | Run `20261122010000_phase3_rapid_mapping.sql`. Redeploy the app. No new settings |
 | **0.5 → 0.6** (Detection sources and DDRiVE assessment, 22 Nov 2026) | 1. Run `20261122020000_phase3_ddrive_assessment.sql`, then `20261122030000_phase3_detection_sources.sql` (in that order). 2. `supabase functions deploy ingest-official` (`ingest-pagasa` is unchanged). 3. Add the `ddrive-ingest-official` schedule (section 5c). 4. Redeploy the app. 5. Officers add watch points (section 7). Existing alerts, risks and watch areas are kept |
+| **0.6 → 0.7** (RA 12287 graduated disbursement, 27 Nov 2026) | 1. Run `20261127010000_phase3_aa_graduated_disbursement.sql`. 2. Redeploy the app. 3. A DRRM officer records the year's allocation for each fund used (Anticipatory Action → Record allocation) **before** the next disbursement: from now on, disbursements from the LDRRMF, an agency's anticipatory action budget or the NDRRM Fund are refused without one. Disbursements already recorded are kept and counted |
 
 ## 10. Keys: which goes where
 

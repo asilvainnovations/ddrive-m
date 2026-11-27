@@ -62,8 +62,8 @@ try {
     const { page, ctx, errors } = await pageAs(browser, 'admin@a.ph');
     await page.goto(`${APP}/detection`); await settle(page);
     let t = await text(page);
-    check(t.includes('Official alerts') && /PAGASA feed last read (just now|\d+ min ago)/.test(t), 'Detection shows official alerts and when the feed was read');
-    check(t.includes('All Philippines (3)'), 'Three alerts in force: the wind signal was replaced by the later cyclone alert', t.match(/All Philippines \(\d+\)/)?.[0]);
+    check(t.includes('Official alerts') && /PAGASA[^.]*: read (just now|\d+ min ago)/.test(t), 'Detection shows official alerts and when the PAGASA feed was read', t.match(/PAGASA[^.]*: [^.]*\./)?.[0]);
+    check(t.includes('Whole region (3)'), 'Three alerts in force: the wind signal was replaced by the later cyclone alert', t.match(/Whole region \(\d+\)/)?.[0]);
     check(!t.includes('Tropical Cyclone Wind Signal No. 1'), 'A replaced alert is not shown as in force');
 
     await page.goto(`${APP}/settings`); await settle(page, 1500);
@@ -127,7 +127,7 @@ try {
     const { page, ctx } = await pageAs(browser, 'newcomer@x.ph');
     await page.goto(`${APP}/detection`); await settle(page);
     const t = await text(page);
-    check(t.includes('All Philippines (3)') && t.includes('My watch areas (0)'), 'Another organisation sees the same public alerts but has its own watch areas');
+    check(t.includes('Whole region (3)') && t.includes('My watch areas (0)'), 'Another organisation sees the same public alerts but has its own watch areas');
     await ctx.close();
   }
 
@@ -140,7 +140,7 @@ try {
     check(t.includes('may be out of date'), 'With no recent feed reading, the dashboard warns that alerts may be out of date');
     await page.goto(`${APP}/detection`); await settle(page);
     t = await text(page);
-    check(t.includes('Check pagasa.dost.gov.ph directly'), 'Detection points people to PAGASA directly');
+    check(/PAGASA[^.]*not read recently: information may be out of date/.test(t), 'Detection warns that PAGASA has not been read recently');
     await ctx.close();
   }
 } finally {

@@ -11,6 +11,7 @@ import {
   Recommendation, RECOMMENDATION_LABEL, SEVERITY_LABEL, STATUS_LABEL, STEPS, addAction, closeNotDeclared,
   draftRequestLetter, hoursUntil, listCases, loadCaseDetail, openCase, peso, recommend, recordAssessment,
   recordDeclaration, recordLifting, submitReport, updateAction, when,
+  AllocationFund, AllocationStatus, GRADUATED_FUNDS, LDRRMF_AA_CEILING_SHARE, LEAD_BAND_LABEL, leadBandFor, listAllocations, recordAllocation,
 } from '@/lib/anticipatory';
 
 // ─── Small building blocks ───────────────────────────────────────────────────
@@ -283,11 +284,16 @@ const MeasureForm: React.FC<{ c: AaCase; onDone: () => void }> = ({ c, onDone })
   const [responsible, setResponsible] = useState('');
   const [fund, setFund] = useState<FundSource>('none');
   const [amount, setAmount] = useState('');
+  const [implementBy, setImplementBy] = useState(toLocalInput(new Date()));
   const { busy, run } = useSubmit(() => { setDescription(''); setAmount(''); onDone(); });
+  const band = leadBandFor(fund, c.hazard, implementBy ? fromLocalInput(implementBy) : null, c.expected_onset);
   return (
     <form className="grid gap-3 sm:grid-cols-2 border-t border-slate-200 dark:border-slate-700 pt-4" onSubmit={(e) => {
       e.preventDefault();
-      run(() => addAction({ case_id: c.id, measure, description, responsible: responsible || null, fund_source: fund, amount_php: amount ? Number(amount) : null }), 'Measure added.');
+      run(() => addAction({
+        case_id: c.id, measure, description, responsible: responsible || null, fund_source: fund, amount_php: amount ? Number(amount) : null,
+        implement_by: implementBy ? fromLocalInput(implementBy) : null,
+      }), 'Measure added.');
     }}>
       <Field id="ms-m" label="Measure (section 9)">
         <select id="ms-m" className={input} value={measure} onChange={(e) => setMeasure(e.target.value as Measure)}>
@@ -302,6 +308,12 @@ const MeasureForm: React.FC<{ c: AaCase; onDone: () => void }> = ({ c, onDone })
         </select>
       </Field>
       <Field id="ms-a" label="Amount allotted (PHP)"><input id="ms-a" type="number" min={0} step="0.01" className={input} value={amount} onChange={(e) => setAmount(e.target.value)} disabled={fund === 'none'} /></Field>
+      <Field id="ms-t" label="When it will be undertaken" hint="Sets how long before the expected onset it happens (IRR Rule V, section 2).">
+        <input id="ms-t" type="datetime-local" className={input} value={implementBy} onChange={(e) => setImplementBy(e.target.value)} />
+      </Field>
+      <div className="text-xs self-end pb-2 text-slate-600 dark:text-slate-300" role="status">
+        {fund === 'none' ? 'No funds: no disbursement limit applies.' : band ? LEAD_BAND_LABEL[band] : 'Give when it will be undertaken to see its limit.'}
+      </div>
       <div className="sm:col-span-2"><button type="submit" disabled={busy} className={primary}><Plus className="w-4 h-4" aria-hidden="true" /> Add measure</button></div>
     </form>
   );
@@ -310,18 +322,37 @@ const MeasureForm: React.FC<{ c: AaCase; onDone: () => void }> = ({ c, onDone })
 const MeasureRow: React.FC<{ a: AaAction; c: AaCase; onDone: () => void }> = ({ a, c, onDone }) => {
   const { can } = useAuth();
   const [disb, setDisb] = useState(a.disbursed_php?.toString() ?? '');
+  const [basis, setBasis] = useState(a.slow_onset_basis ?? '');
   const { busy, run } = useSubmit(onDone);
   const open = !['closed', 'not_declared'].includes(c.status);
+  const needsGuideline = c.hazard === 'drought' && GRADUATED_FUNDS.includes(a.fund_source);
   return (
     <tr>
-      <th scope="row" className="px-3 py-2 text-left font-medium align-top">{MEASURE_LABEL[a.measure]}<div className="font-normal text-slate-600 dark:text-slate-300">{a.description}{a.responsible ? ` · ${a.responsible}` : ''}</div></th>
+      <th scope="row" className="px-3 py-2 text-left font-medium align-top">{MEASURE_LABEL[a.measure]}
+        <div className="font-normal text-slate-600 dark:text-slate-300">{a.description}{a.responsible ? ` · ${a.responsible}` : ''}</div>
+        {a.fund_source !== 'none' && (
+          <div className="font-normal text-xs text-slate-500 dark:text-slate-400">
+            {a.implement_by ? `Undertaken ${when(a.implement_by)} · ` : 'No implementation time yet · '}
+            {a.lead_band ? LEAD_BAND_LABEL[a.lead_band] : 'limit not known until the time is given'}
+          </div>
+        )}
+      </th>
       <td className="px-3 py-2 align-top">{FUND_LABEL[a.fund_source]}</td>
       <td className="px-3 py-2 align-top text-right">{peso(a.amount_php)}</td>
       <td className="px-3 py-2 align-top text-right">
         {open && c.status === 'declared' && a.fund_source !== 'none' && can('drrm_officer') ? (
-          <form className="flex gap-1 justify-end" onSubmit={(e) => { e.preventDefault(); run(() => updateAction(a.id, { disbursed_php: disb ? Number(disb) : null }), 'Disbursement recorded.'); }}>
+          <form className="flex flex-wrap gap-1 justify-end" onSubmit={(e) => {
+            e.preventDefault();
+            run(() => updateAction(a.id, { disbursed_php: disb ? Number(disb) : null, ...(needsGuideline ? { slow_onset_basis: basis || null } : {}) }), 'Disbursement recorded.');
+          }}>
             <label className="sr-only" htmlFor={`d-${a.id}`}>Disbursed for {MEASURE_LABEL[a.measure]}</label>
             <input id={`d-${a.id}`} type="number" min={0} step="0.01" className={cn(input, 'w-32 py-1')} value={disb} onChange={(e) => setDisb(e.target.value)} />
+            {needsGuideline && (
+              <>
+                <label className="sr-only" htmlFor={`g-${a.id}`}>Operational guidelines that set the drought disbursement rate</label>
+                <input id={`g-${a.id}`} placeholder="Operational guidelines reference" className={cn(input, 'w-48 py-1')} value={basis} onChange={(e) => setBasis(e.target.value)} />
+              </>
+            )}
             <button type="submit" disabled={busy} className={cn(secondary, 'py-1 px-2')}>Save</button>
           </form>
         ) : peso(a.disbursed_php)}
@@ -554,6 +585,100 @@ const CaseDetail: React.FC<{ c: AaCase & { version_key?: number }; onChanged: ()
   );
 };
 
+// ─── Allocations (IRR of RA 12287, Rule V) ───────────────────────────────────
+const ALLOC_FUND_LABEL: Record<AllocationFund, string> = {
+  ldrrmf: 'Local DRRM Fund (LDRRMF)',
+  agency_budget: 'Agency budget: anticipatory action allocation',
+  ndrrmf: 'National DRRM Fund augmentation',
+};
+
+const Bar: React.FC<{ used: number; cap: number; label: string }> = ({ used, cap, label }) => {
+  const pct = cap > 0 ? Math.min(100, (used / cap) * 100) : 0;
+  return (
+    <div>
+      <div className="flex justify-between text-xs"><span>{label}</span><span>{peso(used)} of {peso(cap)}</span></div>
+      <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="img" aria-label={`${label}: ${peso(used)} of ${peso(cap)} used`}>
+        <div className={cn('h-full', pct >= 100 ? 'bg-amber-600' : 'bg-blue-700')} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+};
+
+const AllocationForm: React.FC<{ onDone: () => void }> = ({ onDone }) => {
+  const thisYear = Number(new Date().toLocaleString('en-PH', { year: 'numeric', timeZone: 'Asia/Manila' }));
+  const [year, setYear] = useState(String(thisYear));
+  const [fund, setFund] = useState<AllocationFund>('ldrrmf');
+  const [annual, setAnnual] = useState('');
+  const [amount, setAmount] = useState('');
+  const [basis, setBasis] = useState('');
+  const { busy, run } = useSubmit(onDone);
+  const ceiling = annual ? Math.round(Number(annual) * LDRRMF_AA_CEILING_SHARE * 100) / 100 : null;
+  return (
+    <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 border-t border-slate-200 dark:border-slate-700 pt-4 items-end" onSubmit={(e) => {
+      e.preventDefault();
+      run(() => recordAllocation({ fiscal_year: Number(year), fund_source: fund, annual_ldrrmf_php: fund === 'ldrrmf' && annual ? Number(annual) : null, allocation_php: Number(amount), basis }), 'Allocation recorded.');
+    }}>
+      <Field id="al-y" label="Year"><input id="al-y" type="number" min={2025} max={2100} required className={input} value={year} onChange={(e) => setYear(e.target.value)} /></Field>
+      <Field id="al-f" label="Fund">
+        <select id="al-f" className={input} value={fund} onChange={(e) => setFund(e.target.value as AllocationFund)}>
+          {Object.entries(ALLOC_FUND_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+      </Field>
+      {fund === 'ldrrmf' && (
+        <Field id="al-l" label="Annual LDRRMF (PHP)" hint={ceiling != null ? `Ceiling for anticipatory action: ${peso(ceiling)}` : 'The ceiling is 10% of the 70% (Rule V, s. 1(b)).'}>
+          <input id="al-l" type="number" min={0} step="0.01" required className={input} value={annual} onChange={(e) => setAnnual(e.target.value)} />
+        </Field>
+      )}
+      <Field id="al-a" label="Allocation for anticipatory action (PHP)"><input id="al-a" type="number" min={0} step="0.01" required className={input} value={amount} onChange={(e) => setAmount(e.target.value)} /></Field>
+      <Field id="al-b" label="Basis" hint="For example the LDRRMF Investment Plan and Sanggunian resolution, or the approval of the augmentation.">
+        <input id="al-b" required minLength={10} className={input} value={basis} onChange={(e) => setBasis(e.target.value)} />
+      </Field>
+      <div><button type="submit" disabled={busy} className={primary}>Record allocation</button></div>
+    </form>
+  );
+};
+
+const Allocations: React.FC<{ tick: number }> = ({ tick }) => {
+  const [rows, setRows] = useState<AllocationStatus[]>([]);
+  const [adding, setAdding] = useState(false);
+  const load = useCallback(async () => {
+    const { data, error } = await listAllocations();
+    if (error) toast.error(error);
+    setRows(data);
+  }, []);
+  useEffect(() => { load(); }, [load, tick]);
+  return (
+    <section className={card} aria-labelledby="alloc-h">
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="flex-1 min-w-[16rem]">
+          <h2 id="alloc-h" className="font-semibold">Anticipatory action allocations</h2>
+          <p className="text-xs text-slate-600 dark:text-slate-300">
+            IRR of RA 12287, Rule V: for typhoons, floods and other hydrometeorological and geological hazards, no more than 30% of an allocation may go to
+            interventions more than 3 days before the expected onset, and up to 70% to interventions within 3 days. Grants, donations, other budget lines and
+            unexpended LDRRMF in the Special Trust Fund are not graduated. Drought follows the operational guidelines.
+          </p>
+        </div>
+        <Gate min="drrm_officer">
+          {!adding && <button type="button" className={secondary} onClick={() => setAdding(true)}><Plus className="w-4 h-4" aria-hidden="true" /> Record allocation</button>}
+        </Gate>
+      </div>
+      {rows.length === 0 && <p className="mt-3 text-sm text-slate-500">No allocation recorded. Disbursements from the LDRRMF, an agency's anticipatory action budget or the NDRRM Fund need one.</p>}
+      <ul className="mt-3 grid gap-4 md:grid-cols-2">
+        {rows.map((r) => (
+          <li key={r.id} className="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 space-y-2 text-sm">
+            <p className="font-semibold">{r.fiscal_year} · {ALLOC_FUND_LABEL[r.fund_source]}: {peso(r.allocation_php)}</p>
+            {r.annual_ldrrmf_php != null && <p className="text-xs text-slate-500">Annual LDRRMF {peso(r.annual_ldrrmf_php)}</p>}
+            <Bar label="More than 3 days before onset (30%)" used={r.beyond_disbursed_php} cap={r.beyond_cap_php} />
+            <Bar label="Within 3 days of onset (70%)" used={r.within_disbursed_php} cap={r.within_cap_php} />
+            <p className="text-xs text-slate-500">Basis: {r.basis}</p>
+          </li>
+        ))}
+      </ul>
+      {adding && <AllocationForm onDone={() => { setAdding(false); load(); }} />}
+    </section>
+  );
+};
+
 // ─── Module ──────────────────────────────────────────────────────────────────
 const AnticipatoryAction: React.FC = () => {
   const [params, setParams] = useSearchParams();
@@ -589,6 +714,8 @@ const AnticipatoryAction: React.FC = () => {
           <button type="button" className={primary} onClick={() => { setCreating(true); setSelected(null); }}><Plus className="w-4 h-4" aria-hidden="true" /> Open a case</button>
         </Gate>
       </div>
+
+      <Allocations tick={tick} />
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <nav aria-label="Cases" className="space-y-2">

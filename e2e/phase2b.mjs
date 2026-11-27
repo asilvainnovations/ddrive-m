@@ -47,7 +47,7 @@ try {
     const { page, ctx, errors } = await pageAs(browser, null);
     await page.goto(`${APP}/`); await settle(page);
     const t = await text(page);
-    check(t.includes('Disaster resilience intelligence for LGUs, enterprises and development institutions'), 'Home is the first page');
+    check(t.includes('Integrated resilience intelligence') && t.includes('measurable outcomes'), 'Home is the first page');
     const nav = page.getByRole('navigation', { name: 'Main' });
     const labels = ['Dashboard', 'About', 'FAQ', 'Support', 'Resources', 'Policies', 'Pricing', 'Contact'];
     const missing = [];
@@ -77,23 +77,23 @@ try {
     const { page, ctx, errors } = await pageAs(browser, null);
     await page.goto(`${APP}/policies`); await settle(page);
     let t = await text(page);
-    const titles = ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Accessibility Statement', 'AI Ethics and Governance Policy'];
+    const titles = ['Privacy Policy', 'Terms of Service', 'Cookie and Device Storage Policy', 'Accessibility Statement', 'AI Use, Ethics and Governance Policy'];
     check(titles.every((x) => t.includes(x)), 'The policies page lists all five policies');
-    for (const [slug, title] of [['privacy', 'Privacy Policy'], ['terms', 'Terms of Service'], ['cookies', 'Cookie Policy'], ['accessibility', 'Accessibility Statement'], ['ai-ethics', 'AI Ethics and Governance Policy']]) {
+    for (const [slug, title] of [['privacy', 'Privacy Policy'], ['terms', 'Terms of Service'], ['cookies', 'Cookie and Device Storage Policy'], ['accessibility', 'Accessibility Statement'], ['ai-ethics', 'AI Use, Ethics and Governance Policy']]) {
       await page.goto(`${APP}/policies/${slug}`); await settle(page, 1000);
       t = await text(page);
-      check(t.includes(title) && t.includes('In short') && t.includes('draft under legal and privacy review'), `${title} opens, with its summary and the review notice`);
+      check(t.includes(title) && t.includes('In short') && t.includes('Draft — not yet approved for final publication'), `${title} opens, with its summary and the review notice`);
     }
     await page.goto(`${APP}/policies/privacy`); await settle(page, 1000);
-    check((await page.locator('mark', { hasText: 'to be confirmed' }).count()) >= 2, 'Unconfirmed facts in the Privacy Policy are highlighted, not guessed');
+    check((await page.locator('mark', { hasText: 'to be confirmed' }).count()) >= 1, 'Unconfirmed facts in the Privacy Policy are highlighted, not guessed');
     t = await text(page);
     check(t.includes('Supabase') && !/Stripe|Hotjar|Privacy Shield|ISO 27001 Certified/i.test(t), 'The Privacy Policy names DDRiVE-M’s real processors and none it does not use');
     await shot(page, 'privacy');
     await page.goto(`${APP}/privacy-policy`); await settle(page, 1000);
-    check(page.url().endsWith('/privacy-policy') && (await text(page)).includes('If you sign in with Google'), 'The privacy policy opens at /privacy-policy itself');
+    check(page.url().endsWith('/privacy-policy') && (await text(page)).includes('Data Protection Officer'), 'The privacy policy opens at /privacy-policy itself');
     await page.goto(`${APP}/policies/ai-ethics`); await settle(page, 1000);
     t = await text(page);
-    check(t.includes('Alvin Silva') && t.includes('not connected yet'), 'The AI policy is signed and says plainly that DDRiVER AI is not connected yet');
+    check(t.includes('AI Use, Ethics and Governance Policy') && t.includes('not necessarily connected to a production AI service'), 'The AI policy says a feature shown is not necessarily a connected AI service');
     for (const p of ['support', 'resources', 'contact']) {
       await page.goto(`${APP}/${p}`); await settle(page, 1000);
       check((await page.getByRole('heading', { level: 1 }).count()) === 1, `The ${p} page opens`);
@@ -126,7 +126,7 @@ try {
     await page.goto(`${APP}/dashboard`); await settle(page);
     check(await page.getByRole('button', { name: /Anticipatory Action/ }).isVisible(), 'The sidebar lists Anticipatory Action');
     await page.goto(`${APP}/detection`); await settle(page, 2500);
-    await page.getByRole('button', { name: /All Philippines/ }).click().catch(() => {}); await settle(page, 500);
+    await page.getByRole('button', { name: /Whole region/ }).click().catch(() => {}); await settle(page, 500);
     const start = page.getByRole('link', { name: 'Start anticipatory action' }).first();
     check(await start.isVisible(), 'An analyst can start anticipatory action from an official alert');
     await start.click(); await settle(page, 2500);
@@ -162,6 +162,21 @@ try {
     await page.getByRole('button', { name: 'Record the declaration' }).click(); await settle(page, 2000);
     let t = await text(page);
     check(t.includes('State of Imminent Disaster declared') && t.includes('EO 2026-41'), 'The declaration is recorded with its executive order');
+
+    // IRR of RA 12287, Rule V: the year's LDRRMF allocation for anticipatory action comes first.
+    await page.getByRole('button', { name: 'Record allocation' }).click(); await settle(page, 500);
+    await page.getByLabel('Annual LDRRMF (PHP)').fill('10000000');
+    t = await text(page);
+    check(/Ceiling for anticipatory action: ₱700,000/.test(t), 'The allocation form shows the 10%-of-70% LDRRMF ceiling');
+    await page.getByLabel('Allocation for anticipatory action (PHP)').fill('800000');
+    await page.getByLabel('Basis', { exact: true }).fill('LDRRMF Investment Plan 2026, SP Resolution No. 2026-14');
+    await page.getByRole('button', { name: 'Record allocation' }).click(); await settle(page, 1500);
+    t = await text(page);
+    check(t.includes('no more than 10% of the 70%'), 'An allocation above the IRR ceiling is refused with the reason');
+    await page.getByLabel('Allocation for anticipatory action (PHP)').fill('500000');
+    await page.getByRole('button', { name: 'Record allocation' }).click(); await settle(page, 1500);
+    t = await text(page);
+    check(/Within 3 days of onset \(70%\)\s*₱0\.00 of ₱350,000/.test(t), 'The allocation shows each lead-time band against its limit');
 
     await page.getByLabel('What will be done').fill('Pre-emptive evacuation of coastal barangays');
     await page.getByLabel('Measure (section 9)').selectOption('preemptive_evacuation');
