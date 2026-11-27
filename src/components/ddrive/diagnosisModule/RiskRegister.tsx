@@ -134,7 +134,7 @@ const RiskRegister: React.FC<{ onOpenAssessment?: (entryId: string) => void }> =
                     <LinkedActions
                       filter={{ riskId: r.id }} preloaded={actions.filter((a) => a.risk_id === r.id)} onChanged={loadActions}
                       link={{ origin: 'diagnosis', risk_id: r.id }} min="analyst" idPrefix={`risk-${r.id}`} context={`${r.ref} ${r.title}`}
-                      defaultTitle={`Treat: ${r.title}`} defaultPriority={priorityFor(r.level, r.ddrive_risk_code)} compact
+                      defaultTitle={`Treat: ${r.title}`} defaultPriority={priorityFor(r.level, r.ddrive_risk_code)} compact aiSubject={`risk:${r.id}`}
                     />
                   </td>
                 </tr>

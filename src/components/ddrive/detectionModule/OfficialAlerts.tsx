@@ -9,6 +9,7 @@ import { OfficialAlert, SOURCES, SourceKey, ago, alertTitle, isStale, manila, us
 import { riskCategory, scaleWord } from '@/lib/ddriveAssessment/scoring';
 import { LinkedActions } from '@/components/ddrive/responseModule/ProposeAction';
 import { listActions, priorityFor, type ResponseAction } from '@/lib/responseActions';
+import AskDdriver from '@/components/ddrive/ai/AskDdriver';
 
 interface Props {
   /** Called when a person chooses to log an alert as one of the organisation's hazard records. */
@@ -234,7 +235,10 @@ const OfficialAlerts: React.FC<Props> = ({ onLogAsHazard }) => {
                   <a href={a.cap_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1">
                     Original from {a.source} <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
-                  {onLogAsHazard && (
+                  {a.in_watch_area && (
+                    <span className="font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">In your hazard records automatically</span>
+                  )}
+                  {onLogAsHazard && !a.in_watch_area && (
                     <button type="button" onClick={() => onLogAsHazard(a)} disabled={!can('responder')} title={can('responder') ? undefined : needsRole('responder')}
                       className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1 disabled:opacity-50">
                       <FilePlus2 className="w-3.5 h-3.5" aria-hidden="true" /> Log as hazard record
@@ -247,7 +251,8 @@ const OfficialAlerts: React.FC<Props> = ({ onLogAsHazard }) => {
                   )}
                   <span className="text-slate-500 ml-auto">Source: {a.sender ?? a.source}{a.license ? ` · ${a.license.replace(/^.*?(CC BY [0-9]+(?:\.[0-9]+)?).*$/i, '$1')}` : ''}</span>
                 </div>
-                <div className="mt-3 border-t border-slate-200 dark:border-slate-700 pt-2">
+                <div className="mt-3 border-t border-slate-200 dark:border-slate-700 pt-2 space-y-2">
+                  {a.in_watch_area && <AskDdriver task="explain_alert" subject={a.id} label="What does this mean for us? (DDRiVER AI)" idPrefix={`ax-${a.id}`} />}
                   <LinkedActions
                     filter={{ alertId: a.id }} preloaded={actions.filter((x) => x.official_alert_id === a.id)} onChanged={loadActions}
                     link={{ origin: 'detection', official_alert_id: a.id }} min="responder" idPrefix={`al-${a.id}`} context={alertTitle(a)}

@@ -6,16 +6,20 @@ import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { ROLE_LABELS } from '@/lib/roles';
 import OrganisationSettings from '@/components/ddrive/OrganisationSettings';
+import AiSettings from '@/components/ddrive/ai/AiSettings';
+import { useSearchParams } from 'react-router-dom';
 
 const SettingsModule: React.FC = () => {
   const { user, profile, openLogin, activeTenant } = useAuth();
   const { theme, setTheme } = useTheme();
-  const [section, setSection] = useState<'profile' | 'organisation' | 'security' | 'notifications' | 'ai' | 'general'>('profile');
+  const [params] = useSearchParams();
+  const initial = params.get('section');
+  const [section, setSection] = useState<'profile' | 'organisation' | 'security' | 'notifications' | 'ai' | 'general'>(
+    initial === 'ai' || initial === 'organisation' ? initial : 'profile');
   const [twoFA, setTwoFA] = useState(true);
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifSMS, setNotifSMS] = useState(false);
   const [notifPush, setNotifPush] = useState(true);
-  const [aiStyle, setAiStyle] = useState<'concise' | 'detailed'>('detailed');
 
   const sections = [
     { key: 'profile', label: 'Profile', icon: User },
@@ -199,38 +203,7 @@ const SettingsModule: React.FC = () => {
             </div>
           )}
 
-          {section === 'ai' && (
-            <div className="space-y-4">
-              <h3 className="font-montserrat font-bold text-lg">DDRiVER AI Preferences</h3>
-              <div>
-                <label className="text-xs text-slate-500 font-semibold mb-2 block">Response Style</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['concise', 'detailed'].map(s => (
-                    <button
-                      key={s}
-                      onClick={() => setAiStyle(s as 'concise' | 'detailed')}
-                      className={`p-3 rounded-xl border text-sm font-semibold capitalize ${aiStyle === s ? 'border-purple-500 bg-purple-500/10 text-purple-700' : 'border-slate-300'}`}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/60 dark:bg-white/5">
-                <p className="text-sm font-semibold">Enable AI suggestions on dashboard</p>
-                <input type="checkbox" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/60 dark:bg-white/5">
-                <p className="text-sm font-semibold">Cite regulatory sources</p>
-                <input type="checkbox" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/60 dark:bg-white/5">
-                <p className="text-sm font-semibold">Proactive risk insights</p>
-                <input type="checkbox" defaultChecked />
-              </div>
-              <button onClick={() => toast.info('AI settings are not available yet.')} className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold text-sm">Save AI Settings</button>
-            </div>
-          )}
+          {section === 'ai' && <AiSettings />}
         </GlassCard>
       </div>
     </div>

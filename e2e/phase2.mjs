@@ -99,18 +99,24 @@ try {
     await page.getByRole('button', { name: 'Details and instructions' }).first().click();
     t = await text(page);
     check(t.includes('What to do'), 'Instructions from PAGASA can be opened');
+    // An alert in a watch area becomes a hazard record automatically (ADR-010); no one types it in.
+    check(t.includes('In your hazard records automatically'), 'An alert in the watch area is marked as synchronised to the hazard records');
+    const synced = await (await fetch(`${API}/rest/v1/ddrive_hazards?select=name,agency,origin,ddrive_official_alerts(event)&origin=eq.official`, { headers: { authorization: `Bearer ${SERVICE}` } })).json();
+    check(synced.length >= 1 && synced.every((h) => h.agency === 'PAGASA') && synced.some((h) => /General Flood Advisory/.test(h.name)),
+      'Adding the watch area synchronised the PAGASA alert into a hazard record at once', JSON.stringify(synced));
+    // Alerts outside the watch areas can still be logged by hand.
+    await page.getByRole('button', { name: /Whole region/ }).click(); await settle(page, 600);
     await page.getByRole('button', { name: 'Log as hazard record' }).first().click(); await settle(page, 800);
     check(await page.getByLabel('Source of the information').inputValue() === 'PAGASA', 'The form is prefilled with the source');
-    check((await page.getByLabel('Hazard name').inputValue()).includes('General Flood Advisory'), 'The form is prefilled with the alert');
-    check(await page.getByLabel('Hazard type').inputValue() === 'Flood', 'The hazard type is inferred from the event');
+    check((await page.getByLabel('Hazard name').inputValue()).length > 3, 'The form is prefilled with the alert');
     await page.getByLabel('Latitude (4 to 22)').fill('11.24');
     await page.getByLabel('Longitude (116 to 127)').fill('125.00');
     await page.getByLabel('Severity').selectOption('Medium');
     await page.getByRole('button', { name: 'Save hazard record' }).click(); await settle(page);
     t = await text(page);
     check(t.includes('Hazard record saved'), 'Responder saves the hazard record');
-    const rows = await (await fetch(`${API}/rest/v1/ddrive_hazards?select=official_alert_id,source_url,ddrive_official_alerts(event,cap_url)&official_alert_id=not.is.null`, { headers: { authorization: `Bearer ${SERVICE}` } })).json();
-    check(rows.length === 1 && rows[0].ddrive_official_alerts?.cap_url?.endsWith('pagasa-gfa.cap'), 'The record links to the PAGASA alert it came from', JSON.stringify(rows));
+    const rows = await (await fetch(`${API}/rest/v1/ddrive_hazards?select=official_alert_id,source_url,origin,ddrive_official_alerts(event,cap_url)&official_alert_id=not.is.null&origin=eq.field`, { headers: { authorization: `Bearer ${SERVICE}` } })).json();
+    check(rows.length === 1 && /\.cap$/.test(rows[0].ddrive_official_alerts?.cap_url ?? ''), 'The record links to the PAGASA alert it came from', JSON.stringify(rows));
     // The test server is plain http; production PAGASA links are https and are copied into source_url.
     check(rows[0]?.source_url === null, 'A non-https link is not copied into the record (the database accepts https only)', JSON.stringify(rows));
 

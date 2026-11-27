@@ -10,3 +10,8 @@ verify_jwt = false
 [functions.ingest-official]
 # Same as ingest-pagasa: called by pg_cron with a secret key; the function checks the key itself.
 verify_jwt = false
+
+[functions.ddriver-ai]
+# Called from the app with the user's session. The function checks the session with Supabase Auth itself
+# (secret and publishable keys are not JWTs, so the platform check is off), then reads data as that user.
+verify_jwt = false

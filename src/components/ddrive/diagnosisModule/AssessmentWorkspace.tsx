@@ -15,6 +15,7 @@ import { csvCell, download, safeFileName } from '@/lib/rapidMapping/exports';
 import { Field, Gate, NoteAction, card, input, primary, secondary, danger, useSubmit, when } from '../rapidMappingModule/ui';
 import { DataScores, MatrixCounts, riskFill } from './Reports';
 import { LinkedActions } from '../responseModule/ProposeAction';
+import AskDdriver from '../ai/AskDdriver';
 import { listActions, priorityFor, type ResponseAction } from '@/lib/responseActions';
 const Charts = React.lazy(() => import('./Charts'));
 
@@ -104,8 +105,9 @@ const EntryRow: React.FC<{
             filter={{ entryId: e.id }} preloaded={actions} onChanged={onActionsChanged}
             link={{ origin: 'diagnosis', hazard_entry_id: e.id }} min="analyst" idPrefix={`entry-${e.id}`}
             context={`${e.hazard_event} (${e.main_hazard}), rated ${e.risk_code}`}
-            defaultTitle={`Reduce ${e.hazard_event.toLowerCase()} risk`} defaultPriority={priorityFor(null, e.risk_code)} compact
+            defaultTitle={`Reduce ${e.hazard_event.toLowerCase()} risk`} defaultPriority={priorityFor(null, e.risk_code)} compact aiSubject={`entry:${e.id}`}
           />
+          <AskDdriver task="explain_rating" subject={e.id} label={`Explain this ${e.risk_code} rating`} idPrefix={`why-${e.id}`} className="mt-1" />
         </td>
       </tr>
     )}

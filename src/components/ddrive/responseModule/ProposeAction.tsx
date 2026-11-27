@@ -8,6 +8,8 @@ import {
 } from '@/lib/responseActions';
 import { Field, Gate, input, primary, secondary, useSubmit } from '../rapidMappingModule/ui';
 import type { Role } from '@/lib/roles';
+import AskDdriver from '../ai/AskDdriver';
+import type { AiSuggestion } from '@/lib/ddriver';
 
 export interface ProposeLink {
   origin: ActionOrigin;
@@ -15,6 +17,7 @@ export interface ProposeLink {
   hazard_entry_id?: string | null;
   official_alert_id?: string | null;
   hazard_record_id?: number | null;
+  incident_id?: string | null;
 }
 
 /** The form to propose an action. Used in Diagnosis, Detection and Response; the decision is always made in Response. */
@@ -28,7 +31,9 @@ export const ProposeActionForm: React.FC<{
   onDone: () => void;
   onCancel?: () => void;
   idPrefix: string;
-}> = ({ link, defaultTitle = '', defaultPriority = 'medium', defaultArea, defaultStrategy, context, onDone, onCancel, idPrefix }) => {
+  /** 'risk:<id>' or 'entry:<id>': offers DDRiVER AI draft options for this risk. */
+  aiSubject?: string;
+}> = ({ link, defaultTitle = '', defaultPriority = 'medium', defaultArea, defaultStrategy, context, onDone, onCancel, idPrefix, aiSubject }) => {
   const [title, setTitle] = useState(defaultTitle);
   const [description, setDescription] = useState('');
   const [strategy, setStrategy] = useState<Strategy>(defaultStrategy ?? (link.origin === 'detection' ? 'reduce_consequences' : 'reduce_likelihood'));
@@ -37,21 +42,28 @@ export const ProposeActionForm: React.FC<{
   const [owner, setOwner] = useState('');
   const [due, setDue] = useState('');
   const [cost, setCost] = useState('');
+  const [aiAssisted, setAiAssisted] = useState(false);
   const { busy, run } = useSubmit(onDone);
   const id = (k: string) => `${idPrefix}-${k}`;
+  const useDraft = (s: AiSuggestion) => {
+    setTitle(s.title); setStrategy(s.strategy as Strategy); setArea(s.drrm_area as DrrmArea);
+    setDescription(s.rationale.replace(/\s*\[S\d+(?:,\s*S\d+)*\]/g, '').trim()); setAiAssisted(true);
+  };
   return (
     <form
       className="grid gap-3 sm:grid-cols-2 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/30 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         const a: NewAction = {
-          ...link, title, description: description || null, strategy, drrm_area: area, priority,
+          ...link, title, description: description || null, strategy, drrm_area: area, priority, ai_assisted: aiAssisted,
           owner_office: owner || null, due_on: due || null, cost_php: cost ? Number(cost) : null,
         };
         run(() => proposeAction(a), 'Action proposed. It is now waiting for a decision in Response.');
       }}
     >
       <p className="sm:col-span-2 text-sm font-semibold">Propose an action{context ? ` for ${context}` : ''}</p>
+      {aiSubject && <AskDdriver className="sm:col-span-2" task="suggest_treatments" subject={aiSubject} label="Draft options with DDRiVER AI" idPrefix={`${idPrefix}-ai`} onSuggestion={useDraft} />}
+      {aiAssisted && <p className="sm:col-span-2 text-xs rounded-lg bg-purple-50 dark:bg-purple-950/40 border border-purple-200 px-2 py-1">Started from a DDRiVER AI draft. Check and edit it: the proposal is yours and is marked as AI-assisted.</p>}
       <div className="sm:col-span-2">
         <Field id={id('title')} label="Action"><input id={id('title')} required minLength={3} maxLength={200} className={input} value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
       </div>
@@ -105,7 +117,8 @@ export const LinkedActions: React.FC<{
   /** Rows already loaded by the parent (one query for a whole table). With these, onChanged reloads them. */
   preloaded?: ResponseAction[];
   onChanged?: () => void;
-}> = ({ filter, link, min, idPrefix, context, defaultTitle, defaultPriority, compact, preloaded, onChanged }) => {
+  aiSubject?: string;
+}> = ({ filter, link, min, idPrefix, context, defaultTitle, defaultPriority, compact, preloaded, onChanged, aiSubject }) => {
   const [own, setOwn] = useState<ResponseAction[]>([]);
   const [open, setOpen] = useState(false);
   const key = JSON.stringify(filter);
@@ -139,7 +152,7 @@ export const LinkedActions: React.FC<{
       </div>
       {open && (
         <ProposeActionForm
-          link={link} idPrefix={idPrefix} context={context} defaultTitle={defaultTitle} defaultPriority={defaultPriority}
+          link={link} idPrefix={idPrefix} context={context} defaultTitle={defaultTitle} defaultPriority={defaultPriority} aiSubject={aiSubject}
           onCancel={() => setOpen(false)} onDone={() => { setOpen(false); load(); }}
         />
       )}

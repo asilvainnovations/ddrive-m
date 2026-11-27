@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
 import { Shield, CheckCircle2, Clock, Users, Plus } from 'lucide-react';
@@ -10,6 +10,8 @@ import { needsRole } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 import { Field, Gate, input, primary, secondary } from '../rapidMappingModule/ui';
 import ActionsBoard from './ActionsBoard';
+import { LinkedActions } from './ProposeAction';
+import { listActions, type ResponseAction } from '@/lib/responseActions';
 
 // Anticipatory action (RA 12287) is part of Response: acting on a forecast before the hazard strikes.
 const AnticipatoryAction = lazy(() => import('../anticipatoryModule/AnticipatoryAction'));
@@ -56,6 +58,10 @@ const Incidents: React.FC = () => {
   const { data: incidents, refetch } = useIncidents();
   const { can } = useAuth();
   const [adding, setAdding] = useState(false);
+  // Actions serving each incident, in one query.
+  const [actions, setActions] = useState<ResponseAction[]>([]);
+  const loadActions = useCallback(async () => { setActions((await listActions()).data.filter((a) => a.incident_id)); }, []);
+  useEffect(() => { loadActions(); }, [loadActions]);
   const advance = async (id: string, current: number) => {
     const { error } = await setIncidentProgress(id, current + 10);
     if (error) { toast.error(error); return; }
@@ -77,7 +83,7 @@ const Incidents: React.FC = () => {
       {incidents.length === 0 && <p className="text-sm text-slate-500">No incidents recorded.</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {incidents.map((inc) => (
-          <div key={inc.id} className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10">
+          <div key={inc.id} id={`incident-${inc.id}`} className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10">
             <div className="flex items-start justify-between mb-2">
               <div>
                 <p className="font-mono text-[10px] text-slate-500">{inc.ref}</p>
@@ -101,6 +107,13 @@ const Incidents: React.FC = () => {
                 <button type="button" onClick={() => advance(inc.id, inc.progress)} disabled={!can('responder')} title={can('responder') ? undefined : needsRole('responder')}
                   className="text-xs text-blue-700 font-semibold hover:underline disabled:opacity-50 disabled:no-underline">Advance +10%</button>
               )}
+            </div>
+            <div className="mt-3 border-t border-slate-200 dark:border-slate-700 pt-2">
+              <LinkedActions
+                filter={{ incidentId: inc.id }} preloaded={actions.filter((a) => a.incident_id === inc.id)} onChanged={loadActions}
+                link={{ origin: 'manual', incident_id: inc.id }} min="responder" idPrefix={`inc-${inc.id}`} context={`${inc.ref} ${inc.title}`}
+                defaultTitle="" defaultPriority={inc.priority.toLowerCase() as 'critical' | 'high' | 'medium' | 'low'} compact
+              />
             </div>
           </div>
         ))}

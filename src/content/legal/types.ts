@@ -21,5 +21,7 @@ export interface Policy {
   effective: string; // ISO date
   updated: string; // ISO date
   sections: PolicySection[];
+  /** Approved for publication on its own, independent of LEGAL_FACTS.reviewed (which covers the other policies). */
+  final?: boolean;
   signoff?: { name: string; role: string };
 }

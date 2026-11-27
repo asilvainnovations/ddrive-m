@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/sonner';
 import {
   AREA_LABEL, ActionOrigin, ORIGIN_LABEL, PRIORITY_LABEL, ResponseAction, STATUS_LABEL, STRATEGY_SHORT, cancelAction, completeAction,
-  decideAction, listActions, reassignAction, reportProgress, sourceText,
+  decideAction, fundAction, linkIncident, listActions, reassignAction, reportProgress, sourceText,
 } from '@/lib/responseActions';
+import { BudgetLine, FUND_SHORT, fundFits, listLines, peso } from '@/lib/budget';
+import { useIncidents, type Incident } from '@/hooks/useDDriveData';
 import { Field, Gate, NoteAction, card, input, secondary, useSubmit } from '../rapidMappingModule/ui';
 import { ProposeActionForm } from './ProposeAction';
 
-const peso = (n: number | null) => (n == null ? null : n.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' }));
 const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 } as const;
 
 const ProgressForm: React.FC<{ a: ResponseAction; onDone: () => void }> = ({ a, onDone }) => {
@@ -40,7 +41,55 @@ const Reassign: React.FC<{ a: ResponseAction; onDone: () => void }> = ({ a, onDo
   );
 };
 
-const ActionCard: React.FC<{ a: ResponseAction; highlighted: boolean; onChanged: () => void }> = ({ a, highlighted, onChanged }) => {
+// Links an action to an incident (coordination) or funds it from an approved budget line (Integration).
+const Links: React.FC<{ a: ResponseAction; incidents: Incident[]; lines: BudgetLine[]; onChanged: () => void }> = ({ a, incidents, lines, onChanged }) => {
+  const { can } = useAuth();
+  const [inc, setInc] = useState(a.incident_id ?? '');
+  const [line, setLine] = useState(a.budget_line_id ?? '');
+  const { busy, run } = useSubmit(onChanged);
+  const linkable = !['declined', 'cancelled'].includes(a.status);
+  const fundable = ['approved', 'in_progress', 'done'].includes(a.status);
+  const candidates = lines.filter((l) => l.status === 'approved' && fundFits(l.fund_source, a.drrm_area));
+  return (
+    <div className="grid gap-2 sm:grid-cols-2 text-xs">
+      <div>
+        <p className="text-slate-500">Incident</p>
+        {a.ddrive_incidents
+          ? <Link to={`/response?tab=incidents#incident-${a.incident_id}`} className="font-semibold underline">{a.ddrive_incidents.ref} {a.ddrive_incidents.title}</Link>
+          : <span>Not linked</span>}
+        {linkable && can('responder') && (
+          <form className="flex gap-1 mt-1" onSubmit={(e) => { e.preventDefault(); run(() => linkIncident(a.id, inc || null), inc ? 'Linked to the incident.' : 'Unlinked.'); }}>
+            <label className="sr-only" htmlFor={`li-${a.id}`}>Incident for {a.title}</label>
+            <select id={`li-${a.id}`} className={cn(input, 'py-1 text-xs')} value={inc} onChange={(e) => setInc(e.target.value)}>
+              <option value="">No incident</option>
+              {incidents.map((i) => <option key={i.id} value={i.id}>{i.ref} {i.title}</option>)}
+            </select>
+            <button type="submit" disabled={busy || inc === (a.incident_id ?? '')} className={cn(secondary, 'py-1 text-xs')}>Link to incident</button>
+          </form>
+        )}
+      </div>
+      <div>
+        <p className="text-slate-500">Funding</p>
+        {a.ddrive_budget_lines
+          ? <Link to="/integration?tab=budget" className="font-semibold underline">{a.ddrive_budget_lines.ref} {a.ddrive_budget_lines.title} ({FUND_SHORT[a.ddrive_budget_lines.fund_source as keyof typeof FUND_SHORT] ?? a.ddrive_budget_lines.fund_source} {a.ddrive_budget_lines.fiscal_year})</Link>
+          : <span>{fundable ? 'Not funded yet' : 'Funded after approval'}</span>}
+        {fundable && can('drrm_officer') && !(a.status === 'done' && a.budget_line_id) && (
+          <form className="flex gap-1 mt-1" onSubmit={(e) => { e.preventDefault(); run(() => fundAction(a.id, line || null), line ? 'Funded.' : 'Funding removed.'); }}>
+            <label className="sr-only" htmlFor={`fu-${a.id}`}>Budget line for {a.title}</label>
+            <select id={`fu-${a.id}`} className={cn(input, 'py-1 text-xs')} value={line} onChange={(e) => setLine(e.target.value)}>
+              <option value="">No budget line</option>
+              {candidates.map((l) => <option key={l.id} value={l.id}>{l.ref} {l.title} · {FUND_SHORT[l.fund_source]} {l.fiscal_year} · {peso(l.available_php)} left</option>)}
+            </select>
+            <button type="submit" disabled={busy || line === (a.budget_line_id ?? '')} className={cn(secondary, 'py-1 text-xs')}>Fund from budget line</button>
+          </form>
+        )}
+        {fundable && can('drrm_officer') && a.cost_php == null && <p className="text-amber-800 mt-1">Add an estimated cost to fund it: cancel and re-propose with the cost.</p>}
+      </div>
+    </div>
+  );
+};
+
+const ActionCard: React.FC<{ a: ResponseAction; highlighted: boolean; onChanged: () => void; incidents: Incident[]; lines: BudgetLine[] }> = ({ a, highlighted, onChanged, incidents, lines }) => {
   const { can } = useAuth();
   const step = async (fn: () => Promise<{ error: string | null }>, ok: string) => {
     const { error } = await fn();
@@ -56,6 +105,7 @@ const ActionCard: React.FC<{ a: ResponseAction; highlighted: boolean; onChanged:
           <p className="text-xs text-slate-500">{a.ref} · {ORIGIN_LABEL[a.origin]} · {PRIORITY_LABEL[a.priority]} priority</p>
           <h3 className="font-semibold">{a.title}</h3>
           <p className="text-xs text-slate-600 dark:text-slate-300">Responds to: {sourceText(a)}</p>
+          {a.ai_assisted && <p className="text-[11px] font-semibold text-purple-800 dark:text-purple-300">Drafted with DDRiVER AI, proposed by a person</p>}
         </div>
         <span className="text-xs font-semibold px-2 py-1 rounded-full border border-slate-300">{STATUS_LABEL[a.status]}{a.status === 'in_progress' ? `, ${a.progress}%` : ''}</span>
       </div>
@@ -75,6 +125,7 @@ const ActionCard: React.FC<{ a: ResponseAction; highlighted: boolean; onChanged:
       {a.last_update && <p className="text-xs"><span className="text-slate-500">Latest update: </span>{a.last_update}</p>}
       {a.decision_note && <p className="text-xs"><span className="text-slate-500">{a.status === 'cancelled' ? 'Cancelled because: ' : 'Decision note: '}</span>{a.decision_note}</p>}
       {a.outcome && <p className="text-xs"><span className="text-slate-500">Outcome: </span>{a.outcome}</p>}
+      <div className="border-t border-slate-200 dark:border-slate-700 pt-3"><Links a={a} incidents={incidents} lines={lines} onChanged={onChanged} /></div>
 
       {a.status === 'proposed' && (
         <Gate min="drrm_officer">
@@ -115,10 +166,13 @@ const ActionsBoard: React.FC = () => {
   const [view, setView] = useState<View>(focus ? 'all' : 'open');
   const [origin, setOrigin] = useState<ActionOrigin | 'all'>('all');
   const [adding, setAdding] = useState(false);
+  const { data: incidents } = useIncidents();
+  const [lines, setLines] = useState<BudgetLine[]>([]);
   const load = useCallback(async () => {
-    const { data, error } = await listActions();
+    const [{ data, error }, b] = await Promise.all([listActions(), listLines()]);
     if (error) toast.error(error);
     setRows(data);
+    setLines(b.data);
     setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -169,7 +223,7 @@ const ActionsBoard: React.FC = () => {
         <p className="text-sm text-slate-500">No actions here. Propose them from a risk or a scored hazard event in Diagnosis, or from an alert in Detection.</p>
       )}
       <ul className="grid gap-4 xl:grid-cols-2">
-        {shown.map((a) => <ActionCard key={a.id} a={a} highlighted={a.id === focus} onChanged={load} />)}
+        {shown.map((a) => <ActionCard key={a.id} a={a} highlighted={a.id === focus} onChanged={load} incidents={incidents.filter((i) => i.status !== 'Completed' || i.id === a.incident_id)} lines={lines} />)}
       </ul>
     </div>
   );
