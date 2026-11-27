@@ -18,6 +18,7 @@ export interface ProposeLink {
   official_alert_id?: string | null;
   hazard_record_id?: number | null;
   incident_id?: string | null;
+  exercise_check_id?: string | null;
 }
 
 /** The form to propose an action. Used in Diagnosis, Detection and Response; the decision is always made in Response. */

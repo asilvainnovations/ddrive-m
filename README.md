@@ -8,17 +8,18 @@
 
 | Phase | Module | What it does today |
 | --- | --- | --- |
-| 1 Detection | `detectionModule/` | Official alerts from PAGASA (CAP), the Pacific Tsunami Warning Center (CAP), USGS earthquakes and GDACS, with per-source freshness; flagged for your watch areas (provinces, or a point and radius); each alert in a watch area shows your approved DDRiVE assessment's rating, vulnerability and response capacity for that hazard; hazard records ([ADR-005](docs/adr/005-official-detection-sources.md)) |
+| 1 Detection | `detectionModule/` | Official alerts from PAGASA (CAP), the Pacific Tsunami Warning Center (CAP), USGS earthquakes and GDACS, with per-source freshness; flagged for your watch areas (provinces, or a point and radius); each alert in a watch area shows your approved DDRiVE assessment's rating, vulnerability and response capacity for that hazard; hazard records kept in step with the alerts in force ([ADR-005](docs/adr/005-official-detection-sources.md), [ADR-010](docs/adr/010-official-hazard-sync.md)); Himawari satellite loop from JMA ([ADR-015](docs/adr/015-himawari-satellite-loop.md)) |
 | 2 Diagnosis | `diagnosisModule/` | DDRiVE hazard, vulnerability and risk assessment (exposure, four vulnerability categories, response measures → likelihood, severity, VL1–VH9), from templates or an imported DDRiVE workbook; scenarios; Data Scores, Risk Summary and Vulnerability Report; hazard glossary; risk register (likelihood × impact) fed from scored hazard events ([ADR-006](docs/adr/006-ddrive-hazard-assessment.md)) |
 | 3 Response | `responseModule/` | Risk-informed actions proposed from Diagnosis (register risks, scored DDRiVE hazard events) and Detection (alerts, hazard records): a DRRM officer approves or declines; responders report progress and the outcome (ISO 31000 treatment options, RA 10121 thematic areas) ([ADR-008](docs/adr/008-connected-detection-diagnosis-response.md)); incidents; anticipatory action tab |
 | 3 Anticipatory action (in Response) | `anticipatoryModule/` | RA 12287 cases: forecast trigger, pre-disaster risk assessment, recommendation, declaration, measures and funds with IRR graduated disbursement, lifting, report to OCD |
 | 3 Rapid Mapping | `rapidMappingModule/` | Mapping activations per incident; approved areas of interest; GeoJSON/GeoPackage import with geometry and CRS checks; preliminary → reviewed → verified → published product versions with separation of duties; offline-safe field observations; GeoJSON, CSV, metadata and print exports ([ADR-004](docs/adr/004-rapid-mapping.md)) |
-| 4 Integration | `IntegrationModule.tsx` | UNDRR 10 Essentials scorecard entries and guidance |
-| 5 Validation | `ValidationModule.tsx` | Exercise scenarios and links to the ICS simulators |
-| 6 Enhancement | `enhancementModule/` | Plan drafts from templates |
+| 4 Integration | `IntegrationModule.tsx`, `integrationModule/` | Gawad KALASAG CY 2026 self-assessment; risk mainstreaming register (CLUP, CDP, AIP, LDRRMP, ordinances); budget lines by fund and NDRRMP output, funding actions; UNDRR 10 Essentials ([ADR-009](docs/adr/009-action-links-and-budget.md), [ADR-012](docs/adr/012-governance-and-mainstreaming.md)) |
+| 5 Validation | `ValidationModule.tsx`, `validationModule/` | Exercises that test plans, assumptions, capabilities and coordination; gaps become improvement actions; after-action report; links to the ICS simulators ([ADR-013](docs/adr/013-plans-forms-exercises.md)) |
+| 6 Enhancement | `enhancementModule/` | DRRM plan templates (LDRRMP, contingency plan, EOC manual, recovery, PSCP, LCCAP, communication plan) with sources; Memo 147 review and Certificate of Review; SOPG reports; RA 10821 notice; AAR ([ADR-013](docs/adr/013-plans-forms-exercises.md)) |
 | 7 Monitoring | `monitoringModule/` | Team messages and presence |
 | Documents | `documentsModule/` | Document register |
-| DDRiVER AI | `AIChatbot.tsx` | Not connected yet (Phase 2) |
+| DDRiVER AI | `ai/`, `AIChatbot.tsx`, function `ddriver-ai` | Grounded briefs, explanations, drafts and chat with cited sources; off until an administrator turns it on ([ADR-011](docs/adr/011-ddriver-ai.md)) |
+| Dashboard | `dashboardModule/` | Records across the seven phases; UP NOAH Know Your Hazards ([ADR-014](docs/adr/014-noah-know-your-hazards.md)) |
 
 ## Getting started
 

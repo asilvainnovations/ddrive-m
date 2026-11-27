@@ -71,7 +71,7 @@ cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase
 echo "Detection: PTWC, USGS and GDACS through the real ingest-official function"
 kill "$INGEST_PID" 2>/dev/null; sleep 1
 SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUPABASE_SECRET_KEYS='{"default":"sb_secret_e2e_test_key"}' \
-  PTWC_FEED_URL=http://127.0.0.1:8099/ptwc/feed.xml USGS_QUERY_URL=http://127.0.0.1:8099/usgs GDACS_QUERY_URL=http://127.0.0.1:8099/gdacs \
+  PTWC_FEED_URL=http://127.0.0.1:8099/ptwc/feed.xml USGS_QUERY_URL=http://127.0.0.1:8099/usgs GDACS_QUERY_URL=http://127.0.0.1:8099/gdacs HIMAWARI_BASE_URL=http://127.0.0.1:8099/himawari \
   "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ingest-official/deno.json" \
   "$ROOT/supabase/functions/ingest-official/index.ts" > "$WORK/official.log" 2>&1 & OFFICIAL_PID=$!; PIDS+=($OFFICIAL_PID)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
@@ -86,6 +86,7 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SECRET_KEYS='{"default":"sb_secret_
   "$ROOT/supabase/functions/ddriver-ai/index.ts" > "$WORK/ddriver.log" 2>&1 & PIDS+=($!)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node integration_ai.mjs || { echo "--- ddriver-ai log"; tail -30 "$WORK/ddriver.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node plans_governance.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
 
 echo "Crawler view: pages without JavaScript and the Vercel routing"
 cd "$ROOT/e2e" && node crawler.mjs

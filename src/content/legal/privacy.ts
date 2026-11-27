@@ -102,6 +102,8 @@ export const privacy: Policy = {
             ['Google', 'Google sign-in, when you use it; web fonts', 'Sign-in: what you share with Google. Fonts: your IP address and browser details'],
             ['Anthropic', 'DDRiVER AI, only if your organisation turns it on', 'The question and the records needed to answer it (section 4)'],
             ['YouTube (privacy-enhanced mode)', 'The introductory video on the home page, only when you press play', 'Your IP address and browser details'],
+            ['Japan Meteorological Agency (JMA)', 'Himawari satellite images in Detection, only when you open the satellite loop', 'Your IP address and browser details (no account information)'],
+            ['UP NOAH (UP Resilience Institute)', 'The Know Your Hazards map on the Dashboard, only when you press “Show the map here”', 'Your IP address and browser details; NOAH’s own terms and privacy notice apply inside the map'],
           ],
         } },
         { p: 'Members of your organisation see its records according to their role. We do not share one organisation’s records with another. We disclose information to authorities only when the law requires it or to protect life and safety, as the Data Privacy Act allows.' },

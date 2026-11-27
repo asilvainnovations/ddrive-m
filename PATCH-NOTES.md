@@ -1,3 +1,38 @@
+# DDRiVE-M 0.9.0: Integration, Enhancement and Validation; DDRiVER AI; synchronised Detection — 27 November 2026
+
+- **Integration (Phase 4) embeds risk priorities in governance, plans and budgets.**
+  - *Governance:* a yearly self-assessment against the 32 scored indicators of the Gawad KALASAG LDRRMCO toolkit CY 2026, with each indicator's means of verification and rating guide, the six minimum requirements, and the toolkit's weighted mean and band. The official assessment stays with the validation teams ([ADR-012](docs/adr/012-governance-and-mainstreaming.md)).
+  - *Risk priorities in plans:* a mainstreaming register following the CDRA chain (decision area, findings, implications, policy intervention) into the CLUP, CDP, AIP, LDRRMP, LCCAP, ordinances and other instruments. Adoption needs the ordinance or resolution number. A coverage table shows priority risks not yet adopted or funded.
+  - *Budgets:* budget lines by fund (LDRRMF 70%, QRF 30% and others), linked to NDRRMP 2020-2030 outputs. Actions are funded from approved lines, and over-commitment is refused. Actions can be linked to incidents ([ADR-009](docs/adr/009-action-links-and-budget.md)).
+- **Enhancement (Phase 6): plan templates and forms.**
+  - *Plans:* LDRRMP (Memo 147 outline), contingency plan, EOC manual (Memo 131), recovery program, public service continuity plan, LCCAP and communication plan. Each section cites its source. Plans are printable and are approved with their adopting resolution.
+  - *Forms:* the Memo 147 review and Certificate of Review, initial and situation reports (SOPG), the RA 10821 school-use notice and the after-action report ([ADR-013](docs/adr/013-plans-forms-exercises.md)).
+- **Validation (Phase 5): exercises.**
+  - "Test this plan" starts a tabletop, drill, functional or full-scale exercise with checks of objectives, assumptions, capabilities and coordination taken from the plan and the standards.
+  - Checks are rated against what was observed, and gaps become improvement actions in Response.
+  - A DRRM officer closes the evaluation, and the after-action report prints. The plan list shows when each plan was last tested.
+- **Detection (Phase 1).**
+  - Hazard records now follow official alerts in each watch area automatically. This replaces "Automatic agency feeds is not available yet"; PHIVOLCS publishes no feed and stays a link ([ADR-010](docs/adr/010-official-hazard-sync.md)).
+  - *Himawari satellite loop:* the last 3 hours, infrared or visible, from the JMA Meteorological Satellite Center. Only images verified as current are shown; when none are, Detection says so ([ADR-015](docs/adr/015-himawari-satellite-loop.md)).
+- **Dashboard: UP NOAH "Know Your Hazards"** for flood, landslide and storm surge, with your watch areas. The map is loaded only on request. The NOAH code is unlicensed and its data needs NOAH's token, so it is linked, not copied ([ADR-014](docs/adr/014-noah-know-your-hazards.md)). The unused GeoRisk panel, which showed made-up hazard levels, is removed.
+- **DDRiVER AI** across the platform ([ADR-011](docs/adr/011-ddriver-ai.md)).
+  - Tasks: situation brief, explain an alert or rating, draft actions, and chat.
+  - It is grounded in the user's own records, with cited sources; invented citations are removed.
+  - It is off until an administrator turns it on, has daily limits and a 90-day log, and marks drafts it helped write as AI-assisted.
+- **Privacy Policy finalised.**
+  - Adds Google Limited Use, DDRiVER AI, breach handling (NPC Circular 16-03, 72 hours) and retention.
+  - Names every provider, including JMA and UP NOAH when their content is opened.
+  - The DPO reviews it before publication.
+- **Tests (all run on 27 Nov 2026, all passing):**
+  - Database: 14 suites, including new 90 (56 checks), 95 (29), 97 (29), 98 (79) and 99 (10).
+  - Unit: 92 passed, 1 skipped.
+  - Functions: 42.
+  - Browser: 244 checks in 8 suites, including new `integration_ai.mjs` (37) and `plans_governance.mjs` (36), with Himawari checks in `detection.mjs` and NOAH checks.
+  - Fixed while testing: a plan just created from a template did not open until the page was reloaded.
+- **Apply:** DEPLOY.md § 9, "0.8 → 0.9". Cron and pg_net are required.
+
+---
+
 # DDRiVE-M 0.8.0: Connected Detection, Diagnosis and Response — 27 November 2026
 
 Connects the first three phases of the cycle: what Detection observes and Diagnosis interprets now leads to decisions and actions in Response ([ADR-008](docs/adr/008-connected-detection-diagnosis-response.md)).

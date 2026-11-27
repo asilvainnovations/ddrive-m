@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import ExercisesPanel from './validationModule/ExercisesPanel';
 import GlassCard from '@/components/ui/GlassCard';
 import { FlaskConical, Play, Users, Clock, Award, Gamepad2, X, ExternalLink, Radio, Shield, Zap } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
@@ -8,6 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { needsRole } from '@/lib/roles';
 
 const ValidationModule: React.FC = () => {
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'simulators' ? 'simulators' : 'exercises';
   const { data: scenarios, refetch } = useScenarios();
   const { can } = useAuth();
   const [launched, setLaunched] = useState<Scenario | null>(null);
@@ -75,11 +79,20 @@ const ValidationModule: React.FC = () => {
           </div>
           <div>
             <h1 className="font-montserrat font-bold text-2xl">Validation Module</h1>
-            <p className="text-sm text-slate-500 font-poppins">Phase 5 · 3D Simulation Engine (Supabase-tracked)</p>
+            <p className="text-sm text-slate-500 font-poppins">Phase 5 · Test plans, capabilities, assumptions and coordination through exercises</p>
           </div>
         </div>
       </GlassCard>
 
+      <div role="tablist" aria-label="Validation sections" className="flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
+        {([['exercises', 'Exercises: test plans and capabilities'], ['simulators', 'Simulators and scenarios']] as const).map(([k, l]) => (
+          <button key={k} role="tab" type="button" aria-selected={tab === k} onClick={() => setParams({ tab: k })}
+            className={`px-4 py-2 text-sm font-semibold rounded-t-xl ${tab === k ? 'bg-white dark:bg-slate-800 border border-b-0 border-slate-200 dark:border-slate-700 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:text-blue-800'}`}>{l}</button>
+        ))}
+      </div>
+
+      {tab === 'exercises' && <ExercisesPanel />}
+      {tab === 'simulators' && (<>
       {/* External Simulation Links Section */}
       <GlassCard className="p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -207,6 +220,7 @@ const ValidationModule: React.FC = () => {
           </div>
         </div>
       )}
+      </>)}
     </div>
   );
 };

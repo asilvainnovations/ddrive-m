@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import AskDdriver from '@/components/ddrive/ai/AskDdriver';
+import NoahKnowYourHazards from './NoahKnowYourHazards';
 import StatCard from '@/components/ddrive/StatCard';
 import { ModuleKey, moduleByKey } from '@/lib/modules';
 import { isBackendConfigured } from '@/lib/supabase';
@@ -148,6 +149,8 @@ const Dashboard: React.FC = () => {
         <StatCard label="Scenarios" value={show(scenarios, scenarios.data.length)} icon={FlaskConical} color="purple" />
         <StatCard label="Plans" value={show(plans, plans.data.length)} icon={FileCheck2} color="blue" />
       </div>
+
+      <NoahKnowYourHazards />
 
       <section aria-labelledby="modules-heading">
         <div className="mb-4">

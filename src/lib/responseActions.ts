@@ -4,7 +4,7 @@
 import { supabase } from '@/lib/supabase';
 
 export type ActionStatus = 'proposed' | 'approved' | 'declined' | 'in_progress' | 'done' | 'cancelled';
-export type ActionOrigin = 'diagnosis' | 'detection' | 'manual';
+export type ActionOrigin = 'diagnosis' | 'detection' | 'manual' | 'validation';
 export type Strategy = 'avoid' | 'reduce_likelihood' | 'reduce_consequences' | 'share' | 'retain';
 export type DrrmArea = 'prevention_mitigation' | 'preparedness' | 'response' | 'rehabilitation_recovery';
 export type Priority = 'critical' | 'high' | 'medium' | 'low';
@@ -35,6 +35,7 @@ export interface ResponseAction {
   incident_id: string | null;
   budget_line_id: string | null;
   ai_assisted: boolean;
+  exercise_check_id: string | null;
   funded_at: string | null;
   created_at: string;
   ddrive_risks?: { ref: string | null; title: string; level: string | null; ddrive_risk_code: string | null } | null;
@@ -43,6 +44,7 @@ export interface ResponseAction {
   ddrive_hazards?: { name: string; location: string; severity: string } | null;
   ddrive_incidents?: { ref: string | null; title: string; status: string } | null;
   ddrive_budget_lines?: { ref: string | null; title: string; fund_source: string; fiscal_year: number } | null;
+  ddrive_exercise_checks?: { statement: string; ddrive_exercises: { ref: string; title: string } | null } | null;
 }
 
 // ISO 31000:2018, 6.5.2 risk treatment options.
@@ -76,7 +78,7 @@ export const STATUS_LABEL: Record<ActionStatus, string> = {
   cancelled: 'Cancelled',
 };
 
-export const ORIGIN_LABEL: Record<ActionOrigin, string> = { diagnosis: 'From Diagnosis', detection: 'From Detection', manual: 'Entered in Response' };
+export const ORIGIN_LABEL: Record<ActionOrigin, string> = { diagnosis: 'From Diagnosis', detection: 'From Detection', manual: 'Entered in Response', validation: 'From an exercise (Validation)' };
 
 /** Suggested priority from a register risk level or a DDRiVE rating; the proposer can change it. */
 export function priorityFor(level: string | null | undefined, ddriveCode?: string | null): Priority {
@@ -99,6 +101,7 @@ export function sourceText(a: ResponseAction): string {
     return `${o.source} alert: ${o.signal_level ? `Wind Signal No. ${o.signal_level}` : o.event}`;
   }
   if (a.ddrive_hazards) return `Hazard report: ${a.ddrive_hazards.name}, ${a.ddrive_hazards.location}`;
+  if (a.ddrive_exercise_checks) { const c = a.ddrive_exercise_checks; return `Exercise ${c.ddrive_exercises?.ref ?? ''} finding: ${c.statement}`.replace(/\s+/g, ' '); }
   return 'Entered directly';
 }
 
@@ -112,7 +115,7 @@ const done = (error: { message: string } | null) => ({ error: error ? friendly(e
 
 const SELECT = '*, ddrive_risks(ref, title, level, ddrive_risk_code), ddrive_hazard_assessment_entries(hazard_event, main_hazard, risk_code), '
   + 'ddrive_official_alerts(source, event, headline, signal_level), ddrive_hazards(name, location, severity), '
-  + 'ddrive_incidents(ref, title, status), ddrive_budget_lines(ref, title, fund_source, fiscal_year)';
+  + 'ddrive_incidents(ref, title, status), ddrive_budget_lines(ref, title, fund_source, fiscal_year), ddrive_exercise_checks(statement, ddrive_exercises(ref, title))';
 
 export interface ActionFilter { riskId?: string; entryId?: string; alertId?: string; hazardRecordId?: number; incidentId?: string }
 
@@ -136,6 +139,7 @@ export interface NewAction {
   official_alert_id?: string | null;
   hazard_record_id?: number | null;
   incident_id?: string | null;
+  exercise_check_id?: string | null;
   strategy: Strategy;
   drrm_area: DrrmArea;
   priority: Priority;
