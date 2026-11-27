@@ -61,12 +61,22 @@ node "$ROOT/e2e/fake-pagasa.mjs" > "$WORK/pagasa.log" 2>&1 & PIDS+=($!)
 SERVICE_JWT="$(cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" node -e "import('./fake-supabase.mjs').then(m => console.log(m.sign({ role: 'service_role', exp: Math.floor(Date.now() / 1000) + 3600 })))")"
 SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUPABASE_SECRET_KEYS='{"default":"sb_secret_e2e_test_key"}' PAGASA_FEED_URL=http://127.0.0.1:8099/feeds/ \
   "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ingest-pagasa/deno.json" \
-  "$ROOT/supabase/functions/ingest-pagasa/index.ts" > "$WORK/ingest.log" 2>&1 & PIDS+=($!)
+  "$ROOT/supabase/functions/ingest-pagasa/index.ts" > "$WORK/ingest.log" 2>&1 & INGEST_PID=$!; PIDS+=($INGEST_PID)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2.mjs || { echo "--- ingest log"; tail -20 "$WORK/ingest.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
 
 echo "Phase 2b: public site, policies, PWA files and anticipatory action"
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2b.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+
+echo "Detection: PTWC, USGS and GDACS through the real ingest-official function"
+kill "$INGEST_PID" 2>/dev/null; sleep 1
+SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUPABASE_SECRET_KEYS='{"default":"sb_secret_e2e_test_key"}' \
+  PTWC_FEED_URL=http://127.0.0.1:8099/ptwc/feed.xml USGS_QUERY_URL=http://127.0.0.1:8099/usgs GDACS_QUERY_URL=http://127.0.0.1:8099/gdacs \
+  "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ingest-official/deno.json" \
+  "$ROOT/supabase/functions/ingest-official/index.ts" > "$WORK/official.log" 2>&1 & PIDS+=($!)
+for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
+cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node detection.mjs || { echo "--- ingest-official log"; tail -20 "$WORK/official.log"; exit 1; }
+cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node response.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
 
 echo "Crawler view: pages without JavaScript and the Vercel routing"
 cd "$ROOT/e2e" && node crawler.mjs

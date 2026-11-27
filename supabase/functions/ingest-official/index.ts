@@ -11,6 +11,7 @@
 //   DETECTION_COUNTRIES ISO3 list for GDACS, default "PHL"
 //   USGS_MIN_MAGNITUDE  default 4.0
 //   PTWC_FEED_URL       default https://www.tsunami.gov/events/xml/PHEBAtom.xml
+//   USGS_QUERY_URL, GDACS_QUERY_URL  full query addresses replacing the built ones (tests and staging only)
 import { createClient } from 'npm:@supabase/supabase-js@2.106.2';
 import { isServerCaller, readServerKeys } from '../_shared/auth.ts';
 import { fetchText, ingestFeed } from '../_shared/ingest.ts';
@@ -23,6 +24,8 @@ const SOURCES = (env('DETECTION_SOURCES') ?? 'PTWC,USGS,GDACS').split(',').map((
 const COUNTRIES = (env('DETECTION_COUNTRIES') ?? 'PHL').split(',').map((s) => s.trim().toUpperCase()).filter(Boolean);
 const MIN_MAG = Number(env('USGS_MIN_MAGNITUDE') ?? '4.0');
 const PTWC_FEED = env('PTWC_FEED_URL') ?? 'https://www.tsunami.gov/events/xml/PHEBAtom.xml';
+const USGS_URL = env('USGS_QUERY_URL');
+const GDACS_URL = env('GDACS_QUERY_URL');
 const json = (body: unknown, status: number) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
@@ -57,8 +60,8 @@ Deno.serve(async (req) => {
 
   const runs: Record<string, Promise<{ ok: boolean; seen: number; added: number }>> = {};
   if (SOURCES.includes('PTWC')) runs.PTWC = ingestFeed({ source: 'PTWC', feedUrl: PTWC_FEED, maxNewPerRun: 20 }, deps);
-  if (SOURCES.includes('USGS')) runs.USGS = ingestJsonSource({ source: 'USGS', url: usgsQueryUrl(bbox, MIN_MAG), convert: (d) => usgsToAlerts(d, bbox) }, deps);
-  if (SOURCES.includes('GDACS')) runs.GDACS = ingestJsonSource({ source: 'GDACS', url: gdacsQueryUrl(), convert: (d) => gdacsToAlerts(d, bbox, COUNTRIES) }, deps);
+  if (SOURCES.includes('USGS')) runs.USGS = ingestJsonSource({ source: 'USGS', url: USGS_URL ?? usgsQueryUrl(bbox, MIN_MAG), convert: (d) => usgsToAlerts(d, bbox) }, deps);
+  if (SOURCES.includes('GDACS')) runs.GDACS = ingestJsonSource({ source: 'GDACS', url: GDACS_URL ?? gdacsQueryUrl(), convert: (d) => gdacsToAlerts(d, bbox, COUNTRIES) }, deps);
 
   const results: Record<string, unknown> = {};
   for (const [name, p] of Object.entries(runs)) results[name] = await p;

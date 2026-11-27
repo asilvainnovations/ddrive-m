@@ -55,6 +55,19 @@ export async function addRisk(r: NewRisk): Promise<{ error: string | null; ref?:
 }
 
 // ─── Phase 3 · Response ───────────────────────────────────────────────────────
+export interface NewIncident {
+  title: string;
+  priority: 'Critical' | 'High' | 'Medium' | 'Low';
+  assignee_name: string | null;
+  eta: string | null;
+}
+
+/** Opens an incident. The database issues the I-### reference and stamps the organisation and author. */
+export async function openIncident(i: NewIncident): Promise<ActionResult> {
+  const { error } = await supabase.from('ddrive_incidents').insert({ ...i, status: 'Open', progress: 0 });
+  return result(error);
+}
+
 export async function setIncidentProgress(id: string, progress: number): Promise<ActionResult> {
   const clamped = Math.max(0, Math.min(100, progress));
   const { error } = await supabase

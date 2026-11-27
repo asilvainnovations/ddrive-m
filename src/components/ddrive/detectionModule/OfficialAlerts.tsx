@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ExternalLink, AlertTriangle, ChevronDown, ChevronUp, FilePlus2, Hourglass, Gauge, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
@@ -7,6 +7,8 @@ import { needsRole } from '@/lib/roles';
 import { supabase } from '@/lib/supabase';
 import { OfficialAlert, SOURCES, SourceKey, ago, alertTitle, isStale, manila, useOfficialAlerts } from '@/hooks/useOfficialAlerts';
 import { riskCategory, scaleWord } from '@/lib/ddriveAssessment/scoring';
+import { LinkedActions } from '@/components/ddrive/responseModule/ProposeAction';
+import { listActions, priorityFor, type ResponseAction } from '@/lib/responseActions';
 
 interface Props {
   /** Called when a person chooses to log an alert as one of the organisation's hazard records. */
@@ -109,6 +111,10 @@ const OfficialAlerts: React.FC<Props> = ({ onLogAsHazard }) => {
   const contextFor = (id: string) => context.filter((c) => c.alert_id === id);
   const staleFeeds = feeds.filter(isStale);
   const count = (k: string) => base.filter((a) => a.source === k).length;
+  // Response actions already proposed from alerts, in one query.
+  const [actions, setActions] = useState<ResponseAction[]>([]);
+  const loadActions = useCallback(async () => { setActions((await listActions()).data.filter((x) => x.official_alert_id)); }, []);
+  useEffect(() => { loadActions(); }, [loadActions]);
 
   return (
     <GlassCard className="p-6" hover={false}>
@@ -235,11 +241,18 @@ const OfficialAlerts: React.FC<Props> = ({ onLogAsHazard }) => {
                     </button>
                   )}
                   {can('analyst') && (
-                    <Link to={`/anticipatory-action?alert=${encodeURIComponent(a.id)}`} className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                    <Link to={`/response?tab=anticipatory&alert=${encodeURIComponent(a.id)}`} className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1">
                       <Hourglass className="w-3.5 h-3.5" aria-hidden="true" /> Start anticipatory action
                     </Link>
                   )}
                   <span className="text-slate-500 ml-auto">Source: {a.sender ?? a.source}{a.license ? ` · ${a.license.replace(/^.*?(CC BY [0-9]+(?:\.[0-9]+)?).*$/i, '$1')}` : ''}</span>
+                </div>
+                <div className="mt-3 border-t border-slate-200 dark:border-slate-700 pt-2">
+                  <LinkedActions
+                    filter={{ alertId: a.id }} preloaded={actions.filter((x) => x.official_alert_id === a.id)} onChanged={loadActions}
+                    link={{ origin: 'detection', official_alert_id: a.id }} min="responder" idPrefix={`al-${a.id}`} context={alertTitle(a)}
+                    defaultTitle={`Prepare for ${alertTitle(a)}`} defaultPriority={priorityFor(null, contextFor(a.id)[0]?.risk_code)} compact
+                  />
                 </div>
               </li>
             );

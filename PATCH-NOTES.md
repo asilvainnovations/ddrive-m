@@ -1,3 +1,17 @@
+# DDRiVE-M 0.8.0: Connected Detection, Diagnosis and Response — 27 November 2026
+
+Connects the first three phases of the cycle: what Detection observes and Diagnosis interprets now leads to decisions and actions in Response ([ADR-008](docs/adr/008-connected-detection-diagnosis-response.md)).
+
+- **Response actions:** a new record of risk-informed actions (`T-###`). Analysts propose treatments from a register risk or a scored DDRiVE hazard event; responders propose actions from an official alert or a hazard record. A DRRM officer approves (or declines with a reason); responders report progress and complete the action with its outcome; officers can reassign or cancel with a reason. Steps are enforced in the database and audited. Treatment options follow ISO 31000; thematic areas follow RA 10121. The system never writes actions itself.
+- **Response screen rebuilt:** tabs for Risk-informed actions, Incidents and Anticipatory action (RA 12287). Incidents can now be opened from the screen. Removed: the placeholder "AI Treatment Canvas", the static protocol list, and the "New Incident" button that only showed a message.
+- **Anticipatory action is part of Response.** It leaves the side menu; `/anticipatory-action` links, alert hand-offs and the app shortcut open the tab in Response.
+- **Diagnosis and Detection:** each register risk, scored hazard event, official alert and hazard record shows its actions and their status, with "+ Propose action". The hazard record's "Escalate" stub (which said it was not available) is replaced by this. Hazard cards can be opened with the keyboard.
+- **Detection tested end to end:** the browser suite runs the real `ingest-official` function for PTWC, USGS and GDACS; the function takes `USGS_QUERY_URL` and `GDACS_QUERY_URL` for tests and accepts plain `http` for loopback addresses only.
+- **Tests:** `supabase/tests/80_phase3_response_actions.sql` (48 checks, refusals checked for their reason); 7 unit tests; `e2e/detection.mjs` (14) and `e2e/response.mjs` (24).
+- **Apply:** DEPLOY.md § 9, "0.7 → 0.8".
+
+---
+
 # DDRiVE-M 0.7.0: RA 12287 graduated disbursement — 27 November 2026
 
 Closes gap **AA-02 / C-05** of the readiness register in code, from the IRR of RA 12287 (signed 14 September 2026; OCD certified true copy). Legal and finance sign-off is still required ([ADR-007](docs/adr/007-aa-graduated-disbursement.md)).

@@ -1,12 +1,14 @@
 // The organisation's risk register (ISO 31000 likelihood × impact). Risks are typed in here, or added from a scored
 // DDRiVE hazard event, which keeps its DDRiVE rating and a link back (ADR-006).
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import { toast } from '@/components/ui/sonner';
 import { useRisks, Risk } from '@/hooks/useDDriveData';
 import { addRisk } from '@/lib/actions';
 import GatedButton from '@/components/ddrive/GatedButton';
+import { LinkedActions } from '@/components/ddrive/responseModule/ProposeAction';
+import { listActions, priorityFor, type ResponseAction } from '@/lib/responseActions';
 
 const categories = ['All', 'Strategic', 'Operational', 'Financial', 'Compliance', 'Environmental'];
 type DdriveRisk = Risk & { ddrive_risk_code?: string | null; total_vulnerability?: number | null; hazard_entry_id?: string | null };
@@ -18,6 +20,10 @@ const cellClass = (score: number) => (score >= 20 ? 'bg-red-600' : score >= 12 ?
 const RiskRegister: React.FC<{ onOpenAssessment?: (entryId: string) => void }> = () => {
   const { data, refetch, error } = useRisks();
   const risks = data as DdriveRisk[];
+  // Treatment actions for every risk, in one query; proposing here sends them to Response for a decision.
+  const [actions, setActions] = useState<ResponseAction[]>([]);
+  const loadActions = useCallback(async () => { setActions((await listActions()).data.filter((a) => a.risk_id)); }, []);
+  useEffect(() => { loadActions(); }, [loadActions]);
   const [filter, setFilter] = useState('All');
   const [origin, setOrigin] = useState<'all' | 'ddrive'>('all');
   const [showAdd, setShowAdd] = useState(false);
@@ -110,7 +116,8 @@ const RiskRegister: React.FC<{ onOpenAssessment?: (entryId: string) => void }> =
             <tbody>
               {filtered.length === 0 && <tr><td colSpan={9} className="py-4 text-center text-slate-500">No risks yet.</td></tr>}
               {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-slate-100 dark:border-slate-800">
+                <React.Fragment key={r.id}>
+                <tr className="border-slate-100 dark:border-slate-800">
                   <td className="py-2.5 px-2 font-mono text-xs">{r.ref}</td>
                   <td className="py-2.5 px-2 font-medium">{r.title}</td>
                   <td className="py-2.5 px-2 text-slate-600">{r.category}</td>
@@ -121,6 +128,17 @@ const RiskRegister: React.FC<{ onOpenAssessment?: (entryId: string) => void }> =
                   <td className="py-2.5 px-2 text-xs">{r.owner}</td>
                   <td className="py-2.5 px-2 text-xs text-slate-600">{r.status}</td>
                 </tr>
+                <tr className="border-b border-slate-100 dark:border-slate-800">
+                  <td />
+                  <td colSpan={8} className="pb-2.5 px-2">
+                    <LinkedActions
+                      filter={{ riskId: r.id }} preloaded={actions.filter((a) => a.risk_id === r.id)} onChanged={loadActions}
+                      link={{ origin: 'diagnosis', risk_id: r.id }} min="analyst" idPrefix={`risk-${r.id}`} context={`${r.ref} ${r.title}`}
+                      defaultTitle={`Treat: ${r.title}`} defaultPriority={priorityFor(r.level, r.ddrive_risk_code)} compact
+                    />
+                  </td>
+                </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>

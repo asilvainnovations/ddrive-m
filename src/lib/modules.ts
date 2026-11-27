@@ -6,7 +6,6 @@ export type ModuleKey =
   | 'detection'
   | 'diagnosis'
   | 'response'
-  | 'anticipatory'
   | 'mapping'
   | 'integration'
   | 'validation'
@@ -29,8 +28,7 @@ export const MODULES: ModuleMeta[] = [
   { key: 'dashboard', label: 'Command Dashboard', path: '/dashboard', title: 'Command Dashboard', subtitle: 'Overview of all 7 phases' },
   { key: 'detection', label: 'Detection', path: '/detection', title: 'Detection Module', subtitle: 'Phase 1 · Official alerts from PAGASA, PTWC, USGS and GDACS, risk-informed', phase: 1 },
   { key: 'diagnosis', label: 'Diagnosis', path: '/diagnosis', title: 'Diagnosis Module', subtitle: 'Phase 2 · DDRiVE hazard, vulnerability and risk assessment; risk register', phase: 2 },
-  { key: 'response', label: 'Response', path: '/response', title: 'Response Module', subtitle: 'Phase 3 · Treatment and incident management', phase: 3 },
-  { key: 'anticipatory', label: 'Anticipatory Action', path: '/anticipatory-action', title: 'Anticipatory Action', subtitle: 'RA 12287 · Forecast trigger to lifting report', phase: 3 },
+  { key: 'response', label: 'Response', path: '/response', title: 'Response Module', subtitle: 'Phase 3 · Risk-informed actions, incidents and anticipatory action (RA 12287)', phase: 3 },
   { key: 'mapping', label: 'Rapid Mapping', path: '/rapid-mapping', title: 'Rapid Mapping', subtitle: 'Activations · Areas of interest · Versioned map products', phase: 3 },
   { key: 'integration', label: 'Integration', path: '/integration', title: 'Integration Module', subtitle: 'Phase 4 · UNDRR 10 Essentials', phase: 4 },
   { key: 'validation', label: 'Validation', path: '/validation', title: 'Validation Module', subtitle: 'Phase 5 · Simulations and exercises', phase: 5 },

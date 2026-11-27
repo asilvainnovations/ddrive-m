@@ -58,6 +58,7 @@ The migrations in `supabase/migrations/` build every table, access rule (Row Lev
 | 8 | `20261122020000_phase3_ddrive_assessment.sql` | DDRiVE hazard, vulnerability and risk assessments; hazard catalogue; link to the risk register |
 | 9 | `20261122030000_phase3_detection_sources.sql` | PTWC, USGS and GDACS alerts; watch points; risk-informed warnings. **Needs #8 first** |
 | 10 | `20261127010000_phase3_aa_graduated_disbursement.sql` | RA 12287 IRR rules as data; anticipatory action allocations; graduated disbursement limits by lead time. **Needs #6 first** |
+| 11 | `20261127020000_phase3_response_actions.sql` | Risk-informed response actions proposed from Diagnosis and Detection, decided and tracked in Response (ADR-008). **Needs #8 and #9 first** |
 
 **Option A, Supabase CLI (recommended):**
 
@@ -126,6 +127,8 @@ Supabase sets `SUPABASE_URL` and the server keys automatically. These are option
 | `DETECTION_COUNTRIES` | `PHL` | ISO3 codes; a GDACS event affecting one of them is kept even outside the region |
 | `USGS_MIN_MAGNITUDE` | `4.0` | Smallest earthquake stored |
 | `PTWC_FEED_URL` | `https://www.tsunami.gov/events/xml/PHEBAtom.xml` | Only change for testing |
+| `USGS_QUERY_URL` | (built from the watch region) | Only set for testing or staging; plain `http` is accepted for loopback addresses only |
+| `GDACS_QUERY_URL` | (GDACS event list) | Only set for testing or staging; same rule |
 
 For a tenant outside the Philippines, set the region and countries to that country and name its national agencies in the organisation's guidance; never assume Philippine rules apply.
 
@@ -221,7 +224,8 @@ Apply new migrations **before** deploying the app that uses them (`supabase db p
 | --- | --- |
 | **0.4 → 0.5** (Rapid Mapping, 22 Nov 2026) | Run `20261122010000_phase3_rapid_mapping.sql`. Redeploy the app. No new settings |
 | **0.5 → 0.6** (Detection sources and DDRiVE assessment, 22 Nov 2026) | 1. Run `20261122020000_phase3_ddrive_assessment.sql`, then `20261122030000_phase3_detection_sources.sql` (in that order). 2. `supabase functions deploy ingest-official` (`ingest-pagasa` is unchanged). 3. Add the `ddrive-ingest-official` schedule (section 5c). 4. Redeploy the app. 5. Officers add watch points (section 7). Existing alerts, risks and watch areas are kept |
-| **0.6 → 0.7** (RA 12287 graduated disbursement, 27 Nov 2026) | 1. Run `20261127010000_phase3_aa_graduated_disbursement.sql`. 2. Redeploy the app. 3. A DRRM officer records the year's allocation for each fund used (Anticipatory Action → Record allocation) **before** the next disbursement: from now on, disbursements from the LDRRMF, an agency's anticipatory action budget or the NDRRM Fund are refused without one. Disbursements already recorded are kept and counted |
+| **0.6 → 0.7** (RA 12287 graduated disbursement, 27 Nov 2026) | 1. Run `20261127010000_phase3_aa_graduated_disbursement.sql`. 2. Redeploy the app. 3. A DRRM officer records the year's allocation for each fund used (Response → Anticipatory action → Record allocation) **before** the next disbursement: from now on, disbursements from the LDRRMF, an agency's anticipatory action budget or the NDRRM Fund are refused without one. Disbursements already recorded are kept and counted |
+| **0.7 → 0.8** (connected Detection, Diagnosis and Response, 27 Nov 2026) | 1. Run `20261127020000_phase3_response_actions.sql`. 2. Redeploy `ingest-official` (test-only source overrides; no change in production behaviour). 3. Redeploy the app. Anticipatory action moves into Response; `/anticipatory-action` links keep working. No new environment variables |
 
 ## 10. Keys: which goes where
 
@@ -243,7 +247,7 @@ Rotate a key at once if it is ever exposed: create a new one, update where it li
 | --- | --- | --- |
 | `npm run check` | Node 20 | Type-check (strict), lint, production build |
 | `npm run test:unit` | Node 20 | Geometry and CRS checks, GeoPackage and DDRiVE workbook readers, DDRiVE scoring against the workbook's case study, exports, offline queue, rendering |
-| `npm run test:db` | PostgreSQL 15+ | Every migration, twice (safe to re-run); access rules for each role; a database upgraded from before Phase 1; Rapid Mapping, DDRiVE assessment and detection-source rules |
+| `npm run test:db` | PostgreSQL 15+ | Every migration, twice (safe to re-run); access rules for each role; a database upgraded from before Phase 1; Rapid Mapping, DDRiVE assessment, detection-source, anticipatory action and response-action rules |
 | `npm run test:functions` | Deno 2 | CAP parser and PAGASA ingest on real PAGASA documents; PTWC, USGS and GDACS readers |
 | `npm run test:e2e` | PostgREST 12, Playwright with Chromium | The production build against a local API, in a browser |
 
@@ -265,9 +269,9 @@ The database enforces the role ladder (ADR-001); the app only shows or hides con
 | Role | Can also |
 | --- | --- |
 | Viewer | Read everything in the organisation; read published products for the whole organisation |
-| Responder | Report hazards and incidents; send Rapid Mapping field observations; read internal EOC map products |
-| Analyst | Manage risks, documents, plan drafts; open anticipatory action cases; draft and score DDRiVE assessments and add them to the register; draft, review (others' work) and import map products |
-| DRRM officer | Approve plans and DDRiVE assessments; take RA 12287 steps; approve areas of interest; verify and publish map products; manage watch areas and damage classes; read the audit log |
+| Responder | Report hazards and open incidents; propose actions from alerts and hazard records; report progress and outcomes of approved actions; send Rapid Mapping field observations; read internal EOC map products |
+| Analyst | Manage risks, documents, plan drafts; propose treatment actions from register risks and scored hazard events; open anticipatory action cases; draft and score DDRiVE assessments and add them to the register; draft, review (others' work) and import map products |
+| DRRM officer | Approve plans and DDRiVE assessments; approve, decline, reassign or cancel proposed actions; take RA 12287 steps; approve areas of interest; verify and publish map products; manage watch areas and damage classes; read the audit log |
 | Administrator | Manage members and roles, organisation settings and risk criteria; approve map products for public release |
 
 ## 14. Rollback and switching things off

@@ -1,4 +1,4 @@
-// Stand-in for PAGASA's public alert server in browser tests. Serves the real CAP fixtures, with their
+// Stand-in for PAGASA's public alert server, and for PTWC, USGS and GDACS, in browser tests. Serves the real CAP fixtures, with their
 // sent/expires times moved to now so they are in force, and the feed's links pointed at this server.
 import http from 'node:http';
 import fs from 'node:fs';
@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const PORT = Number(process.env.FAKE_PAGASA_PORT || 8099);
+const STARTED = Date.now();
 const BASE = `http://127.0.0.1:${PORT}`;
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../supabase/functions/_shared/testdata');
 const read = (f) => fs.readFileSync(path.join(dir, f), 'utf8');
@@ -37,6 +38,34 @@ http.createServer((req, res) => {
   if (req.url === '/feeds/') {
     res.writeHead(200, { 'content-type': 'application/atom+xml' });
     return res.end(feed());
+  }
+  // PTWC: the Atom feed and its CAP document, on this host (the ingester refuses links to other hosts).
+  if (req.url === '/ptwc/feed.xml') {
+    res.writeHead(200, { 'content-type': 'application/atom+xml' });
+    return res.end(read('ptwc-feed.xml')
+      .replace(/https:\/\/www\.tsunami\.gov\/events\/PHEB\/2026\/11\/21\/test\/1\/WEPA40\/PHEBCAP\.xml/g, `${BASE}/ptwc/cap.xml`)
+      .replace(/https:\/\/www\.tsunami\.gov\/[^"<]*/g, `${BASE}/ptwc/`)
+      .replace(/<updated>[^<]+<\/updated>/g, `<updated>${iso(-30 * 60000)}</updated>`));
+  }
+  if (req.url === '/ptwc/cap.xml') {
+    res.writeHead(200, { 'content-type': 'application/cap+xml' });
+    return res.end(read('ptwc-cap.xml').replace(/<sent>[^<]+<\/sent>/, `<sent>${iso(-30 * 60000)}</sent>`));
+  }
+  // USGS: event times moved to the last two hours, so they are in force (24 hours) and inside the query window.
+  if (req.url.startsWith('/usgs')) {
+    const d = JSON.parse(read('usgs-sample.geojson'));
+    // Fixed at start-up: USGS changes "updated" only when it revises an event, and a change is a new version.
+    d.features.forEach((f, i) => { f.properties.time = STARTED - (60 + i * 10) * 60000; f.properties.updated = STARTED - 30 * 60000; });
+    res.writeHead(200, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify(d));
+  }
+  // GDACS: events running from two days ago to tomorrow, modified an hour ago.
+  if (req.url.startsWith('/gdacs')) {
+    const day = (n) => new Date(STARTED + n * 86400000).toISOString().slice(0, 19);
+    const d = JSON.parse(read('gdacs-sample.json'));
+    for (const f of d.features) Object.assign(f.properties, { fromdate: day(-2), todate: day(1), datemodified: new Date(STARTED - 3600000).toISOString().slice(0, 19) });
+    res.writeHead(200, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify(d));
   }
   const d = docs.find((x) => req.url === `/output/${x.file}`);
   if (d) {

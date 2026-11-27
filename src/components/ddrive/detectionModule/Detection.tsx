@@ -4,6 +4,8 @@ import { Radar, MapPin, Cloud, Mountain, Waves, Flame, Wind, AlertCircle, Extern
 import { toast } from '@/components/ui/sonner';
 import { useHazards, Hazard } from '@/hooks/useDDriveData';
 import { reportHazard, NewHazard } from '@/lib/actions';
+import { LinkedActions } from '@/components/ddrive/responseModule/ProposeAction';
+import { priorityFor } from '@/lib/responseActions';
 import GatedButton from '@/components/ddrive/GatedButton';
 import OfficialAlerts from '@/components/ddrive/detectionModule/OfficialAlerts';
 import { OfficialAlert, alertTitle, manila } from '@/hooks/useOfficialAlerts';
@@ -178,7 +180,9 @@ const DetectionModule: React.FC = () => {
           {filtered.map((h) => (
             <div
               key={h.id}
+              role="button" tabIndex={0} aria-label={`${h.name}, ${h.location}: details and response actions`}
               onClick={() => setSelectedHazard(h)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedHazard(h); } }}
               className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 hover:border-blue-500 cursor-pointer transition"
             >
               <div className="flex items-start justify-between">
@@ -213,9 +217,16 @@ const DetectionModule: React.FC = () => {
               <div className="flex justify-between"><span className="text-slate-500">Coordinates</span><strong>{selectedHazard.lat}°, {selectedHazard.lng}°</strong></div>
               <div className="flex justify-between"><span className="text-slate-500">Status</span><strong>{selectedHazard.status}</strong></div>
             </div>
+            <div className="mt-5 border-t border-slate-200 dark:border-slate-700 pt-4">
+              <p className="text-xs text-slate-600 dark:text-slate-300 mb-2">Response actions for this hazard. A DRRM officer decides on them in Response.</p>
+              <LinkedActions
+                filter={{ hazardRecordId: selectedHazard.id }} link={{ origin: 'detection', hazard_record_id: selectedHazard.id }} min="responder"
+                idPrefix={`hz-${selectedHazard.id}`} context={selectedHazard.name}
+                defaultTitle={`Respond to ${selectedHazard.name}, ${selectedHazard.location}`} defaultPriority={priorityFor(selectedHazard.severity)}
+              />
+            </div>
             <div className="flex gap-2 mt-6">
-              <button onClick={() => { toast.info('Escalation to the Response module is not available yet.'); setSelectedHazard(null); }} className="flex-1 px-4 py-2 rounded-xl bg-blue-700 text-white font-semibold text-sm">Escalate</button>
-              <button onClick={() => setSelectedHazard(null)} className="px-4 py-2 rounded-xl border border-slate-300 font-semibold text-sm">Close</button>
+              <button type="button" onClick={() => setSelectedHazard(null)} className="ml-auto px-4 py-2 rounded-xl border border-slate-300 font-semibold text-sm">Close</button>
             </div>
           </div>
         </div>

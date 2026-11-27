@@ -32,7 +32,7 @@ const MODULES: { n: number; name: string; path: string; status: Status; text: st
   },
   {
     n: 3, name: 'Response', path: '/response', status: 'partial',
-    text: 'Translate risk and incident information into assigned treatments, operational tasks and coordinated action. The separate anticipatory-action workspace records the RA 12287 process while leaving statutory decisions with the competent authorities.',
+    text: 'Decide on the actions proposed from Diagnosis and Detection, assign them, and track them to a recorded outcome alongside incidents. Anticipatory action under RA 12287 is part of Response; statutory decisions stay with the competent authorities.',
     next: 'Next: complete EOC workflows, tasking, resource tracking and harmonised situation reporting.',
   },
   {

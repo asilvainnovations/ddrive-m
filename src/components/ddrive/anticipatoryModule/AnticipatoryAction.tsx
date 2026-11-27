@@ -683,6 +683,8 @@ const Allocations: React.FC<{ tick: number }> = ({ tick }) => {
 const AnticipatoryAction: React.FC = () => {
   const [params, setParams] = useSearchParams();
   const fromAlert = params.get('alert');
+  // Shown inside Response: keep the tab, drop only the alert hand-off.
+  const clearAlert = () => { const p = new URLSearchParams(params); p.delete('alert'); setParams(p); };
   const { can } = useAuth();
   const [cases, setCases] = useState<AaCase[]>([]);
   const [loading, setLoading] = useState(true);
@@ -735,8 +737,8 @@ const AnticipatoryAction: React.FC = () => {
             can('analyst') ? (
               <NewCaseForm
                 initialAlertId={fromAlert}
-                onCancel={() => { setCreating(false); setParams({}); }}
-                onDone={() => { setCreating(false); setParams({}); load(); }}
+                onCancel={() => { setCreating(false); clearAlert(); }}
+                onDone={() => { setCreating(false); clearAlert(); load(); }}
               />
             ) : <p className="text-sm text-slate-500">{needsRole('analyst')}</p>
           ) : current ? (
