@@ -87,6 +87,7 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SECRET_KEYS='{"default":"sb_secret_
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node integration_ai.mjs || { echo "--- ddriver-ai log"; tail -30 "$WORK/ddriver.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
 cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node plans_governance.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node flood.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
 
 echo "Crawler view: pages without JavaScript and the Vercel routing"
 cd "$ROOT/e2e" && node crawler.mjs

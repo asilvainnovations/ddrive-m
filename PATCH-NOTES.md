@@ -14,6 +14,12 @@
 - **Detection (Phase 1).**
   - Hazard records now follow official alerts in each watch area automatically. This replaces "Automatic agency feeds is not available yet"; PHIVOLCS publishes no feed and stays a link ([ADR-010](docs/adr/010-official-hazard-sync.md)).
   - *Himawari satellite loop:* the last 3 hours, infrared or visible, from the JMA Meteorological Satellite Center. Only images verified as current are shown; when none are, Detection says so ([ADR-015](docs/adr/015-himawari-satellite-loop.md)).
+- **Flood intelligence (Detection)** ([ADR-016](docs/adr/016-flood-intelligence.md)).
+  - For each barangay, the day's rainfall and the 3 days before are compared with thresholds lowered by its UP NOAH flood hazard.
+  - The rule is the one from the Ligtas-AI V2.0 notebooks, shown openly with all its inputs. A "Log as hazard record" link opens a flood hazard record prefilled from the outlook.
+  - Barangays and rainfall can be imported from CSV, including Project CCHAIN files.
+  - The notebooks are rewritten as `scripts/flood_intelligence/`. Their labels were made by the rule itself, so their ~99% scores show the rule being copied, not floods being predicted. The scripts fix antecedent rainfall, the split and the LSTM, and write a model card that only allows review of models tested on recorded floods.
+  - It is decision support, not a warning: PAGASA warns.
 - **Dashboard: UP NOAH "Know Your Hazards"** for flood, landslide and storm surge, with your watch areas. The map is loaded only on request. The NOAH code is unlicensed and its data needs NOAH's token, so it is linked, not copied ([ADR-014](docs/adr/014-noah-know-your-hazards.md)). The unused GeoRisk panel, which showed made-up hazard levels, is removed.
 - **DDRiVER AI** across the platform ([ADR-011](docs/adr/011-ddriver-ai.md)).
   - Tasks: situation brief, explain an alert or rating, draft actions, and chat.
@@ -24,11 +30,11 @@
   - Names every provider, including JMA and UP NOAH when their content is opened.
   - The DPO reviews it before publication.
 - **Tests (all run on 27 Nov 2026, all passing):**
-  - Database: 14 suites, including new 90 (56 checks), 95 (29), 97 (29), 98 (79) and 99 (10).
-  - Unit: 92 passed, 1 skipped.
+  - Database: 15 suites, including new 90 (56 checks), 95 (29), 97 (29), 98 (79), 99 (10) and 100 (23).
+  - Unit: 99 passed, 1 skipped. Flood pipeline (Python): 8.
   - Functions: 42.
-  - Browser: 244 checks in 8 suites, including new `integration_ai.mjs` (37) and `plans_governance.mjs` (36), with Himawari checks in `detection.mjs` and NOAH checks.
-  - Fixed while testing: a plan just created from a template did not open until the page was reloaded.
+  - Browser: 254 checks in 9 suites, including new `integration_ai.mjs` (37), `plans_governance.mjs` (36) and `flood.mjs` (10), with Himawari checks in `detection.mjs` and NOAH checks.
+  - Fixed while testing: a plan just created from a template did not open until the page was reloaded; "Log as hazard record" followed from Detection itself did not open the form.
 - **Apply:** DEPLOY.md § 9, "0.8 → 0.9". Cron and pg_net are required.
 
 ---

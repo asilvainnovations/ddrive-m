@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
 import { Radar, ExternalLink, Plus } from 'lucide-react';
@@ -12,6 +12,7 @@ import OfficialAlerts from '@/components/ddrive/detectionModule/OfficialAlerts';
 import { OfficialAlert, alertTitle, manila, useOfficialAlerts } from '@/hooks/useOfficialAlerts';
 import HazardRecords from '@/components/ddrive/detectionModule/HazardRecords';
 import SatelliteLoop from '@/components/ddrive/detectionModule/SatelliteLoop';
+import FloodIntelligence from '@/components/ddrive/detectionModule/FloodIntelligence';
 
 const DetectionModule: React.FC = () => {
   const { data: hazards, refetch } = useHazards();
@@ -20,7 +21,11 @@ const DetectionModule: React.FC = () => {
   const [params] = useSearchParams();
   // ?log=1&source=NOAH opens the form with that source (from the Dashboard's NOAH panel).
   const presetSource = params.get('source');
+  const presetType = params.get('type');
+  const presetName = params.get('name');
   const [showAdd, setShowAdd] = useState(params.get('log') === '1');
+  // Also when the link is followed from Detection itself (Flood intelligence), not only on arrival.
+  useEffect(() => { if (params.get('log') === '1') setShowAdd(true); }, [params]);
   // When set, the hazard form is prefilled from this official alert and the record links to it.
   const [fromAlert, setFromAlert] = useState<OfficialAlert | null>(null);
   const openForm = (alert: OfficialAlert | null) => { setFromAlert(alert); setShowAdd(true); };
@@ -84,6 +89,8 @@ const DetectionModule: React.FC = () => {
 
       <SatelliteLoop />
 
+      <FloodIntelligence />
+
       <HazardRecords hazards={hazards} feeds={feeds} onSelect={setSelectedHazard} />
 
       {selectedHazard && (
@@ -130,11 +137,11 @@ const DetectionModule: React.FC = () => {
                 <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option><option>Local DRRM office</option><option>Field observation</option>
                 <option>PTWC (NOAA)</option><option>USGS (international)</option><option>GDACS (international)</option>
               </select>
-              <select name="type" required aria-label="Hazard type" defaultValue={fromAlert ? alertType(fromAlert) : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="type" required aria-label="Hazard type" defaultValue={fromAlert ? alertType(fromAlert) : presetType ?? undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>Typhoon</option><option>Earthquake</option><option>Flood</option>
                 <option>Volcanic</option><option>Landslide</option><option>Storm Surge</option><option>Tsunami</option>
               </select>
-              <input name="name" required aria-label="Hazard name" defaultValue={fromAlert ? alertTitle(fromAlert) : undefined} placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
+              <input name="name" required aria-label="Hazard name" defaultValue={fromAlert ? alertTitle(fromAlert) : presetName ?? undefined} placeholder="Hazard name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <input name="location" required aria-label="Location" defaultValue={fromAlert ? fromAlert.area_names.join(', ') : undefined} placeholder="Location (e.g. Marikina)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
               <div className="grid grid-cols-2 gap-2">
                 <input name="lat" type="number" step="any" min="4" max="22" required aria-label="Latitude (4 to 22)" placeholder="Latitude" defaultValue={fromAlert?.latitude ?? undefined} className="px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />

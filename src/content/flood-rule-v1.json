@@ -1,0 +1,32 @@
+{
+  "id": "ligtas-rule-v1",
+  "title": "Rainfall against flood hazard rule (from the Ligtas-AI V2.0 notebooks)",
+  "status": "Not validated against observed floods. Decision support only; PAGASA issues rainfall and flood warnings.",
+  "source": "Ligtas-AI V2.0, 01-data-preparation.ipynb, calculate_stochastic_risk (author E. Publico), adapted for DDRiVE-M (ADR-016)",
+  "inputs": {
+    "rain_today_mm": "Rainfall of the day, mm (daily total)",
+    "rain_prev_mm": "Rainfall of the 3 days before, mm. Changed from the notebook, whose 3-day sum included the day itself",
+    "flood_hazard_pct": "Share of the barangay's area in UP NOAH's high flood hazard zone for a 100-year rain return period, 0-100 (Project CCHAIN project_noah_hazards.pct_area_flood_hazard_100yr_high)"
+  },
+  "antecedent_days": 3,
+  "base_danger_mm": 150,
+  "base_warning_mm": 80,
+  "min_factor": 0.4,
+  "onset_ratio": 0.8,
+  "danger": { "full_ratio": 1.5, "half_ratio": 1.0, "ramp_below": 2.5, "ramp_above": 1.0, "at_half": 0.5 },
+  "warning": { "full_ratio": 1.2, "half_ratio": 1.0, "ramp_below": 3.0, "ramp_above": 2.0, "at_half": 0.6 },
+  "antecedent_bonus": { "above_mm": 100, "add": 0.2 },
+  "levels": ["safe", "warning", "danger"],
+  "golden": [
+    { "rain_today_mm": 0,   "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 0,     "p_warning": 0,    "level": "safe" },
+    { "rain_today_mm": 64,  "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 0,     "p_warning": 0,    "level": "safe" },
+    { "rain_today_mm": 80,  "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 0,     "p_warning": 0.6,  "level": "warning" },
+    { "rain_today_mm": 96,  "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 0,     "p_warning": 1,    "level": "warning" },
+    { "rain_today_mm": 150, "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 0.5,   "p_warning": 1,    "level": "danger" },
+    { "rain_today_mm": 75,  "rain_prev_mm": 0,   "flood_hazard_pct": 50, "p_danger": 0.5,   "p_warning": 1,    "level": "danger" },
+    { "rain_today_mm": 60,  "rain_prev_mm": 0,   "flood_hazard_pct": 90, "p_danger": 0.5,   "p_warning": 1,    "level": "danger" },
+    { "rain_today_mm": 0,   "rain_prev_mm": 120, "flood_hazard_pct": 0,  "p_danger": 0.2,   "p_warning": 0,    "level": "safe" },
+    { "rain_today_mm": 135, "rain_prev_mm": 120, "flood_hazard_pct": 0,  "p_danger": 0.45,  "p_warning": 1,    "level": "warning" },
+    { "rain_today_mm": 225, "rain_prev_mm": 0,   "flood_hazard_pct": 0,  "p_danger": 1,     "p_warning": 1,    "level": "danger" }
+  ]
+}
