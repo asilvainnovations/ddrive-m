@@ -47,4 +47,5 @@ else
   "${PSQL[@]}" -f "$ROOT/supabase/tests/97_ai_ddriver.sql"
   "${PSQL[@]}" -f "$ROOT/supabase/tests/98_phase4_6_governance_plans_exercises.sql"
   "${PSQL[@]}" -f "$ROOT/supabase/tests/99_phase1_himawari_frames.sql"
+  "${PSQL[@]}" -f "$ROOT/supabase/tests/100_phase1_flood_intelligence.sql"
 fi

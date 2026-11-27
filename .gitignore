@@ -9,3 +9,8 @@ dist/
 coverage/
 *.log
 .DS_Store
+# Flood Intelligence datasets and trained models (large; Project CCHAIN data is downloaded, not committed)
+/data/
+/models/
+__pycache__/
+.pytest_cache/

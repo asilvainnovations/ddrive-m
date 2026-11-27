@@ -1,3 +1,23 @@
+# DDRiVE-M 0.9.1: Flood intelligence — 27 November 2026
+
+Adds Flood intelligence to Detection ([ADR-016](docs/adr/016-flood-intelligence.md)).
+
+- For each barangay, the day's rainfall and the 3 days before are compared with thresholds lowered by its UP NOAH flood hazard.
+- The rule is the one from the Ligtas-AI V2.0 notebooks, shown openly with all its inputs. A "Log as hazard record" link opens a flood hazard record prefilled from the outlook.
+- Barangays and rainfall can be imported from CSV, including Project CCHAIN files.
+- The notebooks are rewritten as `scripts/flood_intelligence/`. Their labels were made by the rule itself, so their ~99% scores show the rule being copied, not floods being predicted. The scripts fix antecedent rainfall, the split and the LSTM, and write a model card that only allows review of models tested on recorded floods.
+- It is decision support, not a warning: PAGASA warns.
+- **Fixed:** "Log as hazard record" followed from Detection itself did not open the form.
+- **Tests (all run on 27 Nov 2026, all passing):**
+  - Database: 15 suites, including new 100 (23 checks).
+  - Unit: 99 passed, 1 skipped.
+  - Flood pipeline (Python): 8.
+  - Functions: 42.
+  - Browser: 254 checks in 9 suites, including new `flood.mjs` (10).
+- **Apply:** DEPLOY.md § 9, "0.9 → 0.9.1".
+
+---
+
 # DDRiVE-M 0.9.0: Integration, Enhancement and Validation; DDRiVER AI; synchronised Detection — 27 November 2026
 
 - **Integration (Phase 4) embeds risk priorities in governance, plans and budgets.**
