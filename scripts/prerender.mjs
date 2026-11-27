@@ -87,7 +87,7 @@ function policyBody(p) {
   return `<div class="pr">${header()}
 <section class="hero"><p>Policies</p><h1>${esc(p.title)}</h1><p>Effective ${date(p.effective)} · Last updated ${date(p.updated)}</p></section>
 <main class="w">
-${LEGAL_FACTS.reviewed ? '' : `<p class="note">This policy is a draft under legal and privacy review. Details marked <mark>${esc(TO_CONFIRM)}</mark> are being confirmed.</p>`}
+${LEGAL_FACTS.reviewed ? '' : `<p class="note"><strong>Draft — not yet approved for final publication.</strong> This page is undergoing technical, operational and privacy/legal review. Do not treat it as evidence of independent certification or completed control testing. Values marked <mark>${esc(TO_CONFIRM)}</mark> require confirmation.</p>`}
 <h2>In short</h2><ul>${p.keyPoints.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>
 ${p.sections.map((s) => `<section id="${esc(s.id)}"><h2>${esc(s.title)}</h2>${s.blocks.map(block).join('\n')}</section>`).join('\n')}
 ${p.signoff ? `<p>Signed,<br><strong>${esc(p.signoff.name)}</strong><br>${esc(p.signoff.role)}</p>` : ''}
@@ -109,8 +109,8 @@ function homeBody() {
   return `<div class="pr">${header()}
 <section class="hero">
   <p><strong>DDRiVE-M</strong> · ${esc(brand.SITE_FULL_NAME)}</p>
-  <h1>Disaster resilience intelligence for LGUs, enterprises and development institutions</h1>
-  <p>DDRiVE-M (${esc(brand.SITE_FULL_NAME)}) is one platform for the whole disaster risk reduction and management cycle, from detection to recovery, built around RA 10121, RA 12287, ISO 31000 and the UNDRR frameworks. It is published by ${esc(LEGAL_FACTS.publisher)}.</p>
+  <h1>Integrated resilience intelligence—from risk insight to measurable outcomes</h1>
+  <p>DDRiVE-M (${esc(brand.SITE_FULL_NAME)}) is designed around the integration of risk intelligence, governance, operational decisions and resilience outcomes. It connects seven phases in one continuous feedback loop, so evidence informs priorities, priorities guide action, and lessons and results strengthen the next cycle. It is published by ${esc(LEGAL_FACTS.publisher)}.</p>
   <p><a href="/dashboard">Open the dashboard</a> · <a href="/privacy-policy">Privacy Policy</a> · <a href="/terms-of-service">Terms of Service</a></p>
 </section>
 <main class="w">

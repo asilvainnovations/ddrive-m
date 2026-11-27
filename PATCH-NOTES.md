@@ -1,3 +1,16 @@
+# DDRiVE-M 0.7.0: RA 12287 graduated disbursement — 27 November 2026
+
+Closes gap **AA-02 / C-05** of the readiness register in code, from the IRR of RA 12287 (signed 14 September 2026; OCD certified true copy). Legal and finance sign-off is still required ([ADR-007](docs/adr/007-aa-graduated-disbursement.md)).
+
+- **Rules as data:** `ddrive_aa_rule_sets` holds the IRR limits with their citation: LGU allocation ceiling of 10% of the 70% of the annual LDRRMF (Rule V s. 1(b)); for hydrometeorological and geological hazards, at most 30% of the allocation for interventions more than 3 days before the expected onset and up to 70% within 3 days (Rule V s. 2).
+- **Allocations:** a DRRM officer records each year's anticipatory action allocation per fund (LDRRMF, agency anticipatory action budget, NDRRM Fund augmentation) with its basis.
+- **Enforced in the database:** each measure records when it will be undertaken; its lead-time band is computed against the case's expected onset; disbursements that would exceed a band, the allocation, or that lack an allocation or implementation time are refused with the IRR citation. Grants, donations, other budget lines and unexpended LDRRMF in the Special Trust Fund are not graduated (Rule V s. 1(b), s. 2). Drought: disbursement needs a reference to the operational guidelines, which the IRR leaves to set its rate.
+- **App:** Anticipatory Action shows each allocation's bands against their limits, the band of each measure before it is saved, and the reason when a disbursement is refused.
+- **Tests:** `supabase/tests/70_phase3_aa_graduated.sql` (41 checks, each refusal verified for its reason), 6 unit tests, browser test of the allocation flow. Stale browser tests updated for 0.6.0 (Diagnosis tabs, Detection wording, Home and policy texts).
+- **Apply:** DEPLOY.md § 9, "0.6 → 0.7".
+
+---
+
 # DDRiVE-M 0.6.0: Detection sources and DDRiVE assessment — 22 November 2026
 
 - **Detection** reads the NOAA Pacific Tsunami Warning Center (CAP), USGS earthquakes (FDSN GeoJSON) and GDACS (GeoJSON) beside PAGASA, through a new `ingest-official` Edge Function; watch areas can be a point and radius; each alert in a watch area shows the organisation's approved DDRiVE rating for that hazard ([ADR-005](docs/adr/005-official-detection-sources.md)). PHIVOLCS publishes no feed and is linked, not scraped.

@@ -69,6 +69,37 @@ export interface AaAction {
   disbursed_php: number | null;
   status: 'planned' | 'done' | 'cancelled';
   done_at: string | null;
+  /** When the intervention is undertaken; sets its lead-time band (IRR of RA 12287, Rule V s. 2). */
+  implement_by: string | null;
+  lead_band: LeadBand | null;
+  /** Operational-guideline reference, required for slow-onset hazards (drought). */
+  slow_onset_basis: string | null;
+}
+
+export type LeadBand = 'beyond_3_days' | 'within_3_days' | 'not_graduated';
+export const LEAD_BAND_LABEL: Record<LeadBand, string> = {
+  beyond_3_days: 'More than 3 days before onset (limit: 30% of the allocation)',
+  within_3_days: 'Within 3 days of onset (limit: 70% of the allocation)',
+  not_graduated: 'Not graduated (other source, or slow-onset hazard)',
+};
+
+/** Funds whose anticipatory action allocation is graduated by lead time (IRR of RA 12287, Rule V s. 2). */
+export const GRADUATED_FUNDS: FundSource[] = ['ldrrmf', 'agency_budget', 'ndrrmf'];
+export type AllocationFund = 'ldrrmf' | 'agency_budget' | 'ndrrmf';
+
+export interface AllocationStatus {
+  id: string;
+  fiscal_year: number;
+  fund_source: AllocationFund;
+  annual_ldrrmf_php: number | null;
+  allocation_php: number;
+  basis: string;
+  citation: string;
+  beyond_cap_php: number;
+  within_cap_php: number;
+  beyond_disbursed_php: number;
+  within_disbursed_php: number;
+  total_disbursed_php: number;
 }
 
 // ─── Labels ──────────────────────────────────────────────────────────────────
@@ -134,10 +165,10 @@ export const FUND_LABEL: Record<FundSource, string> = {
   none: 'No funds',
   ldrrmf: 'Local DRRM Fund (LDRRMF)',
   ldrrmf_special_trust_fund: 'Unexpended LDRRMF in the Special Trust Fund',
-  agency_budget: 'Agency budget (GAA)',
+  agency_budget: 'Agency budget: anticipatory action allocation (GAA)',
   ndrrmf: 'National DRRM Fund',
   grant_donation: 'Grant or donation',
-  other: 'Other lawful source',
+  other: 'Other lawful source (including other agency budget lines)',
 };
 
 /** Hours from now until the expected onset (negative once it has passed). */
@@ -225,12 +256,12 @@ export async function recordAssessment(a: NewAssessment) {
   return { error: error ? friendly(error.message) : null };
 }
 
-export type NewAction = Pick<AaAction, 'case_id' | 'measure' | 'description' | 'responsible' | 'fund_source' | 'amount_php'>;
+export type NewAction = Pick<AaAction, 'case_id' | 'measure' | 'description' | 'responsible' | 'fund_source' | 'amount_php' | 'implement_by'>;
 export async function addAction(a: NewAction) {
   const { error } = await supabase.from('ddrive_aa_actions').insert(a);
   return { error: error ? friendly(error.message) : null };
 }
-export async function updateAction(id: string, patch: Partial<Pick<AaAction, 'status' | 'disbursed_php' | 'description' | 'responsible'>>) {
+export async function updateAction(id: string, patch: Partial<Pick<AaAction, 'status' | 'disbursed_php' | 'description' | 'responsible' | 'implement_by' | 'slow_onset_basis'>>) {
   const { error } = await supabase.from('ddrive_aa_actions').update(patch).eq('id', id);
   return { error: error ? friendly(error.message) : null };
 }
@@ -247,3 +278,32 @@ export const recordLifting = (id: string, reason: 'impacts_not_met' | 'hazard_oc
   step('ddrive_aa_record_lifting', { p_case: id, p_reason: reason, p_lifted_at: at, p_eo: eo });
 export const submitReport = (id: string, costs: number | null, basis: string, notes: string) =>
   step('ddrive_aa_submit_report', { p_case: id, p_costs: costs, p_basis: basis, p_notes: notes });
+
+// ─── Allocations (IRR of RA 12287, Rule V) ───────────────────────────────────
+/** IRR Rule V s. 1(b): an LGU may set aside no more than 10% of the 70% of its annual LDRRMF. */
+export const LDRRMF_AA_CEILING_SHARE = 0.07;
+
+export async function listAllocations(): Promise<Res<AllocationStatus[]>> {
+  const { data, error } = await supabase.from('ddrive_aa_allocation_status').select('*').order('fiscal_year', { ascending: false });
+  return { data: (data as AllocationStatus[]) ?? [], error: error ? friendly(error.message) : null };
+}
+
+export interface NewAllocation {
+  fiscal_year: number;
+  fund_source: AllocationFund;
+  annual_ldrrmf_php: number | null;
+  allocation_php: number;
+  basis: string;
+}
+export async function recordAllocation(a: NewAllocation) {
+  const { error } = await supabase.from('ddrive_aa_allocations').insert(a);
+  return { error: error ? friendly(error.message) : null };
+}
+
+/** The lead-time band a measure would fall in, as the database works it out (shown before saving). */
+export function leadBandFor(fund: FundSource, hazard: Hazard, implementBy: string | null, expectedOnset: string): LeadBand | null {
+  if (!GRADUATED_FUNDS.includes(fund) || hazard === 'drought') return 'not_graduated';
+  if (!implementBy) return null;
+  const hours = (new Date(expectedOnset).getTime() - new Date(implementBy).getTime()) / 3_600_000;
+  return hours > 72 ? 'beyond_3_days' : 'within_3_days';
+}

@@ -48,7 +48,7 @@ However, **repository evidence does not establish production readiness**. The li
 ### Partially verified
 - Tenant separation: policies exist, but the deployed database and complete access matrix have not been independently tested.
 - PAGASA ingestion: code exists, but production scheduler, monitoring, source uptime and real-world edge cases are unverified.
-- RA 12287: workflow is implemented in part, but IRR graduated disbursement rules are not encoded.
+- RA 12287: workflow implemented; IRR graduated disbursement encoded and enforced in the database on 27 Nov 2026 (ADR-007, 41 SQL checks), pending legal/finance sign-off of the readings in ADR-007.
 - UNDRR scorecard: stored scoring exists, but evidence-backed indicator ownership and outcome traceability are incomplete.
 - Validation: scenarios and participation exist, but full exercise management, AAR and corrective-action closure are not evidenced.
 - Plan enhancement: templates/drafts exist, but approval, legal sufficiency, budget linkage and recovery planning are incomplete.
@@ -58,7 +58,7 @@ However, **repository evidence does not establish production readiness**. The li
 ### Unverified (must not be described as passed)
 - Production Supabase project region, configuration, deployed migration versions and RLS enforcement.
 - Scheduled PAGASA polling and real feed behaviour under outage, delayed updates, malformed CAP and cancellations.
-- CI pipeline, current clean install, lint, typecheck, unit/integration/E2E and production build results.
+- CI pipeline (none configured). Clean install, typecheck, lint, build, unit, SQL and browser tests were executed locally on 27 Nov 2026 and passed; see docs/governance/test-reports/2026-11-27-aa-graduated-disbursement.md. Not a CI or production run.
 - Backup/restore, RPO/RTO, monitoring, incident response and key rotation.
 - MFA availability/enforcement and account recovery hardening.
 - Full static-page data flows, third-party scripts, XSS exposure and retention/deletion.
@@ -70,7 +70,7 @@ However, **repository evidence does not establish production readiness**. The li
 - Complete integrated CDRA including hazard, exposure, vulnerability, capacity, climate projections, spatial evidence and SADD.
 - Full EOC activation/operations, staffing/shift, resource/logistics, situation reporting, handover and demobilisation workflow.
 - DILG Region VIII harmonised pre-disaster, during-disaster, post-disaster and terminal report lifecycle.
-- IRR graduated disbursement controls for RA 12287.
+- IRR graduated disbursement controls for RA 12287: closed in code on 27 Nov 2026 (ADR-007); legal/finance acceptance open.
 - Complete damage/loss/needs assessment and rehabilitation/recovery workflow aligned with NEDA guidance.
 - Evidence-backed MCR2030 scorecard linked to owners, baselines, targets, budgets, milestones and outcomes.
 - Integrated validation/AAR/corrective action lifecycle.
