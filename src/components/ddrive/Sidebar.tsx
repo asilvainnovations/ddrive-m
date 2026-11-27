@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Radar, Stethoscope, Shield, Network, FlaskConical,
-  Sparkles, Radio, FileText, Bot, Settings, X, Hourglass, Map
+  Sparkles, Radio, FileText, Bot, Settings, X, Map
 } from 'lucide-react';
 
 import { MODULES, ModuleKey } from '@/lib/modules';
@@ -22,7 +22,6 @@ const icons: Record<ModuleKey, React.ElementType> = {
   detection: Radar,
   diagnosis: Stethoscope,
   response: Shield,
-  anticipatory: Hourglass,
   mapping: Map,
   integration: Network,
   validation: FlaskConical,

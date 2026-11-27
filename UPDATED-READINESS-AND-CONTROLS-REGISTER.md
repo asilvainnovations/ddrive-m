@@ -36,7 +36,8 @@ However, **repository evidence does not establish production readiness**. The li
 ### Verified in repository (source-level only)
 - `AuthProvider` is mounted around the application routes.
 - Public Home and policy routes are separated from authenticated application routes.
-- Central module registry includes Detection, Diagnosis, Response, Anticipatory Action, Integration, Validation, Enhancement, Monitoring, Documents, Assistant and Settings.
+- Central module registry includes Detection, Diagnosis, Response (with Anticipatory Action as a tab since 0.8.0), Rapid Mapping, Integration, Validation, Enhancement, Monitoring, Documents, Assistant and Settings.
+- Proposed actions flow from Diagnosis and Detection to Response, where a DRRM officer decides on them (ADR-008, `ddrive_response_actions`).
 - Supabase migrations define tenant, membership, user, audit and domain structures.
 - RLS policies and role helper functions are defined in SQL.
 - Named server/database actions replace broad generic client-side table writes for the inspected workflows.

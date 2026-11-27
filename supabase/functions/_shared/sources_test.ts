@@ -1,5 +1,5 @@
 // Run with: deno test --allow-read supabase/functions/_shared/sources_test.ts
-import { DEFAULT_BBOX, gdacsQueryUrl, gdacsToAlerts, ingestJsonSource, parseBbox, usgsQueryUrl, usgsToAlerts, type SourceAlert } from './sources.ts';
+import { DEFAULT_BBOX, gdacsQueryUrl, gdacsToAlerts, ingestJsonSource, parseBbox, sourceUrlAllowed, usgsQueryUrl, usgsToAlerts, type SourceAlert } from './sources.ts';
 import { ingestFeed } from './ingest.ts';
 import type { ParsedAlert } from './cap.ts';
 
@@ -115,4 +115,13 @@ Deno.test('PTWC: the Atom feed and its CAP document go through the CAP pipeline'
   const a = [...x.stored.values()][0] as ParsedAlert;
   assert(a.event === 'Tsunami Information Statement' && a.sender === 'ptwc@noaa.gov' && a.certainty === 'Unlikely', 'CAP fields verbatim');
   assert(a.cap_url === cap, 'followed the CAP link, not the energy map');
+});
+
+Deno.test('sources must be HTTPS, except this machine for local tests', () => {
+  const ok = (u: string) => sourceUrlAllowed(new URL(u));
+  if (!ok('https://earthquake.usgs.gov/fdsnws/event/1/query')) throw new Error('https refused');
+  if (!ok('http://127.0.0.1:8099/usgs') || !ok('http://localhost:8099/gdacs')) throw new Error('loopback refused');
+  for (const bad of ['http://earthquake.usgs.gov/x', 'http://10.0.0.5/x', 'http://127.0.0.1.evil.example/x', 'ftp://127.0.0.1/x', 'file:///etc/passwd']) {
+    if (ok(bad)) throw new Error(`allowed ${bad}`);
+  }
 });

@@ -14,6 +14,8 @@ import {
 import { csvCell, download, safeFileName } from '@/lib/rapidMapping/exports';
 import { Field, Gate, NoteAction, card, input, primary, secondary, danger, useSubmit, when } from '../rapidMappingModule/ui';
 import { DataScores, MatrixCounts, riskFill } from './Reports';
+import { LinkedActions } from '../responseModule/ProposeAction';
+import { listActions, priorityFor, type ResponseAction } from '@/lib/responseActions';
 const Charts = React.lazy(() => import('./Charts'));
 
 type ScoreKey = 'exposure' | 'v_infrastructure' | 'v_productive' | 'v_services' | 'v_social' | 'response';
@@ -26,7 +28,10 @@ const SCORE_COLUMNS: { key: ScoreKey; label: string; scale: keyof typeof SCALES 
 const fmt = (v: number | null) => (v === null ? '—' : Number.isInteger(v) ? String(v) : v.toFixed(1));
 
 // ─── One hazard event row ────────────────────────────────────────────────────
-const EntryRow: React.FC<{ e: Entry; method: Assessment['method']; editable: boolean; onSaved: (e: Entry) => void; onRemoved: () => void; onRegistered: () => void }> = ({ e, method, editable, onSaved, onRemoved, onRegistered }) => {
+const EntryRow: React.FC<{
+  e: Entry; method: Assessment['method']; editable: boolean; onSaved: (e: Entry) => void; onRemoved: () => void; onRegistered: () => void;
+  actions: ResponseAction[]; onActionsChanged: () => void;
+}> = ({ e, method, editable, onSaved, onRemoved, onRegistered, actions, onActionsChanged }) => {
   const [draft, setDraft] = useState(e);
   const [saving, setSaving] = useState(false);
   const [owner, setOwner] = useState('');
@@ -43,7 +48,8 @@ const EntryRow: React.FC<{ e: Entry; method: Assessment['method']; editable: boo
   };
   const code = draft === e ? e.risk_code : preview?.risk_code ?? null;
   return (
-    <tr className="border-b border-slate-100 dark:border-slate-800 align-top">
+    <>
+    <tr className={cn('align-top', !e.risk_code && 'border-b border-slate-100 dark:border-slate-800')}>
       <th scope="row" className="p-1.5 text-left font-medium min-w-[10rem]">{e.main_hazard}<br /><span className="font-normal text-slate-600">{e.hazard_event}</span></th>
       {SCORE_COLUMNS.map((c) => (
         <td key={c.key} className="p-1">
@@ -90,6 +96,20 @@ const EntryRow: React.FC<{ e: Entry; method: Assessment['method']; editable: boo
         )}
       </td>
     </tr>
+    {e.risk_code && (
+      // Scored: the interpreted risk can now be treated. Proposals go to Response for a decision.
+      <tr className="border-b border-slate-100 dark:border-slate-800">
+        <td colSpan={13} className="px-1.5 pb-2">
+          <LinkedActions
+            filter={{ entryId: e.id }} preloaded={actions} onChanged={onActionsChanged}
+            link={{ origin: 'diagnosis', hazard_entry_id: e.id }} min="analyst" idPrefix={`entry-${e.id}`}
+            context={`${e.hazard_event} (${e.main_hazard}), rated ${e.risk_code}`}
+            defaultTitle={`Reduce ${e.hazard_event.toLowerCase()} risk`} defaultPriority={priorityFor(null, e.risk_code)} compact
+          />
+        </td>
+      </tr>
+    )}
+    </>
   );
 };
 
@@ -207,6 +227,9 @@ const AssessmentWorkspace: React.FC<{ a: Assessment; onChanged: (focus?: string 
     setEntries(r.data.entries); setScenarios(r.data.scenarios); setLoading(false);
   }, [a.id]);
   useEffect(() => { setInfo(a); setLoading(true); load(); }, [a, load]);
+  const [actions, setActions] = useState<ResponseAction[]>([]);
+  const loadActions = useCallback(async () => { setActions((await listActions()).data.filter((x) => x.hazard_entry_id)); }, []);
+  useEffect(() => { loadActions(); }, [loadActions]);
 
   const unscored = entries.filter((e) => !e.risk_code).length;
   const byFamily = useMemo(() => FAMILIES.map((f) => ({ f, rows: entries.filter((e) => e.family_code === f.code) })).filter((x) => x.rows.length), [entries]);
@@ -305,7 +328,8 @@ const AssessmentWorkspace: React.FC<{ a: Assessment; onChanged: (focus?: string 
                   {rows.map((e) => (
                     <EntryRow key={e.id} e={e} method={a.method} editable={editable}
                               onSaved={(x) => setEntries((all) => all.map((y) => (y.id === x.id ? x : y)))}
-                              onRemoved={load} onRegistered={load} />
+                              onRemoved={load} onRegistered={load}
+                              actions={actions.filter((x) => x.hazard_entry_id === e.id)} onActionsChanged={loadActions} />
                   ))}
                 </tbody>
               ))}

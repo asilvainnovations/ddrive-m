@@ -82,7 +82,7 @@ export default defineConfig(({ mode }) => {
           shortcuts: [
             { name: "Command Dashboard", url: "/dashboard" },
             { name: "Official alerts", url: "/detection" },
-            { name: "Anticipatory action", url: "/anticipatory-action" },
+            { name: "Anticipatory action", url: "/response?tab=anticipatory" },
           ],
         },
         workbox: {

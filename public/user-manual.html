@@ -723,7 +723,7 @@ code {
           <div class="grid-3" style="gap:10px; margin-top:6px;" id="seven-phases">
             <div style="padding:13px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-1">Phase 1</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🔴 Detection</div><div style="font-size:12px;color:var(--text-tertiary);">Monitor official agency feeds (PAGASA, PHIVOLCS, NOAH, NDRRMC)</div></div>
             <div style="padding:13px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-2">Phase 2</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🔬 Diagnosis</div><div style="font-size:12px;color:var(--text-tertiary);">Classify and analyze risks using ISO 31000 matrix and AI scanner</div></div>
-            <div style="padding:13px; background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-3">Phase 3</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🚨 Response</div><div style="font-size:12px;color:var(--text-tertiary);">Manage incidents from initial report through resolution</div></div>
+            <div style="padding:13px; background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-3">Phase 3</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🚨 Response</div><div style="font-size:12px;color:var(--text-tertiary);">Decide on and track risk-informed actions, incidents and anticipatory action</div></div>
             <div style="padding:13px; background:rgba(16,185,129,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-4">Phase 4</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🏛 Integration</div><div style="font-size:12px;color:var(--text-tertiary);">Align with UNDRR 10 Essentials for city resilience assessment</div></div>
             <div style="padding:13px; background:rgba(13,148,136,0.07); border:1px solid rgba(20,184,166,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-5">Phase 5</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">🎮 Validation</div><div style="font-size:12px;color:var(--text-tertiary);">Train personnel via simulated scenarios and EOC/ICS simulators</div></div>
             <div style="padding:13px; background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.2); border-radius:var(--radius-md);"><div class="phase-badge phase-6">Phase 6</div><div style="font-weight:600;font-size:13px;margin-bottom:3px;color:var(--text-primary);">📋 Enhancement</div><div style="font-size:12px;color:var(--text-tertiary);">Generate AI-powered DRRM plans aligned with Philippine law</div></div>
@@ -949,11 +949,11 @@ code {
             <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><div class="flow-step-title">Click "Report Hazard" button</div><div class="flow-step-desc">Opens the hazard reporting form modal.</div></div></div>
             <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><div class="flow-step-title">Fill out all form fields</div><div class="flow-step-desc">Agency (dropdown), Hazard type, Name (custom title), Location, Latitude and longitude (required; must be inside the Philippines: latitude 4 to 22, longitude 116 to 127), Severity (Low/Medium/High/Critical). Choose "Local DRRM office" or "Field observation" as the source when the information did not come from an agency.</div></div></div>
             <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><div class="flow-step-title">Click "Save hazard record"</div><div class="flow-step-desc">A confirmation appears and the record shows in the hazard list.</div></div></div>
-            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Escalate if needed</div><div class="flow-step-desc">Escalation from a hazard to the Response module is not available yet. Create the incident in the Response module.</div></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><div class="flow-step-title">Propose a response action</div><div class="flow-step-desc">Open the hazard record and choose <strong>+ Propose action</strong> (responder or higher). Each official alert card has the same link. The action goes to Response, where a DRRM officer decides on it.</div></div></div>
           </div>
           <div class="callout callout-warning" style="margin-top:12px;">
             <div class="callout-icon">⚡</div>
-            <div class="callout-body"><div class="callout-title">Best Practice</div><div class="callout-text">Always escalate critical hazards promptly to the Response Module for full incident tracking and resource assignment.</div></div>
+            <div class="callout-body"><div class="callout-title">Best Practice</div><div class="callout-text">Propose actions for critical hazards promptly, so the DRRM officer sees them in Response → Risk-informed actions. Open an incident in Response when an event needs incident tracking.</div></div>
           </div>
         </div></div>
       </div>
@@ -1025,7 +1025,7 @@ code {
         <div class="section-num">6</div>
         <div>
           <div class="section-title">Phase 3: Response Module</div>
-          <div class="section-subtitle">Manage incidents from initial report through resolution</div>
+          <div class="section-subtitle">Decide on and coordinate risk-informed actions, manage incidents, and run anticipatory action. Three tabs: Risk-informed actions, Incidents, Anticipatory action (RA 12287)</div>
         </div>
       </div>
 
@@ -1036,7 +1036,7 @@ code {
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
-          <div class="prose" style="margin-top:8px;"><p>Each open incident displays as an individual card with: ID Number (INC-001…), Title, Priority Badge, Assigned Person, ETA, Progress Bar (visual percentage), and Status Label.</p></div>
+          <div class="prose" style="margin-top:8px;"><p>Open the <strong>Incidents</strong> tab. A responder or higher opens one with <strong>New incident</strong>: what is happening, priority, who it is assigned to, and the expected resolution. The server issues the reference number. Each incident displays as an individual card with: ID Number (INC-001…), Title, Priority Badge, Assigned Person, ETA, Progress Bar (visual percentage), and Status Label.</p></div>
           <div class="grid-2" style="gap:12px; margin-top:10px;">
             <div>
               <div style="font-family:var(--font-condensed);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;">Priority Badges</div>
@@ -1061,40 +1061,48 @@ code {
 
       <div class="coll-card">
         <div class="coll-header" onclick="toggleColl(this.parentElement)">
-          <div class="coll-header-icon">🤖</div>
-          <div class="coll-header-text"><div class="coll-header-title">AI Treatment Canvas & Protocol Library</div><div class="coll-header-sub">Four risk strategies and agency SOPs</div></div>
+          <div class="coll-header-icon">✅</div>
+          <div class="coll-header-text"><div class="coll-header-title">Risk-informed actions</div><div class="coll-header-sub">Proposed from Diagnosis and Detection · decided and tracked in Response</div></div>
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
+          <div class="prose" style="margin-top:8px;"><p>An action is always written by a person and always says what it responds to. DDRiVE-M does not generate actions.</p></div>
           <table class="data-table" style="margin-top:8px;">
-            <thead><tr><th>Strategy</th><th>When to Use</th><th>Color</th></tr></thead>
+            <thead><tr><th>Where</th><th>What you propose from</th><th>Who</th></tr></thead>
             <tbody>
-              <tr><td><strong>Avoid</strong></td><td>Eliminate the risk entirely — remove the source</td><td><span style="color:#991b1b;font-weight:600;">Red</span></td></tr>
-              <tr><td><strong>Reduce</strong></td><td>Lower probability or impact through mitigation</td><td><span style="color:#7c2d12;font-weight:600;">Orange</span></td></tr>
-              <tr><td><strong>Transfer</strong></td><td>Share risk via insurance or partnership</td><td><span style="color:#1e3a8a;font-weight:600;">Blue</span></td></tr>
-              <tr><td><strong>Accept</strong></td><td>Acknowledge and monitor — cost of mitigation too high</td><td><span style="color:#065f46;font-weight:600;">Green</span></td></tr>
+              <tr><td>Diagnosis → Risk register</td><td>A register risk: <strong>+ Propose action</strong> under the row</td><td>Analyst or higher</td></tr>
+              <tr><td>Diagnosis → Assessments</td><td>A scored hazard event (it must have a rating first)</td><td>Analyst or higher</td></tr>
+              <tr><td>Detection → Official alerts</td><td>An alert: <strong>+ Propose action</strong> at the bottom of the card</td><td>Responder or higher</td></tr>
+              <tr><td>Detection → Active Hazard Feed</td><td>A hazard record: open it, then <strong>+ Propose action</strong></td><td>Responder or higher</td></tr>
+              <tr><td>Response → Risk-informed actions</td><td>Nothing: <strong>New action</strong></td><td>Analyst or higher</td></tr>
             </tbody>
           </table>
-          <div class="callout callout-ai" style="margin-top:12px;">
-            <div class="callout-icon">◈</div>
-            <div class="callout-body"><div class="callout-title">Generating AI Recommendations</div><div class="callout-text">Scroll to the AI Treatment Canvas section → click <strong>"Generate AI Mitigation Strategies"</strong>. The system suggests <strong>12 customized approaches</strong> based on your registered risks and incident data. Review each suggestion for applicability to your context.</div></div>
-          </div>
           <table class="data-table" style="margin-top:12px;">
-            <thead><tr><th>Agency</th><th>Protocol Name</th><th>Available SOPs</th></tr></thead>
+            <thead><tr><th>Field</th><th>Choices</th></tr></thead>
             <tbody>
-              <tr><td>DTI</td><td>Trade Continuity</td><td>8 procedures</td></tr>
-              <tr><td>DILG</td><td>LGU Emergency</td><td>12 procedures</td></tr>
-              <tr><td>LGU</td><td>Local Controls</td><td>25 procedures</td></tr>
-              <tr><td>DOH</td><td>Health Emergencies</td><td>14 procedures</td></tr>
+              <tr><td>Treatment option (ISO 31000)</td><td>Avoid · Reduce the likelihood · Reduce the consequences · Share (insurance, partners, contracts) · Retain, by informed decision</td></tr>
+              <tr><td>DRRM thematic area (RA 10121)</td><td>Prevention and mitigation · Preparedness · Response · Rehabilitation and recovery</td></tr>
+              <tr><td>Priority</td><td>Suggested from the risk level or DDRiVE rating; change it if needed</td></tr>
+              <tr><td>Responsible office, due date, estimated cost (PHP)</td><td>Optional</td></tr>
             </tbody>
           </table>
+          <div class="prose" style="margin-top:12px;">
+            <h4>Steps in Response</h4>
+            <ol>
+              <li><strong>Approve</strong> (note optional) or <strong>Decline</strong> (reason required): DRRM officer or administrator.</li>
+              <li><strong>Record progress</strong>: percentage (it cannot go down) and what was done: responder or higher.</li>
+              <li><strong>Mark done</strong> with the outcome: what was done and what it changed: responder or higher.</li>
+              <li><strong>Cancel action</strong> with a reason, or change the responsible office and due date: DRRM officer.</li>
+            </ol>
+            <p>After the decision, what the action is cannot be edited: cancel it with a reason and propose a new one. Overdue due dates are marked. The risk, hazard event, alert or hazard record shows each action and its status, and links to it.</p>
+          </div>
         </div></div>
       </div>
     
       <div class="coll-card">
         <div class="coll-header" onclick="toggleColl(this.parentElement)">
           <div class="coll-header-icon">⏳</div>
-          <div class="coll-header-text"><div class="coll-header-title">Anticipatory Action under RA 12287</div><div class="coll-header-sub">From forecast trigger to the report to OCD · Sidebar → Anticipatory Action</div></div>
+          <div class="coll-header-text"><div class="coll-header-title">Anticipatory Action under RA 12287</div><div class="coll-header-sub">From forecast trigger to the report to OCD · Response → Anticipatory action (RA 12287) tab</div></div>
           <div class="coll-chevron">▾</div>
         </div>
         <div class="coll-body"><div class="coll-body-inner">
@@ -1717,6 +1725,7 @@ code {
             <tbody>
               <tr><td>Detection</td><td>Official alerts, hazard records</td><td>Report Hazard, Log as hazard record</td><td>Hazard record saved, linked to the alert when logged from one</td></tr>
               <tr><td>Diagnosis</td><td>Risk Score</td><td>Add Risk + Upload Data</td><td>Updated risk registry</td></tr>
+              <tr><td>Response</td><td>Proposed action</td><td>Approve</td><td>Action moves to Approved; responders can report progress</td></tr>
               <tr><td>Response</td><td>Incident Progress %</td><td>Advance +10%</td><td>Incident moves forward</td></tr>
               <tr><td>Integration</td><td>Resilience Score</td><td>Complete Assessment</td><td>Score improves over time</td></tr>
               <tr><td>Validation</td><td>Scenario Completion</td><td>Launch Simulation</td><td>Training logged to stats</td></tr>

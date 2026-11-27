@@ -228,6 +228,12 @@ export interface JsonSourceDeps {
 }
 
 /** Reads one JSON source, stores readings not yet stored (oldest first, at most `max`), and records the run. Never throws. */
+/** HTTPS only; plain HTTP is accepted for this machine's loopback address, which local tests use. */
+export function sourceUrlAllowed(u: URL): boolean {
+  if (u.protocol === 'https:') return true;
+  return u.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname);
+}
+
 export async function ingestJsonSource(
   opts: { source: string; url: string; convert: (doc: unknown) => SourceAlert[]; max?: number },
   deps: JsonSourceDeps,
@@ -238,7 +244,7 @@ export async function ingestJsonSource(
   let added = 0;
   try {
     const u = new URL(opts.url);
-    if (u.protocol !== 'https:') throw new Error(`refusing a non-https source: ${opts.url}`);
+    if (!sourceUrlAllowed(u)) throw new Error(`refusing a non-https source: ${opts.url}`);
     const alerts = opts.convert(JSON.parse(await deps.fetchText(opts.url)));
     seen = alerts.length;
     const known = await deps.knownIdentifiers(opts.source, alerts.map((a) => a.identifier));

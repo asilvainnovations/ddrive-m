@@ -123,8 +123,8 @@ try {
   // ── Anticipatory action, end to end ─────────────────────────────────────────
   {
     const { page, ctx, errors } = await pageAs(browser, 'analyst@a.ph');
-    await page.goto(`${APP}/dashboard`); await settle(page);
-    check(await page.getByRole('button', { name: /Anticipatory Action/ }).isVisible(), 'The sidebar lists Anticipatory Action');
+    await page.goto(`${APP}/response`); await settle(page);
+    check(await page.getByRole('tab', { name: 'Anticipatory action (RA 12287)' }).isVisible(), 'Anticipatory action is a tab of the Response module');
     await page.goto(`${APP}/detection`); await settle(page, 2500);
     await page.getByRole('button', { name: /Whole region/ }).click().catch(() => {}); await settle(page, 500);
     const start = page.getByRole('link', { name: 'Start anticipatory action' }).first();
