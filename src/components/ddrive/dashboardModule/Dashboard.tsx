@@ -5,6 +5,7 @@ import {
   Radar, Stethoscope, Shield, Network, Sparkles, Radio, ArrowRight, BookOpen,
 } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
+import AskDdriver from '@/components/ddrive/ai/AskDdriver';
 import StatCard from '@/components/ddrive/StatCard';
 import { ModuleKey, moduleByKey } from '@/lib/modules';
 import { isBackendConfigured } from '@/lib/supabase';
@@ -130,6 +131,9 @@ const Dashboard: React.FC = () => {
         </div>
       </GlassCard>
 
+      <AskDdriver task="situation_brief" label="Situation brief from DDRiVER AI" idPrefix="brief"
+        className="rounded-2xl border border-purple-200 dark:border-purple-900 bg-white/70 dark:bg-slate-900/60 px-4 py-3" />
+
       <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
         <StatCard label="Risks tracked" value={show(risks, risks.data.length)} icon={AlertTriangle} color="red" />
         <StatCard
@@ -250,7 +254,7 @@ const Dashboard: React.FC = () => {
           <div>
             <h3 className="font-montserrat font-bold text-lg text-slate-900 dark:text-white">Hazard records</h3>
             <p className="text-xs text-slate-500 font-poppins">
-              Entered by your team, with the agency each came from. Automatic agency feeds are not connected yet.
+              Official alerts for your watch areas, synchronised every 10 minutes from PAGASA, PTWC, USGS and GDACS, and field reports from your team.
             </p>
           </div>
           <button type="button" onClick={() => go('detection')} className="text-xs px-3 py-1.5 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800">
@@ -275,9 +279,9 @@ const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {hazards.data.slice(0, 6).map((h) => (
+                {hazards.data.filter((h) => h.status === 'Active' || h.status === 'Monitoring').slice(0, 6).map((h) => (
                   <tr key={h.id} className="border-b border-slate-100 dark:border-slate-800">
-                    <td className="py-2.5 px-2">{h.agency}</td>
+                    <td className="py-2.5 px-2">{h.agency}{h.origin === 'official' ? '' : ' · field report'}</td>
                     <td className="py-2.5 px-2 font-medium text-slate-900 dark:text-white">{h.name}</td>
                     <td className="py-2.5 px-2 text-slate-600 dark:text-slate-400">{h.location}</td>
                     <td className="py-2.5 px-2">{h.severity}</td>

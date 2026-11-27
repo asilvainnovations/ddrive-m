@@ -32,11 +32,17 @@ export interface ResponseAction {
   last_update: string | null;
   outcome: string | null;
   completed_at: string | null;
+  incident_id: string | null;
+  budget_line_id: string | null;
+  ai_assisted: boolean;
+  funded_at: string | null;
   created_at: string;
   ddrive_risks?: { ref: string | null; title: string; level: string | null; ddrive_risk_code: string | null } | null;
   ddrive_hazard_assessment_entries?: { hazard_event: string; main_hazard: string; risk_code: string | null } | null;
   ddrive_official_alerts?: { source: string; event: string; headline: string | null; signal_level: number | null } | null;
   ddrive_hazards?: { name: string; location: string; severity: string } | null;
+  ddrive_incidents?: { ref: string | null; title: string; status: string } | null;
+  ddrive_budget_lines?: { ref: string | null; title: string; fund_source: string; fiscal_year: number } | null;
 }
 
 // ISO 31000:2018, 6.5.2 risk treatment options.
@@ -105,9 +111,10 @@ function friendly(message: string): string {
 const done = (error: { message: string } | null) => ({ error: error ? friendly(error.message) : null });
 
 const SELECT = '*, ddrive_risks(ref, title, level, ddrive_risk_code), ddrive_hazard_assessment_entries(hazard_event, main_hazard, risk_code), '
-  + 'ddrive_official_alerts(source, event, headline, signal_level), ddrive_hazards(name, location, severity)';
+  + 'ddrive_official_alerts(source, event, headline, signal_level), ddrive_hazards(name, location, severity), '
+  + 'ddrive_incidents(ref, title, status), ddrive_budget_lines(ref, title, fund_source, fiscal_year)';
 
-export interface ActionFilter { riskId?: string; entryId?: string; alertId?: string; hazardRecordId?: number }
+export interface ActionFilter { riskId?: string; entryId?: string; alertId?: string; hazardRecordId?: number; incidentId?: string }
 
 export async function listActions(f: ActionFilter = {}): Promise<Res<ResponseAction[]>> {
   let q = supabase.from('ddrive_response_actions').select(SELECT).order('created_at', { ascending: false });
@@ -115,6 +122,7 @@ export async function listActions(f: ActionFilter = {}): Promise<Res<ResponseAct
   if (f.entryId) q = q.eq('hazard_entry_id', f.entryId);
   if (f.alertId) q = q.eq('official_alert_id', f.alertId);
   if (f.hazardRecordId != null) q = q.eq('hazard_record_id', f.hazardRecordId);
+  if (f.incidentId) q = q.eq('incident_id', f.incidentId);
   const { data, error } = await q;
   return { data: (data as unknown as ResponseAction[]) ?? [], error: error ? friendly(error.message) : null };
 }
@@ -127,12 +135,15 @@ export interface NewAction {
   hazard_entry_id?: string | null;
   official_alert_id?: string | null;
   hazard_record_id?: number | null;
+  incident_id?: string | null;
   strategy: Strategy;
   drrm_area: DrrmArea;
   priority: Priority;
   owner_office: string | null;
   due_on: string | null;
   cost_php: number | null;
+  /** True when the person started from a DDRiVER AI draft (ADR-011). */
+  ai_assisted?: boolean;
 }
 export async function proposeAction(a: NewAction) {
   const { error } = await supabase.from('ddrive_response_actions').insert(a);
@@ -147,3 +158,5 @@ export const decideAction = (id: string, approve: boolean, note: string) => step
 export const reportProgress = (id: string, progress: number, update: string) => step('ddrive_response_progress', { p_id: id, p_progress: progress, p_update: update });
 export const completeAction = (id: string, outcome: string) => step('ddrive_response_complete', { p_id: id, p_outcome: outcome });
 export const cancelAction = (id: string, reason: string) => step('ddrive_response_cancel', { p_id: id, p_reason: reason });
+export const linkIncident = (id: string, incidentId: string | null) => step('ddrive_response_link_incident', { p_id: id, p_incident_id: incidentId });
+export const fundAction = (id: string, lineId: string | null) => step('ddrive_response_fund', { p_id: id, p_line_id: lineId });

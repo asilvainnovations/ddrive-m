@@ -42,7 +42,7 @@ const PolicyPage: React.FC<{ slug?: string }> = ({ slug: fixed }) => {
 
   return <>
     <PageHeader eyebrow="Policies" title={policy.title}>
-      <p className="mt-3 text-sm text-amber-300 font-semibold">Draft effective date: {date(policy.effective)} · Last reviewed: {date(policy.updated)}</p>
+      <p className="mt-3 text-sm text-amber-300 font-semibold">{policy.final || LEGAL_FACTS.reviewed ? 'Effective' : 'Draft effective date'}: {date(policy.effective)} · Last reviewed: {date(policy.updated)}</p>
     </PageHeader>
     <div className="max-w-6xl mx-auto px-4 py-10 lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
       <aside className="hidden lg:block">
@@ -54,7 +54,7 @@ const PolicyPage: React.FC<{ slug?: string }> = ({ slug: fixed }) => {
         </nav>
       </aside>
       <article className="space-y-8 min-w-0">
-        {!LEGAL_FACTS.reviewed && <div role="alert" className="flex gap-3 rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/40 p-4 text-sm text-amber-950 dark:text-amber-100">
+        {!LEGAL_FACTS.reviewed && !policy.final && <div role="alert" className="flex gap-3 rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/40 p-4 text-sm text-amber-950 dark:text-amber-100">
           <AlertTriangle className="w-5 h-5 shrink-0" aria-hidden="true" />
           <div><strong>Draft — not yet approved for final publication.</strong><p className="mt-1">This page is undergoing technical, operational and privacy/legal review. Do not treat it as evidence of independent certification or completed control testing. Values marked “{TO_CONFIRM}” require confirmation.</p></div>
         </div>}

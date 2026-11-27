@@ -87,7 +87,7 @@ function policyBody(p) {
   return `<div class="pr">${header()}
 <section class="hero"><p>Policies</p><h1>${esc(p.title)}</h1><p>Effective ${date(p.effective)} · Last updated ${date(p.updated)}</p></section>
 <main class="w">
-${LEGAL_FACTS.reviewed ? '' : `<p class="note"><strong>Draft — not yet approved for final publication.</strong> This page is undergoing technical, operational and privacy/legal review. Do not treat it as evidence of independent certification or completed control testing. Values marked <mark>${esc(TO_CONFIRM)}</mark> require confirmation.</p>`}
+${LEGAL_FACTS.reviewed || p.final ? '' : `<p class="note"><strong>Draft — not yet approved for final publication.</strong> This page is undergoing technical, operational and privacy/legal review. Do not treat it as evidence of independent certification or completed control testing. Values marked <mark>${esc(TO_CONFIRM)}</mark> require confirmation.</p>`}
 <h2>In short</h2><ul>${p.keyPoints.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>
 ${p.sections.map((s) => `<section id="${esc(s.id)}"><h2>${esc(s.title)}</h2>${s.blocks.map(block).join('\n')}</section>`).join('\n')}
 ${p.signoff ? `<p>Signed,<br><strong>${esc(p.signoff.name)}</strong><br>${esc(p.signoff.role)}</p>` : ''}

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import BudgetPanel from './integrationModule/BudgetPanel';
 import GlassCard from '@/components/ui/GlassCard';
 import { Network, TrendingUp, ExternalLink, FileText, ClipboardCheck, Search, Building2, ArrowRight, CheckCircle2, Clock, Users, BarChart3, X, ChevronRight, Download, Sparkles } from 'lucide-react';
 import { useUndrr } from '@/hooks/useDDriveData';
@@ -25,6 +27,8 @@ const IntegrationModule: React.FC = () => {
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentType | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'essentials'>('overview');
+  const [params] = useSearchParams();
+  useEffect(() => { if (params.get('tab') === 'budget') setTimeout(() => document.getElementById('budget')?.scrollIntoView({ block: 'start' }), 300); }, [params]);
 
   const avgScore = undrr.length > 0 ? Math.round(undrr.reduce((a, b) => a + b.score, 0) / undrr.length) : 0;
   const totalImprovement = undrr.reduce((a, b) => a + b.trend, 0);
@@ -95,10 +99,12 @@ const IntegrationModule: React.FC = () => {
           </div>
           <div>
             <h1 className="font-montserrat font-bold text-2xl">Integration Module</h1>
-            <p className="text-sm text-slate-500 font-poppins">Phase 4 · UNDRR 10 Essentials (Supabase persisted)</p>
+            <p className="text-sm text-slate-500 font-poppins">Phase 4 · DRRM budget and funded actions · UNDRR 10 Essentials</p>
           </div>
         </div>
       </GlassCard>
+
+      <BudgetPanel />
 
       {/* SPARC Organizational Resilience Button */}
       <GlassCard className="p-6 relative overflow-hidden">

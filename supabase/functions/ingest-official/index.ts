@@ -26,6 +26,14 @@ const MIN_MAG = Number(env('USGS_MIN_MAGNITUDE') ?? '4.0');
 const PTWC_FEED = env('PTWC_FEED_URL') ?? 'https://www.tsunami.gov/events/xml/PHEBAtom.xml';
 const USGS_URL = env('USGS_QUERY_URL');
 const GDACS_URL = env('GDACS_QUERY_URL');
+// Keep each organisation's hazard records in step with the alerts in force (ADR-010). A failure here is logged and
+// reported, and never undoes the alerts just stored; the next run catches up.
+async function syncHazards(db: { rpc: (fn: string) => PromiseLike<{ data: unknown; error: { message: string } | null }> }) {
+  const { data, error } = await db.rpc('ddrive_sync_official_hazards');
+  if (error) { console.error('hazard sync failed:', error.message); return { ok: false, error: error.message }; }
+  return { ok: true, ...(data as Record<string, number>) };
+}
+
 const json = (body: unknown, status: number) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
@@ -66,6 +74,7 @@ Deno.serve(async (req) => {
   const results: Record<string, unknown> = {};
   for (const [name, p] of Object.entries(runs)) results[name] = await p;
   const ok = Object.values(results).every((r) => (r as { ok: boolean }).ok);
+  results.hazard_sync = await syncHazards(db);
   console.log(JSON.stringify({ fn: 'ingest-official', ok, results }));
   return json(results, ok ? 200 : 207);
 });

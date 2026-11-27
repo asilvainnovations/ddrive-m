@@ -26,6 +26,11 @@ export interface Hazard extends Governed {
   detected_at: string;
   psgc_code: string | null;
   source_url: string | null;
+  /** 'official': kept in step with an agency alert by the server (ADR-010); 'field': reported by the organisation. */
+  origin: 'field' | 'official';
+  official_alert_id: string | null;
+  synced_at: string | null;
+  status_reason: string | null;
 }
 
 export interface Risk extends Governed {

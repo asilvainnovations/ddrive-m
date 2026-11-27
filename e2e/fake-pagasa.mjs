@@ -34,7 +34,40 @@ ${docs.map((d) => `<entry><id>urn:uuid:${d.id}</id><title>${d.title}</title><upd
 <author><name>PAGASA DOST</name></author><link type="application/cap+xml" href="${BASE}/output/${d.file}"/></entry>`).join('\n')}
 </feed>`;
 
+// Stand-in for the Claude Messages API, for DDRiVER AI tests. Answers by task, cites a real source and one that was
+// not given (which the function must remove), and keeps the last request so the test can check what was sent.
+const anthropic = { last: null, count: 0 };
+function claude(req, res) {
+  let raw = '';
+  req.on('data', (c) => { raw += c; });
+  req.on('end', () => {
+    if (req.headers['x-api-key'] !== 'test-anthropic-key' || req.headers['anthropic-version'] !== '2023-06-01') {
+      res.writeHead(401, { 'content-type': 'application/json' });
+      return res.end('{"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}');
+    }
+    const body = JSON.parse(raw);
+    anthropic.last = body; anthropic.count += 1;
+    const system = String(body.system);
+    const sources = [...system.matchAll(/<source key="(S\d+)" label="([^"]*)"/g)].map((m) => ({ key: m[1], label: m[2] }));
+    const first = sources[0]?.key ?? 'S1';
+    let text;
+    if (system.includes('Suggest two to four treatment options')) {
+      text = `Two options fit this risk [${first}].\n\`\`\`json\n${JSON.stringify({ suggestions: [
+        { title: 'Move the archive above the 2013 flood line', strategy: 'reduce_consequences', drrm_area: 'prevention_mitigation', rationale: `The risk is rated Critical [${first}].` },
+        { title: 'Order evacuation now', strategy: 'decide_for_them', drrm_area: 'response', rationale: 'invalid' },
+      ] })}\n\`\`\``;
+    } else {
+      text = `Situation: ${sources.filter((x) => !x.label.startsWith('RA ') ).length} records were provided. The first is ${sources[0]?.label ?? 'none'} [${first}]. A claim with no real source [S99].`;
+    }
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ id: 'msg_test', type: 'message', role: 'assistant', model: body.model,
+      content: [{ type: 'thinking', thinking: 'not shown' }, { type: 'text', text }], usage: { input_tokens: 1234, output_tokens: 56 } }));
+  });
+}
+
 http.createServer((req, res) => {
+  if (req.url === '/anthropic/v1/messages' && req.method === 'POST') return claude(req, res);
+  if (req.url === '/anthropic/last') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify(anthropic)); }
   if (req.url === '/feeds/') {
     res.writeHead(200, { 'content-type': 'application/atom+xml' });
     return res.end(feed());

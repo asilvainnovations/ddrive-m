@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
-import { Radar, MapPin, Cloud, Mountain, Waves, Flame, Wind, AlertCircle, ExternalLink, Plus } from 'lucide-react';
+import { Radar, ExternalLink, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { useHazards, Hazard } from '@/hooks/useDDriveData';
 import { reportHazard, NewHazard } from '@/lib/actions';
@@ -8,27 +8,12 @@ import { LinkedActions } from '@/components/ddrive/responseModule/ProposeAction'
 import { priorityFor } from '@/lib/responseActions';
 import GatedButton from '@/components/ddrive/GatedButton';
 import OfficialAlerts from '@/components/ddrive/detectionModule/OfficialAlerts';
-import { OfficialAlert, alertTitle, manila } from '@/hooks/useOfficialAlerts';
-
-const agencies = [
-  { name: 'PAGASA', desc: 'Weather & Typhoon', color: 'from-blue-500 to-blue-700', icon: Cloud },
-  { name: 'PHIVOLCS', desc: 'Seismic & Volcanic', color: 'from-red-500 to-red-700', icon: Mountain },
-  { name: 'NOAH', desc: 'Flood & Rainfall', color: 'from-cyan-500 to-cyan-700', icon: Waves },
-  { name: 'NDRRMC', desc: 'National Coordination', color: 'from-amber-500 to-amber-700', icon: AlertCircle },
-];
-
-const hazardTypes = [
-  { name: 'Typhoon', icon: Wind, color: 'text-blue-600' },
-  { name: 'Earthquake', icon: Mountain, color: 'text-red-600' },
-  { name: 'Flood', icon: Waves, color: 'text-cyan-600' },
-  { name: 'Volcanic', icon: Flame, color: 'text-orange-600' },
-  { name: 'Landslide', icon: Mountain, color: 'text-amber-700' },
-  { name: 'Storm Surge', icon: Waves, color: 'text-teal-600' },
-];
+import { OfficialAlert, alertTitle, manila, useOfficialAlerts } from '@/hooks/useOfficialAlerts';
+import HazardRecords from '@/components/ddrive/detectionModule/HazardRecords';
 
 const DetectionModule: React.FC = () => {
   const { data: hazards, refetch } = useHazards();
-  const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
+  const { feeds } = useOfficialAlerts();
   const [selectedHazard, setSelectedHazard] = useState<Hazard | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   // When set, the hazard form is prefilled from this official alert and the record links to it.
@@ -44,8 +29,6 @@ const DetectionModule: React.FC = () => {
       : 'Flood';
   // The record names the agency that issued the alert; international sources are named as such.
   const alertAgency = (a: OfficialAlert) => (a.source === 'PAGASA' ? 'PAGASA' : a.source === 'PTWC' ? 'PTWC (NOAA)' : `${a.source} (international)`);
-
-  const filtered = selectedAgency ? hazards.filter(h => h.agency === selectedAgency) : hazards;
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,116 +77,7 @@ const DetectionModule: React.FC = () => {
 
       <OfficialAlerts onLogAsHazard={(a) => openForm(a)} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {agencies.map((a) => {
-          const Icon = a.icon;
-          const count = hazards.filter(h => h.agency === a.name).length;
-          const isActive = selectedAgency === a.name;
-          return (
-            <GlassCard
-              key={a.name}
-              onClick={() => setSelectedAgency(isActive ? null : a.name)}
-              className={`p-5 ${isActive ? 'ring-2 ring-blue-500' : ''}`}
-            >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center shadow-lg mb-3`}>
-                <Icon className="w-5 h-5 text-white" />
-              </div>
-              <p className="font-montserrat font-bold">{a.name}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{a.desc}</p>
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-2xl font-bold font-montserrat">{count}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 flex items-center gap-1">
-                  records
-                </span>
-              </div>
-            </GlassCard>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <GlassCard className="p-0 overflow-hidden lg:col-span-2 min-h-[480px]">
-          <div className="p-4 border-b border-white/40 dark:border-white/10 flex items-center justify-between">
-            <div>
-              <h3 className="font-montserrat font-bold text-lg">Map of the Philippines</h3>
-              <p className="text-xs text-slate-500">Google Maps base map. Hazard records and alert areas are not plotted on it yet.</p>
-            </div>
-          </div>
-          <div className="relative" style={{ height: 420 }}>
-            <iframe
-              title="PH Hazard Map"
-              src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3101907.858!2d121.5!3d12.8797!2m3!1f0!2f45!3f0!3m2!1i1024!2i768!4f35!5e1!3m2!1sen!2sph!4v1700000000000"
-              className="w-full h-full"
-              loading="lazy"
-            />
-            <div className="absolute top-4 left-4 space-y-2 pointer-events-none">
-              <div className="px-3 py-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/60 shadow-lg">
-                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Hazard records</p>
-                <p className="font-montserrat font-bold text-lg">{hazards.length}</p>
-              </div>
-            </div>
-          </div>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <h3 className="font-montserrat font-bold text-lg mb-4">Hazard Classification</h3>
-          <div className="space-y-2">
-            {hazardTypes.map((h) => {
-              const Icon = h.icon;
-              const count = hazards.filter(x => x.type === h.name).length;
-              return (
-                <div key={h.name} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/60 dark:hover:bg-white/5 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${h.color}`} />
-                    <span className="text-sm font-poppins font-medium">{h.name}</span>
-                  </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">{count}</span>
-                </div>
-              );
-            })}
-          </div>
-          <p className="mt-4 text-xs text-slate-600 dark:text-slate-400">
-            Official alerts are read automatically every 10 minutes from PAGASA, the Pacific Tsunami Warning Center, USGS and GDACS (see their
-            update times above). Hazard records here are the organisation's own log.
-          </p>
-        </GlassCard>
-      </div>
-
-      <GlassCard className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-montserrat font-bold text-lg">Active Hazard Feed {selectedAgency && `· ${selectedAgency}`}</h3>
-          {selectedAgency && (
-            <button onClick={() => setSelectedAgency(null)} className="text-xs text-blue-700 font-semibold">Clear filter</button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filtered.map((h) => (
-            <div
-              key={h.id}
-              role="button" tabIndex={0} aria-label={`${h.name}, ${h.location}: details and response actions`}
-              onClick={() => setSelectedHazard(h)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedHazard(h); } }}
-              className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 hover:border-blue-500 cursor-pointer transition"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/40">{h.agency}</span>
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                      h.severity === 'Critical' ? 'bg-red-500/15 text-red-700' :
-                      h.severity === 'High' ? 'bg-orange-500/15 text-orange-700' :
-                      'bg-amber-500/15 text-amber-700'
-                    }`}>{h.severity}</span>
-                  </div>
-                  <p className="font-montserrat font-bold text-sm">{h.name}</p>
-                  <p className="text-xs text-slate-500 flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {h.location}</p>
-                </div>
-                <span className="text-xs text-slate-500">{new Date(h.detected_at).toLocaleDateString()}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </GlassCard>
+      <HazardRecords hazards={hazards} feeds={feeds} onSelect={setSelectedHazard} />
 
       {selectedHazard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedHazard(null)}>
@@ -216,6 +90,9 @@ const DetectionModule: React.FC = () => {
               <div className="flex justify-between"><span className="text-slate-500">Severity</span><strong>{selectedHazard.severity}</strong></div>
               <div className="flex justify-between"><span className="text-slate-500">Coordinates</span><strong>{selectedHazard.lat}°, {selectedHazard.lng}°</strong></div>
               <div className="flex justify-between"><span className="text-slate-500">Status</span><strong>{selectedHazard.status}</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">Source</span><strong>{selectedHazard.origin === 'official' ? 'Official alert, synchronised' : 'Field report'}</strong></div>
+              {selectedHazard.status_reason && <p className="text-xs text-slate-600">{selectedHazard.status_reason}</p>}
+              {selectedHazard.source_url && <a href={selectedHazard.source_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs underline font-semibold">The agency's alert <ExternalLink className="w-3 h-3" aria-hidden="true" /></a>}
             </div>
             <div className="mt-5 border-t border-slate-200 dark:border-slate-700 pt-4">
               <p className="text-xs text-slate-600 dark:text-slate-300 mb-2">Response actions for this hazard. A DRRM officer decides on them in Response.</p>

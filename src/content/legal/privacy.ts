@@ -1,144 +1,202 @@
 import type { Policy } from './types';
 import { LEGAL_FACTS as F, fact } from './facts';
 
-// Publication draft. This policy deliberately avoids representing untested technical
-// controls, contractual allocations, retention schedules or regulatory registrations as verified.
+// Privacy notice under the Data Privacy Act of 2012 (RA 10173) s. 16 and its IRR, with the NPC's breach rules
+// (Circular 16-03), and the disclosures Google requires for Google sign-in (API Services User Data Policy, Limited
+// Use). Every processing activity described here was checked against the source code of release 0.9.0
+// (27 November 2026). Update this notice whenever a feature, provider or retention period changes.
 export const privacy: Policy = {
   slug: 'privacy',
   title: 'Privacy Policy',
-  summary: 'How DDRiVE-M handles account information, organisation records, disaster-related information and privacy requests.',
-  effective: F.effective,
-  updated: F.updated,
+  summary: 'What DDRiVE-M collects, why, who receives it, how long it is kept, and how to exercise your rights under the Data Privacy Act.',
+  effective: '2026-11-27',
+  updated: '2026-11-27',
+  final: true,
   keyPoints: [
-    'DDRiVE-M is designed to support disaster risk reduction, climate adaptation and resilience work; information entered may include sensitive details about affected people.',
-    'The organisation using the platform and ASilva Innovations may have different controller and processor responsibilities depending on the purpose and the applicable agreement.',
-    'The platform owner identifies Supabase as the database and authentication provider and the hosting region as Northeast Asia; the live project configuration must be checked before publication.',
-    'Do not enter personal or sensitive information unless your organisation has an appropriate lawful basis, authority and safeguards.',
-    'You may raise a privacy request with the Data Protection Officer or, where the organisation determines the processing, with that organisation.',
+    'We collect your name, email address and organisation role to give you an account, and the records your organisation enters to run its disaster risk reduction work.',
+    'If you sign in with Google, we receive only your name, email address and Google account identifier, and use them only to sign you in. Our use of information from Google follows the Google API Services User Data Policy, including the Limited Use requirements.',
+    'Your organisation decides what records it keeps in DDRiVE-M and is the personal information controller for them; ASilva Innovations processes them on its behalf.',
+    'DDRiVER AI is off unless your organisation turns it on. When on, the records needed to answer a question are sent to Anthropic to write the answer; Anthropic may not use them to train its models.',
+    'We do not sell personal information, and we do not use it for advertising.',
+    `You can ask to access, correct or delete your information. Write to our Data Protection Officer at ${F.dpoEmail}.`,
   ],
   sections: [
     {
       id: 'who',
-      title: '1. Who we are and who this policy covers',
+      title: '1. Who we are and who this notice covers',
       blocks: [
-        { p: `${F.publisher} publishes and operates DDRiVE-M. This policy applies to the public website, the web application and its installable application experience.` },
-        { p: 'DDRiVE-M is intended for use by organisations involved in disaster risk reduction, climate change adaptation, emergency management and resilience planning. Depending on the deployment, it may process account information and records relating to hazards, exposure, vulnerability, incidents, evacuation, response, recovery, plans and organisational operations.' },
-        { p: 'The organisation that decides why and how personal information is processed may be the personal information controller for those activities. ASilva Innovations may act as a personal information processor when processing information on that organisation’s documented instructions. For account administration, service security, support and other purposes determined by ASilva Innovations, its role must be assessed separately. The parties’ actual roles must be confirmed in the applicable service agreement and privacy documentation; this policy does not by itself determine them.' },
+        { p: `${F.publisher} (“we”) publishes and operates DDRiVE-M, a disaster risk reduction, climate adaptation and resilience platform. This notice covers the public website, the web application at ddrive-m.asilvainnovations.com and its installable version.` },
+        { p: 'DDRiVE-M is used by local government units, agencies and other organisations (“your organisation”). Two roles apply under the Data Privacy Act of 2012 (Republic Act No. 10173):' },
+        { ul: [
+          'For your user account, sign-in, security and support, ASilva Innovations is the personal information controller.',
+          'For the records your organisation enters (hazard reports, risks, assessments, actions, incidents, budgets, plans and messages), your organisation is the personal information controller and ASilva Innovations is its personal information processor, acting on its instructions under the service agreement.',
+        ] },
       ],
     },
     {
       id: 'information',
-      title: '2. Information that may be processed',
+      title: '2. What we collect',
       blocks: [
-        { p: 'Depending on the features enabled and how an organisation uses the service, information may include:' },
-        { ul: [
-          'Account and identity information, such as name, email address, organisation membership, assigned role and authentication-related identifiers.',
-          'Operational and organisational records entered by users, including hazard observations, risk assessments, incidents, plans, actions, resources, messages and monitoring records.',
-          'Information about affected or at-risk people, which may include names, location details, age, sex, disability-related information, health information, household details or other sensitive personal information.',
-          'User-generated files, attachments, coordinates and other information submitted to the platform.',
-          'Technical and security information generated through use of the service, such as device, browser, access and diagnostic logs, to the extent collected by the application and its service providers.',
-        ] },
-        { note: 'Do not enter personal information that is not necessary for the DRRM or resilience purpose. Avoid placing sensitive personal information in free-text fields unless the organisation has approved the purpose, lawful basis, access controls and retention arrangements.' },
+        { table: {
+          head: ['Information', 'Where it comes from', 'What it is used for'],
+          rows: [
+            ['Name, email address, password (stored only as a secure hash by Supabase Auth), and an account identifier', 'You, when you create an account', 'Your account, signing in, account emails (confirmation and password reset)'],
+            ['Name, email address, email-verified status and Google account identifier', 'Google, when you choose “Continue with Google”', 'Signing you in only. See section 3'],
+            ['Your organisation, role and active organisation', 'Your organisation’s administrator', 'Deciding what you may see and do'],
+            ['Records your organisation enters: hazard and field reports with locations, watch areas, assessments, risks, actions, incidents, budget lines, plans, documents, messages and map products', 'You and your colleagues', 'Your organisation’s DRRM work in DDRiVE-M'],
+            ['Who created or changed each record, and when (audit log)', 'Generated by the system', 'Accountability and security'],
+            ['Questions to DDRiVER AI, the records used to answer, the answer, and your rating', 'You, when your organisation has turned DDRiVER AI on', 'Answering, and reviewing answers for accuracy and safety (section 4)'],
+            ['Technical data: IP address, browser, device and request logs', 'Your browser, through our hosting providers', 'Running, securing and troubleshooting the service'],
+          ],
+        } },
+        { p: 'Official alerts from PAGASA, the Pacific Tsunami Warning Center, USGS and GDACS contain no personal information. Your organisation’s hazard records are created from them automatically for its watch areas.' },
+        { note: 'Records about affected people (for example evacuees, persons with disabilities, children or health information) are sensitive. Enter them only when your organisation has a lawful basis and a need, and never into free-text fields or DDRiVER AI questions without that basis.' },
+      ],
+    },
+    {
+      id: 'google',
+      title: '3. Google sign-in',
+      blocks: [
+        { p: 'If you choose “Continue with Google”, Google sends us a signed token with your name, email address, whether the email is verified, and your Google account identifier. Our sign-in provider, Supabase Auth, checks the token and links it to your DDRiVE-M account. We request no other Google data: no Gmail, contacts, calendar, Drive or other Google services.' },
+        { p: 'We use this information only to sign you in and to show your name and email to your organisation in DDRiVE-M. We do not use it for advertising, do not sell it, do not use it to train AI models, and do not share it with anyone except our sign-in and hosting providers as needed to sign you in.' },
+        { p: 'DDRiVE-M’s use and transfer to any other app of information received from Google APIs will adhere to the Google API Services User Data Policy (developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements.' },
+        { p: 'You can remove DDRiVE-M’s access at any time in your Google Account under Security → Third-party apps and services. You can then sign in with email and password, or ask us to delete your account (section 8).' },
+      ],
+    },
+    {
+      id: 'ai',
+      title: '4. DDRiVER AI',
+      blocks: [
+        { p: 'DDRiVER AI is off until an administrator of your organisation turns it on in Settings, after reading what it sends. When it is on and someone asks a question, our server reads the records that person is already allowed to see and that the question needs (alerts, hazard records, risks, assessments, actions and budget lines), and sends them with the question to Anthropic’s Claude API, which writes the answer. It does not send member names, contact details or documents.' },
+        { p: 'Anthropic processes this data as our service provider under its Commercial Terms of Service and Data Processing Addendum. Under those terms, Anthropic may not train its models on our inputs and outputs.' },
+        { p: 'Each question, the list of records used, and the answer are kept for 90 days so they can be reviewed for accuracy and safety, then deleted automatically. They are visible only to the person who asked and to their organisation’s administrators. AI answers are decision support: they do not make decisions about people, and they never issue warnings or approve actions or funds (AI Use, Ethics and Governance Policy).' },
       ],
     },
     {
       id: 'purposes',
-      title: '3. Purposes and lawful basis',
+      title: '5. Why we process it, and on what basis',
       blocks: [
-        { p: 'Information may be processed to provide user accounts and organisation workspaces; support risk analysis and planning; record preparedness, response, anticipatory action and recovery activities; maintain security and accountability; provide technical support; and meet applicable legal obligations.' },
-        { p: 'The appropriate lawful basis must be identified for each processing purpose under Republic Act No. 10173 (Data Privacy Act of 2012) and its implementing rules. Where sensitive personal information is involved, the organisation responsible for the processing must identify and document a basis permitted under section 13, together with any applicable safeguards.' },
-        { p: 'A user’s acceptance of this policy is not a substitute for the lawful basis, authority, transparency notices or consent that may be required for a particular processing activity.' },
+        { table: {
+          head: ['Purpose', 'Basis under RA 10173'],
+          rows: [
+            ['Providing your account and signing you in', 'Necessary to provide the service you or your organisation contracted for (s. 12(b))'],
+            ['Storing and showing your organisation’s records to its members', 'Your organisation’s basis as controller (for LGUs and agencies, usually their mandate under RA 10121 and related laws: s. 12(c), (e), 13(b), (f)); we process on its instructions'],
+            ['Audit logs, security monitoring and fraud prevention', 'Our legitimate interest in keeping the service secure (s. 12(f)), and legal obligations'],
+            ['DDRiVER AI, when your organisation turns it on', 'Your organisation’s instruction and basis; s. 12(f) for keeping answers 90 days for review'],
+            ['Responding to requests and complaints; complying with law', 'Legal obligations (s. 12(c))'],
+          ],
+        } },
+        { p: 'We do not use personal information for marketing, profiling or automated decisions with legal or similar effects on people.' },
       ],
     },
     {
       id: 'sharing',
-      title: '4. Service providers and disclosures',
+      title: '6. Who receives it',
       blocks: [
-        { p: 'The platform owner identifies Supabase as the provider used for database and authentication services. The owner-supplied hosting region is Northeast Asia. This region must be verified against the live Supabase project configuration, and the applicable provider terms, subprocessors, backup locations and support-access arrangements must be reviewed before this policy is treated as final.' },
-        { p: 'Other third-party services may be used for functions such as maps, fonts, identity sign-in, video or public hazard information. The services actually loaded by the deployed version, their purposes and the information they receive must be maintained in a current third-party services inventory.' },
-        { p: 'Information may also be disclosed where required by law or valid legal process, or where necessary to protect vital interests, public safety or the security of the service, subject to applicable law and documented procedures.' },
-        { p: 'The platform must not be represented as sharing data only with the providers listed here until the production dependency, network-request and subprocessor inventories have been checked.' },
+        { p: 'We share personal information only with the service providers that run DDRiVE-M, under contracts that require them to protect it and use it only for us:' },
+        { table: {
+          head: ['Provider', 'What it does', 'What it receives'],
+          rows: [
+            ['Supabase', 'Database, sign-in (Auth), server functions and account emails', 'All account information and organisation records'],
+            ['Vercel', 'Hosting of the web application', 'Technical data (IP address, browser, request logs)'],
+            ['Google', 'Google sign-in, when you use it; web fonts', 'Sign-in: what you share with Google. Fonts: your IP address and browser details'],
+            ['Anthropic', 'DDRiVER AI, only if your organisation turns it on', 'The question and the records needed to answer it (section 4)'],
+            ['YouTube (privacy-enhanced mode)', 'The introductory video on the home page, only when you press play', 'Your IP address and browser details'],
+          ],
+        } },
+        { p: 'Members of your organisation see its records according to their role. We do not share one organisation’s records with another. We disclose information to authorities only when the law requires it or to protect life and safety, as the Data Privacy Act allows.' },
       ],
     },
     {
       id: 'location',
-      title: '5. Hosting and international transfers',
+      title: '7. Where it is stored',
       blocks: [
-        { p: `The platform owner has identified the Supabase host region as ${fact(F.hostingRegion)}. This is an owner-supplied configuration statement, not an independent verification of the live production project or of every backup, support or subprocessor location.` },
-        { p: 'Where personal information is transferred or made accessible outside the Philippines, the responsible personal information controller and processor must assess the transfer, contractual safeguards, security measures and accountability requirements under the Data Privacy Act and applicable rules. The location of the primary database alone does not establish the location of all processing.' },
-      ],
-    },
-    {
-      id: 'security',
-      title: '6. Security and confidentiality',
-      blocks: [
-        { p: 'ASilva Innovations is committed to applying appropriate organisational, physical and technical safeguards proportionate to the nature of the information and the risks of disaster-related processing.' },
-        { p: 'The production security statement must be supported by evidence for the deployed configuration, including authentication and role controls, organisation-level access isolation, database policies, encryption in transit and at rest, privileged access, secrets management, audit logging, backup and restoration, vulnerability management, incident response and personnel confidentiality.' },
-        { note: 'The existence of source code, a database policy or a design document is not by itself proof that a control is correctly configured or operating in production. Do not rely on this policy as a certification that every listed safeguard has passed independent testing.' },
-        { p: 'Users must protect their credentials, use approved devices and accounts, report suspected unauthorised access promptly and avoid exporting or sharing records outside authorised channels.' },
+        { p: `The database is hosted by Supabase in the ${fact(F.hostingRegion)} region, as configured by the operator. Vercel serves the web application from its global network. Anthropic processes DDRiVER AI requests in the United States and other countries where it operates. These are transfers of personal information outside the Philippines; we remain accountable for them under s. 21 of the Data Privacy Act and protect them through the providers’ contracts and security measures.` },
       ],
     },
     {
       id: 'retention',
-      title: '7. Retention and deletion',
+      title: '8. How long we keep it',
       blocks: [
-        { p: 'Information should be retained only for as long as necessary for the declared purpose, applicable legal obligations, operational accountability and any documented records-management schedule.' },
-        { p: 'Retention periods differ by record type and by the organisation using the service. The organisation acting as controller must establish and communicate the applicable retention schedule for its records. ASilva Innovations must document retention for account administration, support, security logs, backups and service operations.' },
-        { p: 'Deletion requests may be subject to legal retention requirements, public records obligations, investigation holds, backup cycles or the rights of other data subjects. Where deletion cannot be completed immediately, the responsible party should explain the reason and the applicable schedule.' },
+        { table: {
+          head: ['Information', 'Kept for'],
+          rows: [
+            ['Your account', 'Until you or your organisation ask us to delete it, or the service agreement ends. Deletion removes your sign-in and profile; records you created stay with your organisation, attributed to a deleted user.'],
+            ['Organisation records and their audit log', 'As long as your organisation keeps them, under its records schedule. When the service agreement ends, for the export period it sets, then deleted. Government records may also be subject to the National Archives of the Philippines retention schedules.'],
+            ['DDRiVER AI questions and answers', '90 days, then deleted automatically'],
+            ['Technical and request logs', 'As kept by our hosting providers, normally days to weeks'],
+            ['Backups', 'Supabase’s backup cycle; deleted data leaves backups as they expire'],
+          ],
+        } },
+      ],
+    },
+    {
+      id: 'security',
+      title: '9. How we protect it',
+      blocks: [
+        { ul: [
+          'Each organisation’s records are separated in the database by row-level access rules, so members see only their own organisation’s data, according to their role.',
+          'Decisions such as approvals and fund commitments can only be taken through checked server functions, and every change is written to an audit log.',
+          'Connections use HTTPS. Supabase encrypts stored data. Passwords are stored only as secure hashes.',
+          'Server keys and the AI provider key are kept on the server and never sent to browsers.',
+          'Access by our staff to customer data is limited to support and security needs.',
+        ] },
+        { p: 'You help by keeping your password private, signing out on shared devices, and reporting suspected misuse to us at once.' },
       ],
     },
     {
       id: 'rights',
-      title: '8. Data subject rights and requests',
+      title: '10. Your rights',
       blocks: [
-        { p: 'Subject to the Data Privacy Act and applicable exceptions, data subjects may exercise rights including being informed, access, correction, objection, erasure or blocking, data portability and complaint.' },
-        { p: `For privacy questions or requests involving ASilva Innovations’ own processing, contact the Data Protection Officer at ${F.dpoEmail}. If the information was entered by an LGU, agency or other customer organisation and that organisation determines the purpose of processing, the request may need to be directed to that organisation. We will route requests appropriately where possible.` },
-        { p: 'Requests will be handled within the periods required by applicable law. Any service target published by the organisation must not shorten or replace a statutory deadline.' },
+        { p: 'Under the Data Privacy Act you have the right to be informed, to access your personal information, to object, to have it corrected, to have it erased or blocked, to data portability, to be indemnified for damages, and to file a complaint with the National Privacy Commission.' },
+        { p: `Write to our Data Protection Officer at ${F.dpoEmail}. We will confirm receipt and respond within the period required by law. If your request concerns records your organisation entered, we will pass it to your organisation, which decides as controller, and tell you that we have done so.` },
+        { p: 'Your organisation’s administrator can correct records and remove members directly in DDRiVE-M.' },
       ],
     },
     {
       id: 'breach',
-      title: '9. Personal data breaches',
+      title: '11. If there is a data breach',
       blocks: [
-        { p: 'Suspected or confirmed personal data breaches must be reported promptly through the organisation’s designated incident channel and to the Data Protection Officer. The responsible controller must assess the nature, scope, risk and notification obligations under the Data Privacy Act, its implementing rules and applicable National Privacy Commission issuances.' },
-        { p: 'Where notification to the National Privacy Commission and affected data subjects is legally required, the responsible controller must meet the applicable notification conditions and deadlines. A processor must notify the controller without undue delay in accordance with the applicable agreement and incident-response procedure.' },
-        { p: 'Do not treat this policy as a substitute for the incident-response plan, breach register, notification decision record or controller–processor notification procedure.' },
+        { p: 'If a personal data breach occurs, we will notify the controller concerned without undue delay. Where the National Privacy Commission’s rules require it (NPC Circular 16-03), the controller notifies the Commission and the affected people within 72 hours of knowing about the breach, and we provide the information needed to do so. For breaches of account information, ASilva Innovations is the controller and makes these notifications itself.' },
+      ],
+    },
+    {
+      id: 'storage',
+      title: '12. Browser storage',
+      blocks: [
+        { p: 'DDRiVE-M keeps your sign-in session, your theme and DDRiVER AI style choice, and unsent field observations (when offline) in your browser’s local storage. It does not use advertising or tracking cookies. See the Cookie Policy.' },
       ],
     },
     {
       id: 'children',
-      title: '10. Information about children and vulnerable people',
+      title: '13. Children',
       blocks: [
-        { p: 'Disaster operations may require organisations to process information about children, older persons, persons with disabilities, displaced people and other at-risk groups. Such processing requires heightened necessity, proportionality, access, security and retention safeguards.' },
-        { p: 'The organisation determining the purpose of processing must ensure that the processing is lawful, necessary for the stated purpose, appropriately disclosed and restricted to authorised personnel. Avoid collecting information about children or vulnerable people merely because a field is available.' },
+        { p: 'DDRiVE-M accounts are for adults working for an organisation. Records about children, for example in evacuation or relief work, are entered only by authorised staff of the controller organisation, for a lawful purpose, and are protected as sensitive information.' },
       ],
     },
     {
       id: 'changes',
-      title: '11. Changes to this policy',
+      title: '14. Changes to this notice',
       blocks: [
-        { p: 'This policy will be reviewed when the platform’s processing purposes, features, providers, hosting arrangements or legal requirements materially change. The updated date will be shown at the top of the policy page. Material changes should be communicated through an appropriate channel.' },
+        { p: 'We update this notice when DDRiVE-M’s features, providers or retention periods change, and show the date of the latest version at the top. We tell organisation administrators about material changes.' },
       ],
     },
     {
       id: 'contact',
-      title: '12. Data Protection Officer and contact details',
+      title: '15. Contact us',
       blocks: [
         { table: {
-          head: ['Item', 'Details'],
+          head: ['', 'Details'],
           rows: [
-            ['Publisher / service operator', F.publisher],
-            ['Data Protection Officer (owner-supplied designation)', fact(F.dpoName)],
-            ['DPO contact email', F.dpoEmail],
-            ['General enquiries', F.generalEmail],
+            ['Operator', `${F.publisher}, ${F.address}`],
+            ['Data Protection Officer', `${fact(F.dpoName)}, ${F.dpoEmail}`],
             ['Privacy enquiries', F.privacyEmail],
-            ['Business address', F.address],
-            ['Supabase primary host region (owner-supplied; verify live configuration)', fact(F.hostingRegion)],
-            ['NPC registration reference', fact(F.npcRegistration)],
+            ['General enquiries', `${F.generalEmail}, ${F.phone}`],
           ],
         } },
-        { p: 'You may also contact the National Privacy Commission through its official website at privacy.gov.ph.' },
+        { p: 'You may also contact the National Privacy Commission at privacy.gov.ph.' },
       ],
     },
   ],
+  signoff: { name: F.dpoName ?? F.publisher, role: `Data Protection Officer, ${F.publisher}` },
 };

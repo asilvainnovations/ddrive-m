@@ -57,6 +57,10 @@ check(usgs.length === 3 && usgs.filter((x) => x.msg_type === 'Alert').length ===
 const gdacs = await stored('GDACS');
 check(gdacs.length === 2, 'GDACS: the Philippine cyclone and earthquake are stored; the European drought and the unknown type are not', JSON.stringify(gdacs.map((x) => x.event)));
 const again = await run();
+check(first.body.hazard_sync?.ok === true, 'Each run synchronises hazard records with the alerts in force', JSON.stringify(first.body.hazard_sync));
+const official = await (await fetch(`${API}/rest/v1/ddrive_hazards?select=agency,name,status,origin,tenant_id&origin=eq.official`, { headers: { authorization: `Bearer ${SERVICE}` } })).json();
+check(official.some((h) => h.agency === 'PAGASA' && h.status === 'Active'), 'The PAGASA alert for Leyte is a hazard record of the organisation watching Leyte, without anyone typing it', JSON.stringify(official));
+check(official.every((h) => h.agency !== 'USGS (international)'), 'Alerts outside every watch area create no records');
 check(again.status === 200 && again.body.PTWC?.added === 0 && again.body.USGS?.added === 0 && again.body.GDACS?.added === 0, 'A second run stores nothing twice', JSON.stringify(again.body));
 
 // ── The Detection screen ─────────────────────────────────────────────────────
@@ -75,7 +79,15 @@ try {
   await page.getByRole('button', { name: /^USGS \(/ }).click(); await settle(page, 500);
   const u = await text(page);
   check(u.includes('International source. PAGASA and PHIVOLCS issue the official warnings'), 'USGS readings are labelled as international, not official Philippine warnings');
+  const records = page.locator('ul', { has: page.getByText('Official alert, synchronised') });
+  check(await records.count() > 0, 'Detection lists the synchronised record, marked as from an official alert');
+  check(/PAGASA[^]{0,120}open[^]{0,60}Synchronised, read (just now|\d+ min ago)/.test(u), 'The PAGASA source card shows open records and when it was last synchronised', u.match(/PAGASA Tropical[^]{0,160}/)?.[0]);
+  check(u.includes('PHIVOLCS') && u.includes('No data feed published'), 'PHIVOLCS is shown honestly: linked, with no data feed');
+  check(await page.locator('svg[aria-label], svg title').count() > 0 || u.includes('Hazard records and watch points'), 'The map plots hazard records and watch points');
   check(errors.length === 0, 'No page errors on Detection', errors.join(' | '));
+  await page.goto(`${APP}/dashboard`); await settle(page);
+  const d = await text(page);
+  check(!d.includes('not connected yet') && d.includes('synchronised every 10 minutes'), 'The dashboard no longer says agency feeds are not connected');
   await ctx.close();
 } finally {
   await browser.close();

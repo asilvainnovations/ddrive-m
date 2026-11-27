@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 
 const PORT = Number(process.env.FAKE_SUPABASE_PORT || 54321);
 const REST = process.env.POSTGREST_URL || 'http://127.0.0.1:3000';
+const FUNCTIONS = process.env.FUNCTIONS_URL || 'http://127.0.0.1:8000';
 export const SECRET = process.env.JWT_SECRET || 'e2e-secret-at-least-32-characters-long!!';
 // The test project's secret API key (sb_secret_...), standing in for a real one.
 export const SECRET_KEY = process.env.E2E_SECRET_KEY || 'sb_secret_e2e_test_key';
@@ -50,9 +51,25 @@ if (process.argv[1] && process.argv[1].endsWith('fake-supabase.mjs')) {
       up.on('error', (e) => { res.writeHead(502, cors); res.end(String(e)); });
       return;
     }
+    if (req.url.startsWith('/functions/v1/')) {
+      // Like the gateway: forward to the Edge Function, which checks the session itself.
+      const target = new URL(req.url.replace(/^\/functions\/v1\/[^/?]+/, '') || '/', FUNCTIONS);
+      const headers = { ...req.headers };
+      delete headers.host;
+      const up = http.request(target, { method: req.method, headers }, (r) => {
+        res.writeHead(r.statusCode, { ...r.headers, ...cors });
+        r.pipe(res);
+      });
+      req.pipe(up);
+      up.on('error', (e) => { res.writeHead(502, cors); res.end(JSON.stringify({ error: String(e) })); });
+      return;
+    }
     if (req.url.startsWith('/auth/v1/user')) {
       const token = (req.headers.authorization || '').replace('Bearer ', '');
-      const claims = JSON.parse(Buffer.from(token.split('.')[1] || 'e30', 'base64url').toString());
+      const [h, b, sig] = token.split('.');
+      const good = h && b && sig && crypto.createHmac('sha256', SECRET).update(`${h}.${b}`).digest('base64url') === sig;
+      if (!good) { res.writeHead(401, { 'content-type': 'application/json', ...cors }); return res.end('{"message":"invalid JWT"}'); }
+      const claims = JSON.parse(Buffer.from(b, 'base64url').toString());
       res.writeHead(200, { 'content-type': 'application/json', ...cors });
       return res.end(JSON.stringify({ id: claims.sub, email: claims.email, aud: 'authenticated', role: 'authenticated', user_metadata: {}, app_metadata: {} }));
     }
