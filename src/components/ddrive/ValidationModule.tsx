@@ -25,7 +25,7 @@ const ValidationModule: React.FC = () => {
   const externalSims = [
     {
       name: 'EOC Simulator',
-      url: 'https://asilvainnovations.github.io/ddrive-m/EOCSimulation.html',
+      url: 'https://asilvainnovations.github.io/ddrive-m/public/EOCSimulation.html',
       icon: Radio,
       gradient: 'from-emerald-500 to-teal-600',
       glow: 'shadow-emerald-500/30',
@@ -33,7 +33,7 @@ const ValidationModule: React.FC = () => {
     },
     {
       name: 'ICS Simulator',
-      url: 'https://asilvainnovations.github.io/ddrive-m/ics.html',
+      url: 'https://asilvainnovations.github.io/ddrive-m/public/ics.html',
       icon: Shield,
       gradient: 'from-blue-500 to-indigo-600',
       glow: 'shadow-blue-500/30',
@@ -41,7 +41,7 @@ const ValidationModule: React.FC = () => {
     },
     {
       name: 'ICS Simulator 3.0',
-      url: 'https://asilvainnovations.github.io/ddrive-m/ics-simulator-3.0.html',
+      url: 'https://asilvainnovations.github.io/ddrive-m/public/ics-simulator-3.0.html',
       icon: Zap,
       gradient: 'from-purple-500 to-pink-600',
       glow: 'shadow-purple-500/30',
