@@ -52,7 +52,8 @@ create index if not exists ddrive_response_actions_incident on public.ddrive_res
 create index if not exists ddrive_response_actions_budget on public.ddrive_response_actions (budget_line_id);
 
 -- Committed amount per line: the estimated cost of every funded action that is not declined or cancelled.
-create or replace view public.ddrive_budget_line_status with (security_invoker = true) as
+drop view if exists public.ddrive_budget_line_status;
+create view public.ddrive_budget_line_status with (security_invoker = true) as
 select l.*,
        coalesce(sum(a.cost_php) filter (where a.status not in ('declined', 'cancelled')), 0)::numeric(16, 2) as committed_php,
        (l.amount_php - coalesce(sum(a.cost_php) filter (where a.status not in ('declined', 'cancelled')), 0))::numeric(16, 2) as available_php,

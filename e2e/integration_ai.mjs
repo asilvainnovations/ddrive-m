@@ -78,7 +78,8 @@ try {
     const funded = await one(`ddrive_response_actions?select=budget_line_id&id=eq.${act.id}`);
     check(!!funded?.budget_line_id, 'The officer funds it from the line', JSON.stringify(funded));
     const t = await text(page);
-    check(t.includes('PHP 200,000 committed to 1 action') && t.includes('PHP 300,000 available'), 'The line shows PHP 200,000 committed and PHP 300,000 available', t.match(/PHP 500,000 budgeted[^·]*·[^·]*·[^.]{0,40}/)?.[0]);
+    // The browser formats pesos as "₱200,000" (en-PH); older ICU data writes "PHP 200,000".
+    check(/(PHP|₱)\s?200,000 committed to 1 action/.test(t) && /(PHP|₱)\s?300,000 available/.test(t), 'The line shows PHP 200,000 committed and PHP 300,000 available', t.match(/(PHP|₱)\s?500,000 budgeted.{0,80}/)?.[0]);
     check(errors.length === 0, 'Integration (officer): no page errors', errors.join(' | '));
     await ctx.close();
   }
@@ -141,12 +142,12 @@ try {
     check(!String(last.system).includes('B warehouse'), 'Nothing from another organisation was sent');
     const log = (await (await rest('ddrive_ai_log?select=task,model,unverified_citations,ok,input_tokens&order=created_at.desc&limit=1', analyst)).json())[0];
     check(log?.ok === true && log.unverified_citations === 1 && log.input_tokens === 1234, 'The answer is logged with the model, token use and the removed citation', JSON.stringify(log));
-    await page.getByRole('button', { name: 'Helpful' }).click(); await settle(page, 800);
+    await page.getByRole('button', { name: 'Helpful', exact: true }).click(); await settle(page, 800);
     check((await one('ddrive_ai_log?select=feedback&order=created_at.desc&limit=1'))?.feedback === 'helpful', 'The analyst rates the answer');
 
     await page.goto(`${APP}/dashboard`); await settle(page);
     await page.getByRole('button', { name: 'Situation brief from DDRiVER AI' }).click(); await settle(page, 4000);
-    check((await text(page)).includes('DDRiVER AI, decision support'), 'The dashboard gives a situation brief on request');
+    check(/DDRiVER AI, decision support/i.test(await text(page)), 'The dashboard gives a situation brief on request'); // the label is shown in capitals
 
     await page.goto(`${APP}/diagnosis?tab=register`); await settle(page);
     const row = page.locator('tr', { has: page.getByText('City hall archive floods') });

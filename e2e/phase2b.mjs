@@ -82,10 +82,12 @@ try {
     for (const [slug, title] of [['privacy', 'Privacy Policy'], ['terms', 'Terms of Service'], ['cookies', 'Cookie and Device Storage Policy'], ['accessibility', 'Accessibility Statement'], ['ai-ethics', 'AI Use, Ethics and Governance Policy']]) {
       await page.goto(`${APP}/policies/${slug}`); await settle(page, 1000);
       t = await text(page);
-      check(t.includes(title) && t.includes('In short') && t.includes('Draft — not yet approved for final publication'), `${title} opens, with its summary and the review notice`);
+      // The Privacy Policy is final (0.9.0); the others are still drafts awaiting review.
+      if (slug === 'privacy') check(t.includes(title) && t.includes('In short') && !t.includes('Draft — not yet approved for final publication'), `${title} opens, with its summary, as the final notice`);
+      else check(t.includes(title) && t.includes('In short') && t.includes('Draft — not yet approved for final publication'), `${title} opens, with its summary and the review notice`);
     }
     await page.goto(`${APP}/policies/privacy`); await settle(page, 1000);
-    check((await page.locator('mark', { hasText: 'to be confirmed' }).count()) >= 1, 'Unconfirmed facts in the Privacy Policy are highlighted, not guessed');
+    check((await page.locator('mark', { hasText: 'to be confirmed' }).count()) === 0, 'The final Privacy Policy has no unconfirmed facts left');
     t = await text(page);
     check(t.includes('Supabase') && !/Stripe|Hotjar|Privacy Shield|ISO 27001 Certified/i.test(t), 'The Privacy Policy names DDRiVE-M’s real processors and none it does not use');
     await shot(page, 'privacy');

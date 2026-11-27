@@ -214,7 +214,7 @@ const ActionsBoard: React.FC = () => {
         </div>
         <label className="flex items-center gap-1">From
           <select className={cn(input, 'py-1 w-auto')} value={origin} onChange={(e) => setOrigin(e.target.value as ActionOrigin | 'all')}>
-            <option value="all">anywhere</option><option value="diagnosis">Diagnosis</option><option value="detection">Detection</option><option value="manual">Response</option>
+            <option value="all">anywhere</option><option value="diagnosis">Diagnosis</option><option value="detection">Detection</option><option value="validation">Validation (exercises)</option><option value="manual">Response</option>
           </select>
         </label>
       </div>

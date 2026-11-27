@@ -1,139 +1,126 @@
-import React, { useState } from 'react';
+// Phase 6 · Enhancement: improve policies, plans, investments and recovery pathways using evidence.
+// Plans are made from templates grounded in the NDRRMC standards, reviewed (LDRRMP, Memo 147), approved with their
+// adopting resolution, and tested through exercises in Validation, whose findings come back as improvement actions.
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
-import { Sparkles, FileText, Wand2, CheckCircle2, X } from 'lucide-react';
+import { BookOpen, FileText, Sparkles } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { usePlans } from '@/hooks/useDDriveData';
-import { draftPlan } from '@/lib/actions';
 import { useAuth } from '@/contexts/AuthContext';
-import { needsRole } from '@/lib/roles';
+import { cn } from '@/lib/utils';
+import { PLAN_TEMPLATES, PlanTemplate, completeness, templateByKey } from '@/content/planTemplates';
+import { PlanRecord, PlanTestStatus, createPlan, listPlans } from '@/lib/planning';
+import { Field, card, input, primary, secondary } from '../rapidMappingModule/ui';
+import PlanEditor from './PlanEditor';
+import FormsPanel from './FormsPanel';
 
-const templates = [
-  { name: 'DRRM Plan', desc: 'RA 10121 compliant', standard: 'RA 10121', color: 'from-blue-500 to-cyan-500', type: 'DRRM' },
-  { name: 'Business Continuity Plan', desc: 'ISO 22301 aligned', standard: 'ISO 22301', color: 'from-emerald-500 to-teal-500', type: 'Continuity' },
-  { name: 'Recovery Plan', desc: 'DILG standards', standard: 'DILG MC', color: 'from-amber-500 to-orange-500', type: 'Recovery' },
-  { name: 'Public Service Continuity', desc: 'PSCP 2nd Edition', standard: 'PSCP 2E', color: 'from-purple-500 to-pink-500', type: 'Continuity' },
-];
+type Tab = 'plans' | 'templates' | 'forms';
+type P = PlanRecord & { test?: PlanTestStatus };
+const thisYear = new Date().getFullYear();
+
+const StartPlan: React.FC<{ t: PlanTemplate; onCancel: () => void }> = ({ t, onCancel }) => {
+  const nav = useNavigate();
+  const [title, setTitle] = useState(t.key === 'ldrrmp' ? `LDRRMP ${thisYear}-${thisYear + 5}` : t.name);
+  const [hazard, setHazard] = useState('');
+  const [from, setFrom] = useState(thisYear);
+  const [to, setTo] = useState(thisYear + (t.key === 'ldrrmp' ? 5 : 2));
+  return (
+    <form className="grid gap-2 mt-2 text-xs" onSubmit={async (e) => {
+      e.preventDefault();
+      const { id, error } = await createPlan(t, title, { hazard, period_from: t.period ? from : undefined, period_to: t.period ? to : undefined });
+      if (error) toast.error(error); else { toast.success('Draft created.'); nav(`/enhancement?tab=plans&plan=${id}`); }
+    }}>
+      <Field id={`sp-${t.key}`} label="Title"><input id={`sp-${t.key}`} required minLength={3} className={input} value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
+      {t.perHazard && <Field id={`sph-${t.key}`} label="Hazard"><input id={`sph-${t.key}`} required className={input} value={hazard} onChange={(e) => setHazard(e.target.value)} placeholder="For example: Tropical cyclone" /></Field>}
+      {t.period && <div className="flex gap-2">
+        <Field id={`spf-${t.key}`} label="From"><input id={`spf-${t.key}`} type="number" className={input} value={from} onChange={(e) => setFrom(Number(e.target.value))} /></Field>
+        <Field id={`spt-${t.key}`} label="To"><input id={`spt-${t.key}`} type="number" className={input} value={to} onChange={(e) => setTo(Number(e.target.value))} /></Field>
+      </div>}
+      <div className="flex gap-2"><button type="submit" className={primary}>Create draft</button><button type="button" className={secondary} onClick={onCancel}>Cancel</button></div>
+    </form>
+  );
+};
 
 const EnhancementModule: React.FC = () => {
-  const { data: plans, refetch } = usePlans();
   const { can } = useAuth();
-  const [generating, setGenerating] = useState<typeof templates[0] | null>(null);
-
-  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!generating) return;
-    const form = new FormData(e.currentTarget);
-    const { error } = await draftPlan({
-      title: `${generating.name} - ${form.get('org')}`,
-      type: generating.type,
-      standard: generating.standard,
-    });
-    if (error) { toast.error(error); return; }
-    toast.success(`${generating.name} saved as a draft`);
-    setGenerating(null);
-    refetch();
-  };
+  const [params, setParams] = useSearchParams();
+  const tab = (['plans', 'templates', 'forms'].includes(params.get('tab') ?? '') ? params.get('tab') : 'plans') as Tab;
+  const planId = params.get('plan');
+  const [plans, setPlans] = useState<P[]>([]);
+  const [starting, setStarting] = useState<string | null>(null);
+  const load = useCallback(async () => { const { data, error } = await listPlans(); if (error) toast.error(error); setPlans(data); }, []);
+  useEffect(() => { load(); }, [load]);
+  const open = plans.find((p) => p.id === planId);
+  // A plan just created (or opened from a link) may not be in the list yet: reload once it is asked for.
+  useEffect(() => { if (planId && !plans.some((p) => p.id === planId)) load(); }, [planId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-6">
-      <GlassCard className="p-6">
+      <GlassCard className="p-6" hover={false}>
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg"><Sparkles className="w-5 h-5 text-white" aria-hidden="true" /></div>
           <div>
             <h1 className="font-montserrat font-bold text-2xl">Enhancement Module</h1>
-            <p className="text-sm text-slate-500 font-poppins">Phase 6 · AI Plan Generator (Supabase-persisted)</p>
+            <p className="text-sm text-slate-500 font-poppins">Phase 6 · DRRM plans from templates, plan reviews, forms, and testing through exercises</p>
           </div>
         </div>
       </GlassCard>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {templates.map(t => (
-          <GlassCard key={t.name} className="p-5" onClick={() => (can('analyst') ? setGenerating(t) : toast.info(needsRole('analyst')))}>
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center shadow-lg mb-3`}>
-              <Wand2 className="w-5 h-5 text-white" />
-            </div>
-            <p className="font-montserrat font-bold">{t.name}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{t.desc}</p>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/40">{t.standard}</span>
-          </GlassCard>
+      <div role="tablist" aria-label="Enhancement sections" className="flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
+        {([['plans', 'Plans'], ['templates', 'Plan templates'], ['forms', 'Forms']] as [Tab, string][]).map(([k, l]) => (
+          <button key={k} role="tab" type="button" aria-selected={tab === k} onClick={() => setParams({ tab: k })}
+            className={cn('px-4 py-2 text-sm font-semibold rounded-t-xl', tab === k ? 'bg-white dark:bg-slate-800 border border-b-0 border-slate-200 dark:border-slate-700 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:text-blue-800')}>{l}</button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <GlassCard className="p-6 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-montserrat font-bold text-lg">Active Plans & Documents ({plans.length})</h3>
+      {tab === 'plans' && open && <PlanEditor plan={open} onChanged={load} />}
+      {tab === 'plans' && !open && (
+        <div className={card}>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h2 className="font-montserrat font-bold text-lg">Plans ({plans.length})</h2>
+            {can('analyst') && <button type="button" className={secondary} onClick={() => setParams({ tab: 'templates' })}>New plan from a template</button>}
           </div>
-          <div className="space-y-3">
-            {plans.map(p => (
-              <div key={p.id} className="p-4 rounded-xl bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-blue-700" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-poppins font-semibold text-sm truncate">{p.title}</p>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 flex-wrap">
-                    <span className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[10px] font-bold">{p.type}</span>
-                    <span>{p.standard}</span>
-                    <span>·</span>
-                    <span>Updated {p.last_updated}</span>
+          {plans.length === 0 && <p className="text-sm text-slate-500">No plans yet. Start one from a template.</p>}
+          <ul className="space-y-2">
+            {plans.map((p) => {
+              const t = templateByKey(p.template_key);
+              const c = t ? completeness(t, p.content ?? {}) : null;
+              return (
+                <li key={p.id} className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 items-center">
+                  <FileText className="w-5 h-5 text-blue-700 shrink-0" aria-hidden="true" />
+                  <div className="flex-1 min-w-[14rem]">
+                    {t ? <button type="button" className="font-semibold text-sm underline text-left" onClick={() => setParams({ tab: 'plans', plan: p.id })}>{p.ref} {p.title}</button>
+                      : <p className="font-semibold text-sm">{p.ref} {p.title}</p>}
+                    <p className="text-xs text-slate-500">{t?.name ?? p.type} · {p.standard}{p.hazard ? ` · ${p.hazard}` : ''}{p.adoption_ref ? ` · Adopted: ${p.adoption_ref}` : ''}</p>
+                    <p className="text-xs">{c ? `${c.done} of ${c.total} required sections` : 'No template'} · {p.test?.last_tested_on ? `last tested ${p.test.last_tested_on}` : 'not tested'}{p.test?.exercises_open ? ` · ${p.test.exercises_open} exercise(s) open` : ''}</p>
                   </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-montserrat font-bold text-lg">{p.compliance == null ? 'Not assessed' : `${p.compliance}%`}</p>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    p.status === 'Approved' ? 'bg-emerald-500/15 text-emerald-700' :
-                    p.status === 'In Review' ? 'bg-amber-500/15 text-amber-700' :
-                    'bg-slate-500/15 text-slate-700'
-                  }`}>{p.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <h3 className="font-montserrat font-bold text-lg mb-4">Compliance Dashboard</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-300">
-            Not assessed yet. Compliance against RA 10121, ISO 22301, ISO 31000 and PSCP guidance will be scored
-            clause by clause, with the evidence behind each score, once that checklist is built.
-          </p>
-          <button onClick={() => toast.info('Regulatory reports is not available yet.')} className="w-full mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-900 text-white font-semibold text-sm">Generate Regulatory Report</button>
-        </GlassCard>
-      </div>
-
-      <GlassCard className="p-6">
-        <h3 className="font-montserrat font-bold text-lg mb-4">Resource Availability & Recovery Tracking</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-300">
-          Not set up yet. Resource figures (funds, relief stocks, evacuation centres, teams) will appear here once your
-          organisation records them.
-        </p>
-      </GlassCard>
-
-      {generating && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setGenerating(null)}>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-montserrat font-bold text-xl">Generate {generating.name}</h3>
-              <button onClick={() => setGenerating(null)}><X className="w-5 h-5" /></button>
-            </div>
-            <form onSubmit={handleGenerate} className="space-y-3">
-              <input name="org" required placeholder="Organization name" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-              <input name="scope" placeholder="Geographic scope (e.g. Metro Manila)" className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent" />
-              <textarea name="objectives" placeholder="Key objectives and scope..." rows={3} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent resize-none" />
-              <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-xs flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <span>AI will generate a plan aligned with {generating.standard} and save it to Supabase.</span>
-              </div>
-              <button type="submit" className="w-full px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
-                <Wand2 className="w-4 h-4 inline mr-1" /> Generate with AI
-              </button>
-            </form>
-          </div>
+                  <span className={cn('text-[11px] font-bold px-2 py-0.5 rounded-full border', p.status === 'Approved' ? 'border-emerald-400 text-emerald-800' : 'border-slate-300')}>{p.status}</span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
+
+      {tab === 'templates' && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {PLAN_TEMPLATES.map((t) => (
+            <div key={t.key} className={cn(card, 'text-xs space-y-2')}>
+              <p className="font-montserrat font-bold text-base flex items-center gap-2"><BookOpen className="w-4 h-4" aria-hidden="true" /> {t.name}</p>
+              <p className="text-slate-500">{t.standard}</p>
+              <p>{t.purpose}</p>
+              <details><summary className="cursor-pointer font-semibold">{t.sections.length} sections</summary>
+                <ol className="list-decimal pl-5 mt-1">{t.sections.map((s) => <li key={s.id}>{s.title} <span className="text-slate-500">({s.source})</span></li>)}</ol>
+              </details>
+              <p><span className="font-semibold">In force when: </span>{t.adoption}</p>
+              {can('analyst') && (starting === t.key ? <StartPlan t={t} onCancel={() => setStarting(null)} />
+                : <button type="button" className={primary} onClick={() => setStarting(t.key)}>Start a plan from this template</button>)}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'forms' && <FormsPanel />}
     </div>
   );
 };

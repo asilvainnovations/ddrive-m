@@ -1,6 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import BudgetPanel from './integrationModule/BudgetPanel';
+import GovernancePanel from './integrationModule/GovernancePanel';
+import MainstreamingPanel from './integrationModule/MainstreamingPanel';
+
+type IntTab = 'governance' | 'mainstreaming' | 'budget' | 'resilience';
+// Phase 4: embed risk priorities in governance, plans, budgets and institutions.
+const INT_TABS: { key: IntTab; label: string }[] = [
+  { key: 'governance', label: 'Governance (Gawad KALASAG)' },
+  { key: 'mainstreaming', label: 'Risk priorities in plans' },
+  { key: 'budget', label: 'DRRM budget' },
+  { key: 'resilience', label: 'Resilience scorecards' },
+];
 import GlassCard from '@/components/ui/GlassCard';
 import { Network, TrendingUp, ExternalLink, FileText, ClipboardCheck, Search, Building2, ArrowRight, CheckCircle2, Clock, Users, BarChart3, X, ChevronRight, Download, Sparkles } from 'lucide-react';
 import { useUndrr } from '@/hooks/useDDriveData';
@@ -27,8 +38,9 @@ const IntegrationModule: React.FC = () => {
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentType | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'essentials'>('overview');
-  const [params] = useSearchParams();
-  useEffect(() => { if (params.get('tab') === 'budget') setTimeout(() => document.getElementById('budget')?.scrollIntoView({ block: 'start' }), 300); }, [params]);
+  const [params, setParams] = useSearchParams();
+  const tab = (INT_TABS.some((t) => t.key === params.get('tab')) ? params.get('tab') : 'governance') as IntTab;
+  const go = (t: IntTab) => setParams({ tab: t });
 
   const avgScore = undrr.length > 0 ? Math.round(undrr.reduce((a, b) => a + b.score, 0) / undrr.length) : 0;
   const totalImprovement = undrr.reduce((a, b) => a + b.trend, 0);
@@ -99,13 +111,25 @@ const IntegrationModule: React.FC = () => {
           </div>
           <div>
             <h1 className="font-montserrat font-bold text-2xl">Integration Module</h1>
-            <p className="text-sm text-slate-500 font-poppins">Phase 4 · DRRM budget and funded actions · UNDRR 10 Essentials</p>
+            <p className="text-sm text-slate-500 font-poppins">Phase 4 · Risk priorities in governance, plans and budgets</p>
           </div>
         </div>
       </GlassCard>
 
-      <BudgetPanel />
 
+      <div role="tablist" aria-label="Integration sections" className="flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
+        {INT_TABS.map((t) => (
+          <button key={t.key} role="tab" type="button" aria-selected={tab === t.key} id={`int-tab-${t.key}`} onClick={() => go(t.key)}
+            className={`px-4 py-2 text-sm font-semibold rounded-t-xl ${tab === t.key ? 'bg-white dark:bg-slate-800 border border-b-0 border-slate-200 dark:border-slate-700 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:text-blue-800'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'governance' && <GovernancePanel />}
+      {tab === 'mainstreaming' && <MainstreamingPanel />}
+      {tab === 'budget' && <BudgetPanel />}
+      {tab === 'resilience' && (<>
       {/* SPARC Organizational Resilience Button */}
       <GlassCard className="p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
@@ -361,6 +385,8 @@ const IntegrationModule: React.FC = () => {
       </GlassCard>
 
       {/* Assessment Modal */}
+      </>)}
+
       {showAssessmentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 max-w-4xl w-full border border-emerald-500/30 shadow-2xl max-h-[90vh] overflow-y-auto">

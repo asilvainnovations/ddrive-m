@@ -12,6 +12,7 @@ import {
 import { AREA_LABEL, DrrmArea, ResponseAction, fundAction, listActions } from '@/lib/responseActions';
 import { Field, Gate, NoteAction, card, input, primary, secondary, danger, useSubmit } from '../rapidMappingModule/ui';
 import AskDdriver from '../ai/AskDdriver';
+import { listNdrrmpOutputs, type NdrrmpOutput } from '@/lib/planning';
 
 const thisYear = new Date().getFullYear();
 const AREAS = Object.keys(AREA_LABEL) as DrrmArea[];
@@ -20,6 +21,8 @@ const AddLine: React.FC<{ year: number; onDone: () => void; onCancel: () => void
   const [l, setL] = useState<NewLine>({ fiscal_year: year, fund_source: 'ldrrmf_70', drrm_area: 'preparedness', title: '', description: null, aip_code: null, amount_php: 0 });
   const { busy, run } = useSubmit(onDone);
   const set = <K extends keyof NewLine>(k: K, v: NewLine[K]) => setL({ ...l, [k]: v });
+  const [outputs, setOutputs] = useState<NdrrmpOutput[]>([]);
+  useEffect(() => { listNdrrmpOutputs().then((r) => setOutputs(r.data)); }, []);
   return (
     <form className="grid gap-3 sm:grid-cols-2 rounded-xl border border-slate-200 dark:border-slate-700 p-4" onSubmit={(e) => { e.preventDefault(); run(() => addLine(l), 'Budget line added as a draft.'); }}>
       <div className="sm:col-span-2"><Field id="bl-title" label="Programme, project or activity (PPA)"><input id="bl-title" required minLength={3} maxLength={200} className={input} value={l.title} onChange={(e) => set('title', e.target.value)} /></Field></div>
@@ -36,6 +39,12 @@ const AddLine: React.FC<{ year: number; onDone: () => void; onCancel: () => void
         </select>
       </Field>
       <Field id="bl-aip" label="AIP reference code (optional)"><input id="bl-aip" maxLength={60} className={input} value={l.aip_code ?? ''} onChange={(e) => set('aip_code', e.target.value || null)} /></Field>
+      <Field id="bl-ndrrmp" label="NDRRMP 2020-2030 output it serves (optional)">
+        <select id="bl-ndrrmp" className={input} value={l.ndrrmp_output ?? ''} onChange={(e) => set('ndrrmp_output', e.target.value || null)}>
+          <option value="">None</option>
+          {outputs.filter((o) => o.drrm_area === l.drrm_area).map((o) => <option key={o.code} value={o.code}>{o.code} {o.title.slice(0, 90)}</option>)}
+        </select>
+      </Field>
       <Field id="bl-desc" label="Notes (optional)"><input id="bl-desc" maxLength={4000} className={input} value={l.description ?? ''} onChange={(e) => set('description', e.target.value || null)} /></Field>
       <div className="sm:col-span-2 flex gap-2">
         <button type="submit" disabled={busy} className={primary}>Add budget line</button>
@@ -152,7 +161,7 @@ const BudgetPanel: React.FC = () => {
               <li key={l.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-xs space-y-2">
                 <div className="flex flex-wrap gap-2 items-start">
                   <div className="flex-1 min-w-[14rem]">
-                    <p className="text-slate-500">{l.ref} · {FUND_LABEL[l.fund_source]} · {AREA_LABEL[l.drrm_area]}{l.aip_code ? ` · AIP ${l.aip_code}` : ''}</p>
+                    <p className="text-slate-500">{l.ref} · {FUND_LABEL[l.fund_source]} · {AREA_LABEL[l.drrm_area]}{l.aip_code ? ` · AIP ${l.aip_code}` : ''}{l.ndrrmp_output ? ` · NDRRMP output ${l.ndrrmp_output}` : ''}</p>
                     <p className="font-semibold text-sm">{l.title}</p>
                     {l.approval_basis && <p>Approved: {l.approval_basis}</p>}
                   </div>

@@ -20,6 +20,7 @@ export interface BudgetLine {
   status: LineStatus;
   approval_basis: string | null;
   approved_at: string | null;
+  ndrrmp_output: string | null;
   committed_php: number;
   available_php: number;
   action_count: number;
@@ -64,6 +65,7 @@ export async function listLines(year?: number): Promise<Res<BudgetLine[]>> {
 
 export interface NewLine {
   fiscal_year: number; fund_source: FundSource; drrm_area: DrrmArea; title: string; description: string | null; aip_code: string | null; amount_php: number;
+  ndrrmp_output?: string | null;
 }
 export const addLine = async (l: NewLine) => done((await supabase.from('ddrive_budget_lines').insert(l)).error);
 export const deleteLine = async (id: string) => done((await supabase.from('ddrive_budget_lines').delete().eq('id', id)).error);

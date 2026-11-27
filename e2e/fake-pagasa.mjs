@@ -65,7 +65,26 @@ function claude(req, res) {
   });
 }
 
+// Stand-in for JMA's Himawari real-time images (ADR-015): each 10-minute slot is "published" 15 minutes after it,
+// except one slot two hours ago that still holds yesterday's image, which must never be shown.
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+export const STALE_SLOT_AGO_MIN = 120;
+function himawari(req, res) {
+  const m = req.url.match(/^\/himawari\/img\/se2\/se2_(b13|b03)_([0-2]\d)([0-5]0)\.jpg$/);
+  if (!m) { res.writeHead(404); return res.end(); }
+  const now = Date.now();
+  const d = new Date(now); d.setUTCHours(Number(m[2]), Number(m[3]), 0, 0);
+  if (d.getTime() > now) d.setUTCDate(d.getUTCDate() - 1);
+  let modified = d.getTime() + 15 * 60e3;
+  if (modified > now) { res.writeHead(404); return res.end(); }
+  const staleSlot = new Date(now - STALE_SLOT_AGO_MIN * 60e3); staleSlot.setUTCMinutes(staleSlot.getUTCMinutes() - (staleSlot.getUTCMinutes() % 10), 0, 0);
+  if (d.getTime() === staleSlot.getTime()) modified -= 24 * 3600e3;
+  res.writeHead(200, { 'content-type': 'image/png', 'last-modified': new Date(modified).toUTCString(), 'access-control-allow-origin': '*' });
+  return res.end(req.method === 'HEAD' ? undefined : PNG);
+}
+
 http.createServer((req, res) => {
+  if (req.url.startsWith('/himawari/')) return himawari(req, res);
   if (req.url === '/anthropic/v1/messages' && req.method === 'POST') return claude(req, res);
   if (req.url === '/anthropic/last') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify(anthropic)); }
   if (req.url === '/feeds/') {

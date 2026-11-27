@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
 import { Radar, ExternalLink, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
@@ -10,12 +11,16 @@ import GatedButton from '@/components/ddrive/GatedButton';
 import OfficialAlerts from '@/components/ddrive/detectionModule/OfficialAlerts';
 import { OfficialAlert, alertTitle, manila, useOfficialAlerts } from '@/hooks/useOfficialAlerts';
 import HazardRecords from '@/components/ddrive/detectionModule/HazardRecords';
+import SatelliteLoop from '@/components/ddrive/detectionModule/SatelliteLoop';
 
 const DetectionModule: React.FC = () => {
   const { data: hazards, refetch } = useHazards();
   const { feeds } = useOfficialAlerts();
   const [selectedHazard, setSelectedHazard] = useState<Hazard | null>(null);
-  const [showAdd, setShowAdd] = useState(false);
+  const [params] = useSearchParams();
+  // ?log=1&source=NOAH opens the form with that source (from the Dashboard's NOAH panel).
+  const presetSource = params.get('source');
+  const [showAdd, setShowAdd] = useState(params.get('log') === '1');
   // When set, the hazard form is prefilled from this official alert and the record links to it.
   const [fromAlert, setFromAlert] = useState<OfficialAlert | null>(null);
   const openForm = (alert: OfficialAlert | null) => { setFromAlert(alert); setShowAdd(true); };
@@ -77,6 +82,8 @@ const DetectionModule: React.FC = () => {
 
       <OfficialAlerts onLogAsHazard={(a) => openForm(a)} />
 
+      <SatelliteLoop />
+
       <HazardRecords hazards={hazards} feeds={feeds} onSelect={setSelectedHazard} />
 
       {selectedHazard && (
@@ -119,7 +126,7 @@ const DetectionModule: React.FC = () => {
                   Linked to the {fromAlert.source} alert issued {manila(fromAlert.sent)}. Add the coordinates of the place you are recording.
                 </p>
               )}
-              <select name="agency" required aria-label="Source of the information" defaultValue={fromAlert ? alertAgency(fromAlert) : undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
+              <select name="agency" required aria-label="Source of the information" defaultValue={fromAlert ? alertAgency(fromAlert) : presetSource ?? undefined} className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-transparent">
                 <option>PAGASA</option><option>PHIVOLCS</option><option>NOAH</option><option>NDRRMC</option><option>Local DRRM office</option><option>Field observation</option>
                 <option>PTWC (NOAA)</option><option>USGS (international)</option><option>GDACS (international)</option>
               </select>
