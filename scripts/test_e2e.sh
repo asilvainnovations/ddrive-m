@@ -95,6 +95,10 @@ want flood && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE
 want eoc && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node eoc.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 want csp && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node csp.mjs || exit 1; }
 
+echo "Deployment check: scripts/verify_deployment.mjs against the local stand-in project"
+want verify && { SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_PUBLISHABLE_KEY=sb_publishable_e2e_test_key SUPABASE_SECRET_KEY=sb_secret_e2e_test_key \
+  VERIFY_FUNCTIONS=ddriver-ai VERIFY_FRESH_FACTOR=4 node "$ROOT/scripts/verify_deployment.mjs" || exit 1; }
+
 echo "Crawler view: pages without JavaScript and the Vercel routing"
 want crawler && { cd "$ROOT/e2e" && node crawler.mjs; }
 true

@@ -1,3 +1,26 @@
+# DDRiVE-M 0.10.1: Move to Supabase project bvpakjzgcsnmsgarxbaf — 28 November 2026
+
+- **New Supabase project.** Configuration now names `bvpakjzgcsnmsgarxbaf` (region `ap-southeast-2`, Sydney). This covers `.env.example`, `supabase/config.toml`, the email template script and DEPLOY.md.
+- **Moving guide.** New DEPLOY.md § 15 sets out the cut-over order: privacy, data, migrations, schedules, functions, sign-in, check, then switch Vercel.
+- **Deployment check.** `scripts/verify_deployment.mjs` checks a deployed project without changing anything:
+  - the project answers;
+  - anonymous visitors read no records;
+  - sign-in providers are on;
+  - functions are deployed and refuse callers without a key;
+  - every table and view of the migrations exists;
+  - reference data is complete;
+  - official sources were read recently.
+  The browser suite runs it against the local stand-in project.
+- **Privacy Policy.** Section 7 now says the database is hosted in Asia Pacific (Sydney, Australia). It said "Northeast Asia" before. The DPO should confirm this cross-border transfer.
+- **Tests (28 Nov 2026, all passing):**
+  - Unit: 99 passed, 1 skipped.
+  - Build and CSP check: pass.
+  - Browser suites phase1, phase2, phase2b and crawler: 118 checks.
+  - Deployment check against the local stack: 13 passed, 1 warning (the stand-in has no Auth settings endpoint).
+- **Apply:** DEPLOY.md § 15.
+
+---
+
 # DDRiVE-M 0.10.0: EOC operations, CI and security headers — 28 November 2026
 
 - **EOC operations (Response → EOC operations)** ([ADR-017](docs/adr/017-eoc-operations.md)).

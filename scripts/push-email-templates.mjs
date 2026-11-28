@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ref = process.argv[2] || 'mytnwrctkubhrfjwloln';
+const ref = process.argv[2] || 'bvpakjzgcsnmsgarxbaf';
 const token = process.env.SUPABASE_ACCESS_TOKEN;
 if (!token) {
   console.error('Set SUPABASE_ACCESS_TOKEN (https://supabase.com/dashboard/account/tokens).');
