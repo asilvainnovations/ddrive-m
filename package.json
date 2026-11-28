@@ -1,7 +1,7 @@
 {
   "name": "ddrive-m",
   "private": true,
-  "version": "0.9.1",
+  "version": "0.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,16 +9,16 @@
     "build:dev": "vite build --mode development",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "lint": "eslint .",
-    "check": "npm run typecheck && npm run lint && npm run build",
+    "check": "npm run typecheck && npm run lint && npm run build && node scripts/check_csp.mjs",
     "preview": "vite preview",
     "test:db": "bash scripts/test_db.sh && bash scripts/test_db.sh --legacy",
     "test:e2e": "bash scripts/test_e2e.sh",
     "test:functions": "deno test --allow-read --config supabase/functions/ingest-pagasa/deno.json supabase/functions/_shared/",
     "icons": "node scripts/make-icons.mjs",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "test:pipeline": "python3 -m pytest scripts/flood_intelligence/tests -q"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -54,7 +54,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
-    "fast-xml-parser": "^4.5.7",
+    "fast-xml-parser": "^5.12.1",
     "fflate": "^0.8.3",
     "highlight.js": "^11.9.0",
     "input-otp": "^1.2.4",
@@ -73,8 +73,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "vaul": "^0.9.3",
-    "zod": "^3.23.8"
+    "vaul": "^0.9.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

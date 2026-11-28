@@ -59,7 +59,7 @@ However, **repository evidence does not establish production readiness**. The li
 ### Unverified (must not be described as passed)
 - Production Supabase project region, configuration, deployed migration versions and RLS enforcement.
 - Scheduled PAGASA polling and real feed behaviour under outage, delayed updates, malformed CAP and cancellations.
-- CI pipeline (none configured). Clean install, typecheck, lint, build, unit, SQL and browser tests were executed locally on 27 Nov 2026 and passed; see docs/governance/test-reports/2026-11-27-aa-graduated-disbursement.md. Not a CI or production run.
+- CI pipeline: configured on 28 Nov 2026 (`.github/workflows/ci.yml`, ADR-018); its first GitHub run is the evidence, not yet recorded here. Clean install, typecheck, lint, build, unit, SQL and browser tests were executed locally on 27 Nov 2026 and passed; see docs/governance/test-reports/2026-11-27-aa-graduated-disbursement.md. Not a CI or production run.
 - Backup/restore, RPO/RTO, monitoring, incident response and key rotation.
 - MFA availability/enforcement and account recovery hardening.
 - Full static-page data flows, third-party scripts, XSS exposure and retention/deletion.
@@ -69,7 +69,7 @@ However, **repository evidence does not establish production readiness**. The li
 
 ### Gaps explicitly identified
 - Complete integrated CDRA including hazard, exposure, vulnerability, capacity, climate projections, spatial evidence and SADD.
-- Full EOC activation/operations, staffing/shift, resource/logistics, situation reporting, handover and demobilisation workflow.
+- Full EOC activation/operations, staffing/shift, resource/logistics, situation reporting, handover and demobilisation workflow. Partly closed in code on 28 Nov 2026 (ADR-017): alert status log with Memo 131 triggers, duty roster by management function, append-only operations log with handovers. Resource tracking, cluster activation, DILG Region VIII Forms A–L and EOC relocation remain open.
 - DILG Region VIII harmonised pre-disaster, during-disaster, post-disaster and terminal report lifecycle.
 - IRR graduated disbursement controls for RA 12287: closed in code on 27 Nov 2026 (ADR-007); legal/finance acceptance open.
 - Complete damage/loss/needs assessment and rehabilitation/recovery workflow aligned with NEDA guidance.
@@ -86,7 +86,7 @@ Severity definitions and accountable role owners are in `TECHNICAL-FUNCTIONAL-BA
 | 1 | Live RLS and tenant isolation validation | Critical | Backend / Supabase security lead |
 | 2 | PAGASA ingestion freshness and production monitoring | Critical | Data integration lead |
 | 3 | RA 12287 legal workflow and graduated disbursement controls | Critical | DRRM domain lead + legal counsel + finance/control lead |
-| 4 | EOC operational capability and offline/degraded procedures | Critical | EOC operations lead + LGU DRRM authority |
+| 4 | EOC operational capability and offline/degraded procedures (status, roster and log in code since 28 Nov 2026, ADR-017) | Critical | EOC operations lead + LGU DRRM authority |
 | 5 | Backup/restore and incident/breach response | Critical | Platform/SRE lead + DPO |
 | 6 | CDRA and climate-risk model | High | DRR/CCA technical lead + GIS/data lead |
 | 7 | Harmonised response reporting | High | DRRM operations lead + reporting/MEL lead |

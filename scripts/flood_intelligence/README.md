@@ -49,7 +49,7 @@ Recorded floods for `--labels observed` go in a CSV with the columns `adm4_pcode
 ## Run
 
 ```bash
-pip install pandas numpy xgboost            # tensorflow as well, for 03 and 04
+pip install -r scripts/flood_intelligence/requirements.txt   # tensorflow as well, for 03 and 04
 python scripts/flood_intelligence/01_data_preparation.py --climate data/raw/climate_atmosphere.csv \
   --hazards data/raw/project_noah_hazards.csv --out data/processed/flood_training.csv \
   --labels observed --observed data/raw/recorded_floods.csv --absent-as-safe

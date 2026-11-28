@@ -15,9 +15,11 @@ import { listActions, type ResponseAction } from '@/lib/responseActions';
 
 // Anticipatory action (RA 12287) is part of Response: acting on a forecast before the hazard strikes.
 const AnticipatoryAction = lazy(() => import('../anticipatoryModule/AnticipatoryAction'));
+const EocOperations = lazy(() => import('./EocOperations'));
 
-type Tab = 'actions' | 'incidents' | 'anticipatory';
+type Tab = 'eoc' | 'actions' | 'incidents' | 'anticipatory';
 const TABS: { key: Tab; label: string }[] = [
+  { key: 'eoc', label: 'EOC operations' },
   { key: 'actions', label: 'Risk-informed actions' },
   { key: 'incidents', label: 'Incidents' },
   { key: 'anticipatory', label: 'Anticipatory action (RA 12287)' },
@@ -153,6 +155,11 @@ const ResponseModule: React.FC = () => {
       </div>
 
       <div role="tabpanel" id={`rs-panel-${tab}`} aria-labelledby={`rs-tab-${tab}`}>
+        {tab === 'eoc' && (
+          <Suspense fallback={<p role="status" className="text-sm text-slate-500">Loading…</p>}>
+            <EocOperations />
+          </Suspense>
+        )}
         {tab === 'actions' && <ActionsBoard />}
         {tab === 'incidents' && <Incidents />}
         {tab === 'anticipatory' && (

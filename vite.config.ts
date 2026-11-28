@@ -54,6 +54,8 @@ export default defineConfig(({ mode }) => {
       host: "::",
       port: 8080,
     },
+    // The browser tests serve the build with the production Content-Security-Policy (ADR-018, scripts/test_e2e.sh).
+    preview: process.env.PREVIEW_CSP ? { headers: { "Content-Security-Policy": process.env.PREVIEW_CSP } } : undefined,
     plugins: [
       react(),
       // Installable app (PWA). The service worker caches the app's own files so screens open offline.
