@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ExercisesPanel from './validationModule/ExercisesPanel';
+const IcsSimulator = lazy(() => import('./validationModule/IcsSimulator'));
+const FloodWatch = lazy(() => import('./validationModule/FloodWatch'));
+const EchoPanel = lazy(() => import('./validationModule/EchoPanel'));
+const CpActivation = lazy(() => import('./validationModule/CpActivation'));
+
+const TABS = [
+  ['exercises', 'Exercises'],
+  ['activation', 'EOC activation from plans'],
+  ['ics', 'ICS simulator'],
+  ['flood', 'Flood intelligence'],
+  ['echo', 'ECHO: evacuation and camps'],
+  ['simulators', 'Other simulators'],
+] as const;
+type Tab = typeof TABS[number][0];
 import GlassCard from '@/components/ui/GlassCard';
 import { FlaskConical, Play, Users, Clock, Award, Gamepad2, X, ExternalLink, Radio, Shield, Zap } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
@@ -11,7 +25,7 @@ import { needsRole } from '@/lib/roles';
 
 const ValidationModule: React.FC = () => {
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') === 'simulators' ? 'simulators' : 'exercises';
+  const tab: Tab = (TABS.find(([k]) => k === params.get('tab'))?.[0]) ?? 'exercises';
   const { data: scenarios, refetch } = useScenarios();
   const { can } = useAuth();
   const [launched, setLaunched] = useState<Scenario | null>(null);
@@ -79,19 +93,25 @@ const ValidationModule: React.FC = () => {
           </div>
           <div>
             <h1 className="font-montserrat font-bold text-2xl">Validation Module</h1>
-            <p className="text-sm text-slate-500 font-poppins">Phase 5 · Test plans, capabilities, assumptions and coordination through exercises</p>
+            <p className="text-sm text-slate-500 font-poppins">Phase 5 · Test plans, capabilities, assumptions and coordination through exercises, for an LGU or a sub-region such as Metro Manila</p>
           </div>
         </div>
       </GlassCard>
 
       <div role="tablist" aria-label="Validation sections" className="flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
-        {([['exercises', 'Exercises: test plans and capabilities'], ['simulators', 'Simulators and scenarios']] as const).map(([k, l]) => (
+        {TABS.map(([k, l]) => (
           <button key={k} role="tab" type="button" aria-selected={tab === k} onClick={() => setParams({ tab: k })}
             className={`px-4 py-2 text-sm font-semibold rounded-t-xl ${tab === k ? 'bg-white dark:bg-slate-800 border border-b-0 border-slate-200 dark:border-slate-700 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:text-blue-800'}`}>{l}</button>
         ))}
       </div>
 
       {tab === 'exercises' && <ExercisesPanel />}
+      <Suspense fallback={<p className="text-sm text-slate-500" role="status">Loading…</p>}>
+        {tab === 'activation' && <CpActivation />}
+        {tab === 'ics' && <IcsSimulator />}
+        {tab === 'flood' && <FloodWatch />}
+        {tab === 'echo' && <EchoPanel />}
+      </Suspense>
       {tab === 'simulators' && (<>
       {/* External Simulation Links Section */}
       <GlassCard className="p-6 relative overflow-hidden">

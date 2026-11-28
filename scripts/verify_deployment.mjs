@@ -95,7 +95,7 @@ if (!SECRET) {
     const n = Number((r.headers?.get('content-range') ?? '').split('/')[1]);
     return Number.isFinite(n) ? n : null;
   };
-  for (const [rel, n, what] of [['ddrive_hazard_catalogue', 84, 'DDRiVE hazard catalogue'], ['ddrive_gk_items', 32, 'Gawad KALASAG CY 2026 indicators'], ['ddrive_ndrrmp_outputs', 50, 'NDRRMP 2020-2030 outputs']]) {
+  for (const [rel, n, what] of [['ddrive_hazard_catalogue', 84, 'DDRiVE hazard catalogue'], ['ddrive_gk_items', 32, 'Gawad KALASAG CY 2026 indicators'], ['ddrive_ndrrmp_outputs', 50, 'NDRRMP 2020-2030 outputs'], ['ddrive_response_clusters', 12, 'Response clusters (national cluster approach)']]) {
     const got = await count(rel);
     (got === n ? pass : fail)(`Reference data: ${what}`, `${got ?? 'unreadable'} of ${n} rows`);
   }
