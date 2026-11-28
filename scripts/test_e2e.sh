@@ -93,6 +93,7 @@ want integration_ai && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT=
 want plans_governance && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node plans_governance.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 want flood && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node flood.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 want eoc && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node eoc.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
+want validation && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node validation.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 want csp && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node csp.mjs || exit 1; }
 
 echo "Deployment check: scripts/verify_deployment.mjs against the local stand-in project"

@@ -52,6 +52,7 @@ However, **repository evidence does not establish production readiness**. The li
 - RA 12287: workflow implemented; IRR graduated disbursement encoded and enforced in the database on 27 Nov 2026 (ADR-007, 41 SQL checks), pending legal/finance sign-off of the readings in ADR-007.
 - UNDRR scorecard: stored scoring exists, but evidence-backed indicator ownership and outcome traceability are incomplete.
 - Validation: scenarios and participation exist, but full exercise management, AAR and corrective-action closure are not evidenced.
+  - Update 0.11.0 (28 Nov 2026): sub-regional validation added (ADR-019). Contingency plan activation sets and append-only activations (exercise and live, logged in the EOC log), ICS simulator runs saved as exercise evidence, flood watch by LGU, and ECHO findings added as exercise checks. Covered by SQL, unit and browser tests.
 - Plan enhancement: templates/drafts exist, but approval, legal sufficiency, budget linkage and recovery planning are incomplete.
 - Monitoring: team messages and dashboard aggregation exist, but complete operational and resilience-outcome monitoring is not evidenced.
 - Offline: PWA assets can be cached; live operational records and current alerts are not thereby available offline.

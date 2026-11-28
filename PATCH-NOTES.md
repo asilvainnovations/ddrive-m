@@ -1,3 +1,40 @@
+# DDRiVE-M 0.11.0: Sub-regional validation for Metro Manila — 28 November 2026
+
+Validation now has four new tabs for a sub-region. Metro Manila is the first, with its 16 cities and Pateros. The tools were reviewed from MODE (Ormoc City CDRRMO) and tailored to the multi-LGU level ([ADR-019](docs/adr/019-subregional-validation-operations.md)).
+
+- **EOC activation from plans.** Each contingency plan lists the response clusters and EOC functions it brings in, as lead, on or standby, from BLUE or RED.
+  - *Clusters:* the 12 clusters of the national cluster approach, each with its lead agency.
+  - *Preview:* shows the set at BLUE or at RED.
+  - *In an exercise:* an analyst activates the plan at the level the exercise assumes.
+  - *Live:* a DRRM officer activates it on the current EOC status. The activation is logged as a decision in the EOC operations log.
+  - Activations cannot be edited. They never change the EOC level.
+- **ICS simulator.** Three Metro Manila scenarios:
+  - a Marikina–Pasig flood;
+  - a West Valley Fault magnitude 7.2 earthquake;
+  - a Manila Bay storm surge.
+
+  Each phase is timed and scored on command, coordination, communication, decision quality and timeliness. Each verdict comes with the doctrine behind the best answer. The simulator runs as an individual run or as a facilitated tabletop. A printable summary is included. Runs are saved to the organisation and can be linked to an exercise.
+- **Flood intelligence.**
+  - Your flood outlook is grouped by LGU, with a watch list you can copy or add to the EOC log.
+  - The Marikina River gauge reading is shown against the city's alarms: 15, 16 and 18 m.
+  - UP NOAH flood hazard layers are listed for each LGU.
+  - A benefit-cost screen for nature-based, hybrid and grey measures uses only your own figures.
+- **ECHO.** An evacuation and camp worksheet for each LGU.
+  - It checks covered space, water and toilets against Sphere and JMC No. 02 s. 2021, each with its own source.
+  - It suggests candidate host LGUs in the same district for any shortfall, and estimates how long moving people takes.
+  - Gaps and hosting arrangements can be added to an exercise as checks.
+- **Licence.** Code adapted from MODE keeps its Apache 2.0 notice (`THIRD_PARTY_NOTICES.md`).
+- **Tests (28 Nov 2026, all passing):**
+  - SQL: 16 suites (new: 39 checks) plus the legacy suite.
+  - Unit: 118 passed, 1 skipped (new: 19).
+  - Edge Functions: 42.
+  - Pipeline: 8.
+  - Browser: all suites, including the new validation suite (29 checks) and the CSP check.
+  - Type-check, lint (0 errors), build and the CSP header check.
+- **Apply:** DEPLOY.md, upgrade row "0.10.1 → 0.11".
+
+---
+
 # DDRiVE-M 0.10.1: Move to Supabase project bvpakjzgcsnmsgarxbaf — 28 November 2026
 
 - **New Supabase project.** Configuration now names `bvpakjzgcsnmsgarxbaf` (region `ap-southeast-2`, Sydney). This covers `.env.example`, `supabase/config.toml`, the email template script and DEPLOY.md.
