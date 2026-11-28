@@ -1,0 +1,6 @@
+pandas>=2.0
+numpy>=1.26
+scikit-learn>=1.4   # required by xgboost.XGBClassifier
+xgboost>=2.0
+pytest>=8.0
+# tensorflow  (only for 03_tensorflow_dense.py and 04_lstm.py)
