@@ -14,3 +14,4 @@ coverage/
 /models/
 __pycache__/
 .pytest_cache/
+e2e/screenshots/

@@ -1,0 +1,100 @@
+# Continuous integration (ADR-018): every pull request and every push to main runs the same suites as a release
+# (DEPLOY.md § 11). A failing suite fails the run; nothing is deployed from here.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+  POSTGREST_VERSION: v12.2.3
+  PLAYWRIGHT_VERSION: 1.63.0
+
+jobs:
+  app:
+    name: Type-check, lint, build, CSP, unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm }
+      - run: npm ci
+      - run: npm run check          # typecheck, lint, production build, CSP check against the built HTML
+      - run: npm run test:unit
+      - name: Dependency audit (production, high and critical)
+        run: npm audit --omit=dev --audit-level=high
+
+  database:
+    name: Migrations and access rules (PostgreSQL)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: PostgreSQL client and server
+        run: |
+          ls -d /usr/lib/postgresql/*/bin
+          echo "PGBIN=$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)" >> "$GITHUB_ENV"
+      - run: bash scripts/test_db.sh | tee db.log
+      - run: bash scripts/test_db.sh --legacy | tee db-legacy.log
+      - name: Every SQL suite passed
+        run: |
+          if grep -q '^FAIL' db.log db-legacy.log; then grep '^FAIL' db.log db-legacy.log; exit 1; fi
+          grep -A2 '^passed failed' db.log | grep -E '^ +[0-9]' || true
+
+  functions:
+    name: Edge Function and pipeline tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: deno test --allow-read --config supabase/functions/ingest-pagasa/deno.json supabase/functions/_shared/
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pandas numpy xgboost pytest
+      - run: python -m pytest scripts/flood_intelligence/tests -q
+
+  e2e:
+    name: Browser tests (production build against a local API)
+    runs-on: ubuntu-24.04
+    needs: [app, database]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm }
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: npm ci
+      - name: Playwright with Chromium
+        run: |
+          npm install --no-save playwright@${{ env.PLAYWRIGHT_VERSION }}
+          npx playwright install --with-deps chromium
+      - name: PostgREST
+        run: |
+          curl -fsSL -o /tmp/postgrest.tar.xz "https://github.com/PostgREST/postgrest/releases/download/${POSTGREST_VERSION}/postgrest-${POSTGREST_VERSION}-linux-static-x64.tar.xz"
+          tar -xJf /tmp/postgrest.tar.xz -C /usr/local/bin
+          postgrest --version
+          echo "PGBIN=$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)" >> "$GITHUB_ENV"
+      - run: mkdir -p e2e/screenshots && bash scripts/test_e2e.sh
+        env:
+          SCREENSHOT_DIR: ${{ github.workspace }}/e2e/screenshots
+      - name: Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots
+          path: e2e/screenshots/
+          if-no-files-found: ignore

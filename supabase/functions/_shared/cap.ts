@@ -1,7 +1,7 @@
 // Parser for CAP 1.2 alerts and the Atom feeds that list them (OASIS CAP 1.2; OASIS CAP feeds 1.0).
 // Written for PAGASA's feed but kept to the standard, so other agencies' CAP feeds can use it.
 // Pure TypeScript with one dependency, so it runs in Supabase Edge Functions (Deno) and in tests.
-import { XMLParser } from 'npm:fast-xml-parser@4.5.1';
+import { XMLParser } from 'npm:fast-xml-parser@5.12.1';
 
 export interface FeedEntry {
   /** Entry id with any "urn:uuid:" prefix removed; for PAGASA this equals the CAP identifier. */

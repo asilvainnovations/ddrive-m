@@ -6,6 +6,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PGBIN="${PGBIN:-$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1)}"
 POSTGREST_BIN="${POSTGREST_BIN:-postgrest}"
+# E2E_ONLY=csp,eoc runs only those suites (services still start); unset runs everything.
+want() { [ -z "${E2E_ONLY:-}" ] || [[ ",$E2E_ONLY," == *",$1,"* ]]; }
 DENO_BIN="${DENO_BIN:-deno}"
 PGPORT=55440
 REST_PORT=3000
@@ -50,11 +52,13 @@ echo "3/5 build"
 (cd "$ROOT" && VITE_SUPABASE_URL=http://127.0.0.1:54321 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_e2e_test_key npx vite build --logLevel error && node scripts/prerender.mjs)
 
 echo "4/5 serve"
+# Every suite runs under the production Content-Security-Policy, with the local test origins (ADR-018).
+export PREVIEW_CSP="$(node "$ROOT/scripts/csp_for_tests.mjs")"
 (cd "$ROOT" && setsid npx vite preview --host 127.0.0.1 --port 4173 --strictPort > "$WORK/preview.log" 2>&1) & PIDS+=($!)
 for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:4173/ && break; sleep 0.5; done
 
 echo "5/5 browser tests"
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" node phase1.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+want phase1 && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" node phase1.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 
 echo "Phase 2: official alerts (fake PAGASA server + the real ingest Edge Function)"
 node "$ROOT/e2e/fake-pagasa.mjs" > "$WORK/pagasa.log" 2>&1 & PIDS+=($!)
@@ -63,10 +67,10 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUP
   "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ingest-pagasa/deno.json" \
   "$ROOT/supabase/functions/ingest-pagasa/index.ts" > "$WORK/ingest.log" 2>&1 & INGEST_PID=$!; PIDS+=($INGEST_PID)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2.mjs || { echo "--- ingest log"; tail -20 "$WORK/ingest.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+want phase2 && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2.mjs || { echo "--- ingest log"; tail -20 "$WORK/ingest.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 
 echo "Phase 2b: public site, policies, PWA files and anticipatory action"
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2b.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+want phase2b && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node phase2b.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 
 echo "Detection: PTWC, USGS and GDACS through the real ingest-official function"
 kill "$INGEST_PID" 2>/dev/null; sleep 1
@@ -75,8 +79,8 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY="$SERVICE_JWT" SUP
   "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ingest-official/deno.json" \
   "$ROOT/supabase/functions/ingest-official/index.ts" > "$WORK/official.log" 2>&1 & OFFICIAL_PID=$!; PIDS+=($OFFICIAL_PID)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node detection.mjs || { echo "--- ingest-official log"; tail -20 "$WORK/official.log"; exit 1; }
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node response.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+want detection && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node detection.mjs || { echo "--- ingest-official log"; tail -20 "$WORK/official.log"; exit 1; }; }
+want response && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node response.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
 
 echo "Integration and DDRiVER AI: the real ddriver-ai function against a stand-in Claude API"
 kill "$OFFICIAL_PID" 2>/dev/null; sleep 1
@@ -85,9 +89,12 @@ SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SECRET_KEYS='{"default":"sb_secret_
   "$DENO_BIN" run --quiet --allow-net --allow-env --allow-read --config "$ROOT/supabase/functions/ddriver-ai/deno.json" \
   "$ROOT/supabase/functions/ddriver-ai/index.ts" > "$WORK/ddriver.log" 2>&1 & PIDS+=($!)
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:8000/ && break; sleep 0.5; done
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node integration_ai.mjs || { echo "--- ddriver-ai log"; tail -30 "$WORK/ddriver.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node plans_governance.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
-cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node flood.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }
+want integration_ai && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node integration_ai.mjs || { echo "--- ddriver-ai log"; tail -30 "$WORK/ddriver.log"; echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
+want plans_governance && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node plans_governance.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
+want flood && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node flood.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
+want eoc && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node eoc.mjs || { echo "--- PostgREST log"; tail -20 "$WORK/postgrest.log"; exit 1; }; }
+want csp && { cd "$ROOT/e2e" && JWT_SECRET="$JWT_SECRET" SERVICE_JWT="$SERVICE_JWT" node csp.mjs || exit 1; }
 
 echo "Crawler view: pages without JavaScript and the Vercel routing"
-cd "$ROOT/e2e" && node crawler.mjs
+want crawler && { cd "$ROOT/e2e" && node crawler.mjs; }
+true

@@ -1,3 +1,28 @@
+# DDRiVE-M 0.10.0: EOC operations, CI and security headers — 28 November 2026
+
+- **EOC operations (Response → EOC operations)** ([ADR-017](docs/adr/017-eoc-operations.md)).
+  - *Alert status:* WHITE, BLUE or RED, as defined in the harmonised response reporting SOP. A DRRM officer records each change with an NDRRMC Memo 131 trigger, the basis and the Responsible Official who directed it. Raising the status takes an activation trigger (9.2.1) and lowering it a deactivation trigger (9.2.7). The log cannot be edited.
+  - *Top bar:* shows the current status on every screen, or "not recorded"; it never assumes WHITE.
+  - *Duty roster:* by the five management functions (9.3.1). Under BLUE or RED, functions with no one on duty are flagged.
+  - *Operations log:* append-only, with shift handovers that name who takes over.
+- **CI:** GitHub Actions runs type-check, lint, build, the CSP check, unit, SQL, Edge Function, pipeline and browser tests, plus a dependency audit, on every pull request and push to `main` ([ADR-018](docs/adr/018-ci-and-security-headers.md)).
+- **Security headers:**
+  - *App:* a strict Content-Security-Policy. Inline scripts are allowed by hash only, and connections go to Supabase only.
+  - *All paths:* HSTS, Permissions-Policy and Cross-Origin-Opener-Policy.
+  - *Standalone legacy pages:* a looser policy.
+  - *Tests:* `scripts/check_csp.mjs` checks the policy against the built HTML, and a browser test runs every main screen under it.
+- **Dependencies:**
+  - Removed `zod` and `@hookform/resolvers`, which were unused and carried a high-severity advisory.
+  - `fast-xml-parser` is upgraded to 5.12.1 in the app and the CAP parser.
+  - Two moderate `react-router` 6 advisories remain; fixing them needs React Router 7.
+- **Tests (all run on 28 Nov 2026, all passing):**
+  - Database: 16 suites, including new 110 (34 checks).
+  - Unit: 99 passed, 1 skipped. Functions: 42. Flood pipeline (Python): 8.
+  - Browser: 273 checks in 11 suites, including new `eoc.mjs` (14) and `csp.mjs` (5). Every suite now runs under the production Content-Security-Policy.
+- **Apply:** DEPLOY.md § 9, "0.9.1 → 0.10".
+
+---
+
 # DDRiVE-M 0.9.1: Flood intelligence — 27 November 2026
 
 Adds Flood intelligence to Detection ([ADR-016](docs/adr/016-flood-intelligence.md)).

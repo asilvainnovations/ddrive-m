@@ -7,6 +7,7 @@ import { toast } from '@/components/ui/sonner';
 import { Link } from 'react-router-dom';
 import { useOfficialAlerts, alertTitle, ago } from '@/hooks/useOfficialAlerts';
 import DDriveLogo from './DDriveLogo';
+import { LEVELS, useEocStatus } from '@/lib/eoc';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -20,6 +21,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const { inArea, feed, stale } = useOfficialAlerts();
+  const eoc = useEocStatus();
 
   const name = profile?.full_name || user?.email || '';
   const initials = profile?.avatar_initials || (name ? name.slice(0, 2).toUpperCase() : '');
@@ -53,6 +55,15 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, title, subtitle }) => {
         </div>
 
         <div className="flex-1" />
+
+        {user && activeTenant && eoc.loaded && (
+          <Link to="/response?tab=eoc" role="status"
+            aria-label={eoc.status ? `EOC alert status ${LEVELS[eoc.status.level].label}, ${LEVELS[eoc.status.level].name}, since ${new Date(eoc.status.effective_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}` : 'EOC alert status not recorded'}
+            title={eoc.status ? `${eoc.status.ref}: directed by ${eoc.status.directed_by}` : 'No EOC status recorded yet'}
+            className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-bold ${eoc.status ? LEVELS[eoc.status.level].badge : 'border-dashed border-slate-400 text-slate-600 dark:text-slate-300'}`}>
+            EOC: {eoc.status ? LEVELS[eoc.status.level].label : 'not recorded'}
+          </Link>
+        )}
 
         <button
           type="button"

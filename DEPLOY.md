@@ -65,6 +65,7 @@ The migrations in `supabase/migrations/` build every table, access rule (Row Lev
 | 15 | `20261127060000_phase4_6_governance_plans_exercises.sql` | Gawad KALASAG self-assessment, NDRRMP outputs, risk mainstreaming register, plan templates, forms, exercises (ADR-012, ADR-013). **Needs #12 first** |
 | 16 | `20261127070000_phase1_himawari_frames.sql` | Addresses of current Himawari satellite images for the Detection loop (ADR-015) |
 | 17 | `20261127080000_phase1_flood_intelligence.sql` | Flood Intelligence: barangays with their flood hazard, daily rainfall, imports (ADR-016) |
+| 18 | `20261128010000_phase3_eoc_operations.sql` | EOC operations: alert status log (Memo 131 triggers), duty roster, operations log (ADR-017) |
 
 **Option A, Supabase CLI (recommended):**
 
@@ -258,6 +259,7 @@ Apply new migrations **before** deploying the app that uses them (`supabase db p
 | **0.7 → 0.8** (connected Detection, Diagnosis and Response, 27 Nov 2026) | 1. Run `20261127020000_phase3_response_actions.sql`. 2. Redeploy `ingest-official` (test-only source overrides; no change in production behaviour). 3. Redeploy the app. Anticipatory action moves into Response; `/anticipatory-action` links keep working. No new environment variables |
 | **0.8 → 0.9** (Integration, Enhancement, Validation, DDRiVER AI, hazard sync, NOAH and Himawari, 27 Nov 2026) | 1. Enable the **Cron** and **pg_net** extensions if not yet enabled. 2. Run, in order, `20261127030000_phase4_action_links_budget.sql`, `20261127040000_phase1_official_hazard_sync.sql`, `20261127050000_ai_ddriver.sql`, `20261127060000_phase4_6_governance_plans_exercises.sql`, `20261127070000_phase1_himawari_frames.sql`. 3. `supabase functions deploy ingest-pagasa ingest-official` (hazard sync, Himawari). 4. Optional: DDRiVER AI secrets and `supabase functions deploy ddriver-ai` (section 5d). 5. Add the `ddrive-ai-purge` schedule (section 5c). 6. Redeploy the app. 7. Have the DPO review the final Privacy Policy before publishing (it now names Anthropic, JMA and UP NOAH). Existing records are kept; existing hazard records stay as field records |
 | **0.9 → 0.9.1** (Flood intelligence, 27 Nov 2026) | 1. Run `20261127080000_phase1_flood_intelligence.sql`. 2. Redeploy the app. No functions or settings change. 3. An analyst imports the barangays with their flood hazard (Detection → Flood intelligence → Import from CSV; for example Project CCHAIN's `project_noah_hazards.csv`), and responders record daily rainfall |
+| **0.9.1 → 0.10** (EOC operations, CI, security headers, 28 Nov 2026) | 1. Run `20261128010000_phase3_eoc_operations.sql`. 2. `supabase functions deploy ingest-pagasa ingest-official` (CAP parser upgraded to fast-xml-parser 5.12.1). 3. Redeploy the app: `vercel.json` now sends a Content-Security-Policy and HSTS. If the project uses a custom Supabase domain, add it to `connect-src` first. 4. After deploying, open the app and check the browser console for "Content Security Policy" messages. 5. A DRRM officer records the current EOC status (Response → EOC operations); until then the top bar says "EOC: not recorded". 6. In GitHub, make the CI checks required for `main` with a branch protection rule or ruleset |
 
 ## 10. Keys: which goes where
 
@@ -285,7 +287,7 @@ Rotate a key at once if it is ever exposed: create a new one, update where it li
 | `python -m pytest scripts/flood_intelligence/tests` | Python 3.10+, pandas, numpy (xgboost for the training test) | Flood Intelligence pipeline: antecedent rainfall per barangay, labels and their source, time split, model card, and the rule's golden cases shared with the app |
 | `npm run test:e2e` | PostgREST 12, Playwright with Chromium | The production build against a local API, in a browser |
 
-Record the counts in the release notes (`docs/governance/TEST-REPORT-TEMPLATE.md`). A suite that was not run is reported as not run, never as passed.
+CI (`.github/workflows/ci.yml`) runs all of these on every pull request and push to `main`. Record the counts in the release notes (`docs/governance/TEST-REPORT-TEMPLATE.md`). A suite that was not run is reported as not run, never as passed.
 
 ## 12. Data protection notes
 
