@@ -1,5 +1,5 @@
-# Supabase CLI settings for DDRiVE-M. Hosted project: mytnwrctkubhrfjwloln
-# (link once with: supabase link --project-ref mytnwrctkubhrfjwloln).
+# Supabase CLI settings for DDRiVE-M. Hosted project: bvpakjzgcsnmsgarxbaf (ap-southeast-2)
+# (link once with: supabase link --project-ref bvpakjzgcsnmsgarxbaf).
 project_id = "ddrive-m"
 
 [functions.ingest-pagasa]

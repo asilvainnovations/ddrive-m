@@ -2,7 +2,7 @@
 
 This guide takes DDRiVE-M from this repository to a running service: the database and access rules on Supabase, the alert-ingest functions and their schedule, sign-in, and the web app on Vercel. It also covers upgrades, checks after each step, and handover.
 
-Production today: app at `https://ddrive-m.asilvainnovations.com` (Vercel), database and functions on Supabase project `mytnwrctkubhrfjwloln`. Replace these with your own values for another deployment.
+Production today: app at `https://ddrive-m.asilvainnovations.com` (Vercel), database and functions on Supabase project `bvpakjzgcsnmsgarxbaf` (region `ap-southeast-2`, Sydney), from 28 Nov 2026; before that, `mytnwrctkubhrfjwloln` (see § 15 for the move). Replace these with your own values for another deployment.
 
 Time needed: about two hours for a new deployment; 15 minutes for an upgrade.
 
@@ -22,6 +22,7 @@ Time needed: about two hours for a new deployment; 15 minutes for an upgrade.
 12. [Data protection notes](#12-data-protection-notes)
 13. [Roles](#13-roles)
 14. [Rollback and switching things off](#14-rollback-and-switching-things-off)
+15. [Moving to a new Supabase project](#15-moving-to-a-new-supabase-project)
 
 ## 1. Before you start
 
@@ -237,6 +238,15 @@ For local development: create `.env.local` with the same three variables, then `
 
 ## 8. Checks after deployment
 
+First run the automatic check. It is read-only; keep the secret key in your shell.
+
+```bash
+SUPABASE_URL=https://<project-ref>.supabase.co SUPABASE_PUBLISHABLE_KEY=sb_publishable_… \
+  SUPABASE_SECRET_KEY=sb_secret_… node scripts/verify_deployment.mjs
+```
+
+It checks that the project answers, anonymous visitors read no records, email (and Google) sign-in is on, the functions are deployed and refuse callers without a key, every table and view of the migrations exists, the reference data is complete (84 catalogue rows, 32 Gawad KALASAG indicators, 50 NDRRMP outputs), every official source was read recently, and an organisation exists. Then check by hand:
+
 - [ ] Home, `/privacy-policy` and `/terms-of-service` load without signing in.
 - [ ] Sign-up email arrives from your domain; the link opens `/dashboard`.
 - [ ] Google sign-in works (if set up).
@@ -316,3 +326,24 @@ The database enforces the role ladder (ADR-001); the app only shows or hides con
 - **The app release is bad:** Vercel → Deployments → promote the previous deployment. Migrations are additive, so the previous app keeps working against the newer database.
 - **A migration fails halfway:** each file is safe to re-run; fix the cause and run it again. Do not edit an applied migration; add a new one.
 - **Backups:** Supabase daily backups (and point-in-time recovery on paid plans). Test a restore into a separate project before go-live.
+
+## 15. Moving to a new Supabase project
+
+Use this when the database moves to another Supabase project (as on 28 Nov 2026, to `bvpakjzgcsnmsgarxbaf` in `ap-southeast-2`). The app keeps working on the old project until step 7, so nothing is cut over half-done.
+
+1. **Region and privacy.** The project's region is part of the Privacy Policy (section 7, "Where it is stored"), read from `hostingRegion` in `src/content/legal/facts.ts`. Update it, and have the DPO confirm the cross-border transfer (Data Privacy Act s. 21) before users' data moves.
+2. **Data.** If the old project holds records to keep, export them first: `pg_dump --data-only --schema=public` from the old project (its database password from your password manager). A new, empty project needs no export.
+3. **Migrations.** Apply every file in `supabase/migrations/` in order (§ 3). With psql, use the session pooler string from Supabase → Connect (port 5432):
+   ```bash
+   export DATABASE_URL='postgresql://postgres.<project-ref>:<password>@aws-1-<region>.pooler.supabase.com:5432/postgres'
+   for f in supabase/migrations/*.sql; do echo "$f"; psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break; done
+   ```
+   Then load the exported data, if any, with `psql "$DATABASE_URL" -f data.sql`.
+4. **Extensions, secrets and schedules.** Enable Cron and pg_net; create the Vault secret `ddrive_ingest_key` with the **new** project's secret key; add the three schedules (§ 5c).
+5. **Functions.** `supabase link --project-ref <project-ref>`, set the function secrets (§ 5b, § 5d; `ANTHROPIC_API_KEY` only if DDRiVER AI is used), and `supabase functions deploy ingest-pagasa ingest-official ddriver-ai`. Supabase injects `SUPABASE_URL` and the keys; the functions accept the new `sb_secret_…` keys.
+6. **Sign-in.** Authentication → URL configuration: Site URL `https://ddrive-m.asilvainnovations.com`, redirect URL `https://ddrive-m.asilvainnovations.com/**`; email templates (§ 4a, `scripts/push-email-templates.mjs <project-ref>`); SMTP; Google provider with the new callback `https://<project-ref>.supabase.co/auth/v1/callback`, also added to the Google OAuth client (§ 4b). Users of the old project sign up again unless `auth.users` was migrated (Supabase's project transfer or a dashboard backup restore keeps it; a `public` data dump does not).
+7. **Check, then switch.** Run `node scripts/verify_deployment.mjs` against the new project until it reports no failures. Only then set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Vercel (Production) to the new values and redeploy. The secret key never goes into Vercel.
+8. **After.** Run § 8 by hand; keep the old project paused (not deleted) for 30 days; rotate any key that was pasted into a chat, ticket or document during the move.
+
+Not needed for DDRiVE-M: the Supabase Library client block (`npx shadcn add @supabase/supabase-client-react-router`) would add a second client beside `src/lib/supabase.ts`, which already reads the same variables and refuses server keys in the bundle; and `@supabase/server` is not used, because the functions check callers in `supabase/functions/_shared/auth.ts` and through Supabase Auth.
+

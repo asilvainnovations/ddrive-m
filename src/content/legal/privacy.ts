@@ -10,7 +10,7 @@ export const privacy: Policy = {
   title: 'Privacy Policy',
   summary: 'What DDRiVE-M collects, why, who receives it, how long it is kept, and how to exercise your rights under the Data Privacy Act.',
   effective: '2026-11-27',
-  updated: '2026-11-27',
+  updated: '2026-11-28',
   final: true,
   keyPoints: [
     'We collect your name, email address and organisation role to give you an account, and the records your organisation enters to run its disaster risk reduction work.',

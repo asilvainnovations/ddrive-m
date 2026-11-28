@@ -16,7 +16,7 @@ export const LEGAL_FACTS = {
   dpoName: 'Alvin M. Silva' as string | null,
 
   // Supplied by the platform owner; verify in the live Supabase project settings.
-  hostingRegion: 'Northeast Asia' as string | null,
+  hostingRegion: 'Asia Pacific (Sydney, Australia; Supabase region ap-southeast-2)' as string | null,
 
   // Do not publish a registration number until its applicability and details are verified.
   npcRegistration: null as string | null,
